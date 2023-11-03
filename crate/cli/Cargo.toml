@@ -1,0 +1,29 @@
+[package]
+name = "cosmian_vm"
+version = "0.1.0"
+edition = "2021"
+license = "MIT/Apache-2.0"
+description = "Cosmian VM CLI"
+
+[[bin]]
+name = "cosmian_vm"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+clap = { version = "4", default-features = false, features = [
+    "cargo",
+    "derive",
+    "error-context",
+    "help",
+    "std",
+    "string",
+    "usage",
+] }
+cosmian_vm_agent = { path = "../agent" } # TODO: don't do that
+cosmian_vm_client = { path = "../client" }
+rand = "0.8"
+tee_attestation = { path = "../../../microservice_encryption/tee-tools/tee_attestation" }
+
+# tee_attestation = { git = "https://github.com/Cosmian/tee-tools", branch = "get_quote" }
+tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }
