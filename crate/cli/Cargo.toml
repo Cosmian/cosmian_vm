@@ -20,10 +20,9 @@ clap = { version = "4", default-features = false, features = [
     "string",
     "usage",
 ] }
-cosmian_vm_agent = { path = "../agent" } # TODO: don't do that
 cosmian_vm_client = { path = "../client" }
+hex = { workspace = true }
+ima = { path = "../ima" }
 rand = "0.8"
-tee_attestation = { path = "../../../microservice_encryption/tee-tools/tee_attestation" }
-
-# tee_attestation = { git = "https://github.com/Cosmian/tee-tools", branch = "get_quote" }
+tee_attestation = { workspace = true }
 tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }

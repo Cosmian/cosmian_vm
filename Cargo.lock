@@ -576,8 +576,9 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
- "cosmian_vm_agent",
  "cosmian_vm_client",
+ "hex",
+ "ima",
  "rand",
  "tee_attestation",
  "tokio",
@@ -590,9 +591,9 @@ dependencies = [
  "actix-cors",
  "actix-http",
  "actix-web",
+ "cosmian_vm_client",
  "hex",
- "serde",
- "serde_json",
+ "ima",
  "sha1",
  "tee_attestation",
  "thiserror",
@@ -607,7 +608,6 @@ dependencies = [
 name = "cosmian_vm_client"
 version = "0.1.0"
 dependencies = [
- "cosmian_vm_agent",
  "hex",
  "http",
  "reqwest",
@@ -1128,6 +1128,18 @@ checksum = "7d20d6b07bfbc108882d88ed8e37d39636dcc260e15e30c45e6ba089610b917c"
 dependencies = [
  "unicode-bidi",
  "unicode-normalization",
+]
+
+[[package]]
+name = "ima"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha1",
+ "thiserror",
 ]
 
 [[package]]
@@ -2093,6 +2105,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "0.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2112,6 +2125,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "0.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2122,6 +2136,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "0.2.0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
 dependencies = [
  "chrono",
  "elliptic-curve",
@@ -2318,6 +2333,7 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "0.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
 dependencies = [
  "bincode",
  "sev_quote",

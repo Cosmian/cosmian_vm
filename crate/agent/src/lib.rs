@@ -5,9 +5,9 @@ use actix_web::{
     web::{scope, PayloadConfig, ServiceConfig},
 };
 
-pub mod core;
 pub mod endpoints;
-pub mod errors;
+pub mod error;
+pub mod utils;
 
 pub fn endpoints(cfg: &mut ServiceConfig) {
     cfg.service(endpoints::get_ima_ascii);

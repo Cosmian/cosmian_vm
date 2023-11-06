@@ -1,6 +1,5 @@
 use std::time::Duration;
 
-use cosmian_vm_agent::endpoints::QuoteParam;
 use http::{HeaderMap, HeaderValue, StatusCode};
 
 use reqwest::{Client, ClientBuilder, Response};
@@ -14,25 +13,34 @@ pub struct CosmianVmClient {
     client: Client,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct QuoteParam {
+    pub nonce: String,
+}
+
 impl CosmianVmClient {
-    /// TODO
+    /// Proceed a snapshot of the VM
     pub async fn snapshot(&self) -> Result<String, Error> {
         self.get("/snapshot", None::<&()>).await
     }
 
+    /// Get the IMA list as an ascii string
     pub async fn ima_ascii(&self) -> Result<String, Error> {
         self.get("/ima/ascii", None::<&()>).await
     }
 
+    /// Get the IMA list as a binary blob
     pub async fn ima_binary(&self) -> Result<Vec<u8>, Error> {
         self.get("/ima/binary", None::<&()>).await
     }
 
-    pub async fn pcr_value(&self, id: u8) -> Result<String, Error> {
+    /// Get the PCR value for register number `id`
+    pub async fn pcr_value(&self, id: u32) -> Result<String, Error> {
         self.get(&format!("/tmp_endpoint/pcr/{id}"), None::<&()>)
             .await
     }
 
+    /// Get the quote of the tee
     pub async fn tee_quote(&self, nonce: &[u8]) -> Result<Vec<u8>, Error> {
         self.get(
             "/quote/tee",
@@ -43,6 +51,7 @@ impl CosmianVmClient {
         .await
     }
 
+    /// Get the quote of the tpm
     pub async fn tpm_quote(&self, nonce: &[u8]) -> Result<Vec<u8>, Error> {
         self.get(
             "/quote/tpm",
@@ -53,7 +62,7 @@ impl CosmianVmClient {
         .await
     }
 
-    /// Instantiate a new KMIP REST Client
+    /// Instantiate a new cosmian VM client
     #[allow(clippy::too_many_arguments)]
     #[allow(dead_code)]
     pub fn instantiate(server_url: &str, accept_invalid_certs: bool) -> Result<Self, Error> {

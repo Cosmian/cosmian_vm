@@ -7,13 +7,12 @@ edition = "2021"
 actix-cors = "0.6"
 actix-http = "3"
 actix-web = "4"
-hex = "0.4"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.96"
-sha1 = "0.10"
-tee_attestation = { path = "../../../microservice_encryption/tee-tools/tee_attestation" }
-# " git = "https://github.com/Cosmian/tee-tools", branch = "get_quote" }
-thiserror = "1.0"
+cosmian_vm_client = { path = "../client" }
+hex = { workspace = true }
+ima = { path = "../ima" }
+sha1 = { workspace = true }
+tee_attestation = { workspace = true }
+thiserror = { workspace = true }
 tracing = "0.1"
 tracing-actix-web = "0.7"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
