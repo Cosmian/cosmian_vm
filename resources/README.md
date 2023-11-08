@@ -1,18 +1,9 @@
-Disable apparmor and install selinux: https://www.linode.com/docs/guides/how-to-install-selinux-on-ubuntu-22-04/
-Check:
+# Setup
 
-$ ls -Z /bin/bash
--rwxr-xr-x. root root system_u:object_r:shell_exec_t:s0 /bin/bash
+Configure your machien to be a Cosmian VM:
 
-Liste des magic: https://elixir.bootlin.com/linux/v3.18.103/source/include/uapi/linux/magic.h
+```sh
+$./setup.sh
+```
 
-ps -aeZ
-
-getfattr -m - -d /sbin/init
-
-
-
-sudo find / -type f ! -path "./output"
-
-sudo find / -type f ! -path "./output" -exec sha1sum  "{}" +  > ./output
-
+Then copy the `cosmian_vm_agent` on this machine and run it.

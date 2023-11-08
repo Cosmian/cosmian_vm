@@ -1,3 +1,5 @@
+use anyhow::Result;
+
 use actix_web::{App, HttpServer};
 use tracing_actix_web::TracingLogger;
 use tracing_subscriber::{
@@ -9,24 +11,23 @@ use tracing_subscriber::{
 };
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> Result<()> {
     // Init logging
     init_logging();
 
-    tracing::info!("Starting server...");
+    let port = std::env::var("COSMIAN_VM_AGENT_PORT").map_or_else(
+        |_| 5355,
+        |p| p.parse::<u16>().expect("bad COSMIAN_VM_AGENT_PORT value"),
+    );
+
+    tracing::info!("Starting server on 0.0.0.0:{port}...");
     // Start REST server thread
     HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
             .configure(cosmian_vm_agent::config())
     })
-    .bind((
-        "0.0.0.0",
-        std::env::var("BACKEND_PORT").map_or_else(
-            |_| 8080,
-            |p| p.parse::<u16>().expect("bad BACKEND_PORT value"),
-        ),
-    ))?
+    .bind(("0.0.0.0", port))?
     .run()
     .await?;
 

@@ -1,16 +1,20 @@
+use std::sync::Arc;
 use std::time::Duration;
 
 use http::{HeaderMap, HeaderValue, StatusCode};
 
-use reqwest::{Client, ClientBuilder, Response};
-use serde::{Deserialize, Serialize};
-
+use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
 use crate::error::Error;
+use ratls::verify::get_server_certificate;
+use reqwest::{Client, ClientBuilder, Response, Url};
+use rustls::{client::WebPkiVerifier, Certificate};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
 pub struct CosmianVmClient {
-    pub server_url: String,
+    pub agent_url: String,
     client: Client,
+    pub certificate: Certificate,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -65,16 +69,30 @@ impl CosmianVmClient {
     /// Instantiate a new cosmian VM client
     #[allow(clippy::too_many_arguments)]
     #[allow(dead_code)]
-    pub fn instantiate(server_url: &str, accept_invalid_certs: bool) -> Result<Self, Error> {
-        let server_url = match server_url.strip_suffix('/') {
+    pub fn instantiate(agent_url: &str, accept_invalid_certs: bool) -> Result<Self, Error> {
+        let agent_url = match agent_url.strip_suffix('/') {
             Some(s) => s.to_string(),
-            None => server_url.to_string(),
+            None => agent_url.to_string(),
         };
 
         let mut headers = HeaderMap::new();
         headers.insert("Connection", HeaderValue::from_static("keep-alive"));
 
-        let builder = ClientBuilder::new().danger_accept_invalid_certs(accept_invalid_certs);
+        // Get the agent certificate
+        let agent_url_parsed: Url = Url::parse(&agent_url)?;
+        let certificate = Certificate(
+            get_server_certificate(
+                agent_url_parsed
+                    .host_str()
+                    .ok_or_else(|| Error::Default("Host not found in agent url".to_string()))?,
+                agent_url_parsed.port().unwrap_or(443).into(),
+            )
+            .map_err(|e| {
+                Error::Default(format!("Can't get the Cosmian VM Agent certificate: {e}"))
+            })?,
+        );
+
+        let builder = build_tls_client_tee(&certificate, accept_invalid_certs)?;
 
         // Build the client
         Ok(Self {
@@ -83,7 +101,8 @@ impl CosmianVmClient {
                 .tcp_keepalive(Duration::from_secs(30))
                 .default_headers(headers)
                 .build()?,
-            server_url,
+            agent_url,
+            certificate,
         })
     }
 
@@ -92,10 +111,10 @@ impl CosmianVmClient {
         R: serde::de::DeserializeOwned + Sized + 'static,
         O: Serialize,
     {
-        let server_url = format!("{}{endpoint}", self.server_url);
+        let agent_url = format!("{}{endpoint}", self.agent_url);
         let response = match data {
-            Some(d) => self.client.get(server_url).query(d).send().await?,
-            None => self.client.get(server_url).send().await?,
+            Some(d) => self.client.get(agent_url).query(d).send().await?,
+            None => self.client.get(agent_url).send().await?,
         };
 
         let status_code = response.status();
@@ -113,10 +132,10 @@ impl CosmianVmClient {
         O: Serialize,
         R: serde::de::DeserializeOwned + Sized + 'static,
     {
-        let server_url = format!("{}{endpoint}", self.server_url);
+        let agent_url = format!("{}{endpoint}", self.agent_url);
         let response = match data {
-            Some(d) => self.client.post(server_url).json(d).send().await?,
-            None => self.client.post(server_url).send().await?,
+            Some(d) => self.client.post(agent_url).json(d).send().await?,
+            None => self.client.post(agent_url).send().await?,
         };
 
         let status_code = response.status();
@@ -151,4 +170,40 @@ async fn handle_error(response: Response) -> Result<String, Error> {
             _ => format!("{status} {text}"),
         })
     }
+}
+
+/// Build a `TLSClient` to use with a Cosmian VM Agent running inside a tee
+/// The TLS verification is the basic one but also include the verification of the leaf certificate
+/// The TLS socket is mounted since the leaf certificate is exactly the same than the expected one.
+pub fn build_tls_client_tee(
+    leaf_cert: &Certificate,
+    accept_invalid_certs: bool,
+) -> Result<ClientBuilder, Error> {
+    let mut root_cert_store = rustls::RootCertStore::empty();
+
+    let trust_anchors = webpki_roots::TLS_SERVER_ROOTS.iter().map(|trust_anchor| {
+        rustls::OwnedTrustAnchor::from_subject_spki_name_constraints(
+            trust_anchor.subject,
+            trust_anchor.spki,
+            trust_anchor.name_constraints,
+        )
+    });
+    root_cert_store.add_trust_anchors(trust_anchors);
+
+    let verifier = if !accept_invalid_certs {
+        LeafCertificateVerifier::new(
+            leaf_cert,
+            Arc::new(WebPkiVerifier::new(root_cert_store, None)),
+        )
+    } else {
+        LeafCertificateVerifier::new(leaf_cert, Arc::new(NoVerifier))
+    };
+
+    let config = rustls::ClientConfig::builder()
+        .with_safe_defaults()
+        .with_custom_certificate_verifier(Arc::new(verifier))
+        .with_no_client_auth();
+
+    // Create a client builder
+    Ok(Client::builder().use_preconfigured_tls(config))
 }

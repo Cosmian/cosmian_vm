@@ -10,8 +10,8 @@ $ cargo build
 
 On a SEV host:
 
-```sh 
-$ sudo ./cosmian_vm_agent
+```sh  
+$ sudo COSMIAN_VM_AGENT_CERTIFICATE=/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem ./cosmian_vm_agent
 ```
 
 Then on your localhost:

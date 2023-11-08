@@ -10,7 +10,7 @@ name = "cosmian_vm"
 path = "src/main.rs"
 
 [dependencies]
-anyhow = "1.0"
+anyhow = { workspace = true }
 clap = { version = "4", default-features = false, features = [
     "cargo",
     "derive",
@@ -23,6 +23,7 @@ clap = { version = "4", default-features = false, features = [
 cosmian_vm_client = { path = "../client" }
 hex = { workspace = true }
 ima = { path = "../ima" }
+pem-rfc7468 = "0.7"
 rand = "0.8"
 tee_attestation = { workspace = true }
 tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }

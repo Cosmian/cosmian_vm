@@ -6,13 +6,15 @@ resolver = "2"
 lto = true
 strip = true
 
-[profile.dev]
-lto = true
-strip = true
+# [profile.dev]
+# lto = true
+# strip = true
 
 [workspace.dependencies]
+anyhow = "1.0"
 hex = "0.4"
 sha1 = "0.10"
+ratls = { git = "https://github.com/Cosmian/tee-tools", branch = "fix_gcp" }
 tee_attestation = { git = "https://github.com/Cosmian/tee-tools", branch = "fix_gcp" }
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }

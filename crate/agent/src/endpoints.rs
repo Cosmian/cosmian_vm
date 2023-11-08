@@ -1,10 +1,11 @@
 use crate::{
     error::{Error, ResponseWithError},
     utils::{filter_whilelist, hash_file},
+    CosmianVmAgent,
 };
 use actix_web::{
     get,
-    web::{Json, Path, Query},
+    web::{Data, Json, Path, Query},
 };
 use cosmian_vm_client::client::QuoteParam;
 use ima::{
@@ -12,7 +13,7 @@ use ima::{
     snapshot::{Snapshot, SnapshotEntry},
 };
 use std::process::Command;
-use tee_attestation::get_quote;
+use tee_attestation::{forge_report_data_with_nonce, get_quote};
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
@@ -120,9 +121,18 @@ pub async fn get_pcr_value(path: Path<u32>) -> ResponseWithError<Json<String>> {
 
 /// Return the TEE quote
 #[get("/quote/tee")]
-pub async fn get_tee_quote(data: Query<QuoteParam>) -> ResponseWithError<Json<Vec<u8>>> {
+pub async fn get_tee_quote(
+    data: Query<QuoteParam>,
+    certificate: Data<CosmianVmAgent>,
+) -> ResponseWithError<Json<Vec<u8>>> {
     let nonce = hex::decode(&data.nonce)?;
-    let quote = get_quote(&nonce)?;
+    let report_data = forge_report_data_with_nonce(
+        nonce[..].try_into().map_err(|_| {
+            Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
+        })?,
+        certificate.pem_certificate.as_bytes(),
+    )?;
+    let quote = get_quote(&report_data)?;
     Ok(Json(quote))
 }
 

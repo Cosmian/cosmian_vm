@@ -1,11 +1,11 @@
-use std::{fs, path::PathBuf};
-
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use cosmian_vm_client::client::CosmianVmClient;
 use ima::snapshot::Snapshot;
+use pem_rfc7468::{encode_string, LineEnding};
 use rand::RngCore;
-use tee_attestation::{verify_quote, TeeMeasurement};
+use std::{fs, path::PathBuf};
+use tee_attestation::{forge_report_data_with_nonce, verify_quote, TeeMeasurement};
 use tokio::task::spawn_blocking;
 
 /// Verify a Cosmian VM
@@ -26,6 +26,11 @@ impl VerifyArgs {
 
         let client = CosmianVmClient::instantiate(&self.url, false)?;
         let ima_binary = client.ima_binary().await?;
+
+        if ima_binary.is_empty() {
+            return Err(anyhow::anyhow!("No IMA list recovered"));
+        }
+
         let ima_binary: &[u8] = ima_binary.as_ref();
         let ima = ima::ima::Ima::try_from(ima_binary)?;
 
@@ -37,21 +42,23 @@ impl VerifyArgs {
         let snapshot = fs::read_to_string(&self.snapshot)?;
         let snapshot = Snapshot::try_from(snapshot.as_ref())?;
 
-        let mut data = [0u8; 32];
-        rand::thread_rng().fill_bytes(&mut data);
+        let mut nonce = [0u8; 32];
+        rand::thread_rng().fill_bytes(&mut nonce);
 
-        let quote = client.tee_quote(&data).await?;
+        let quote = client.tee_quote(&nonce).await?;
 
         println!("Verifying the VM integrity...");
         let failures = ima.compare(&snapshot);
         if !failures.entries.is_empty() {
-            let _ = failures.entries.iter().map(|entry| {
+            failures.entries.iter().for_each(|entry| {
                 println!(
                     "Entry ({},{}) can't be found in the snapshot!",
                     entry.path,
                     hex::encode(&entry.hash)
                 );
             });
+
+            return Err(anyhow::anyhow!("Integrity check failed"));
         }
 
         let pcr_value = ima.pcr_value()?;
@@ -59,7 +66,7 @@ impl VerifyArgs {
             return Err(anyhow::anyhow!(
                 "Bad PCR value ({} == {})",
                 hex::encode(pcr_value),
-                expecting_pcr_value
+                expecting_pcr_value.to_lowercase()
             ));
         }
 
@@ -67,10 +74,18 @@ impl VerifyArgs {
         // TODO
 
         println!("Verifying the TEE integrity...");
+
+        let report_data = forge_report_data_with_nonce(
+            &nonce,
+            encode_string("CERTIFICATE", LineEnding::default(), &client.certificate.0)
+                .map_err(|e| anyhow!(e))?
+                .as_bytes(),
+        )?;
+
         spawn_blocking(move || {
             verify_quote(
                 &quote,
-                &data,
+                &report_data,
                 TeeMeasurement {
                     sgx: None,
                     sev: None,
