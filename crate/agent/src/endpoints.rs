@@ -7,13 +7,13 @@ use actix_web::{
     get,
     web::{Data, Json, Path, Query},
 };
-use cosmian_vm_client::client::QuoteParam;
-use ima::{
-    ima::{read_ima_ascii, read_ima_binary, Ima},
-    snapshot::{Snapshot, SnapshotEntry},
+use cosmian_vm_client::{
+    client::QuoteParam,
+    snapshot::{CosmianVmSnapshot, SnapshotFiles, SnapshotFilesEntry},
 };
+use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
 use std::process::Command;
-use tee_attestation::{forge_report_data_with_nonce, get_quote};
+use tee_attestation::{forge_report_data_with_nonce, get_measurement, get_quote};
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
@@ -42,22 +42,23 @@ pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
 ///
 /// Note: require root privileges
 #[get("/snapshot")]
-pub async fn get_snapshot() -> ResponseWithError<Json<String>> {
+pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
     let ima_ascii = read_ima_ascii()?;
     let ima_ascii: &str = ima_ascii.as_ref();
     let ima = Ima::try_from(ima_ascii)?;
 
-    let mut filehashes = Snapshot {
-        entries: ima
-            .entries
+    // Create the snapshotfiles with files contains in the IMA list
+    let mut filehashes = SnapshotFiles(
+        ima.entries
             .iter()
-            .map(|item| SnapshotEntry {
+            .map(|item| SnapshotFilesEntry {
                 hash: item.filedata_hash.clone(),
                 path: item.filename_hint.clone(),
             })
             .collect(),
-    };
+    );
 
+    // Add to the snapshotfiles all the file on the system
     for file in WalkDir::new(ROOT_PATH)
         .into_iter()
         .filter_entry(filter_whilelist)
@@ -68,13 +69,20 @@ pub async fn get_snapshot() -> ResponseWithError<Json<String>> {
             continue;
         }
 
-        filehashes.entries.push(SnapshotEntry {
+        filehashes.0.push(SnapshotFilesEntry {
             hash: hash_file(file.path())?,
             path: file.path().display().to_string(),
         });
     }
 
-    Ok(Json(String::from(filehashes)))
+    // Get the measurement of the tee (the report data does not matter)
+    let quote = get_quote(&[])?;
+    let measurement = get_measurement(&quote)?;
+
+    Ok(Json(CosmianVmSnapshot {
+        filehashes,
+        measurement,
+    }))
 }
 
 /// Return the #id PCR value

@@ -23,7 +23,7 @@ impl SnapshotArgs {
         let client = CosmianVmClient::instantiate(&self.url, false)?;
         let snapshot = client.snapshot().await?;
 
-        fs::write(&self.output, snapshot)?;
+        fs::write(&self.output, serde_json::to_string(&snapshot)?)?;
 
         println!(
             "The snapshot has been saved at {}",

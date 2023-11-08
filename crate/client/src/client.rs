@@ -5,6 +5,7 @@ use http::{HeaderMap, HeaderValue, StatusCode};
 
 use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
 use crate::error::Error;
+use crate::snapshot::CosmianVmSnapshot;
 use ratls::verify::get_server_certificate;
 use reqwest::{Client, ClientBuilder, Response, Url};
 use rustls::{client::WebPkiVerifier, Certificate};
@@ -24,7 +25,7 @@ pub struct QuoteParam {
 
 impl CosmianVmClient {
     /// Proceed a snapshot of the VM
-    pub async fn snapshot(&self) -> Result<String, Error> {
+    pub async fn snapshot(&self) -> Result<CosmianVmSnapshot, Error> {
         self.get("/snapshot", None::<&()>).await
     }
 

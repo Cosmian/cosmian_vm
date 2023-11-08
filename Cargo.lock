@@ -581,6 +581,8 @@ dependencies = [
  "ima",
  "pem-rfc7468",
  "rand",
+ "serde",
+ "serde_json",
  "tee_attestation",
  "tokio",
 ]
@@ -617,6 +619,7 @@ dependencies = [
  "rustls",
  "serde",
  "serde_json",
+ "tee_attestation",
  "thiserror",
  "url",
  "webpki-roots",
@@ -1175,6 +1178,7 @@ name = "ima"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "cosmian_vm_client",
  "hex",
  "serde",
  "serde_json",
@@ -1726,7 +1730,7 @@ dependencies = [
 [[package]]
 name = "ratls"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#fed06d483734d06d26489fab92665fd6c2f881da"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
 dependencies = [
  "asn1-rs",
  "bincode",
@@ -2179,7 +2183,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#fed06d483734d06d26489fab92665fd6c2f881da"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2199,7 +2203,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#fed06d483734d06d26489fab92665fd6c2f881da"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2210,7 +2214,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#fed06d483734d06d26489fab92665fd6c2f881da"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
 dependencies = [
  "chrono",
  "elliptic-curve",
@@ -2407,9 +2411,11 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#fed06d483734d06d26489fab92665fd6c2f881da"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
 dependencies = [
  "bincode",
+ "serde",
+ "serde_json",
  "sev_quote",
  "sgx_quote",
  "sha2",

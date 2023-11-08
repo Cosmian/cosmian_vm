@@ -1,11 +1,10 @@
 use anyhow::{anyhow, Result};
 use clap::Args;
-use cosmian_vm_client::client::CosmianVmClient;
-use ima::snapshot::Snapshot;
+use cosmian_vm_client::{client::CosmianVmClient, snapshot::CosmianVmSnapshot};
 use pem_rfc7468::{encode_string, LineEnding};
 use rand::RngCore;
 use std::{fs, path::PathBuf};
-use tee_attestation::{forge_report_data_with_nonce, verify_quote, TeeMeasurement};
+use tee_attestation::{forge_report_data_with_nonce, verify_quote};
 use tokio::task::spawn_blocking;
 
 /// Verify a Cosmian VM
@@ -40,7 +39,7 @@ impl VerifyArgs {
         let expecting_pcr_value = client.pcr_value(ima.entries[0].pcr).await?;
 
         let snapshot = fs::read_to_string(&self.snapshot)?;
-        let snapshot = Snapshot::try_from(snapshot.as_ref())?;
+        let snapshot: CosmianVmSnapshot = serde_json::from_str(&snapshot)?;
 
         let mut nonce = [0u8; 32];
         rand::thread_rng().fill_bytes(&mut nonce);
@@ -48,9 +47,9 @@ impl VerifyArgs {
         let quote = client.tee_quote(&nonce).await?;
 
         println!("Verifying the VM integrity...");
-        let failures = ima.compare(&snapshot);
-        if !failures.entries.is_empty() {
-            failures.entries.iter().for_each(|entry| {
+        let failures = ima.compare(&snapshot.filehashes);
+        if !failures.0.is_empty() {
+            failures.0.iter().for_each(|entry| {
                 println!(
                     "Entry ({},{}) can't be found in the snapshot!",
                     entry.path,
@@ -82,17 +81,7 @@ impl VerifyArgs {
                 .as_bytes(),
         )?;
 
-        spawn_blocking(move || {
-            verify_quote(
-                &quote,
-                &report_data,
-                TeeMeasurement {
-                    sgx: None,
-                    sev: None,
-                },
-            )
-        })
-        .await??;
+        spawn_blocking(move || verify_quote(&quote, &report_data, snapshot.measurement)).await??;
 
         Ok(())
     }

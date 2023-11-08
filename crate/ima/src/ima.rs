@@ -1,12 +1,10 @@
 use std::fs;
 
+use cosmian_vm_client::snapshot::{SnapshotFiles, SnapshotFilesEntry};
 use serde::{Deserialize, Serialize};
 use sha1::{Digest, Sha1};
 
-use crate::{
-    error::Error,
-    snapshot::{Snapshot, SnapshotEntry},
-};
+use crate::error::Error;
 
 const EVENT_ENTRY_SIZE: usize = 28;
 const IMA_ASCII_PATH: &str = "/sys/kernel/security/ima/ascii_runtime_measurements";
@@ -205,19 +203,19 @@ impl Ima {
     }
 
     /// Return the couple (hash, file) from the current IMA list not present in the given snapshot
-    pub fn compare(&self, snapshot: &Snapshot) -> Snapshot {
-        let mut ret = Snapshot { entries: vec![] };
+    pub fn compare(&self, snapshot: &SnapshotFiles) -> SnapshotFiles {
+        let mut ret = SnapshotFiles(vec![]);
         for entry in &self.entries {
             if entry.filename_hint == "boot_aggregate" {
                 continue;
             }
 
-            let found = snapshot.entries.iter().any(|item| {
+            let found = snapshot.0.iter().any(|item| {
                 (&item.hash, &item.path) == (&entry.filedata_hash, &entry.filename_hint)
             });
 
             if !found {
-                ret.entries.push(SnapshotEntry {
+                ret.0.push(SnapshotFilesEntry {
                     hash: entry.filedata_hash.clone(),
                     path: entry.filename_hint.clone(),
                 });
@@ -230,6 +228,8 @@ impl Ima {
 
 #[cfg(test)]
 mod tests {
+    use cosmian_vm_client::snapshot::CosmianVmSnapshot;
+
     use super::*;
 
     #[test]
@@ -313,21 +313,24 @@ mod tests {
         let raw_ima = include_bytes!("../data/ima.bin");
         let raw_snapshot = include_str!("../data/snapshot");
         let ima = Ima::try_from(raw_ima.as_slice()).expect("Can't parse IMA file");
-        let snapshot = Snapshot::try_from(raw_snapshot).expect("Can't parse snapshot file");
+        let snapshot: CosmianVmSnapshot =
+            serde_json::from_str(raw_snapshot).expect("Can't parse snapshot file");
 
-        let ret = ima.compare(&snapshot);
+        let ret = ima.compare(&snapshot.filehashes);
 
-        assert_eq!(ret.entries.len(), 2);
+        assert_eq!(ret.0.len(), 16);
+
+        println!("{:?}", ret);
 
         assert_eq!(
-            hex::encode(&ret.entries[0].hash),
+            hex::encode(&ret.0[0].hash),
             "ad65f41a5efd4ad27bd5d1d74ad5f60917677611"
         );
-        assert_eq!(ret.entries[0].path, "/usr/libexec/netplan/generate"); // not present
+        assert_eq!(ret.0[0].path, "/usr/libexec/netplan/generate"); // not present
         assert_eq!(
-            hex::encode(&ret.entries[1].hash),
+            hex::encode(&ret.0[5].hash),
             "5659fe4d0ce59b251d644eb52ca72280b4f17602"
         );
-        assert_eq!(ret.entries[1].path, "/usr/bin/aa-exec"); // present but not with that hash value
+        assert_eq!(ret.0[5].path, "/usr/bin/aa-exec"); // present but not with that hash value
     }
 }

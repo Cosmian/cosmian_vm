@@ -1,6 +1,6 @@
 # Setup
 
-Configure your machien to be a Cosmian VM:
+Configure your machine to be a Cosmian VM:
 
 ```sh
 $./setup.sh
