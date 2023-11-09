@@ -1,5 +1,5 @@
 /target
-cosmian_vm.snapshot
-ima.ascii
-ima.binary
+/cosmian_vm.snapshot
+/ima.ascii
+/ima.binary
 *.swp

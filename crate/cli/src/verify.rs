@@ -27,7 +27,7 @@ impl VerifyArgs {
         let ima_binary = client.ima_binary().await?;
 
         if ima_binary.is_empty() {
-            return Err(anyhow::anyhow!("No IMA list recovered"));
+            anyhow::bail!("No IMA list recovered");
         }
 
         let ima_binary: &[u8] = ima_binary.as_ref();
@@ -57,16 +57,16 @@ impl VerifyArgs {
                 );
             });
 
-            return Err(anyhow::anyhow!("Integrity check failed"));
+            anyhow::bail!("Integrity check failed");
         }
 
         let pcr_value = ima.pcr_value()?;
         if pcr_value != hex::decode(&expecting_pcr_value)? {
-            return Err(anyhow::anyhow!(
+            anyhow::bail!(
                 "Bad PCR value ({} == {})",
                 hex::encode(pcr_value),
                 expecting_pcr_value.to_lowercase()
-            ));
+            );
         }
 
         println!("Verifying the TPM integrity...");

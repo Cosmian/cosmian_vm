@@ -128,6 +128,8 @@ impl TryFrom<&[u8]> for Ima {
             let template_name = String::from_utf8_lossy(template_name).to_string();
             if template_name != "ima-ng" {
                 // TODO: handle several templates
+                // - 'ima-sig' template (same format as ima-ng, but with an appended signature when present)
+                // - original 'ima' template (no 'sha1:' prefix)
                 return Err(Error::NotImplemented(format!(
                     "Template name '{template_name}' not supported"
                 )));
@@ -204,25 +206,19 @@ impl Ima {
 
     /// Return the couple (hash, file) from the current IMA list not present in the given snapshot
     pub fn compare(&self, snapshot: &SnapshotFiles) -> SnapshotFiles {
-        let mut ret = SnapshotFiles(vec![]);
-        for entry in &self.entries {
-            if entry.filename_hint == "boot_aggregate" {
-                continue;
-            }
-
-            let found = snapshot.0.iter().any(|item| {
-                (&item.hash, &item.path) == (&entry.filedata_hash, &entry.filename_hint)
-            });
-
-            if !found {
-                ret.0.push(SnapshotFilesEntry {
-                    hash: entry.filedata_hash.clone(),
-                    path: entry.filename_hint.clone(),
-                });
-            }
-        }
-
-        ret
+        SnapshotFiles(
+            self.entries
+                .iter()
+                .filter(|entry| entry.filename_hint != "boot_aggregate")
+                .filter_map(|entry| {
+                    let sf_entry = SnapshotFilesEntry {
+                        hash: entry.filedata_hash.clone(),
+                        path: entry.filename_hint.clone(),
+                    };
+                    (!snapshot.0.contains(&sf_entry)).then_some(sf_entry)
+                })
+                .collect(),
+        )
     }
 }
 
@@ -318,19 +314,21 @@ mod tests {
 
         let ret = ima.compare(&snapshot.filehashes);
 
-        assert_eq!(ret.0.len(), 16);
+        assert_eq!(ret.0.len(), 14);
 
-        println!("{:?}", ret);
-
-        assert_eq!(
-            hex::encode(&ret.0[0].hash),
-            "ad65f41a5efd4ad27bd5d1d74ad5f60917677611"
-        );
-        assert_eq!(ret.0[0].path, "/usr/libexec/netplan/generate"); // not present
-        assert_eq!(
-            hex::encode(&ret.0[5].hash),
-            "5659fe4d0ce59b251d644eb52ca72280b4f17602"
-        );
-        assert_eq!(ret.0[5].path, "/usr/bin/aa-exec"); // present but not with that hash value
+        assert!(&ret
+            .0
+            .get(&SnapshotFilesEntry {
+                hash: hex::decode("ad65f41a5efd4ad27bd5d1d74ad5f60917677611").unwrap(),
+                path: "/usr/libexec/netplan/generate".to_string()
+            })
+            .is_none()); // not present
+        assert!(&ret
+            .0
+            .get(&SnapshotFilesEntry {
+                hash: hex::decode("5659fe4d0ce59b251d644eb52ca72280b4f17602").unwrap(),
+                path: "/usr/bin/aa-exec".to_string()
+            })
+            .is_none()); // present but not with that hash value
     }
 }

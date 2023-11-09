@@ -69,7 +69,7 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
             continue;
         }
 
-        filehashes.0.push(SnapshotFilesEntry {
+        filehashes.0.insert(SnapshotFilesEntry {
             hash: hash_file(file.path())?,
             path: file.path().display().to_string(),
         });
@@ -135,7 +135,7 @@ pub async fn get_tee_quote(
 ) -> ResponseWithError<Json<Vec<u8>>> {
     let nonce = hex::decode(&data.nonce)?;
     let report_data = forge_report_data_with_nonce(
-        nonce[..].try_into().map_err(|_| {
+        &nonce.try_into().map_err(|_| {
             Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
         })?,
         certificate.pem_certificate.as_bytes(),

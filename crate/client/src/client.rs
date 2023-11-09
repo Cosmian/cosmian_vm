@@ -71,10 +71,7 @@ impl CosmianVmClient {
     #[allow(clippy::too_many_arguments)]
     #[allow(dead_code)]
     pub fn instantiate(agent_url: &str, accept_invalid_certs: bool) -> Result<Self, Error> {
-        let agent_url = match agent_url.strip_suffix('/') {
-            Some(s) => s.to_string(),
-            None => agent_url.to_string(),
-        };
+        let agent_url = agent_url.strip_suffix('/').unwrap_or(agent_url).to_string();
 
         let mut headers = HeaderMap::new();
         headers.insert("Connection", HeaderValue::from_static("keep-alive"));

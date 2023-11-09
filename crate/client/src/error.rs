@@ -5,6 +5,9 @@ pub enum Error {
     #[error("{0}")]
     Default(String),
 
+    #[error(transparent)]
+    HexParsingError(#[from] hex::FromHexError),
+
     #[error("Not Supported: {0}")]
     NotSupported(String),
 

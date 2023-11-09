@@ -1730,7 +1730,7 @@ dependencies = [
 [[package]]
 name = "ratls"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "asn1-rs",
  "bincode",
@@ -2183,7 +2183,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2203,7 +2203,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2214,7 +2214,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "chrono",
  "elliptic-curve",
@@ -2411,9 +2411,10 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#a99b89fba2af4e031fe63426bbcb6a94a8c1aaea"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "bincode",
+ "hex",
  "serde",
  "serde_json",
  "sev_quote",
