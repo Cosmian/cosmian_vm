@@ -236,7 +236,6 @@ impl Ima {
     /// Return the hash method used to hash the files
     ///
     /// If the IMA is empty, the default value is: `ImaHashMethod::Sha1`
-
     pub fn hash_file_method(&self) -> ImaHashMethod {
         self.entries
             .get(0)
