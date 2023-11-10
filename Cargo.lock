@@ -599,6 +599,7 @@ dependencies = [
  "hex",
  "ima",
  "sha1",
+ "sha2",
  "tee_attestation",
  "thiserror",
  "tracing",

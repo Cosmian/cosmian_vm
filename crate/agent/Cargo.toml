@@ -12,6 +12,7 @@ cosmian_vm_client = { path = "../client" }
 hex = { workspace = true }
 ima = { path = "../ima" }
 sha1 = { workspace = true }
+sha2 = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
 tracing = "0.1"

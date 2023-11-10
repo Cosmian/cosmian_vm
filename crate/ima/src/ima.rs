@@ -33,9 +33,25 @@ pub struct ImaEntry {
     pub pcr: u32,
     pub template_hash: Vec<u8>,
     pub template_name: String,
+    pub filedata_hash_method: ImaHashMethod,
     pub filedata_hash: Vec<u8>,
     pub filename_hint: String,
 }
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub enum ImaHashMethod {
+    Sha1,
+    Sha256,
+    Sha512,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Ima {
+    pub entries: Vec<ImaEntry>,
+}
+
+const IMA_DEFAULT_PCR_ID: u32 = 10;
+const IMA_DEFAULT_FILEHASH_FUNCTION: ImaHashMethod = ImaHashMethod::Sha1;
 
 impl TryFrom<&str> for ImaEntry {
     type Error = Error;
@@ -62,12 +78,21 @@ impl TryFrom<&str> for ImaEntry {
             "Ima entry line malformed (index: 3)".to_string(),
         ))?;
 
-        let filedata_hash = if raw_filedata_hash.starts_with("sha1:") {
-            &raw_filedata_hash[raw_filedata_hash.len() - 40..]
+        let (filedata_hash_method, filedata_hash) = if raw_filedata_hash.starts_with("sha1:") {
+            (
+                ImaHashMethod::Sha1,
+                &raw_filedata_hash[raw_filedata_hash.len() - 40..],
+            )
         } else if raw_filedata_hash.starts_with("sha256:") {
-            &raw_filedata_hash[raw_filedata_hash.len() - 64..]
-        } else if raw_filedata_hash.starts_with("sha384:") {
-            &raw_filedata_hash[raw_filedata_hash.len() - 96..]
+            (
+                ImaHashMethod::Sha256,
+                &raw_filedata_hash[raw_filedata_hash.len() - 64..],
+            )
+        } else if raw_filedata_hash.starts_with("sha512:") {
+            (
+                ImaHashMethod::Sha512,
+                &raw_filedata_hash[raw_filedata_hash.len() - 128..],
+            )
         } else {
             return Err(Error::NotImplemented("File hash not supported".to_owned()));
         };
@@ -76,6 +101,7 @@ impl TryFrom<&str> for ImaEntry {
             pcr: pcr.parse::<u32>()?,
             template_hash: hex::decode(template_hash)?,
             template_name: template_name.to_string(),
+            filedata_hash_method,
             filedata_hash: hex::decode(filedata_hash)?,
             filename_hint: line
                 .get(
@@ -91,11 +117,6 @@ impl TryFrom<&str> for ImaEntry {
                 .to_string(),
         })
     }
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Ima {
-    pub entries: Vec<ImaEntry>,
 }
 
 impl TryFrom<&str> for Ima {
@@ -166,12 +187,12 @@ impl TryFrom<&[u8]> for Ima {
             let hint =
                 &template_data[template_cursor..(template_cursor + hint_length as usize - 1)];
 
-            let hash = if hash.starts_with(b"sha1:") {
-                &hash[hash.len() - 20..]
+            let (filedata_hash_method, hash) = if hash.starts_with(b"sha1:") {
+                (ImaHashMethod::Sha1, &hash[hash.len() - 20..])
             } else if hash.starts_with(b"sha256:") {
-                &hash[hash.len() - 32..]
-            } else if hash.starts_with(b"sha384:") {
-                &hash[hash.len() - 48..]
+                (ImaHashMethod::Sha256, &hash[hash.len() - 32..])
+            } else if hash.starts_with(b"sha512:") {
+                (ImaHashMethod::Sha512, &hash[hash.len() - 64..])
             } else {
                 return Err(Error::NotImplemented("File hash not supported".to_owned()));
             };
@@ -180,6 +201,7 @@ impl TryFrom<&[u8]> for Ima {
                 pcr: event.pcr,
                 template_hash: event.digest.to_vec(),
                 template_name,
+                filedata_hash_method,
                 filedata_hash: hash.to_vec(),
                 filename_hint: String::from_utf8_lossy(hint).to_string(),
             });
@@ -202,6 +224,25 @@ impl Ima {
         }
 
         Ok(old_entry.to_vec())
+    }
+
+    /// Return the id of the extended pcr value
+    ///
+    /// If the IMA is empty, the default value is: `IMA_DEFAULT_PCR_ID`
+    pub fn pcr_id(&self) -> u32 {
+        self.entries.get(0).map_or(IMA_DEFAULT_PCR_ID, |e| e.pcr)
+    }
+
+    /// Return the hash method used to hash the files
+    ///
+    /// If the IMA is empty, the default value is: `ImaHashMethod::Sha1`
+
+    pub fn hash_file_method(&self) -> ImaHashMethod {
+        self.entries
+            .get(0)
+            .map_or(IMA_DEFAULT_FILEHASH_FUNCTION, |e| {
+                e.filedata_hash_method.clone()
+            })
     }
 
     /// Return the couple (hash, file) from the current IMA list not present in the given snapshot
@@ -242,6 +283,7 @@ mod tests {
                 pcr: 10,
                 template_hash: hex::decode("470f3a07c979dfda23c75b4865955df704e49e4b").unwrap(),
                 template_name: "ima-ng".to_string(),
+                filedata_hash_method: ImaHashMethod::Sha1,
                 filedata_hash: hex::decode("3d993d6bfad2564637310b643c404f54d23b85e2").unwrap(),
                 filename_hint: "boot_aggregate".to_string()
             }
@@ -253,6 +295,7 @@ mod tests {
                 pcr: 10,
                 template_hash: hex::decode("a84ff12e903a050abff2f336292d8318e7430a89").unwrap(),
                 template_name: "ima-ng".to_string(),
+                filedata_hash_method: ImaHashMethod::Sha1,
                 filedata_hash: hex::decode("f4107171a62db56e4949c30fca97d09f7550aac5").unwrap(),
                 filename_hint: "/usr/lib/modules/6.2.0-1018-gcp/kernel/fs/autofs/autofs4.ko"
                     .to_string()
@@ -273,6 +316,7 @@ mod tests {
                 pcr: 10,
                 template_hash: hex::decode("470f3a07c979dfda23c75b4865955df704e49e4b").unwrap(),
                 template_name: "ima-ng".to_string(),
+                filedata_hash_method: ImaHashMethod::Sha1,
                 filedata_hash: hex::decode("3d993d6bfad2564637310b643c404f54d23b85e2").unwrap(),
                 filename_hint: "boot_aggregate".to_string()
             }
@@ -284,6 +328,7 @@ mod tests {
                 pcr: 10,
                 template_hash: hex::decode("a84ff12e903a050abff2f336292d8318e7430a89").unwrap(),
                 template_name: "ima-ng".to_string(),
+                filedata_hash_method: ImaHashMethod::Sha1,
                 filedata_hash: hex::decode("f4107171a62db56e4949c30fca97d09f7550aac5").unwrap(),
                 filename_hint: "/usr/lib/modules/6.2.0-1018-gcp/kernel/fs/autofs/autofs4.ko"
                     .to_string()
@@ -326,6 +371,7 @@ mod tests {
                 filedata_hash: hex::decode("ad65f41a5efd4ad27bd5d1d74ad5f60917677611").unwrap(),
                 filename_hint: "/usr/libexec/netplan/generate".to_string(),
                 pcr: 10,
+                filedata_hash_method: ImaHashMethod::Sha1,
                 template_hash: [
                     27, 57, 158, 185, 6, 218, 99, 164, 90, 172, 217, 96, 154, 254, 6, 69, 128, 23,
                     236, 175
@@ -339,6 +385,7 @@ mod tests {
                 filedata_hash: hex::decode("5659fe4d0ce59b251d644eb52ca72280b4f17602").unwrap(),
                 filename_hint: "/usr/bin/aa-exec".to_string(),
                 pcr: 10,
+                filedata_hash_method: ImaHashMethod::Sha1,
                 template_hash: [
                     215, 207, 23, 146, 41, 2, 129, 4, 150, 89, 180, 105, 253, 171, 147, 29, 9, 13,
                     207, 34

@@ -32,11 +32,7 @@ impl VerifyArgs {
 
         let ima_binary: &[u8] = ima_binary.as_ref();
         let ima = ima::ima::Ima::try_from(ima_binary)?;
-
-        // let ima_binary_path = Path::new("ima.binary");
-        // fs::write(ima_binary_path, ima_binary)?;
-
-        let expecting_pcr_value = client.pcr_value(ima.entries[0].pcr).await?;
+        let expecting_pcr_value = client.pcr_value(ima.pcr_id()).await?;
 
         let snapshot = fs::read_to_string(&self.snapshot)?;
         let snapshot: CosmianVmSnapshot = serde_json::from_str(&snapshot)?;

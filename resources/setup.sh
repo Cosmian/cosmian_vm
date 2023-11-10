@@ -8,8 +8,12 @@ fi
 DN="cosmianvm.cosmian.dev"
 
 # Configure IMA
+## Policy
 mkdir -p /etc/ima
 cp data/ima-policy /etc/ima
+## Hash method (we assume GRUB_CMDLINE_LINUX has no value yet)
+sed -i /GRUB_CMDLINE_LINUX=/s/\"\"$/\"ima_hash=sha256\"/ /etc/default/grub
+update-grub
 
 # Install deps
 apt install nginx certbot
