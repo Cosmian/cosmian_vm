@@ -47,6 +47,9 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
     let ima_ascii: &str = ima_ascii.as_ref();
     let ima = Ima::try_from(ima_ascii)?;
 
+    // We use the same hash method than the IMA used
+    let hash_method = ima.hash_file_method();
+
     // Create the snapshotfiles with files contains in the IMA list
     let mut filehashes = SnapshotFiles(
         ima.entries
@@ -70,7 +73,7 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
         }
 
         filehashes.0.insert(SnapshotFilesEntry {
-            hash: hash_file(file.path())?,
+            hash: hash_file(file.path(), &hash_method)?,
             path: file.path().display().to_string(),
         });
     }

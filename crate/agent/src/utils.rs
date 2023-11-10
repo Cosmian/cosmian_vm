@@ -1,4 +1,6 @@
+use ima::ima::ImaHashMethod;
 use sha1::{Digest, Sha1};
+use sha2::{Sha256, Sha512};
 use std::path::Path;
 use std::{fs, io};
 use walkdir::DirEntry;
@@ -6,11 +8,26 @@ use walkdir::DirEntry;
 use crate::error::Error;
 
 #[inline(always)]
-pub fn hash_file(path: &Path) -> Result<Vec<u8>, Error> {
+pub fn hash_file(path: &Path, hash_method: &ImaHashMethod) -> Result<Vec<u8>, Error> {
     let mut file = fs::File::open(path)?;
-    let mut hasher = Sha1::new();
-    let _ = io::copy(&mut file, &mut hasher)?;
-    Ok(hasher.finalize().to_vec())
+
+    match hash_method {
+        ImaHashMethod::Sha1 => {
+            let mut hasher = Sha1::new();
+            let _ = io::copy(&mut file, &mut hasher)?;
+            Ok(hasher.finalize().to_vec())
+        }
+        ImaHashMethod::Sha256 => {
+            let mut hasher = Sha256::new();
+            let _ = io::copy(&mut file, &mut hasher)?;
+            Ok(hasher.finalize().to_vec())
+        }
+        ImaHashMethod::Sha512 => {
+            let mut hasher = Sha512::new();
+            let _ = io::copy(&mut file, &mut hasher)?;
+            Ok(hasher.finalize().to_vec())
+        }
+    }
 }
 
 pub fn filter_whilelist(entry: &DirEntry) -> bool {
