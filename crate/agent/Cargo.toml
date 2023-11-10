@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = { workspace = true }
 actix-cors = "0.6"
 actix-http = "3"
 actix-web = "4"

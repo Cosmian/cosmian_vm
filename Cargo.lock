@@ -579,7 +579,10 @@ dependencies = [
  "cosmian_vm_client",
  "hex",
  "ima",
+ "pem-rfc7468",
  "rand",
+ "serde",
+ "serde_json",
  "tee_attestation",
  "tokio",
 ]
@@ -591,6 +594,7 @@ dependencies = [
  "actix-cors",
  "actix-http",
  "actix-web",
+ "anyhow",
  "cosmian_vm_client",
  "hex",
  "ima",
@@ -610,10 +614,15 @@ version = "0.1.0"
 dependencies = [
  "hex",
  "http",
+ "ratls",
  "reqwest",
+ "rustls",
  "serde",
  "serde_json",
+ "tee_attestation",
  "thiserror",
+ "url",
+ "webpki-roots",
 ]
 
 [[package]]
@@ -669,6 +678,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fffa369a668c8af7dbf8b5e56c9f744fbd399949ed171606040001947de40b1c"
 dependencies = [
  "const-oid",
+ "der_derive",
+ "flagset",
  "pem-rfc7468",
  "zeroize",
 ]
@@ -685,6 +696,17 @@ dependencies = [
  "num-bigint",
  "num-traits",
  "rusticata-macros",
+]
+
+[[package]]
+name = "der_derive"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5fe87ce4529967e0ba1dcf8450bab64d97dfd5010a6256187ffe2e43e6f0e049"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.38",
 ]
 
 [[package]]
@@ -763,6 +785,7 @@ dependencies = [
  "digest",
  "elliptic-curve",
  "rfc6979",
+ "sha2",
  "signature",
  "spki",
 ]
@@ -821,6 +844,12 @@ dependencies = [
  "rand_core",
  "subtle",
 ]
+
+[[package]]
+name = "flagset"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d52a7e408202050813e6f1d9addadcaafef3dca7530c7ddfb005d4081cce6779"
 
 [[package]]
 name = "flate2"
@@ -1085,6 +1114,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-rustls"
+version = "0.24.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec3efd23720e2049821a693cbc7e65ea87c72f1c58ff2f9522ff332b1491e590"
+dependencies = [
+ "futures-util",
+ "http",
+ "hyper",
+ "rustls",
+ "tokio",
+ "tokio-rustls",
+]
+
+[[package]]
 name = "hyper-tls"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1135,6 +1178,7 @@ name = "ima"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "cosmian_vm_client",
  "hex",
  "serde",
  "serde_json",
@@ -1684,6 +1728,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "ratls"
+version = "0.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
+dependencies = [
+ "asn1-rs",
+ "bincode",
+ "const-oid",
+ "der",
+ "ecdsa",
+ "p256",
+ "rand_chacha",
+ "rustls",
+ "sha2",
+ "spki",
+ "tee_attestation",
+ "thiserror",
+ "x509-cert",
+ "x509-parser",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1771,6 +1836,7 @@ dependencies = [
  "http",
  "http-body",
  "hyper",
+ "hyper-rustls",
  "hyper-tls",
  "ipnet",
  "js-sys",
@@ -1782,12 +1848,14 @@ dependencies = [
  "percent-encoding",
  "pin-project-lite",
  "rustls",
+ "rustls-pemfile",
  "serde",
  "serde_json",
  "serde_urlencoded",
  "system-configuration",
  "tokio",
  "tokio-native-tls",
+ "tokio-rustls",
  "tokio-util",
  "tower-service",
  "url",
@@ -1795,6 +1863,7 @@ dependencies = [
  "wasm-bindgen-futures",
  "wasm-streams",
  "web-sys",
+ "webpki-roots",
  "winreg",
 ]
 
@@ -1904,6 +1973,15 @@ dependencies = [
  "ring 0.17.5",
  "rustls-webpki",
  "sct",
+]
+
+[[package]]
+name = "rustls-pemfile"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d3987094b1d07b653b7dfdc3f70ce9a1da9c51ac18c1b06b662e4f9a0e9f4b2"
+dependencies = [
+ "base64",
 ]
 
 [[package]]
@@ -2105,7 +2183,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2125,7 +2203,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2136,7 +2214,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "chrono",
  "elliptic-curve",
@@ -2333,11 +2411,15 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#22fb473fb6cff8481ef8f083edf14206e7ec66d4"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix_gcp#4a1b57c515350fa6e63ead278c0a450e70a2d4f0"
 dependencies = [
  "bincode",
+ "hex",
+ "serde",
+ "serde_json",
  "sev_quote",
  "sgx_quote",
+ "sha2",
  "thiserror",
 ]
 
@@ -2465,6 +2547,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbae76ab933c85776efabc971569dd6119c580d8f5d448769dec1764bf796ef2"
 dependencies = [
  "native-tls",
+ "tokio",
+]
+
+[[package]]
+name = "tokio-rustls"
+version = "0.24.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c28327cf380ac148141087fbfb9de9d7bd4e84ab5d2c28fbc911d753de8a7081"
+dependencies = [
+ "rustls",
  "tokio",
 ]
 
@@ -2782,6 +2874,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "webpki-roots"
+version = "0.25.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "14247bb57be4f377dfb94c72830b8ce8fc6beac03cf4bf7b9732eadd414123fc"
+
+[[package]]
 name = "winapi"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2895,6 +2993,19 @@ checksum = "524e57b2c537c0f9b1e69f1965311ec12182b4122e45035b1508cd24d2adadb1"
 dependencies = [
  "cfg-if",
  "windows-sys",
+]
+
+[[package]]
+name = "x509-cert"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25eefca1d99701da3a57feb07e5079fc62abba059fc139e98c13bbb250f3ef29"
+dependencies = [
+ "const-oid",
+ "der",
+ "sha1",
+ "signature",
+ "spki",
 ]
 
 [[package]]

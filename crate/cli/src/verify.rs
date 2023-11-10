@@ -1,11 +1,10 @@
-use std::{fs, path::PathBuf};
-
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
-use cosmian_vm_client::client::CosmianVmClient;
-use ima::snapshot::Snapshot;
+use cosmian_vm_client::{client::CosmianVmClient, snapshot::CosmianVmSnapshot};
+use pem_rfc7468::{encode_string, LineEnding};
 use rand::RngCore;
-use tee_attestation::{verify_quote, TeeMeasurement};
+use std::{fs, path::PathBuf};
+use tee_attestation::{forge_report_data_with_nonce, verify_quote};
 use tokio::task::spawn_blocking;
 
 /// Verify a Cosmian VM
@@ -26,6 +25,11 @@ impl VerifyArgs {
 
         let client = CosmianVmClient::instantiate(&self.url, false)?;
         let ima_binary = client.ima_binary().await?;
+
+        if ima_binary.is_empty() {
+            anyhow::bail!("No IMA list recovered");
+        }
+
         let ima_binary: &[u8] = ima_binary.as_ref();
         let ima = ima::ima::Ima::try_from(ima_binary)?;
 
@@ -35,49 +39,49 @@ impl VerifyArgs {
         let expecting_pcr_value = client.pcr_value(ima.entries[0].pcr).await?;
 
         let snapshot = fs::read_to_string(&self.snapshot)?;
-        let snapshot = Snapshot::try_from(snapshot.as_ref())?;
+        let snapshot: CosmianVmSnapshot = serde_json::from_str(&snapshot)?;
 
-        let mut data = [0u8; 32];
-        rand::thread_rng().fill_bytes(&mut data);
+        let mut nonce = [0u8; 32];
+        rand::thread_rng().fill_bytes(&mut nonce);
 
-        let quote = client.tee_quote(&data).await?;
+        let quote = client.tee_quote(&nonce).await?;
 
         println!("Verifying the VM integrity...");
-        let failures = ima.compare(&snapshot);
+        let failures = ima.compare(&snapshot.filehashes);
         if !failures.entries.is_empty() {
-            let _ = failures.entries.iter().map(|entry| {
+            failures.entries.iter().for_each(|entry| {
                 println!(
                     "Entry ({},{}) can't be found in the snapshot!",
-                    entry.path,
-                    hex::encode(&entry.hash)
+                    entry.filename_hint,
+                    hex::encode(&entry.filedata_hash)
                 );
             });
+
+            anyhow::bail!("Integrity check failed");
         }
 
         let pcr_value = ima.pcr_value()?;
         if pcr_value != hex::decode(&expecting_pcr_value)? {
-            return Err(anyhow::anyhow!(
+            anyhow::bail!(
                 "Bad PCR value ({} == {})",
                 hex::encode(pcr_value),
-                expecting_pcr_value
-            ));
+                expecting_pcr_value.to_lowercase()
+            );
         }
 
         println!("Verifying the TPM integrity...");
         // TODO
 
         println!("Verifying the TEE integrity...");
-        spawn_blocking(move || {
-            verify_quote(
-                &quote,
-                &data,
-                TeeMeasurement {
-                    sgx: None,
-                    sev: None,
-                },
-            )
-        })
-        .await??;
+
+        let report_data = forge_report_data_with_nonce(
+            &nonce,
+            encode_string("CERTIFICATE", LineEnding::default(), &client.certificate.0)
+                .map_err(|e| anyhow!(e))?
+                .as_bytes(),
+        )?;
+
+        spawn_blocking(move || verify_quote(&quote, &report_data, snapshot.measurement)).await??;
 
         Ok(())
     }
