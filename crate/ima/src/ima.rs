@@ -28,7 +28,7 @@ struct EventHeaderEntry {
     pub name_length: u32,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct ImaEntry {
     pub pcr: u32,
     pub template_hash: Vec<u8>,
@@ -205,25 +205,28 @@ impl Ima {
     }
 
     /// Return the couple (hash, file) from the current IMA list not present in the given snapshot
-    pub fn compare(&self, snapshot: &SnapshotFiles) -> SnapshotFiles {
-        SnapshotFiles(
-            self.entries
+    pub fn compare(&self, snapshot: &SnapshotFiles) -> Ima {
+        Ima {
+            entries: self
+                .entries
                 .iter()
-                .filter(|entry| entry.filename_hint != "boot_aggregate")
                 .filter_map(|entry| {
-                    let sf_entry = SnapshotFilesEntry {
-                        hash: entry.filedata_hash.clone(),
-                        path: entry.filename_hint.clone(),
-                    };
-                    (!snapshot.0.contains(&sf_entry)).then_some(sf_entry)
+                    (entry.filename_hint != "boot_aggregate"
+                        && !snapshot.0.contains(&SnapshotFilesEntry {
+                            hash: entry.filedata_hash.clone(),
+                            path: entry.filename_hint.clone(),
+                        }))
+                    .then_some(entry.clone())
                 })
                 .collect(),
-        )
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
+
     use cosmian_vm_client::snapshot::CosmianVmSnapshot;
 
     use super::*;
@@ -314,21 +317,35 @@ mod tests {
 
         let ret = ima.compare(&snapshot.filehashes);
 
-        assert_eq!(ret.0.len(), 14);
+        assert_eq!(ret.entries.len(), 16);
 
-        assert!(&ret
-            .0
-            .get(&SnapshotFilesEntry {
-                hash: hex::decode("ad65f41a5efd4ad27bd5d1d74ad5f60917677611").unwrap(),
-                path: "/usr/libexec/netplan/generate".to_string()
+        let entries: HashSet<_> = ret.entries.iter().collect();
+
+        assert!(&entries
+            .get(&ImaEntry {
+                filedata_hash: hex::decode("ad65f41a5efd4ad27bd5d1d74ad5f60917677611").unwrap(),
+                filename_hint: "/usr/libexec/netplan/generate".to_string(),
+                pcr: 10,
+                template_hash: [
+                    27, 57, 158, 185, 6, 218, 99, 164, 90, 172, 217, 96, 154, 254, 6, 69, 128, 23,
+                    236, 175
+                ]
+                .to_vec(),
+                template_name: "ima-ng".to_string()
             })
-            .is_none()); // not present
-        assert!(&ret
-            .0
-            .get(&SnapshotFilesEntry {
-                hash: hex::decode("5659fe4d0ce59b251d644eb52ca72280b4f17602").unwrap(),
-                path: "/usr/bin/aa-exec".to_string()
+            .is_some()); // not present in the snapshot
+        assert!(&entries
+            .get(&ImaEntry {
+                filedata_hash: hex::decode("5659fe4d0ce59b251d644eb52ca72280b4f17602").unwrap(),
+                filename_hint: "/usr/bin/aa-exec".to_string(),
+                pcr: 10,
+                template_hash: [
+                    215, 207, 23, 146, 41, 2, 129, 4, 150, 89, 180, 105, 253, 171, 147, 29, 9, 13,
+                    207, 34
+                ]
+                .to_vec(),
+                template_name: "ima-ng".to_string()
             })
-            .is_none()); // present but not with that hash value
+            .is_some()); // present in the snapshot but not with that hash value
     }
 }

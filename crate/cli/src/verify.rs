@@ -48,12 +48,12 @@ impl VerifyArgs {
 
         println!("Verifying the VM integrity...");
         let failures = ima.compare(&snapshot.filehashes);
-        if !failures.0.is_empty() {
-            failures.0.iter().for_each(|entry| {
+        if !failures.entries.is_empty() {
+            failures.entries.iter().for_each(|entry| {
                 println!(
                     "Entry ({},{}) can't be found in the snapshot!",
-                    entry.path,
-                    hex::encode(&entry.hash)
+                    entry.filename_hint,
+                    hex::encode(&entry.filedata_hash)
                 );
             });
 

@@ -67,13 +67,13 @@ impl TryFrom<&str> for SnapshotFiles {
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Eq, Hash, PartialEq)]
+#[derive(Debug, Clone, Deserialize, Serialize, Hash, Eq, PartialEq)]
 pub struct SnapshotFilesEntry {
     pub hash: Vec<u8>,
     pub path: String,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
+#[derive(Debug, Clone, Deserialize, Serialize, Eq, PartialEq)]
 pub struct SnapshotFiles(pub HashSet<SnapshotFilesEntry>);
 
 // Needed for `serde` serialization convenience
