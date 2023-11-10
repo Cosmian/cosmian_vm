@@ -15,19 +15,20 @@ async fn main() -> Result<()> {
     // Init logging
     init_logging();
 
+    let host = "127.0.0.1";
     let port = std::env::var("COSMIAN_VM_AGENT_PORT").map_or_else(
         |_| 5355,
         |p| p.parse::<u16>().expect("bad COSMIAN_VM_AGENT_PORT value"),
     );
 
-    tracing::info!("Starting server on 0.0.0.0:{port}...");
+    tracing::info!("Starting server on {host}:{port}...");
     // Start REST server thread
     HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
             .configure(cosmian_vm_agent::config())
     })
-    .bind(("0.0.0.0", port))?
+    .bind((host, port))?
     .run()
     .await?;
 
