@@ -46,7 +46,6 @@ impl VerifyArgs {
 
         let quote = client.tee_quote(&nonce).await?;
 
-        println!("Verifying the VM integrity...");
         let failures = ima.compare(&snapshot.filehashes);
         if !failures.entries.is_empty() {
             failures.entries.iter().for_each(|entry| {
@@ -56,12 +55,15 @@ impl VerifyArgs {
                     hex::encode(&entry.filedata_hash)
                 );
             });
-
-            anyhow::bail!("Integrity check failed");
+            println!("[ FAIL ] Verifying VM integrity");
+            anyhow::bail!("Unexpected binaries found");
+        } else {
+            println!("[ OK ] Verifying VM integrity");
         }
 
         let pcr_value = ima.pcr_value()?;
         if pcr_value != hex::decode(&expecting_pcr_value)? {
+            println!("[ FAIL ] Verifying TPM attestation");
             anyhow::bail!(
                 "Bad PCR value ({} == {})",
                 hex::encode(pcr_value),
@@ -69,10 +71,8 @@ impl VerifyArgs {
             );
         }
 
-        println!("Verifying the TPM integrity...");
         // TODO
-
-        println!("Verifying the TEE integrity...");
+        println!("[ OK ] Verifying TPM attestation");
 
         let report_data = forge_report_data_with_nonce(
             &nonce,
@@ -82,6 +82,8 @@ impl VerifyArgs {
         )?;
 
         spawn_blocking(move || verify_quote(&quote, &report_data, snapshot.measurement)).await??;
+
+        println!("[ OK ] Verifying TEE attestation");
 
         Ok(())
     }
