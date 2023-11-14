@@ -252,6 +252,7 @@ impl Ima {
                 .iter()
                 .filter_map(|entry| {
                     (entry.filename_hint != "boot_aggregate"
+                        && entry.filedata_hash != vec![0; entry.filedata_hash.len()] // Non flushed file can have a null hash in IMA (swap files for example) 
                         && !snapshot.0.contains(&SnapshotFilesEntry {
                             hash: entry.filedata_hash.clone(),
                             path: entry.filename_hint.clone(),
