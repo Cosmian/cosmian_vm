@@ -1,0 +1,76 @@
+---
+# tasks file for roles/nginx
+
+- name: "Install Base package"
+  apt:
+    name: certbot
+    state: latest
+    update_cache: yes
+
+- name: "Install Nginx Mainline Key"
+  ansible.builtin.apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+  tags: key
+
+- name: "Add Nginx Mainline Repo into sources lists"
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] https://nginx.org/packages/mainline/ubuntu jammy nginx"
+    state: present
+  tags: repo
+
+- name: Generate DH Parameters
+  community.crypto.openssl_dhparam:
+    path: /etc/letsencrypt/ssl-dhparams.pem
+    size: 2048
+    mode: 0644
+    state: present
+  tags: dhparam
+
+- name: "Install nginx"
+  apt:
+    name: nginx
+    state: latest
+    update_cache: yes
+  tags: nginx
+
+- name: Make sure the sites-available, sites-enabled and conf.d directories exist
+  file:
+    path: "/etc/nginx/{{item}}"
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  with_items: ["sites-available", "sites-enabled", "conf.d"]
+
+# - name: Stop Nginx
+#   service:
+#     name: nginx
+#     state: stopped
+#   changed_when: false
+
+# - name: Run certbot command to initialize LetsEncrypt
+#   become: true
+#   shell: certbot certonly --standalone -d {{ nginx_domain_name }} -m {{ nginx_user }} -n --agree-tos
+#   failed_when: false
+
+# - name: Copy nginx conf
+#   ansible.builtin.copy:
+#     src: cosmian_vm/resources/conf/nginx.conf
+#     dest: /etc/nginx/conf.d/{{ nginx_domain_name }}.conf
+#     remote_src: true
+#     owner: root
+#     group: root
+#     mode: '0644' #voir avec Séb
+
+# - name: Replace domaine name
+#   ansible.builtin.replace:
+#     path: /etc/nginx/conf.d/{{ nginx_domain_name }}.conf
+#     regexp: $DEFAULT_DN # chercher comment récupérer la variable d'environnement 
+#     replace: '{{ nginx_domain_name }}' 
+
+# - name: "Check if Nginx is started"
+#   systemd:
+#     name: nginx
+#     state: started
+#   changed_when: false

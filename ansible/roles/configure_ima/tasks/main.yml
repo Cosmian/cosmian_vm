@@ -1,0 +1,58 @@
+---
+# tasks file for ansible/roles/configure_ima
+
+- name: Update bashrc
+  become: true
+  lineinfile:
+    path: .bashrc
+    state: present
+    line: 'export DEFAULT_DN="cosmianvm.cosmian.dev"'
+
+- name: sourcing .bashrc
+  ansible.builtin.shell: source .bashrc
+  args:
+    executable: /bin/bash
+  notify: reload systemctl
+
+# Policy
+- name: Create ima folder
+  file:
+    path: /etc/ima
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Copy ima policy
+  ansible.builtin.copy:
+    src: cosmian_vm/resources/data/ima-policy
+    dest: /etc/ima/
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0400'
+
+# Hash method
+- name: Set hash method if not set
+  lineinfile:
+    path: /etc/default/grub
+    regex: 'GRUB_CMDLINE_LINUX="ima_hash='    
+    line: 'GRUB_CMDLINE_LINUX="ima_hash=sha256"'
+    insertafter: 'GRUB_CMDLINE_LINUX_DEFAULT'
+    state: present
+    backup: yes
+
+# # Template format
+- name: Set template format if not set
+  lineinfile:
+    path: /etc/default/grub
+    regex: 'GRUB_CMDLINE_LINUX="ima_hash=sha256"'    
+    line: 'GRUB_CMDLINE_LINUX="ima_hash=sha256 ima_template=ima-ng"'
+    insertafter: 'GRUB_CMDLINE_LINUX_DEFAULT'
+    state: present
+    backup: yes
+
+# Update grub
+- name: Update grub
+  ansible.builtin.command:
+    cmd: update-grub

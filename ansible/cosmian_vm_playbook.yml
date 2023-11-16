@@ -1,0 +1,9 @@
+---
+- name: "Setup Cosmian VM"
+  hosts: localhost
+  connection: local   
+  become: true
+  roles:
+    - configure_ima
+    - nginx
+    - no_updates

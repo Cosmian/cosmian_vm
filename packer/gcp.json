@@ -1,0 +1,36 @@
+{
+   "builders": [
+       {
+           "type": "googlecompute",
+           "project_id": "amd-sev-snp",
+           "source_image": "ubuntu-2204-jammy-v20231030",
+           "source_image_family": "ubuntu-2204-lts",
+           "account_file": "/home/pauline/Downloads/amd-sev-snp-d42061429e6a.json",
+           "zone": "europe-west4-a",
+           "ssh_username": "root",
+	   "ssh_timeout": "2m",
+           "image_name": "cosmian-vm-{{timestamp}}",
+           "image_guest_os_features": ["SEV_SNP_CAPABLE"],
+           "network": "default",
+           "subnetwork": "default",
+	   "tags": ["ssh-full"]
+       }
+  ],
+  "provisioners": [
+      {
+         "type": "file",
+         "source": "cosmian_vm_agent",
+         "destination": "/usr/sbin/cosmian_vm_agent"
+      },
+      {
+          "type": "shell",
+          "execute_command": "sudo -E /bin/bash '{{.Path}}'",
+          "inline": ["echo 'using bash'"]
+      },
+      {
+        "type": "ansible",
+        "playbook_file": "../ansible/cosmian_vm_playbook.yml",
+        "extra_arguments": [ "-vvvv" ]
+      }
+  ]
+}
