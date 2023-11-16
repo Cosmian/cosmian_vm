@@ -4,12 +4,12 @@
 - name: Update bashrc
   become: true
   lineinfile:
-    path: .bashrc
+    path: /root/.bashrc
     state: present
     line: 'export DEFAULT_DN="cosmianvm.cosmian.dev"'
 
 - name: sourcing .bashrc
-  ansible.builtin.shell: source .bashrc
+  ansible.builtin.shell: source ~/.bashrc
   args:
     executable: /bin/bash
   notify: reload systemctl
