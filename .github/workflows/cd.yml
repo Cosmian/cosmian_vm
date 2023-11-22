@@ -1,0 +1,52 @@
+name: Build and Publish VM Image
+
+on: [push]
+
+jobs:
+  build-cosmian-vm:
+    name: Build Cosmian VM Binary
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+
+    - name: Build binary
+      run: cargo build
+      
+  packer-docker-base:
+    needs: build-cosmian-vm
+    name: Build Cosmian VM Image
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./packer
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: "Authenticate to Google Cloud"
+        id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+            credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+
+    #   - name: Run `packer init`
+    #     id: init
+    #     run: packer init .
+
+    #   - name: Run `packer validate`
+    #     id: validate
+    #     run: packer validate .
+
+      - name: Run `packer build`
+        id: build
+        run: packer build gcp_ansible.json
