@@ -30,7 +30,7 @@
     {
       "type": "ansible",
       "playbook_file": "../ansible/cosmian_vm_playbook.yml",
-      "extra_arguments": ["-vvvv"]
+      "extra_arguments": ["-v"]
     }
   ]
 }
