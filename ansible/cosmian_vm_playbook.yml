@@ -1,7 +1,6 @@
 ---
 - name: "Setup Cosmian VM"
-  hosts: localhost
-  connection: local   
+  hosts: all
   become: true
   roles:
     - configure_ima

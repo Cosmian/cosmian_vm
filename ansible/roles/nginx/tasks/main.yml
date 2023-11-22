@@ -1,23 +1,28 @@
 ---
 # tasks file for roles/nginx
 
-# - name: Update all packages to their latest version
-#   apt:
-    # update_cache: yes
+- name: Update all packages to their latest version
+  apt:
+    update_cache: yes
 
-- name: "Install Base package"
+- name: Install Certbot
   apt:
     name: certbot
     state: latest
-    #update_cache: yes
+    update_cache: yes
 
-- name: "Install Nginx Mainline Key"
+# - name: Install cerbot
+#   community.general.snap:
+#     name:
+#       - certbot
+
+- name: Install Nginx Mainline Key
   ansible.builtin.apt_key:
     url: https://nginx.org/keys/nginx_signing.key
     state: present
   tags: key
 
-- name: "Add Nginx Mainline Repo into sources lists"
+- name: Add Nginx Mainline Repo into sources lists
   ansible.builtin.apt_repository:
     repo: "deb https://nginx.org/packages/mainline/ubuntu jammy nginx"
     state: present
@@ -36,7 +41,7 @@
   apt:
     name: nginx
     state: latest
-    # update_cache: yes
+    update_cache: yes
   tags: nginx
 
 - name: Make sure the sites-available, sites-enabled and conf.d directories exist

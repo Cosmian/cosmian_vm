@@ -25,7 +25,7 @@
 
 - name: Copy ima policy
   ansible.builtin.copy:
-    src: cosmian_vm/resources/data/ima-policy
+    src: /root/data/ima-policy
     dest: /etc/ima/
     remote_src: true
     owner: root

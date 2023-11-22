@@ -18,6 +18,9 @@
         - apt-daily
         - apt-daily-upgrade
         - snapd
+        - apt-daily-upgrade.timer
+        - apt-daily.timer
+        - snapd.socket
 
     - name: Update APT configuration to disable automatic updates
       lineinfile:
@@ -29,7 +32,7 @@
     - name: Update APT cache
       ansible.builtin.apt:
         autoclean: yes
-        update_cache: yes
+        # update_cache: yes
   when: ansible_distribution == 'Ubuntu'
   tags: ubuntu
 
@@ -74,5 +77,5 @@
 
     - name: Update DNF cache
       dnf:
-        update_cache: yes
+        # update_cache: yes
   tags: redhat

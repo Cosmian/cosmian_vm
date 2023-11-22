@@ -23,6 +23,11 @@
       "destination": "/usr/sbin/cosmian_vm_agent"
     },
     {
+      "type": "file",
+      "source": "../resources/data",
+      "destination": "/root/data"
+    },
+    {
       "type": "shell",
       "execute_command": "sudo -E /bin/bash '{{.Path}}'",
       "inline": ["pwd"]
