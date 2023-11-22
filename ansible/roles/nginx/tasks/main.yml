@@ -11,11 +11,6 @@
     state: latest
     update_cache: yes
 
-# - name: Install cerbot
-#   community.general.snap:
-#     name:
-#       - certbot
-
 - name: Install Nginx Mainline Key
   ansible.builtin.apt_key:
     url: https://nginx.org/keys/nginx_signing.key
@@ -37,7 +32,7 @@
     state: present
   tags: dhparam
 
-- name: "Install nginx"
+- name: Install Nginx
   apt:
     name: nginx
     state: latest
@@ -52,7 +47,6 @@
     mode: 0755
     state: directory
   with_items: ["sites-available", "sites-enabled", "conf.d"]
-
 # - name: Stop Nginx
 #   service:
 #     name: nginx
@@ -76,8 +70,8 @@
 # - name: Replace domaine name
 #   ansible.builtin.replace:
 #     path: /etc/nginx/conf.d/{{ nginx_domain_name }}.conf
-#     regexp: $DEFAULT_DN # chercher comment récupérer la variable d'environnement 
-#     replace: '{{ nginx_domain_name }}' 
+#     regexp: $DEFAULT_DN # chercher comment récupérer la variable d'environnement
+#     replace: '{{ nginx_domain_name }}'
 
 # - name: "Check if Nginx is started"
 #   systemd:

@@ -21,7 +21,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0700'
+    mode: "0700"
 
 - name: Copy ima policy
   ansible.builtin.copy:
@@ -30,15 +30,15 @@
     remote_src: true
     owner: root
     group: root
-    mode: '0400'
+    mode: "0400"
 
 # Hash method
 - name: Set hash method if not set
   lineinfile:
     path: /etc/default/grub
-    regex: 'GRUB_CMDLINE_LINUX="ima_hash='    
+    regex: 'GRUB_CMDLINE_LINUX="ima_hash='
     line: 'GRUB_CMDLINE_LINUX="ima_hash=sha256"'
-    insertafter: 'GRUB_CMDLINE_LINUX_DEFAULT'
+    insertafter: "GRUB_CMDLINE_LINUX_DEFAULT"
     state: present
     backup: yes
 
@@ -46,9 +46,9 @@
 - name: Set template format if not set
   lineinfile:
     path: /etc/default/grub
-    regex: 'GRUB_CMDLINE_LINUX="ima_hash=sha256"'    
+    regex: 'GRUB_CMDLINE_LINUX="ima_hash=sha256"'
     line: 'GRUB_CMDLINE_LINUX="ima_hash=sha256 ima_template=ima-ng"'
-    insertafter: 'GRUB_CMDLINE_LINUX_DEFAULT'
+    insertafter: "GRUB_CMDLINE_LINUX_DEFAULT"
     state: present
     backup: yes
 

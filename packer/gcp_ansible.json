@@ -28,11 +28,6 @@
       "destination": "/root/data"
     },
     {
-      "type": "shell",
-      "execute_command": "sudo -E /bin/bash '{{.Path}}'",
-      "inline": ["pwd"]
-    },
-    {
       "type": "ansible",
       "playbook_file": "../ansible/cosmian_vm_playbook.yml",
       "extra_arguments": ["-v"]

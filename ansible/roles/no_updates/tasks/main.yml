@@ -7,7 +7,6 @@
 
 - name: Disable automatic updates on Ubuntu
   block:
-
     - name: Disable auto upgrade services
       systemd:
         name: "{{ item }}"
@@ -32,14 +31,13 @@
     - name: Update APT cache
       ansible.builtin.apt:
         autoclean: yes
-        # update_cache: yes
+        update_cache: yes
   when: ansible_distribution == 'Ubuntu'
   tags: ubuntu
 
 - name: Disable automatic updates on Red Hat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
-
     - name: Disable dnf-automatic service
       systemd:
         name: dnf-automatic.timer
@@ -49,27 +47,27 @@
     - name: Disable automatic updates in dnf.conf
       lineinfile:
         path: /etc/dnf/dnf.conf
-        line: 'check_update=0'
+        line: "check_update=0"
         backup: yes
 
     - name: Disable automatic updates in dnf.conf
       lineinfile:
         path: /etc/dnf/dnf.conf
-        line: 'excludepkgs=*'
+        line: "excludepkgs=*"
         backup: yes
 
     - name: Update automatic.conf to disable automatic updates download
       lineinfile:
         path: /etc/dnf/automatic.conf
-        regexp: 'download_updates = yes'
-        line: 'download_updates = no'
+        regexp: "download_updates = yes"
+        line: "download_updates = no"
         backup: yes
 
     - name: Update automatic.conf to disable automatic updates apply
       lineinfile:
         path: /etc/dnf/automatic.conf
-        regexp: 'apply_updates = yes'
-        line: 'apply_updates = no'
+        regexp: "apply_updates = yes"
+        line: "apply_updates = no"
         backup: yes
 
     - name: Clean Yum metadata
@@ -77,5 +75,5 @@
 
     - name: Update DNF cache
       dnf:
-        # update_cache: yes
+        update_cache: yes
   tags: redhat
