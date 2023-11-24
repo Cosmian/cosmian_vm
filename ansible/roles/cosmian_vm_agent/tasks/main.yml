@@ -1,0 +1,19 @@
+---
+# tasks file for ansible/roles/cosmian_vm_agent
+- name: Copy cosmian_vm_agent
+  ansible.builtin.copy:
+    src: /tmp/cosmian_vm_agent
+    dest: /usr/sbin/cosmian_vm_agent
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0500'
+
+- name: Copy post-install.sh
+  ansible.builtin.copy:
+    src: /tmp/cosmian_vm_post_install.sh
+    dest: /usr/sbin/cosmian_vm_post_install.sh
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0500'

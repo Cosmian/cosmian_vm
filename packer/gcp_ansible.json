@@ -18,34 +18,24 @@
   ],
   "provisioners": [
     {
-      "type": "shell",
-      "execute_command": "sudo -E /bin/bash '{{.Path}}'",
-      "inline": ["whoami"]
-    },
-    {
       "type": "file",
-      "source": "/home/runner/work/cosmian_vm/cosmian_vm/crate/agent",
+      "source": "../target/debug/cosmian_vm_agent",
       "destination": "/tmp/cosmian_vm_agent"
     },
     {
       "type": "file",
-      "source": "../resources/data",
-      "destination": "/tmp/data"
+      "source": "../resources/post-install.sh",
+      "destination": "/tmp/cosmian_vm_post_install.sh"
     },
     {
-      "type": "shell",
-      "execute_command": "sudo -E /bin/bash '{{.Path}}'",
-      "inline": 
-        [
-          "mkdir -p /root/data",
-          "mv /tmp/cosmian_vm_agent /usr/sbin/", 
-          "mv /tmp/data/ /root"
-        ]
+      "type": "file",
+      "source": "../resources/data/ima-policy",
+      "destination": "/tmp/ima-policy"
     },
     {
-      "type": "shell",
-      "execute_command": "sudo -E /bin/bash '{{.Path}}'",
-      "inline": ["sudo ls -la /root/data"]
+      "type": "file",
+      "source": "../resources/conf/nginx.conf",
+      "destination": "/tmp/cosmian_vm_agent.conf"
     },
     {
       "type": "ansible",

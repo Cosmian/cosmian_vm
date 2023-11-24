@@ -47,34 +47,12 @@
     mode: 0755
     state: directory
   with_items: ["sites-available", "sites-enabled", "conf.d"]
-# - name: Stop Nginx
-#   service:
-#     name: nginx
-#     state: stopped
-#   changed_when: false
 
-# - name: Run certbot command to initialize LetsEncrypt
-#   become: true
-#   shell: certbot certonly --standalone -d {{ nginx_domain_name }} -m {{ nginx_user }} -n --agree-tos
-#   failed_when: false
-
-# - name: Copy nginx conf
-#   ansible.builtin.copy:
-#     src: cosmian_vm/resources/conf/nginx.conf
-#     dest: /etc/nginx/conf.d/{{ nginx_domain_name }}.conf
-#     remote_src: true
-#     owner: root
-#     group: root
-#     mode: '0644' #voir avec Séb
-
-# - name: Replace domaine name
-#   ansible.builtin.replace:
-#     path: /etc/nginx/conf.d/{{ nginx_domain_name }}.conf
-#     regexp: $DEFAULT_DN # chercher comment récupérer la variable d'environnement
-#     replace: '{{ nginx_domain_name }}'
-
-# - name: "Check if Nginx is started"
-#   systemd:
-#     name: nginx
-#     state: started
-#   changed_when: false
+- name: Copy nginx conf
+  ansible.builtin.copy:
+    src: /tmp/cosmian_vm_agent.conf
+    dest: /etc/nginx/sites-available/cosmian_vm_agent.conf
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0644'

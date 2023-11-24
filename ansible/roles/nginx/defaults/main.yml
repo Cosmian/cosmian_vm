@@ -1,4 +1,0 @@
----
-# defaults file for nginx_backend
-nginx_domain_name: "domain.name"
-nginx_user: "tech@cosmian.com"

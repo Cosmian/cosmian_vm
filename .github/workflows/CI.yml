@@ -5,7 +5,7 @@ name: Continuous integration
 jobs:
   check:
     name: Check
-    runs-on: ubuntu-22.04
+    runs-on: [self-hosted]
     steps:
       - uses: actions/checkout@v2
       - name: Rustup setup

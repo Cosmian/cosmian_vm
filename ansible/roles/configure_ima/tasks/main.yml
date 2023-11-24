@@ -1,20 +1,6 @@
 ---
 # tasks file for ansible/roles/configure_ima
 
-- name: Update bashrc
-  become: true
-  lineinfile:
-    path: /root/.bashrc
-    state: present
-    line: 'export DEFAULT_DN="cosmianvm.cosmian.dev"'
-
-- name: sourcing .bashrc
-  ansible.builtin.shell: source ~/.bashrc
-  args:
-    executable: /bin/bash
-  notify: reload systemctl
-
-# Policy
 - name: Create ima folder
   file:
     path: /etc/ima
@@ -25,7 +11,7 @@
 
 - name: Copy ima policy
   ansible.builtin.copy:
-    src: /root/data/ima-policy
+    src: /tmp/ima-policy
     dest: /etc/ima/
     remote_src: true
     owner: root
