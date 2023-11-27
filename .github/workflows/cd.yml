@@ -20,7 +20,13 @@ jobs:
 
     - name: Build binary
       run: cargo build
-      
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: cosmian_vm_agent
+        path: target/debug/cosmian_vm_agent
+
   packer-docker-base:
     needs: build-cosmian-vm
     name: Build Cosmian VM Image
@@ -33,6 +39,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: cosmian_vm_agent
+          path: packer/cosmian_vm_agent
+
       - name: "Authenticate to Google Cloud"
         id: "auth"
         uses: "google-github-actions/auth@v1"
@@ -42,14 +54,6 @@ jobs:
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
         id: setup
-
-    #   - name: Run `packer init`
-    #     id: init
-    #     run: packer init .
-
-    #   - name: Run `packer validate`
-    #     id: validate
-    #     run: packer validate .
 
       - name: Run `packer build`
         id: build

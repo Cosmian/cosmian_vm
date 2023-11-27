@@ -2,12 +2,12 @@
 # tasks file for ansible/roles/cosmian_vm_agent
 - name: Copy cosmian_vm_agent
   ansible.builtin.copy:
-    src: /tmp/cosmian_vm_agent
-    dest: /usr/sbin/cosmian_vm_agent
+    src: /tmp/cosmian_vm_agent/
+    dest: /usr/sbin/   
     remote_src: true
     owner: root
     group: root
-    mode: '0500'
+    mode: 0500
 
 - name: Copy post-install.sh
   ansible.builtin.copy:
@@ -16,4 +16,28 @@
     remote_src: true
     owner: root
     group: root
-    mode: '0500'
+    mode: 0500
+
+- name: Update all packages to their latest version
+  apt:
+    update_cache: yes
+
+- name: Install Supervisor
+  apt:
+    name: supervisor
+    state: latest
+    update_cache: yes
+
+- name: Adding a program
+  template:
+    src: cosmian_vm_agent.conf.j2
+    dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reread Supervisor conf file
+  command: supervisorctl reread
+
+- name: Update Supervisor process
+  command: supervisorctl update

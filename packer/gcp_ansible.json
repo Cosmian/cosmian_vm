@@ -19,11 +19,6 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "../target/debug/cosmian_vm_agent",
-      "destination": "/tmp/cosmian_vm_agent"
-    },
-    {
-      "type": "file",
       "source": "../resources/post-install.sh",
       "destination": "/tmp/cosmian_vm_post_install.sh"
     },
@@ -36,6 +31,15 @@
       "type": "file",
       "source": "../resources/conf/nginx.conf",
       "destination": "/tmp/cosmian_vm_agent.conf"
+    },
+    {
+      "type": "file",
+      "source": "./cosmian_vm_agent",
+      "destination": "/tmp/"
+    },
+    {
+      "type": "shell",
+      "inline": ["sudo ls -la /tmp | grep cosmian"]
     },
     {
       "type": "ansible",
