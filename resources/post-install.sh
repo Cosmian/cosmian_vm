@@ -27,3 +27,10 @@ ln -s "$NGINX_CONF_PATH" /etc/nginx/sites-enabled/cosmian_vm_agent.conf
 echo '0 12 * * * certbot renew --nginx --post-hook "service nginx restart"' | crontab -
 systemctl enable nginx
 systemctl start nginx
+
+COSMIAN_VM_AGENT_CERTIFICATE="/etc/letsencrypt/live/$DN/cert.pem"
+SUPERVISOR_CONF_PATH="/etc/supervisor/conf.d/cosmian_vm_agent.conf"
+
+sed -i "s/$DN_PLACEHOLDER/$COSMIAN_VM_AGENT_CERTIFICATE/g" "$SUPERVISOR_CONF_PATH"
+supervisorctl reread
+supervisorctl update

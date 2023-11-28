@@ -1,6 +1,6 @@
 [program:cosmian_vm_agent]
-environment=USER="root"
-command=/usr/sbin/cosmian_vm_agent
+environment=USER=0,COSMIAN_VM_AGENT_CERTIFICATE="COSMIAN_VM_DN_PLACEHOLDER"
+command=cosmian_vm_agent $COSMIAN_VM_AGENT_CERTIFICATE
 autostart=true
 autorestart=true
 stderr_logfile=/var/log/cosmian_vm_agent.err.log
