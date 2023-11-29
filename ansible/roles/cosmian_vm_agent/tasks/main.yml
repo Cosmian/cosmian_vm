@@ -1,10 +1,18 @@
 ---
 # tasks file for ansible/roles/cosmian_vm_agent
+
 - name: Copy cosmian_vm_agent
   ansible.builtin.copy:
     src: /tmp/cosmian_vm_agent/
-    dest: /usr/sbin/   
+    dest: /usr/sbin/
     remote_src: true
+    owner: root
+    group: root
+    mode: 0500
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /usr/sbin/cosmian_vm_agent
     owner: root
     group: root
     mode: 0500

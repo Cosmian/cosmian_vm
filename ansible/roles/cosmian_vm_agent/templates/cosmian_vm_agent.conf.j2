@@ -1,7 +1,9 @@
 [program:cosmian_vm_agent]
-environment=USER=0,COSMIAN_VM_AGENT_CERTIFICATE="COSMIAN_VM_DN_PLACEHOLDER"
 command=cosmian_vm_agent $COSMIAN_VM_AGENT_CERTIFICATE
+directory=/usr/sbin
 autostart=true
 autorestart=true
+user=root
 stderr_logfile=/var/log/cosmian_vm_agent.err.log
 stdout_logfile=/var/log/cosmian_vm_agent.out.log
+environment=COSMIAN_VM_AGENT_CERTIFICATE="COSMIAN_VM_DN_PLACEHOLDER"

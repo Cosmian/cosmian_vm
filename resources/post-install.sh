@@ -31,6 +31,6 @@ systemctl start nginx
 COSMIAN_VM_AGENT_CERTIFICATE="/etc/letsencrypt/live/$DN/cert.pem"
 SUPERVISOR_CONF_PATH="/etc/supervisor/conf.d/cosmian_vm_agent.conf"
 
-sed -i "s/$DN_PLACEHOLDER/$COSMIAN_VM_AGENT_CERTIFICATE/g" "$SUPERVISOR_CONF_PATH"
+sed -i "s@$DN_PLACEHOLDER@$COSMIAN_VM_AGENT_CERTIFICATE@g" "$SUPERVISOR_CONF_PATH"
 supervisorctl reread
 supervisorctl update
