@@ -18,7 +18,7 @@ jobs:
         toolchain: stable
         override: true
 
-    - name: Build binary
+    - name: Build the agent
       run: cargo build
 
     - name: Upload artifacts
