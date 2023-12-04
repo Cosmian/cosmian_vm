@@ -41,7 +41,7 @@
 
 - name: Make sure the sites-available, sites-enabled and conf.d directories exist
   file:
-    path: "/etc/nginx/{{item}}"
+    path: /etc/nginx/{{item}}
     owner: root
     group: root
     mode: 0755
@@ -55,4 +55,14 @@
     remote_src: true
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
+  changed_when: false
+
+- name: Install custom nginx.conf
+  ansible.builtin.template:
+    src: default_nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  changed_when: false
