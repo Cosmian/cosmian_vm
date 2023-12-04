@@ -1,0 +1,6 @@
+---
+# handlers file for nginx_backend
+- name: reload_nginx
+  systemd:
+    name: nginx
+    state: reloaded

@@ -1,0 +1,79 @@
+---
+# tasks file for no_updates
+
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
+
+- name: Disable automatic updates on Ubuntu
+  block:
+    - name: Disable auto upgrade services
+      systemd:
+        name: "{{ item }}"
+        enabled: no
+        state: stopped
+      with_items:
+        - unattended-upgrades
+        - apt-daily
+        - apt-daily-upgrade
+        - snapd
+        - apt-daily-upgrade.timer
+        - apt-daily.timer
+        - snapd.socket
+
+    - name: Update APT configuration to disable automatic updates
+      lineinfile:
+        path: /etc/apt/apt.conf.d/10periodic
+        regexp: 'APT::Periodic::Update-Package-Lists "1";'
+        line: 'APT::Periodic::Update-Package-Lists "0";'
+        backup: yes
+
+    - name: Update APT cache
+      ansible.builtin.apt:
+        autoclean: yes
+        update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+  tags: ubuntu
+
+- name: Disable automatic updates on Red Hat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  block:
+    - name: Disable dnf-automatic service
+      systemd:
+        name: dnf-automatic.timer
+        enabled: no
+        state: stopped
+
+    - name: Disable automatic updates in dnf.conf
+      lineinfile:
+        path: /etc/dnf/dnf.conf
+        line: "check_update=0"
+        backup: yes
+
+    - name: Disable automatic updates in dnf.conf
+      lineinfile:
+        path: /etc/dnf/dnf.conf
+        line: "excludepkgs=*"
+        backup: yes
+
+    - name: Update automatic.conf to disable automatic updates download
+      lineinfile:
+        path: /etc/dnf/automatic.conf
+        regexp: "download_updates = yes"
+        line: "download_updates = no"
+        backup: yes
+
+    - name: Update automatic.conf to disable automatic updates apply
+      lineinfile:
+        path: /etc/dnf/automatic.conf
+        regexp: "apply_updates = yes"
+        line: "apply_updates = no"
+        backup: yes
+
+    - name: Clean Yum metadata
+      command: dnf clean all
+
+    - name: Update DNF cache
+      dnf:
+        update_cache: yes
+  tags: redhat

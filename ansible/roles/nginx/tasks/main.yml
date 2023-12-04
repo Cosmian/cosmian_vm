@@ -1,0 +1,68 @@
+---
+# tasks file for roles/nginx
+
+- name: Update all packages to their latest version
+  apt:
+    update_cache: yes
+
+- name: Install Certbot
+  apt:
+    name: certbot
+    state: latest
+    update_cache: yes
+
+- name: Install Nginx Mainline Key
+  ansible.builtin.apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+  tags: key
+
+- name: Add Nginx Mainline Repo into sources lists
+  ansible.builtin.apt_repository:
+    repo: "deb https://nginx.org/packages/mainline/ubuntu jammy nginx"
+    state: present
+    update_cache: false
+  tags: repo
+
+- name: Generate DH Parameters
+  community.crypto.openssl_dhparam:
+    path: /etc/letsencrypt/ssl-dhparams.pem
+    size: 2048
+    mode: 0644
+    state: present
+  tags: dhparam
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: latest
+    update_cache: yes
+  tags: nginx
+
+- name: Make sure the sites-available, sites-enabled and conf.d directories exist
+  file:
+    path: /etc/nginx/{{item}}
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  with_items: ["sites-available", "sites-enabled", "conf.d"]
+
+- name: Copy nginx conf
+  ansible.builtin.copy:
+    src: /tmp/cosmian_vm_agent.conf
+    dest: /etc/nginx/sites-available/cosmian_vm_agent.conf
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0644
+  changed_when: false
+
+- name: Install custom nginx.conf
+  ansible.builtin.template:
+    src: default_nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  changed_when: false
