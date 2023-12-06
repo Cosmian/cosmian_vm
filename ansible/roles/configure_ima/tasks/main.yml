@@ -1,6 +1,10 @@
 ---
 # tasks file for ansible/roles/configure_ima
 
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
+
 - name: Create ima folder
   file:
     path: /etc/ima
@@ -20,15 +24,26 @@
 
 # Hash and template method
 - name: Set hash and template method
-  lineinfile:
+  replace:
     path: /etc/default/grub
-    regex: 'GRUB_CMDLINE_LINUX="'
-    line: 'GRUB_CMDLINE_LINUX="ima_hash=sha256 ima_template=ima-ng"'
-    insertafter: "GRUB_CMDLINE_LINUX_DEFAULT"
-    state: present
-    backup: yes
+    regexp: '^(GRUB_CMDLINE_LINUX="[^"]*)(")$'
+    replace: '\1 ima_hash=sha256 ima_template=ima-ng\2'
 
 # Update grub
-- name: Update grub
-  ansible.builtin.command:
-    cmd: update-grub
+- name: Cerbot and Nginx install on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+    - name: Update grub
+      ansible.builtin.command:
+        cmd: update-grub
+
+- name: Cerbot and Nginx install on RedHat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  block:
+    - name: Update grub
+      ansible.builtin.command:
+        cmd: grub2-mkconfig -o "$(readlink -e /etc/grub2.conf)"
+
+    - name: Selinux
+      ansible.builtin.command:
+        cmd: setsebool -P httpd_can_network_connect 1

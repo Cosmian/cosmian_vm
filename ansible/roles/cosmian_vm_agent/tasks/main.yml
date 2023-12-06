@@ -1,6 +1,11 @@
 ---
 # tasks file for ansible/roles/cosmian_vm_agent
 
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
+
+
 - name: Copy cosmian_vm_agent
   ansible.builtin.copy:
     src: /tmp/cosmian_vm_agent/
@@ -26,15 +31,32 @@
     group: root
     mode: 0500
 
-- name: Update all packages to their latest version
-  apt:
-    update_cache: yes
+- name: Cerbot and Nginx install on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+  - name: Update all packages to their latest version
+    apt:
+      update_cache: yes
 
-- name: Install Supervisor
-  apt:
-    name: supervisor
-    state: latest
-    update_cache: yes
+  - name: Install Supervisor
+    apt:
+      name: supervisor
+      state: latest
+      update_cache: yes
+
+- name: Cerbot and Nginx install on RedHat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  block:
+  - name: Update all packages to their latest version
+    dnf:
+      update_cache: yes
+
+  - name: Install supervisor
+    ansible.builtin.dnf:
+      name: supervisor
+      state: present
+      update_cache: yes
+      disable_gpg_check: true
 
 - name: Adding a program
   template:

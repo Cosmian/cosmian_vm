@@ -69,4 +69,4 @@ jobs:
 
       - name: Run `packer build`
         id: build
-        run: packer build gcp_ansible.json
+        run: packer build gcp_ansible_ubuntu.json
