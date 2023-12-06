@@ -31,7 +31,7 @@
     group: root
     mode: 0500
 
-- name: Cerbot and Nginx install on Ubuntu
+- name: Supervisor install on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
   - name: Update all packages to their latest version
@@ -44,7 +44,7 @@
       state: latest
       update_cache: yes
 
-- name: Cerbot and Nginx install on RedHat
+- name: Supervisor install on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
   - name: Update all packages to their latest version
@@ -54,14 +54,13 @@
   - name: Install supervisor
     ansible.builtin.dnf:
       name: supervisor
-      state: present
+      state: latest
       update_cache: yes
-      disable_gpg_check: true
 
 - name: Adding a program
   template:
     src: cosmian_vm_agent.conf.j2
-    dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
+    dest: /etc/supervisord.d/cosmian_vm_agent.conf
     owner: root
     group: root
     mode: 0644

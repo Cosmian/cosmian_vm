@@ -67,6 +67,15 @@ jobs:
         uses: hashicorp/setup-packer@main
         id: setup
 
+      - name: Run `packer init`
+        id: init
+        run: packer init -machine-readable gcp.pkr.hcl
+
+      - name: Install Googlecompute plugin
+        run: |
+          packer plugins install github.com/hashicorp/googlecompute
+          packer plugins install github.com/hashicorp/ansible
+
       - name: Run `packer build`
         id: build
-        run: packer build gcp_ansible_ubuntu.json
+        run: packer build gcp.pkr.hcl

@@ -42,7 +42,7 @@
   block:
     - name: Update grub
       ansible.builtin.command:
-        cmd: grub2-mkconfig -o "$(readlink -e /etc/grub2.conf)"
+        cmd: grub2-mkconfig -o /etc/grub2.cfg
 
     - name: Selinux
       ansible.builtin.command:
