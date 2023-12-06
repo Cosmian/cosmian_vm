@@ -77,7 +77,9 @@ impl VerifyArgs {
                 .as_bytes(),
         )?;
 
-        spawn_blocking(move || verify_quote(&quote, &report_data, snapshot.measurement)).await??;
+        let mut policy = snapshot.policy;
+        policy.set_report_data(&report_data)?;
+        spawn_blocking(move || verify_quote(&quote, &policy)).await??;
 
         println!("[ OK ] Verifying TEE attestation");
 
