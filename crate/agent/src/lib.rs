@@ -22,6 +22,8 @@ pub fn endpoints(cfg: &mut ServiceConfig) {
     cfg.service(endpoints::get_snapshot);
     cfg.service(endpoints::get_tee_quote);
     cfg.service(endpoints::get_tpm_quote);
+    cfg.service(endpoints::init_agent);
+    cfg.service(endpoints::restart_agent);
 }
 
 pub fn config() -> impl FnOnce(&mut ServiceConfig) {

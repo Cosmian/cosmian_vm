@@ -1,20 +1,26 @@
+use actix_web::{
+    get, post,
+    web::{Data, Json, Path, Query},
+};
+use aes_gcm::{
+    aead::{Aead, OsRng},
+    AeadCore as _, Aes256Gcm, KeyInit as _,
+};
+use cosmian_vm_client::{
+    client::{ConfParam, QuoteParam},
+    snapshot::{CosmianVmSnapshot, SnapshotFiles, SnapshotFilesEntry},
+};
+use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
+use sha1::digest::generic_array::GenericArray;
+use std::process::Command;
+use tee_attestation::{forge_report_data_with_nonce, get_measurement, get_quote};
+use walkdir::WalkDir;
+
 use crate::{
     error::{Error, ResponseWithError},
     utils::{filter_whilelist, hash_file},
     CosmianVmAgent,
 };
-use actix_web::{
-    get,
-    web::{Data, Json, Path, Query},
-};
-use cosmian_vm_client::{
-    client::QuoteParam,
-    snapshot::{CosmianVmSnapshot, SnapshotFiles, SnapshotFilesEntry},
-};
-use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
-use std::process::Command;
-use tee_attestation::{forge_report_data_with_nonce, get_measurement, get_quote};
-use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
 
@@ -152,4 +158,94 @@ pub async fn get_tee_quote(
 pub async fn get_tpm_quote(_data: Query<QuoteParam>) -> ResponseWithError<Json<Vec<u8>>> {
     // TODO
     Ok(Json(vec![]))
+}
+
+/// Provision the agent configuration
+#[post("/init")]
+pub async fn init_agent(data: Query<ConfParam>) -> ResponseWithError<Json<Option<Vec<u8>>>> {
+    let cfg = data.into_inner();
+
+    // encrypt app conf (if some) and write it to disk
+    let key = if let Some(app_cfg) = &cfg.application {
+        let (cipher, key) = if let Some(wrap_key) = &app_cfg.wrap_key {
+            // key is provided, no need to return the key to the user
+            (Aes256Gcm::new(GenericArray::from_slice(wrap_key)), None)
+        } else {
+            // key generation is needed, the new key is then returned to the user
+            let key = Aes256Gcm::generate_key(OsRng);
+            (Aes256Gcm::new(&key), Some(key.to_vec()))
+        };
+
+        let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
+        let ciphertext = cipher
+            .encrypt(&nonce, app_cfg.content.as_ref())
+            .map_err(|e| Error::CommandError(format!("cannot encrypt app configuration: {e}")))?;
+
+        // write nonce
+        let mut nonce_path = cfg.agent.tmpfs.clone();
+        nonce_path.push("nonce");
+        std::fs::write(&nonce_path, nonce)?;
+
+        // write encrypted conf
+        let mut enc_app_path = cfg.agent.tmpfs.clone();
+        enc_app_path.push("app.cfg.enc");
+        std::fs::write(enc_app_path, ciphertext)?;
+
+        // copy conf to encrypted tmpfs
+        std::fs::write(&app_cfg.deployed_filepath, &app_cfg.content)?;
+
+        key
+    } else {
+        None
+    };
+
+    // start app binary
+    Command::new(&cfg.agent.app_binary).spawn()?;
+
+    Ok(Json(key))
+}
+
+/// Restart a configured agent (after a reboot for example)
+#[post("/restart")]
+pub async fn restart_agent(data: Query<ConfParam>) -> ResponseWithError<Json<()>> {
+    let cfg = data.into_inner();
+
+    // TODO check it is not already start?
+
+    if let Some(app_cfg) = &cfg.application {
+        // decrypt app conf and copy it to tmpfs
+
+        let key = &app_cfg
+            .wrap_key
+            .as_deref()
+            .map(GenericArray::from_slice)
+            .ok_or_else(|| {
+                Error::BadRequest("No key provided to decrypt app configuration".to_string())
+            })?;
+
+        // read nonce
+        let mut nonce_path = cfg.agent.tmpfs.clone();
+        nonce_path.push("nonce");
+        let nonce = std::fs::read(nonce_path)?;
+        let nonce = GenericArray::from_slice(&nonce);
+
+        // read encrypted conf
+        let mut enc_app_path = cfg.agent.tmpfs.clone();
+        enc_app_path.push("app.cfg.enc");
+        let ciphertext = std::fs::read(enc_app_path)?;
+
+        // decrypt conf
+        let cipher = Aes256Gcm::new(key);
+        let app_cfg_content = cipher
+            .decrypt(nonce, ciphertext.as_ref())
+            .map_err(|e| Error::CommandError(format!("cannot decrypt app configuration: {e}")))?;
+
+        // copy conf to encrypted tmpfs
+        std::fs::write(&app_cfg.deployed_filepath, app_cfg_content)?;
+    }
+
+    // start app binary
+    Command::new(cfg.agent.app_binary).spawn()?;
+
+    Ok(Json(()))
 }

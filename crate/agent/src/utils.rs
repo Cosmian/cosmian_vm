@@ -56,3 +56,5 @@ pub fn _filter_whilelist(entry: &DirEntry) -> Result<bool, Error> {
 
     Ok(true)
 }
+
+pub fn start_detached_app() {}

@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -21,6 +22,57 @@ pub struct CosmianVmClient {
 #[derive(Serialize, Deserialize)]
 pub struct QuoteParam {
     pub nonce: String,
+}
+
+/// Configuration parameters.
+///
+/// The optional configuration `AppConf` of the deployed app will be:
+/// - written to tmpfs to be used at runtime (tmpfs is encrypted)
+/// - encrypted and then written to disk
+#[derive(Serialize, Deserialize)]
+pub struct ConfParam {
+    /// Configuration of the Cosmian VM Agent
+    pub agent: CosmianAgentConf,
+
+    /// Configuration of the deployed application
+    pub application: Option<AppConf>,
+}
+
+/// Cosmian VM Agent configuration
+#[derive(Serialize, Deserialize)]
+pub struct CosmianAgentConf {
+    /// Location of the binary file of the app to be started.
+    pub app_binary: PathBuf,
+
+    /// Location of the encrypted tmpfs mountpoint.
+    pub tmpfs: PathBuf,
+}
+
+/// Configuration of the deployed application.
+///
+/// This configuration depends on the app developer.
+#[derive(Serialize, Deserialize)]
+pub struct AppConf {
+    /// Location of the deployed app configuration file.
+    ///
+    /// This is the expected location by the app
+    /// when running onto the VM.
+    pub deployed_filepath: PathBuf,
+
+    /// Raw content of the configuration.
+    ///
+    /// Note: fully depends on the app, so
+    /// we can't guess better than bytes.
+    pub content: Vec<u8>,
+
+    /// Key/password used to encrypt the app configuration.
+    ///
+    /// Mandatory when calling `/restart` endpoint if the
+    /// app needs a configuration.
+    ///
+    /// On a first place, ff `None` is provided,
+    /// a new random key is generated when calling `/init` endpoint.
+    pub wrap_key: Option<Vec<u8>>,
 }
 
 impl CosmianVmClient {
@@ -65,6 +117,18 @@ impl CosmianVmClient {
             }),
         )
         .await
+    }
+
+    /// Init the agent by provisioning the configuration
+    pub async fn init_agent(&self, conf_param: &ConfParam) -> Result<Option<Vec<u8>>, Error> {
+        self.post("/init", Some(conf_param)).await
+    }
+
+    /// Restart an agent
+    ///
+    /// Note: the agent must have been configured already
+    pub async fn restart_agent(&self, conf_param: &ConfParam) -> Result<(), Error> {
+        self.post("/restart", Some(conf_param)).await
     }
 
     /// Instantiate a new cosmian VM client

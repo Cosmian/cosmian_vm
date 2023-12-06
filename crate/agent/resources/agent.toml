@@ -1,0 +1,3 @@
+[agent]
+application = "/usr/bin/ls"
+encrypted_store = "/mnt/encrypted"

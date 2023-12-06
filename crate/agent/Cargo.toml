@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+aes-gcm = "0.10"
 anyhow = { workspace = true }
 actix-cors = "0.6"
 actix-http = "3"
