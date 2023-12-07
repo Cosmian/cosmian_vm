@@ -66,7 +66,7 @@
   - name: Adding a program
     template:
       src: cosmian_vm_agent.conf.j2
-      dest: /etc/supervisord.d/cosmian_vm_agent.conf
+      dest: /etc/supervisord.d/cosmian_vm_agent.ini
       owner: root
       group: root
       mode: 0644

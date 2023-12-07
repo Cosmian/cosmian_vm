@@ -73,6 +73,11 @@ variable "use_os_login" {
   default = true
 }
 
+variable "wait_to_add_ssh_keys" {
+  type    = string
+  default = "20s"
+}
+
 source "googlecompute" "ubuntu" {
   project_id             = var.project_id
   source_image           = var.ubuntu_source_image
@@ -86,6 +91,7 @@ source "googlecompute" "ubuntu" {
   subnetwork             = var.subnetwork
   tags                   = var.tags
   use_os_login           = var.use_os_login
+  wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
 }
 
 source "googlecompute" "redhat" {
@@ -101,6 +107,7 @@ source "googlecompute" "redhat" {
   subnetwork             = var.subnetwork
   tags                   = var.tags
   use_os_login           = var.use_os_login
+  wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
 }
 
 build {

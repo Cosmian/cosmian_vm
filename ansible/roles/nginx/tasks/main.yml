@@ -46,6 +46,15 @@
       update_cache: yes
     tags: nginx
 
+  - name: Install custom nginx.conf
+    ansible.builtin.template:
+      src: ubuntu_default_nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      owner: root
+      group: root
+      mode: 0644
+    changed_when: false
+
 - name: Cerbot and Nginx install on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
@@ -69,6 +78,15 @@
       state: latest
       update_cache: yes
 
+  - name: Install custom nginx.conf
+    ansible.builtin.template:
+      src: redhat_default_nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      owner: root
+      group: root
+      mode: 0644
+    changed_when: false
+
 - name: Make sure the sites-available, sites-enabled and conf.d directories exist
   file:
     path: /etc/nginx/{{item}}
@@ -88,11 +106,3 @@
     mode: 0644
   changed_when: false
 
-- name: Install custom nginx.conf
-  ansible.builtin.template:
-    src: default_nginx.conf.j2
-    dest: /etc/nginx/nginx.conf
-    owner: root
-    group: root
-    mode: 0644
-  changed_when: false
