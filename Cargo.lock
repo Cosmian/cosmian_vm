@@ -1194,7 +1194,6 @@ name = "ima"
 version = "0.1.0"
 dependencies = [
  "bincode",
- "cosmian_vm_client",
  "hex",
  "serde",
  "serde_json",

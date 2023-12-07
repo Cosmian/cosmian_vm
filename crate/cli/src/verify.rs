@@ -42,7 +42,7 @@ impl VerifyArgs {
 
         let quote = client.tee_quote(&nonce).await?;
 
-        let failures = ima.compare(&snapshot.filehashes);
+        let failures = ima.compare(&snapshot.filehashes.0);
         if !failures.entries.is_empty() {
             failures.entries.iter().for_each(|entry| {
                 println!(

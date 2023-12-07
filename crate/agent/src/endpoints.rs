@@ -9,7 +9,7 @@ use actix_web::{
 };
 use cosmian_vm_client::{
     client::QuoteParam,
-    snapshot::{CosmianVmSnapshot, SnapshotFiles, SnapshotFilesEntry},
+    snapshot::{CosmianVmSnapshot, SnapshotFiles},
 };
 use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
 use std::process::Command;
@@ -54,10 +54,7 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
     let mut filehashes = SnapshotFiles(
         ima.entries
             .iter()
-            .map(|item| SnapshotFilesEntry {
-                hash: item.filedata_hash.clone(),
-                path: item.filename_hint.clone(),
-            })
+            .map(|item| (item.filename_hint.clone(), item.filedata_hash.clone()))
             .collect(),
     );
 
@@ -72,10 +69,10 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
             continue;
         }
 
-        filehashes.0.insert(SnapshotFilesEntry {
-            hash: hash_file(file.path(), &hash_method)?,
-            path: file.path().display().to_string(),
-        });
+        filehashes.0.insert((
+            file.path().display().to_string(),
+            hash_file(file.path(), &hash_method)?,
+        ));
     }
 
     // Get the measurement of the tee (the report data does not matter)
