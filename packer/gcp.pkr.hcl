@@ -35,7 +35,7 @@ variable "ssh_username" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "5m"
+  default = "10m"
 }
 
 variable "ubuntu_image_name" {

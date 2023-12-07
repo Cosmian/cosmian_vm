@@ -95,16 +95,4 @@
     owner: root
     group: root
     mode: 0644
-    changed_when: false
-
-- name: Check if Nginx is started
-  systemd:
-    name: nginx
-    state: started
-  changed_when: false
-
-- name: Check if Supervisor is started"
-  systemd:
-    name: nginx
-    state: started
   changed_when: false
