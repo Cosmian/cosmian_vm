@@ -11,10 +11,12 @@ actix-web = "4"
 cosmian_vm_client = { path = "../client" }
 hex = { workspace = true }
 ima = { path = "../ima" }
+serde = "1"
 sha1 = { workspace = true }
 sha2 = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
+toml = "0.8"
 tracing = "0.1"
 tracing-actix-web = "0.7"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

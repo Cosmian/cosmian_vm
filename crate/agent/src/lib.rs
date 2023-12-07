@@ -1,4 +1,4 @@
-use std::fs;
+use std::path::PathBuf;
 
 use actix_cors::Cors;
 use actix_http::Method;
@@ -6,9 +6,40 @@ use actix_web::{
     dev::Service as _,
     web::{scope, Data, PayloadConfig, ServiceConfig},
 };
+use serde::Deserialize;
 
+static AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
+
+#[derive(Deserialize)]
 pub struct CosmianVmAgent {
-    pem_certificate: String,
+    agent: Agent,
+}
+
+#[allow(dead_code)]
+#[derive(Deserialize)]
+struct Agent {
+    /// Name of the Linux service (ie: nginx)
+    pub service: String,
+    /// Certificate of the VM in PEM format
+    #[serde(with = "pem_reader")]
+    pub pem_certificate: String,
+    /// Encrypted data storage (ie: tmpfs)
+    pub encrypted_store: PathBuf,
+    /// Where the app conf is stored encrypted
+    pub secret_app_conf: PathBuf,
+}
+
+mod pem_reader {
+    use serde::{Deserialize as _, Deserializer};
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<String, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        let pem_content = std::fs::read_to_string(s).map_err(serde::de::Error::custom)?;
+        Ok(pem_content)
+    }
 }
 
 pub mod endpoints;
@@ -25,17 +56,15 @@ pub fn endpoints(cfg: &mut ServiceConfig) {
 }
 
 pub fn config() -> impl FnOnce(&mut ServiceConfig) {
-    let agent = CosmianVmAgent {
-        pem_certificate: fs::read_to_string(
-            std::env::var("COSMIAN_VM_AGENT_CERTIFICATE")
-                .expect("Please set the `COSMIAN_VM_AGENT_CERTIFICATE` environment variable."),
-        )
-        .expect("Can't read the Cosmian VM Agent certificate file"),
-    };
+    let conf: CosmianVmAgent = toml::from_str(
+        &std::fs::read_to_string(AGENT_CONF)
+            .unwrap_or_else(|_| panic!("cannot read agent conf at: `{AGENT_CONF:?}`")),
+    )
+    .expect("failed to parse agent configuration as a valid toml file");
 
     move |cfg: &mut ServiceConfig| {
         cfg.app_data(PayloadConfig::new(10_000_000_000))
-            .app_data(Data::new(agent))
+            .app_data(Data::new(conf))
             .service({
                 // cannot call `.wrap()` on the `ServiceConfig` directly, so an empty scope is created for the entire app
                 scope("")
@@ -58,5 +87,28 @@ pub fn config() -> impl FnOnce(&mut ServiceConfig) {
                     })
                     .configure(endpoints)
             });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::CosmianVmAgent;
+
+    #[test]
+    fn test_agent_toml() {
+        let cfg_str = r#"
+        [agent]
+        service = "cosmian_kms"
+        pem_certificate = "../../tests/data/cert.pem"
+        encrypted_store = "/mnt/cosmian_vm/data"
+        secret_app_conf = "/mnt/cosmian_vm/app.json"
+        "#;
+
+        let config: CosmianVmAgent = toml::from_str(cfg_str).unwrap();
+        // test that the content of PEM cert is read
+        assert!(config
+            .agent
+            .pem_certificate
+            .starts_with("-----BEGIN PRIVATE KEY"));
     }
 }
