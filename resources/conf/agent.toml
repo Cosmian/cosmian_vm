@@ -1,5 +1,7 @@
 [agent]
-service = "cosmian_kms"
-pem_certificate = "/etc/letsencrypt/cert.pem"
-encrypted_store = "/mnt/cosmian_vm/data"
-secret_app_conf = "/mnt/cosmian_vm/app.json"
+pem_certificate = "/etc/letsencrypt/live/DN_PLACEHOLDER/cert.pem"
+
+[app]
+service_app_name = "cosmian_kms"
+encrypted_folder = "/mnt/cosmian_vm/data"
+secret_app_conf = "/etc/cosmian_vm/app_secrets.json"

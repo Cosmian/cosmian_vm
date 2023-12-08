@@ -11,7 +11,7 @@ actix-web = "4"
 cosmian_vm_client = { path = "../client" }
 hex = { workspace = true }
 ima = { path = "../ima" }
-serde = "1"
+serde = { workspace = true }
 sha1 = { workspace = true }
 sha2 = { workspace = true }
 tee_attestation = { workspace = true }

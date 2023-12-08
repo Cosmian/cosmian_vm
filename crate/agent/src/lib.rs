@@ -13,19 +13,25 @@ static AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
 #[derive(Deserialize)]
 pub struct CosmianVmAgent {
     agent: Agent,
+    #[allow(dead_code)]
+    app: Option<App>,
+}
+
+#[derive(Deserialize)]
+struct Agent {
+    /// Certificate of the VM in PEM format
+    #[serde(with = "pem_reader")]
+    pub pem_certificate: String,
 }
 
 #[allow(dead_code)]
 #[derive(Deserialize)]
-struct Agent {
+struct App {
     /// Name of the Linux service (ie: nginx)
-    pub service: String,
-    /// Certificate of the VM in PEM format
-    #[serde(with = "pem_reader")]
-    pub pem_certificate: String,
+    pub service_app_name: String,
     /// Encrypted data storage (ie: tmpfs)
-    pub encrypted_store: PathBuf,
-    /// Where the app conf is stored encrypted
+    pub encrypted_folder: PathBuf,
+    /// Where the secret app conf is stored encrypted
     pub secret_app_conf: PathBuf,
 }
 
@@ -98,10 +104,12 @@ mod tests {
     fn test_agent_toml() {
         let cfg_str = r#"
         [agent]
-        service = "cosmian_kms"
         pem_certificate = "../../tests/data/cert.pem"
-        encrypted_store = "/mnt/cosmian_vm/data"
-        secret_app_conf = "/mnt/cosmian_vm/app.json"
+
+        [app]
+        service_app_name = "cosmian_kms"
+        encrypted_folder = "/mnt/cosmian_vm/data"
+        secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
         "#;
 
         let config: CosmianVmAgent = toml::from_str(cfg_str).unwrap();
@@ -109,6 +117,6 @@ mod tests {
         assert!(config
             .agent
             .pem_certificate
-            .starts_with("-----BEGIN PRIVATE KEY"));
+            .starts_with("-----BEGIN CERTIFICATE"));
     }
 }
