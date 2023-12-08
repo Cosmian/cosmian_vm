@@ -128,14 +128,14 @@ pub async fn get_pcr_value(path: Path<u32>) -> ResponseWithError<Json<String>> {
 #[get("/quote/tee")]
 pub async fn get_tee_quote(
     data: Query<QuoteParam>,
-    certificate: Data<CosmianVmAgent>,
+    conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<Vec<u8>>> {
     let nonce = hex::decode(&data.nonce)?;
     let report_data = forge_report_data_with_nonce(
         &nonce.try_into().map_err(|_| {
             Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
         })?,
-        certificate.pem_certificate.as_bytes(),
+        conf.agent.pem_certificate.as_bytes(),
     )?;
     let quote = get_quote(&report_data)?;
     Ok(Json(quote))
