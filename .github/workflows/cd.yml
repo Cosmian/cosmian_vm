@@ -64,21 +64,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-3
 
-      # - name: Authenticate to Google Cloud
-      #   uses: "google-github-actions/auth@v1"
-      #   with:
-      #       credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+      - name: Authenticate to Google Cloud
+        uses: "google-github-actions/auth@v1"
+        with:
+            credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
 
       - name: Run `packer init`
-        run: packer init -machine-readable aws.pkr.hcl
+        run: packer init -machine-readable gcp.pkr.hcl
 
       - name: Install plugins
         run: |
           packer plugins install github.com/hashicorp/amazon
+          packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
 
       - name: Run `packer build`
-        run: packer build aws.pkr.hcl
+        run: packer build gcp.pkr.hcl

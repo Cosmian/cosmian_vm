@@ -50,12 +50,6 @@
         line: "check_update=0"
         backup: yes
 
-    - name: Disable automatic updates in dnf.conf
-      lineinfile:
-        path: /etc/dnf/dnf.conf
-        line: "excludepkgs=*"
-        backup: yes
-
     - name: Update automatic.conf to disable automatic updates download
       lineinfile:
         path: /etc/dnf/automatic.conf
