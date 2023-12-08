@@ -16,7 +16,7 @@ where
 {
     let mut map = serializer.serialize_seq(Some(buffer.len()))?;
     for item in buffer {
-        map.serialize_element(&(item.0.clone(), &hex::encode(item.1.clone())))?;
+        map.serialize_element(&(item.0.clone(), &hex::encode(&item.1)))?;
     }
     map.end()
 }

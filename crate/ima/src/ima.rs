@@ -98,7 +98,7 @@ impl TryFrom<&str> for ImaEntry {
         let split: Vec<&str> = line.split_whitespace().collect();
 
         // The filename_hint can't contain whitespaces. If the filename contains file, they are replace by '_' before being inserted in the IMA
-        // We can therefore somply split the line using the whitespaces
+        // We can therefore simply split the line using the whitespaces
 
         let pcr = split.first().ok_or(Error::ImaParsingError(
             "Ima entry line malformed (index: 0)".to_string(),
@@ -152,6 +152,20 @@ impl TryFrom<&str> for ImaEntry {
             None
         };
 
+        if template_name == ImaTemplate::ImaSig {
+            if split.len() > 6 {
+                return Err(Error::ImaParsingError(format!(
+                    "Extra field detected: {}",
+                    split.len()
+                )));
+            }
+        } else if split.len() > 5 {
+            return Err(Error::ImaParsingError(format!(
+                "Extra field detected: {}",
+                split.len()
+            )));
+        }
+
         Ok(ImaEntry {
             pcr: pcr.parse::<u32>()?,
             template_hash: hex::decode(template_hash)?,
@@ -190,40 +204,82 @@ impl TryFrom<&[u8]> for Ima {
             cursor += EVENT_ENTRY_SIZE;
 
             // Parse the name of the template
-            let template_name = &data[cursor..(cursor + event.name_length as usize)];
+            let template_name = &data
+                .get(cursor..(cursor + event.name_length as usize))
+                .ok_or(Error::ImaParsingError(
+                    "Not enough bytes in the buffer to parse IMA entry template name".to_string(),
+                ))?;
             let template_name = String::from_utf8_lossy(template_name).to_string();
             let template_name = ImaTemplate::try_from(template_name.as_ref())?;
 
             cursor += event.name_length as usize;
 
             // Parse the length of the template data
-            let length: u32 =
-                bincode::deserialize(&data[cursor..(cursor + (u32::BITS as usize / 8))])?;
+            let length = bincode::deserialize::<u32>(
+                data.get(cursor..(cursor + (u32::BITS as usize / 8)))
+                    .ok_or(Error::ImaParsingError(
+                        "Not enough bytes in the buffer to parse IMA entry length".to_string(),
+                    ))?,
+            )? as usize;
             cursor += u32::BITS as usize / 8;
 
             // Parse the template data
-            let template_data = &data[cursor..(cursor + length as usize)];
-            cursor += length as usize;
+            let template_data =
+                &data
+                    .get(cursor..(cursor + length))
+                    .ok_or(Error::ImaParsingError(format!(
+                        "Not enough bytes in the buffer to parse IMA entry template: {} > {}",
+                        cursor + length,
+                        data.len(),
+                    )))?;
+            cursor += length;
 
             // From the template data, parse the size of the hash field
             let mut template_cursor = 0;
-            let hash_length: u32 =
-                bincode::deserialize(&template_data[0..(u32::BITS as usize / 8)])?;
+            let hash_length =
+                bincode::deserialize::<u32>(&template_data[0..(u32::BITS as usize / 8)])? as usize;
             template_cursor += u32::BITS as usize / 8;
 
             // From the template data, parse the hash field
-            let hash = &template_data[template_cursor..(template_cursor + hash_length as usize)];
-            template_cursor += hash_length as usize;
+            let hash = &template_data[template_cursor..(template_cursor + hash_length)];
+            template_cursor += hash_length;
 
             // From the template data, parse the size of the file field
-            let hint_length: u32 = bincode::deserialize(
+            let hint_length = bincode::deserialize::<u32>(
                 &template_data[template_cursor..(template_cursor + (u32::BITS as usize / 8))],
-            )?;
+            )? as usize;
             template_cursor += u32::BITS as usize / 8;
 
             // From the template data, parse the file field
-            let hint =
-                &template_data[template_cursor..(template_cursor + hint_length as usize - 1)];
+            let hint = &template_data[template_cursor..(template_cursor + hint_length - 1)];
+
+            template_cursor += hint_length;
+
+            // From the template data, parse the signature if any
+            let sig = if template_name == ImaTemplate::ImaSig {
+                let sig_length = bincode::deserialize::<u32>(
+                    &template_data[template_cursor..(template_cursor + (u32::BITS as usize / 8))],
+                )? as usize;
+                template_cursor += u32::BITS as usize / 8;
+
+                if sig_length != 0 {
+                    let sig = &template_data[template_cursor..(template_cursor + sig_length)];
+                    template_cursor += sig_length;
+
+                    Some(sig.to_vec())
+                } else {
+                    None
+                }
+            } else {
+                None
+            };
+
+            if template_cursor != length {
+                return Err(Error::ImaParsingError(format!(
+                    "Extra bytes {} unparsed in buffer",
+                    template_cursor - length
+                )));
+            }
 
             let (filedata_hash_method, hash) = if template_name == ImaTemplate::Ima {
                 (ImaHashMethod::Sha1, hash)
@@ -244,7 +300,7 @@ impl TryFrom<&[u8]> for Ima {
                 filedata_hash_method,
                 filedata_hash: hash.to_vec(),
                 filename_hint: String::from_utf8_lossy(hint).to_string(),
-                file_signature: None, // TODO
+                file_signature: sig,
             });
         }
 
@@ -307,9 +363,7 @@ impl Ima {
                         // In these two cases, IMA cannot know what is actually read,
                         // and invalidates the measurement with all zeros
                         && entry.filedata_hash != vec![0; entry.filedata_hash.len()]
-                        && !snapshot_ima.contains(&(entry.filename_hint.clone(), &entry.filedata_hash
-                            )
-                        ))
+                        && !snapshot_ima.contains(&(entry.filename_hint.clone(), &entry.filedata_hash)))
                     .then_some(entry.clone())
                 })
                 .collect(),
@@ -511,7 +565,20 @@ mod tests {
             }
         );
 
-        assert_eq!(ima.entries.len(), 511)
+        assert_eq!(
+            ima.entries[16],
+            ImaEntry {
+                pcr: 10,
+                template_hash: hex::decode("412dd9c12c28f32ad6c9b1531b259ae2e0374f60").unwrap(),
+                template_name: ImaTemplate::ImaSig,
+                filedata_hash_method: ImaHashMethod::Sha256,
+                filedata_hash: hex::decode("0e71237a2db762d0b43a7b3d9aedd2210ff2327bfb9c984fc2557042a2d5c103").unwrap(),
+                filename_hint: "/usr/lib64/systemd/libsystemd-shared-252.so".to_string(),
+                file_signature: Some(hex::decode("030204577055f401006a5d222918b0222967185cd5d52d24f7d779280034932dc735850ab0d259b9b16e2e4d34484642d22bbd6a3d7b3c0c2dd002748ef16eb35ff5ccc720a7ad93d8baa05846d1cb6b92713044286f380c807dc9d2f181eebb1e3b34738bf0d505ae13824d9a31f73f6475dcf3848d6d1c38263b5bbe27cf1e96b85e24f55f0ad5911670ccd794587413e4d2f57aaf5df03a321af5c90d93126b9f1d05ede7b3d7d6f3f45ed7016b4e7b2cda66bda0c9cf86f9f2587536ef1a8fcf7ddacb52b457be600489dbb1046ae346346531d5e6953cb86f6697498a5973d738d4162e86078473a4a8d096e01bd98cad82b52edf3e2bc43e8149de2f66f7b67593ee5cc6a617").unwrap()),
+            }
+        );
+
+        assert_eq!(ima.entries.len(), 401)
     }
 
     #[test]
