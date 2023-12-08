@@ -1194,7 +1194,6 @@ name = "ima"
 version = "0.1.0"
 dependencies = [
  "bincode",
- "cosmian_vm_client",
  "hex",
  "serde",
  "serde_json",
@@ -1643,7 +1642,7 @@ checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 [[package]]
 name = "pccs_client"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1ced3bdc13445c2d26eeab7d8ff058c112a89dc6"
+source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1717d380ce8065c46501a18ad22a982c5ca23362"
 dependencies = [
  "hex",
  "reqwest",
@@ -1797,7 +1796,7 @@ dependencies = [
 [[package]]
 name = "ratls"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1ced3bdc13445c2d26eeab7d8ff058c112a89dc6"
+source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1717d380ce8065c46501a18ad22a982c5ca23362"
 dependencies = [
  "asn1-rs",
  "bincode",
@@ -2254,7 +2253,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1ced3bdc13445c2d26eeab7d8ff058c112a89dc6"
+source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1717d380ce8065c46501a18ad22a982c5ca23362"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2275,7 +2274,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "0.1.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1ced3bdc13445c2d26eeab7d8ff058c112a89dc6"
+source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1717d380ce8065c46501a18ad22a982c5ca23362"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2286,7 +2285,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1ced3bdc13445c2d26eeab7d8ff058c112a89dc6"
+source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1717d380ce8065c46501a18ad22a982c5ca23362"
 dependencies = [
  "chrono",
  "hex",
@@ -2492,7 +2491,7 @@ dependencies = [
 [[package]]
 name = "tdx_quote"
 version = "0.0.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1ced3bdc13445c2d26eeab7d8ff058c112a89dc6"
+source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1717d380ce8065c46501a18ad22a982c5ca23362"
 dependencies = [
  "hex",
  "log",
@@ -2511,7 +2510,7 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1ced3bdc13445c2d26eeab7d8ff058c112a89dc6"
+source = "git+https://github.com/Cosmian/tee-tools?branch=get_quote#1717d380ce8065c46501a18ad22a982c5ca23362"
 dependencies = [
  "bincode",
  "hex",
