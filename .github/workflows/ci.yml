@@ -1,6 +1,6 @@
 on: [push]
 
-name: Continuous integration
+name: Rust compilation, check and test
 
 jobs:
   check:

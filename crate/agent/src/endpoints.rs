@@ -13,7 +13,7 @@ use cosmian_vm_client::{
 };
 use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
 use std::process::Command;
-use tee_attestation::{forge_report_data_with_nonce, get_measurement, get_quote};
+use tee_attestation::{forge_report_data_with_nonce, get_quote, TeePolicy};
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
@@ -80,12 +80,9 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
 
     // Get the measurement of the tee (the report data does not matter)
     let quote = get_quote(&[])?;
-    let measurement = get_measurement(&quote)?;
+    let policy = TeePolicy::try_from(quote.as_ref())?;
 
-    Ok(Json(CosmianVmSnapshot {
-        filehashes,
-        measurement,
-    }))
+    Ok(Json(CosmianVmSnapshot { filehashes, policy }))
 }
 
 /// Return the #id PCR value

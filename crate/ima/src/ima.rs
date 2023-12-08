@@ -252,7 +252,13 @@ impl Ima {
                 .iter()
                 .filter_map(|entry| {
                     (entry.filename_hint != "boot_aggregate"
-                        && entry.filedata_hash != vec![0; entry.filedata_hash.len()] // Non flushed file can have a null hash in IMA (swap files for example) 
+                        /* The kernel prohibits writing and executing a file concurrently.
+                        Other files can be read and written concurrently:
+                        - "open_writers" file already open for write, is opened for read
+                        - "open_reader" file already open for read is opened for write
+                        In these two cases, IMA cannot know what is actually read,
+                        and invalidates the measurement with all zeros */
+                        && entry.filedata_hash != vec![0; entry.filedata_hash.len()]
                         && !snapshot.0.contains(&SnapshotFilesEntry {
                             hash: entry.filedata_hash.clone(),
                             path: entry.filename_hint.clone(),

@@ -17,8 +17,8 @@ sha1 = "0.10"
 sha2 = "0.10"
 # ratls = { path = "../microservice_encryption/tee-tools/ratls" }
 # tee_attestation = { path = "../microservice_encryption/tee-tools/tee_attestation" }
-ratls = { git = "https://github.com/Cosmian/tee-tools", branch = "fix_gcp" }
-tee_attestation = { git = "https://github.com/Cosmian/tee-tools", branch = "fix_gcp" }
+ratls = { git = "https://github.com/Cosmian/tee-tools", branch = "get_quote" }
+tee_attestation = { git = "https://github.com/Cosmian/tee-tools", branch = "get_quote" }
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.96"

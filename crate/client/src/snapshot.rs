@@ -1,6 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::HashSet;
-use tee_attestation::TeeMeasurement;
+use tee_attestation::TeePolicy;
 
 use crate::error::Error;
 
@@ -90,5 +90,5 @@ pub struct CosmianVmSnapshot {
         deserialize_with = "deserialize_snapshotfiles"
     )]
     pub filehashes: SnapshotFiles,
-    pub measurement: TeeMeasurement,
+    pub policy: TeePolicy,
 }
