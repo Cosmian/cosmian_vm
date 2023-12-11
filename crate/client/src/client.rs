@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
 use crate::error::Error;
+use crate::ser_de::{base64_serde, base64_serde_opt};
 use crate::snapshot::CosmianVmSnapshot;
 
 #[derive(Clone)]
@@ -20,22 +21,8 @@ pub struct CosmianVmClient {
 
 #[derive(Serialize, Deserialize)]
 pub struct QuoteParam {
-    #[serde(with = "hex_serde")]
+    #[serde(with = "base64_serde")]
     pub nonce: Vec<u8>,
-}
-
-mod hex_serde {
-    use hex::FromHex;
-    use serde::{de::Error, Deserialize as _, Deserializer, Serializer};
-
-    pub fn serialize<S: Serializer>(v: &Vec<u8>, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.serialize_str(&hex::encode(v))
-    }
-
-    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<u8>, D::Error> {
-        String::deserialize(deserializer)
-            .and_then(|string| Vec::from_hex(string).map_err(|e| Error::custom(e.to_string())))
-    }
 }
 
 impl CosmianVmClient {
@@ -171,12 +158,14 @@ pub struct AppConf {
     ///
     /// Note: fully depends on the app, so
     /// we can't guess better than bytes.
+    #[serde(with = "base64_serde")]
     pub content: Vec<u8>,
 
     /// Key/password used to encrypt the app configuration.
     ///
     /// If `None` is provided, a new random key
     /// is generated when calling `/init` endpoint.
+    #[serde(with = "base64_serde_opt")]
     pub key: Option<Vec<u8>>,
 }
 
@@ -184,6 +173,7 @@ pub struct AppConf {
 #[derive(Serialize, Deserialize)]
 pub struct RestartParam {
     /// Key/password used to decrypt the app configuration.
+    #[serde(with = "base64_serde")]
     pub key: Vec<u8>,
 }
 

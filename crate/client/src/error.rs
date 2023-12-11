@@ -25,4 +25,7 @@ pub enum Error {
 
     #[error(transparent)]
     UrlParsing(#[from] url::ParseError),
+
+    #[error(transparent)]
+    Base64Decode(#[from] base64::DecodeError),
 }

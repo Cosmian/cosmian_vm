@@ -13,8 +13,6 @@ pub enum Error {
     #[error("{0}")]
     Cryptography(String),
     #[error(transparent)]
-    Base64Decode(#[from] base64::DecodeError),
-    #[error(transparent)]
     HexParsingError(#[from] hex::FromHexError),
     #[error(transparent)]
     ImaError(#[from] ima::error::Error),
@@ -38,7 +36,6 @@ impl ResponseError for Error {
             | Error::TeeAttestation(_)
             | Error::Cryptography(_)
             | Error::Serialization(_)
-            | Error::Base64Decode(_)
             | Error::WalkDirError(_) => StatusCode::INTERNAL_SERVER_ERROR,
 
             Error::BadRequest(_) => StatusCode::BAD_REQUEST,

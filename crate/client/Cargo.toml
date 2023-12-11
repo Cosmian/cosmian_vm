@@ -5,6 +5,7 @@ edition = "2021"
 license = "MIT/Apache-2.0"
 
 [dependencies]
+base64 = "0.21"
 hex = { workspace = true }
 http = "0.2"
 ratls = { workspace = true }

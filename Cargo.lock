@@ -650,7 +650,6 @@ dependencies = [
  "actix-web",
  "aes-gcm",
  "anyhow",
- "base64",
  "cosmian_vm_client",
  "hex",
  "ima",
@@ -672,6 +671,7 @@ dependencies = [
 name = "cosmian_vm_client"
 version = "0.1.0"
 dependencies = [
+ "base64",
  "hex",
  "http",
  "ratls",
