@@ -31,6 +31,14 @@
     group: root
     mode: 0500
 
+- name: Create cosmian agent log directory
+  ansible.builtin.file:
+    path: /var/log/cosmian_vm
+    state: directory
+    owner: root
+    group: root
+    mode: 0500
+
 - name: Supervisor install on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
@@ -43,6 +51,14 @@
       name: supervisor
       state: latest
       update_cache: yes
+
+  - name: Adding a program
+    template:
+      src: cosmian_vm_agent.conf.j2
+      dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
+      owner: root
+      group: root
+      mode: 0644
 
   - name: Check if Supervisor is started"
     systemd:
@@ -71,7 +87,7 @@
       group: root
       mode: 0644
 
-  - name: Check if Supervisor is started"
+  - name: Check if Supervisor is started
     systemd:
       name: supervisord
       enabled: true
