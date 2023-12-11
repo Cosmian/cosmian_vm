@@ -69,6 +69,24 @@ impl CosmianVmClient {
         .await
     }
 
+    /// Initialize the deployed app
+    pub async fn init_app(&self, content: &[u8], key: Option<&[u8]>) -> Result<(), Error> {
+        self.post(
+            "/app/init",
+            Some(&AppConf {
+                content: content.to_vec(),
+                key: key.map(|k| k.to_vec()),
+            }),
+        )
+        .await
+    }
+
+    /// Restart the deployed app
+    pub async fn restart_app(&self, key: &[u8]) -> Result<(), Error> {
+        self.post("/app/restart", Some(&RestartParam { key: key.to_vec() }))
+            .await
+    }
+
     /// Instantiate a new cosmian VM client
     #[allow(clippy::too_many_arguments)]
     #[allow(dead_code)]

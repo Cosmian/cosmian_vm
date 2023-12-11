@@ -158,7 +158,7 @@ pub async fn get_tpm_quote(_data: Query<QuoteParam>) -> ResponseWithError<Json<V
 }
 
 /// Initialize the application configuration
-#[post("/init")]
+#[post("/app/init")]
 pub async fn init_app(
     data: Query<AppConf>,
     conf: Data<CosmianVmAgent>,
@@ -211,7 +211,7 @@ pub async fn init_app(
 /// Restart a configured app (after a reboot for example).
 ///
 /// Stop the service, decrypt and copy app conf, start the service.
-#[post("/restart")]
+#[post("/app/restart")]
 pub async fn restart_app(
     data: Query<RestartParam>,
     conf: Data<CosmianVmAgent>,
