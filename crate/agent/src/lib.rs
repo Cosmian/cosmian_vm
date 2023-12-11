@@ -11,6 +11,7 @@ static AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
 pub mod conf;
 pub mod endpoints;
 pub mod error;
+pub mod service;
 pub mod utils;
 
 pub fn endpoints(cfg: &mut ServiceConfig) {

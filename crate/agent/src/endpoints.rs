@@ -1,6 +1,7 @@
 use crate::{
     conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
     error::{Error, ResponseWithError},
+    service::{Supervisor, UnixService as _},
     utils::{filter_whilelist, hash_file},
     CosmianVmAgent,
 };
@@ -202,9 +203,7 @@ pub async fn init_app(
     )?;
 
     // start app service
-    Command::new("supervisorctl")
-        .args([&app_conf_agent.service_app_name, "start"])
-        .output()?;
+    Supervisor::start(&app_conf_agent.service_app_name)?;
 
     Ok(Json(key))
 }
@@ -225,9 +224,7 @@ pub async fn restart_app(
     };
 
     // ensure app service is stopped
-    Command::new("supervisorctl")
-        .args([&app_conf_agent.service_app_name, "stop"])
-        .output()?;
+    Supervisor::stop(&app_conf_agent.service_app_name)?;
 
     // read app json conf
     let raw_json = std::fs::read_to_string(&app_conf_agent.secret_app_conf)?;
@@ -248,9 +245,7 @@ pub async fn restart_app(
     )?;
 
     // start app service
-    Command::new("supervisorctl")
-        .args([&app_conf_agent.service_app_name, "start"])
-        .output()?;
+    Supervisor::start(&app_conf_agent.service_app_name)?;
 
     Ok(Json(()))
 }
