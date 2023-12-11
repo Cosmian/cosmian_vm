@@ -1,29 +1,44 @@
-use std::process::Output;
+use crate::error::Error;
 
 pub(crate) mod internal {
-    use std::process::{Command, Output};
+    use std::process::Command;
+
+    use crate::error::Error;
 
     #[doc(hidden)]
     pub trait UnixServiceInternal {
         const NAME: &'static str;
 
-        fn call(actions: &[&str]) -> Result<Output, std::io::Error> {
-            Command::new(Self::NAME).args(actions).output()
+        fn call(actions: &[&str]) -> Result<String, Error> {
+            match Command::new(Self::NAME).args(actions).output() {
+                Ok(output) => {
+                    if output.status.success() {
+                        Ok(String::from_utf8_lossy(&output.stdout).to_string())
+                    } else {
+                        Err(Error::CommandError(format!(
+                            "Output: {} - error: {}",
+                            String::from_utf8_lossy(&output.stdout),
+                            String::from_utf8_lossy(&output.stderr)
+                        )))
+                    }
+                }
+                Err(e) => Err(Error::CommandError(e.to_string())),
+            }
         }
     }
 }
 
 pub trait UnixService: internal::UnixServiceInternal {
-    fn start(service_app_name: &str) -> Result<Output, std::io::Error> {
-        Self::call(&[service_app_name, "start"])
+    fn start(service_app_name: &str) -> Result<String, Error> {
+        Self::call(&["start", service_app_name])
     }
 
-    fn stop(service_app_name: &str) -> Result<Output, std::io::Error> {
-        Self::call(&[service_app_name, "stop"])
+    fn stop(service_app_name: &str) -> Result<String, Error> {
+        Self::call(&["stop", service_app_name])
     }
 
-    fn reload(service_app_name: &str) -> Result<Output, std::io::Error> {
-        Self::call(&[service_app_name, "reload"])
+    fn reload(service_app_name: &str) -> Result<String, Error> {
+        Self::call(&["reload", service_app_name])
     }
 }
 

@@ -22,7 +22,7 @@ enum CliCommands {
     Snapshot(SnapshotArgs),
     Verify(VerifyArgs),
     #[command(subcommand)]
-    AppConf(AppConfArgs),
+    App(AppConfArgs),
 }
 
 #[tokio::main]
@@ -32,7 +32,7 @@ async fn main() -> Result<()> {
     match opts.command {
         CliCommands::Snapshot(args) => args.run().await,
         CliCommands::Verify(args) => args.run().await,
-        CliCommands::AppConf(args) => match args {
+        CliCommands::App(args) => match args {
             AppConfArgs::Init(args) => args.run().await,
             AppConfArgs::Restart(args) => args.run().await,
         },

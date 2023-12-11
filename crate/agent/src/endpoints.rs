@@ -160,7 +160,7 @@ pub async fn get_tpm_quote(_data: Query<QuoteParam>) -> ResponseWithError<Json<V
 /// Initialize the application configuration
 #[post("/app/init")]
 pub async fn init_app(
-    data: Query<AppConf>,
+    data: Json<AppConf>,
     conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<Option<Vec<u8>>>> {
     let app_conf_param = data.into_inner();
@@ -213,7 +213,7 @@ pub async fn init_app(
 /// Stop the service, decrypt and copy app conf, start the service.
 #[post("/app/restart")]
 pub async fn restart_app(
-    data: Query<RestartParam>,
+    data: Json<RestartParam>,
     conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<()>> {
     let cfg = data.into_inner();

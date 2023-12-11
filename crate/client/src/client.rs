@@ -70,7 +70,11 @@ impl CosmianVmClient {
     }
 
     /// Initialize the deployed app
-    pub async fn init_app(&self, content: &[u8], key: Option<&[u8]>) -> Result<(), Error> {
+    pub async fn init_app(
+        &self,
+        content: &[u8],
+        key: Option<&[u8]>,
+    ) -> Result<Option<Vec<u8>>, Error> {
         self.post(
             "/app/init",
             Some(&AppConf {
