@@ -2,14 +2,15 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use http::{HeaderMap, HeaderValue, StatusCode};
-
-use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
-use crate::error::Error;
-use crate::snapshot::CosmianVmSnapshot;
 use ratls::verify::get_server_certificate;
 use reqwest::{Client, ClientBuilder, Response, Url};
 use rustls::{client::WebPkiVerifier, Certificate};
 use serde::{Deserialize, Serialize};
+
+use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
+use crate::error::Error;
+use crate::ser_de::{base64_serde, base64_serde_opt};
+use crate::snapshot::CosmianVmSnapshot;
 
 #[derive(Clone)]
 pub struct CosmianVmClient {
@@ -20,7 +21,8 @@ pub struct CosmianVmClient {
 
 #[derive(Serialize, Deserialize)]
 pub struct QuoteParam {
-    pub nonce: String,
+    #[serde(with = "base64_serde")]
+    pub nonce: Vec<u8>,
 }
 
 impl CosmianVmClient {
@@ -50,7 +52,7 @@ impl CosmianVmClient {
         self.get(
             "/quote/tee",
             Some(&QuoteParam {
-                nonce: hex::encode(nonce),
+                nonce: nonce.to_vec(),
             }),
         )
         .await
@@ -61,10 +63,32 @@ impl CosmianVmClient {
         self.get(
             "/quote/tpm",
             Some(&QuoteParam {
-                nonce: hex::encode(nonce),
+                nonce: nonce.to_vec(),
             }),
         )
         .await
+    }
+
+    /// Initialize the deployed app
+    pub async fn init_app(
+        &self,
+        content: &[u8],
+        key: Option<&[u8]>,
+    ) -> Result<Option<Vec<u8>>, Error> {
+        self.post(
+            "/app/init",
+            Some(&AppConf {
+                content: content.to_vec(),
+                key: key.map(|k| k.to_vec()),
+            }),
+        )
+        .await
+    }
+
+    /// Restart the deployed app
+    pub async fn restart_app(&self, key: &[u8]) -> Result<(), Error> {
+        self.post("/app/restart", Some(&RestartParam { key: key.to_vec() }))
+            .await
     }
 
     /// Instantiate a new cosmian VM client
@@ -145,6 +169,34 @@ impl CosmianVmClient {
         let p = handle_error(response).await?;
         Err(Error::RequestFailed(p))
     }
+}
+
+/// Configuration of the deployed application.
+///
+/// This configuration depends on the app developer.
+#[derive(Serialize, Deserialize)]
+pub struct AppConf {
+    /// Raw content of the configuration.
+    ///
+    /// Note: fully depends on the app, so
+    /// we can't guess better than bytes.
+    #[serde(with = "base64_serde")]
+    pub content: Vec<u8>,
+
+    /// Key/password used to encrypt the app configuration.
+    ///
+    /// If `None` is provided, a new random key
+    /// is generated when calling `/init` endpoint.
+    #[serde(with = "base64_serde_opt")]
+    pub key: Option<Vec<u8>>,
+}
+
+/// Configuration to restart a deployed app (ie: after a reboot)
+#[derive(Serialize, Deserialize)]
+pub struct RestartParam {
+    /// Key/password used to decrypt the app configuration.
+    #[serde(with = "base64_serde")]
+    pub key: Vec<u8>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

@@ -1,55 +1,17 @@
-use std::path::PathBuf;
-
 use actix_cors::Cors;
 use actix_http::Method;
 use actix_web::{
     dev::Service as _,
     web::{scope, Data, PayloadConfig, ServiceConfig},
 };
-use serde::Deserialize;
+use conf::CosmianVmAgent;
 
 static AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
 
-#[derive(Deserialize)]
-pub struct CosmianVmAgent {
-    agent: Agent,
-    #[allow(dead_code)]
-    app: Option<App>,
-}
-
-#[derive(Deserialize)]
-struct Agent {
-    /// Certificate of the VM in PEM format
-    #[serde(with = "pem_reader")]
-    pub pem_certificate: String,
-}
-
-#[allow(dead_code)]
-#[derive(Deserialize)]
-struct App {
-    /// Name of the Linux service (ie: nginx)
-    pub service_app_name: String,
-    /// Encrypted data storage (ie: tmpfs)
-    pub encrypted_folder: PathBuf,
-    /// Where the secret app conf is stored encrypted
-    pub secret_app_conf: PathBuf,
-}
-
-mod pem_reader {
-    use serde::{Deserialize as _, Deserializer};
-
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<String, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s = String::deserialize(deserializer)?;
-        let pem_content = std::fs::read_to_string(s).map_err(serde::de::Error::custom)?;
-        Ok(pem_content)
-    }
-}
-
+pub mod conf;
 pub mod endpoints;
 pub mod error;
+pub mod service;
 pub mod utils;
 
 pub fn endpoints(cfg: &mut ServiceConfig) {
@@ -59,6 +21,8 @@ pub fn endpoints(cfg: &mut ServiceConfig) {
     cfg.service(endpoints::get_snapshot);
     cfg.service(endpoints::get_tee_quote);
     cfg.service(endpoints::get_tpm_quote);
+    cfg.service(endpoints::init_app);
+    cfg.service(endpoints::restart_app);
 }
 
 pub fn config() -> impl FnOnce(&mut ServiceConfig) {
@@ -93,30 +57,5 @@ pub fn config() -> impl FnOnce(&mut ServiceConfig) {
                     })
                     .configure(endpoints)
             });
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::CosmianVmAgent;
-
-    #[test]
-    fn test_agent_toml() {
-        let cfg_str = r#"
-        [agent]
-        pem_certificate = "../../tests/data/cert.pem"
-
-        [app]
-        service_app_name = "cosmian_kms"
-        encrypted_folder = "/mnt/cosmian_vm/data"
-        secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
-        "#;
-
-        let config: CosmianVmAgent = toml::from_str(cfg_str).unwrap();
-        // test that the content of PEM cert is read
-        assert!(config
-            .agent
-            .pem_certificate
-            .starts_with("-----BEGIN CERTIFICATE"));
     }
 }

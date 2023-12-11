@@ -10,12 +10,16 @@ pub enum Error {
     BadRequest(String),
     #[error("{0}")]
     CommandError(String),
+    #[error("{0}")]
+    Cryptography(String),
     #[error(transparent)]
     HexParsingError(#[from] hex::FromHexError),
     #[error(transparent)]
     ImaError(#[from] ima::error::Error),
     #[error(transparent)]
     IOError(#[from] std::io::Error),
+    #[error(transparent)]
+    Serialization(#[from] serde_json::Error),
     #[error(transparent)]
     TeeAttestation(#[from] tee_attestation::error::Error),
     #[error(transparent)]
@@ -30,6 +34,8 @@ impl ResponseError for Error {
             | Error::ImaError(_)
             | Error::IOError(_)
             | Error::TeeAttestation(_)
+            | Error::Cryptography(_)
+            | Error::Serialization(_)
             | Error::WalkDirError(_) => StatusCode::INTERNAL_SERVER_ERROR,
 
             Error::BadRequest(_) => StatusCode::BAD_REQUEST,

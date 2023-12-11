@@ -2,6 +2,6 @@
 pem_certificate = "/etc/letsencrypt/live/DN_PLACEHOLDER/cert.pem"
 
 [app]
-service_app_name = "cosmian_kms"
+service_app_name = "cosmian_helloworld"
 encrypted_folder = "/mnt/cosmian_vm/data"
 secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
