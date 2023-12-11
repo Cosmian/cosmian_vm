@@ -13,7 +13,6 @@ use aes_gcm::{
     aead::{Aead, OsRng},
     AeadCore as _, Aes256Gcm, KeyInit as _, Nonce,
 };
-use base64::{engine::general_purpose, Engine as _};
 use cosmian_vm_client::{
     client::{AppConf, QuoteParam, RestartParam},
     snapshot::{CosmianVmSnapshot, SnapshotFiles},
@@ -139,9 +138,9 @@ pub async fn get_tee_quote(
     data: Query<QuoteParam>,
     conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<Vec<u8>>> {
-    let nonce = hex::decode(&data.nonce)?;
+    let data = data.into_inner();
     let report_data = forge_report_data_with_nonce(
-        &nonce.try_into().map_err(|_| {
+        &data.nonce.try_into().map_err(|_| {
             Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
         })?,
         conf.agent.pem_certificate.as_bytes(),
@@ -188,8 +187,8 @@ pub async fn init_app(
     let eac = EncryptedAppConf {
         version: "1.0".to_string(),
         algorithm: EncryptedAppConfAlgorithm::Aes256Gcm,
-        nonce: general_purpose::STANDARD_NO_PAD.encode(nonce),
-        data: general_purpose::STANDARD_NO_PAD.encode(ciphertext),
+        nonce: nonce.to_vec(),
+        data: ciphertext,
     };
     let json = serde_json::to_string(&eac).map_err(Error::Serialization)?;
 
@@ -234,15 +233,12 @@ pub async fn restart_app(
     let raw_json = std::fs::read_to_string(&app_conf_agent.secret_app_conf)?;
     let eac: EncryptedAppConf = serde_json::from_str(&raw_json).map_err(Error::Serialization)?;
 
-    let nonce_bytes = general_purpose::STANDARD_NO_PAD.decode(eac.nonce).unwrap();
-    let ciphertext = general_purpose::STANDARD_NO_PAD.decode(eac.data).unwrap();
-
     // decrypt conf
     let key = GenericArray::from_slice(&cfg.key);
-    let nonce = Nonce::from_slice(&nonce_bytes);
+    let nonce = Nonce::from_slice(&eac.nonce);
     let cipher = Aes256Gcm::new(key);
     let app_cfg_content = cipher
-        .decrypt(nonce, ciphertext.as_ref())
+        .decrypt(nonce, eac.data.as_ref())
         .map_err(|e| Error::Cryptography(format!("cannot decrypt app conf: {e}")))?;
 
     // write decrypted app conf to encrypted tmpfs

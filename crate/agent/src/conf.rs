@@ -29,18 +29,42 @@ pub(crate) struct App {
 pub(crate) struct EncryptedAppConf {
     /// Version of the app (ie: "1.0")
     pub version: String,
-    /// Algorithm used for encryption (ie: "aes256-gcm")
+    /// Algorithm used for encryption
     pub algorithm: EncryptedAppConfAlgorithm,
-    /// Base64-encoded nonce of the encrypted data (ie: "base64(abcdef)")
-    pub nonce: String,
-    /// Base64-encoded content of the encrypted data (ie: "base64(aes256-gcm(file_content))")
-    pub data: String,
+    /// Nonce of the encrypted data.
+    ///
+    /// This data is base64 encoded when serialized in conf
+    #[serde(with = "base64_serde")]
+    pub nonce: Vec<u8>,
+    /// Encrypted data (ie: "aes256-gcm(file_content)").
+    ///
+    /// This data is base64 encoded when serialized in conf
+    #[serde(with = "base64_serde")]
+    pub data: Vec<u8>,
 }
 
 #[derive(Deserialize, Serialize)]
 pub enum EncryptedAppConfAlgorithm {
     #[serde(rename = "aes256-gcm")]
     Aes256Gcm,
+}
+
+mod base64_serde {
+    use base64::{engine::general_purpose, Engine as _};
+    use serde::Serializer;
+    use serde::{Deserialize as _, Deserializer};
+
+    pub fn serialize<S: Serializer>(v: &Vec<u8>, s: S) -> Result<S::Ok, S::Error> {
+        let base64 = general_purpose::STANDARD_NO_PAD.encode(v);
+        s.serialize_str(&base64)
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(d: D) -> Result<Vec<u8>, D::Error> {
+        let base64 = String::deserialize(d)?;
+        general_purpose::STANDARD_NO_PAD
+            .decode(base64.as_bytes())
+            .map_err(serde::de::Error::custom)
+    }
 }
 
 mod pem_reader {
@@ -58,8 +82,6 @@ mod pem_reader {
 
 #[cfg(test)]
 mod tests {
-    use base64::{engine::general_purpose, Engine as _};
-
     use crate::{
         conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
         CosmianVmAgent,
@@ -90,8 +112,8 @@ mod tests {
         let eac = EncryptedAppConf {
             version: "1.0".to_string(),
             algorithm: EncryptedAppConfAlgorithm::Aes256Gcm,
-            nonce: general_purpose::STANDARD_NO_PAD.encode(b"1234"),
-            data: general_purpose::STANDARD_NO_PAD.encode(b"5678"),
+            nonce: b"1234".to_vec(),
+            data: b"5678".to_vec(),
         };
         let ser = serde_json::to_string(&eac).unwrap();
         assert_eq!(

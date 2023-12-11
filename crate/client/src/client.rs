@@ -2,14 +2,14 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use http::{HeaderMap, HeaderValue, StatusCode};
-
-use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
-use crate::error::Error;
-use crate::snapshot::CosmianVmSnapshot;
 use ratls::verify::get_server_certificate;
 use reqwest::{Client, ClientBuilder, Response, Url};
 use rustls::{client::WebPkiVerifier, Certificate};
 use serde::{Deserialize, Serialize};
+
+use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
+use crate::error::Error;
+use crate::snapshot::CosmianVmSnapshot;
 
 #[derive(Clone)]
 pub struct CosmianVmClient {
@@ -20,7 +20,22 @@ pub struct CosmianVmClient {
 
 #[derive(Serialize, Deserialize)]
 pub struct QuoteParam {
-    pub nonce: String,
+    #[serde(with = "hex_serde")]
+    pub nonce: Vec<u8>,
+}
+
+mod hex_serde {
+    use hex::FromHex;
+    use serde::{de::Error, Deserialize as _, Deserializer, Serializer};
+
+    pub fn serialize<S: Serializer>(v: &Vec<u8>, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(&hex::encode(v))
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<u8>, D::Error> {
+        String::deserialize(deserializer)
+            .and_then(|string| Vec::from_hex(string).map_err(|e| Error::custom(e.to_string())))
+    }
 }
 
 impl CosmianVmClient {
@@ -50,7 +65,7 @@ impl CosmianVmClient {
         self.get(
             "/quote/tee",
             Some(&QuoteParam {
-                nonce: hex::encode(nonce),
+                nonce: nonce.to_vec(),
             }),
         )
         .await
@@ -61,7 +76,7 @@ impl CosmianVmClient {
         self.get(
             "/quote/tpm",
             Some(&QuoteParam {
-                nonce: hex::encode(nonce),
+                nonce: nonce.to_vec(),
             }),
         )
         .await
