@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -153,15 +152,6 @@ impl CosmianVmClient {
 /// This configuration depends on the app developer.
 #[derive(Serialize, Deserialize)]
 pub struct AppConf {
-    /// Location of the deployed app configuration file.
-    ///
-    /// This location is usually a path within
-    /// the encrypted part of disk (ie: tmpfs).
-    ///
-    /// This is the expected location by the app
-    /// when running onto the VM.
-    pub deployed_filepath: PathBuf,
-
     /// Raw content of the configuration.
     ///
     /// Note: fully depends on the app, so
@@ -172,23 +162,14 @@ pub struct AppConf {
     ///
     /// If `None` is provided, a new random key
     /// is generated when calling `/init` endpoint.
-    pub wrap_key: Option<Vec<u8>>,
+    pub key: Option<Vec<u8>>,
 }
 
 /// Configuration to restart a deployed app (ie: after a reboot)
 #[derive(Serialize, Deserialize)]
 pub struct RestartParam {
-    /// Location of the deployed app configuration file.
-    ///
-    /// This location is usually a path within
-    /// the encrypted part of disk (ie: tmpfs).
-    ///
-    /// This is the expected location by the app
-    /// when running onto the VM.
-    pub deployed_filepath: PathBuf,
-
     /// Key/password used to decrypt the app configuration.
-    pub wrap_key: Vec<u8>,
+    pub key: Vec<u8>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

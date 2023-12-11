@@ -1,5 +1,5 @@
 use crate::{
-    conf::{Algorithm, EncryptedAppConf},
+    conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
     error::{Error, ResponseWithError},
     utils::{filter_whilelist, hash_file},
     CosmianVmAgent,
@@ -25,6 +25,7 @@ use tee_attestation::{forge_report_data_with_nonce, get_quote, TeePolicy};
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
+const APP_CONF_FILENAME: &str = "app.conf";
 
 /// Get the IMA hashes list (ASCII format)
 ///
@@ -165,13 +166,14 @@ pub async fn init_app(
     let app_conf_param = data.into_inner();
 
     let Some(app_conf_agent) = &conf.app else {
-        // No app configuration provided
-        return Ok(Json(None));
+        return Err(Error::BadRequest(
+            "no app configuration provided".to_string(),
+        ));
     };
 
-    let (cipher, key) = if let Some(wrap_key) = &app_conf_param.wrap_key {
+    let (cipher, key) = if let Some(key) = &app_conf_param.key {
         // key is provided, no need to return the key to the user
-        (Aes256Gcm::new(GenericArray::from_slice(wrap_key)), None)
+        (Aes256Gcm::new(GenericArray::from_slice(key)), None)
     } else {
         // key generation is needed, the new key is then returned to the user
         let key = Aes256Gcm::generate_key(OsRng);
@@ -181,26 +183,27 @@ pub async fn init_app(
     let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
     let ciphertext = cipher
         .encrypt(&nonce, app_conf_param.content.as_ref())
-        .map_err(|e| Error::CommandError(format!("cannot encrypt app configuration: {e}")))?;
+        .map_err(|e| Error::Cryptography(format!("cannot encrypt app conf: {e}")))?;
 
     let eac = EncryptedAppConf {
         version: "1.0".to_string(),
-        algorithm: Algorithm::Aes256Gcm,
+        algorithm: EncryptedAppConfAlgorithm::Aes256Gcm,
         nonce: general_purpose::STANDARD_NO_PAD.encode(nonce),
         data: general_purpose::STANDARD_NO_PAD.encode(ciphertext),
     };
-    let json = serde_json::to_string(&eac)
-        .map_err(|e| Error::CommandError(format!("cannot serialize encrypted app conf: {e}")))?;
+    let json = serde_json::to_string(&eac).map_err(Error::Serialization)?;
 
     // write encrypted app conf to non-encrypted fs
-    std::fs::write(&app_conf_agent.secret_app_conf, json.as_bytes())
-        .map_err(|e| Error::CommandError(format!("cannot write encrypted app conf: {e}")))?;
+    std::fs::write(&app_conf_agent.secret_app_conf, json.as_bytes())?;
 
     // write plaintext conf to encrypted tmpfs
-    std::fs::write(&app_conf_param.deployed_filepath, &app_conf_param.content)?;
+    std::fs::write(
+        app_conf_agent.encrypted_folder.join(APP_CONF_FILENAME),
+        app_conf_param.content,
+    )?;
 
     // start app service
-    Command::new("service")
+    Command::new("supervisorctl")
         .args([&app_conf_agent.service_app_name, "start"])
         .output()?;
 
@@ -223,32 +226,33 @@ pub async fn restart_app(
     };
 
     // ensure app service is stopped
-    Command::new("service")
+    Command::new("supervisorctl")
         .args([&app_conf_agent.service_app_name, "stop"])
         .output()?;
 
     // read app json conf
-    let raw_json = &std::fs::read_to_string(&app_conf_agent.secret_app_conf)
-        .map_err(|e| Error::CommandError(format!("cannot deserialize encrypted app conf: {e}")))?;
-    let eac: EncryptedAppConf = serde_json::from_str(raw_json)
-        .map_err(|e| Error::CommandError(format!("cannot serialize encrypted app conf: {e}")))?;
+    let raw_json = std::fs::read_to_string(&app_conf_agent.secret_app_conf)?;
+    let eac: EncryptedAppConf = serde_json::from_str(&raw_json).map_err(Error::Serialization)?;
 
     let nonce_bytes = general_purpose::STANDARD_NO_PAD.decode(eac.nonce).unwrap();
     let ciphertext = general_purpose::STANDARD_NO_PAD.decode(eac.data).unwrap();
 
     // decrypt conf
-    let key = GenericArray::from_slice(&cfg.wrap_key);
+    let key = GenericArray::from_slice(&cfg.key);
     let nonce = Nonce::from_slice(&nonce_bytes);
     let cipher = Aes256Gcm::new(key);
     let app_cfg_content = cipher
         .decrypt(nonce, ciphertext.as_ref())
-        .map_err(|e| Error::CommandError(format!("cannot decrypt app configuration: {e}")))?;
+        .map_err(|e| Error::Cryptography(format!("cannot decrypt app conf: {e}")))?;
 
     // write decrypted app conf to encrypted tmpfs
-    std::fs::write(cfg.deployed_filepath, app_cfg_content)?;
+    std::fs::write(
+        app_conf_agent.encrypted_folder.join(APP_CONF_FILENAME),
+        app_cfg_content,
+    )?;
 
     // start app service
-    Command::new("service")
+    Command::new("supervisorctl")
         .args([&app_conf_agent.service_app_name, "start"])
         .output()?;
 

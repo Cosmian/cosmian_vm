@@ -20,7 +20,6 @@ pub(crate) struct App {
     /// Name of the Linux service (ie: nginx)
     pub service_app_name: String,
     /// Encrypted data storage (ie: tmpfs)
-    #[allow(dead_code)]
     pub encrypted_folder: PathBuf,
     /// Where the secret app conf is stored encrypted
     pub secret_app_conf: PathBuf,
@@ -31,7 +30,7 @@ pub(crate) struct EncryptedAppConf {
     /// Version of the app (ie: "1.0")
     pub version: String,
     /// Algorithm used for encryption (ie: "aes256-gcm")
-    pub algorithm: Algorithm,
+    pub algorithm: EncryptedAppConfAlgorithm,
     /// Base64-encoded nonce of the encrypted data (ie: "base64(abcdef)")
     pub nonce: String,
     /// Base64-encoded content of the encrypted data (ie: "base64(aes256-gcm(file_content))")
@@ -39,7 +38,7 @@ pub(crate) struct EncryptedAppConf {
 }
 
 #[derive(Deserialize, Serialize)]
-pub enum Algorithm {
+pub enum EncryptedAppConfAlgorithm {
     #[serde(rename = "aes256-gcm")]
     Aes256Gcm,
 }
@@ -62,7 +61,7 @@ mod tests {
     use base64::{engine::general_purpose, Engine as _};
 
     use crate::{
-        conf::{Algorithm, EncryptedAppConf},
+        conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
         CosmianVmAgent,
     };
 
@@ -90,7 +89,7 @@ mod tests {
     fn test_encrypted_app_conf() {
         let eac = EncryptedAppConf {
             version: "1.0".to_string(),
-            algorithm: Algorithm::Aes256Gcm,
+            algorithm: EncryptedAppConfAlgorithm::Aes256Gcm,
             nonce: general_purpose::STANDARD_NO_PAD.encode(b"1234"),
             data: general_purpose::STANDARD_NO_PAD.encode(b"5678"),
         };
