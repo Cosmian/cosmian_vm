@@ -20,10 +20,10 @@ pub(crate) struct Agent {
 pub(crate) struct App {
     /// Name of the Linux service (ie: nginx)
     pub service_app_name: String,
-    /// Encrypted data storage (ie: tmpfs)
-    pub encrypted_folder: PathBuf,
+    /// Decrypted data storage (ie: tmpfs)
+    pub decrypted_folder: PathBuf,
     /// Where the secret app conf is stored encrypted
-    pub secret_app_conf: PathBuf,
+    pub encrypted_secret_app_conf: PathBuf,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -78,8 +78,8 @@ mod tests {
     
             [app]
             service_app_name = "cosmian_kms"
-            encrypted_folder = "/mnt/cosmian_vm/data"
-            secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
+            decrypted_folder = "/mnt/cosmian_vm/data"
+            encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
             "#;
 
         let config: CosmianVmAgent = toml::from_str(cfg_str).unwrap();

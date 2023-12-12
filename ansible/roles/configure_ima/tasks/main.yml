@@ -22,38 +22,37 @@
     group: root
     mode: "0400"
 
-- name: Copier le script Bash sur la machine distante
+- name: Copy the bash script to the remote host (in order to update the grub conf)
   copy:
     content: |
-          #!/usr/bin/bash
-          f=/etc/default/grub
+      #!/usr/bin/bash
+      f=/etc/default/grub
 
-          ## Hash method
-          if grep -q ima_hash= $f ; then
-            # Hash method already set
-            sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
-          else
-            # Hash method not set
-            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
-          fi
+      ## Hash method
+      if grep -q ima_hash= $f ; then
+        # Hash method already set
+        sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
+      else
+        # Hash method not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
+      fi
 
-          ## Template format
-          if grep -q ima_template= $f ; then
-            # Template format already set
-            sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
-          else
-            # Template format not set
-            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
-          fi
+      ## Template format
+      if grep -q ima_template= $f ; then
+        # Template format already set
+        sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
+      else
+        # Template format not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
+      fi
     dest: /tmp/grub.sh
-    mode: '0755'  # Assurez-vous que le script est exécutable
+    mode: "0755" # Make the script executable
     remote_src: yes
 
-- name: Exécuter le script Bash sur la machine distante
+- name: Update the grub configuration
   command: "/tmp/grub.sh"
 
-
-- name: Supprimer le script Bash sur la machine distante
+- name: Remove the update grub configuration script
   file:
     path: "/tmp/grub.sh"
     state: absent
@@ -72,7 +71,7 @@
     - name: Update grub
       ansible.builtin.command:
         cmd: grub2-mkconfig -o /etc/grub2.cfg
-    
+
     - name: Selinux - allow https
       ansible.builtin.command:
         cmd: setsebool -P httpd_can_network_connect 1

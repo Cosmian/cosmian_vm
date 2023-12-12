@@ -61,7 +61,7 @@ impl VerifyArgs {
         if pcr_value != hex::decode(&expecting_pcr_value)? {
             println!("[ FAIL ] Verifying TPM attestation");
             anyhow::bail!(
-                "Bad PCR value ({} == {})",
+                "Bad PCR value '{}' (Expecting: '{}')",
                 hex::encode(pcr_value),
                 expecting_pcr_value.to_lowercase()
             );
