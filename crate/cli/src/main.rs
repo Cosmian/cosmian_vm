@@ -21,9 +21,9 @@ struct Cli {
     #[arg(long, action)]
     url: String,
 
-    /// Allow to connect using a self signed cert
+    /// Allow to connect using a self signed cert or not trusted cert chain
     #[arg(long)]
-    allow_self_signed: bool,
+    allow_insecure_tls: bool,
 }
 
 #[derive(Subcommand)]
@@ -38,7 +38,7 @@ enum CliCommands {
 async fn main() -> Result<()> {
     let opts = Cli::parse();
 
-    let client = CosmianVmClient::instantiate(&opts.url, opts.allow_self_signed)?;
+    let client = CosmianVmClient::instantiate(&opts.url, opts.allow_insecure_tls)?;
 
     match opts.command {
         CliCommands::Snapshot(args) => args.run(&client).await,

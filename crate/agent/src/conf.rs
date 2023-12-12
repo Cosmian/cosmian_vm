@@ -70,8 +70,8 @@ mod tests {
             [agent]
             host = "127.0.0.1"
             port = 5355
-            ssl_certificate = "../tests/data/cert.pem"
-            ssl_private_key = "../../tests/data/key.pem"
+            ssl_certificate = "../data/cert.pem"
+            ssl_private_key = "../data/key.pem"
 
             [app]
             service_app_name = "cosmian_kms"
@@ -86,8 +86,8 @@ mod tests {
                 agent: Agent {
                     host: "127.0.0.1".to_string(),
                     port: 5355,
-                    ssl_certificate: PathBuf::from("../tests/data/cert.pem"),
-                    ssl_private_key: PathBuf::from("../../tests/data/key.pem")
+                    ssl_certificate: PathBuf::from("../data/cert.pem"),
+                    ssl_private_key: PathBuf::from("../data/key.pem")
                 },
                 app: Some(App {
                     service_app_name: "cosmian_kms".to_string(),

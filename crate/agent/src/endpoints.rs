@@ -20,8 +20,8 @@ use cosmian_vm_client::{
 };
 use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
 use sha1::digest::generic_array::GenericArray;
-use std::process::Command;
-use tee_attestation::{forge_report_data_with_nonce, get_quote, TeePolicy};
+use std::{collections::HashSet, fs::File, process::Command};
+use tee_attestation::{forge_report_data_with_nonce, get_quote, guess_tee, TeePolicy, TeeType};
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
@@ -52,37 +52,46 @@ pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
 /// Note: require root privileges
 #[get("/snapshot")]
 pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
-    let ima_ascii = read_ima_ascii()?;
-    let ima_ascii: &str = ima_ascii.as_ref();
-    let ima = Ima::try_from(ima_ascii)?;
+    let filehashes = match guess_tee()? {
+        // No reason to snapshot the filesystem on SGX
+        // The `mr_enclave` is sufficient to verify the integrity
+        TeeType::Sgx => SnapshotFiles(HashSet::new()),
+        TeeType::Sev | TeeType::Tdx => {
+            let ima_ascii = read_ima_ascii()?;
+            let ima_ascii: &str = ima_ascii.as_ref();
+            let ima = Ima::try_from(ima_ascii)?;
 
-    // We use the same hash method than the IMA used
-    let hash_method = ima.hash_file_method();
+            // We use the same hash method than the IMA used
+            let hash_method = ima.hash_file_method();
 
-    // Create the snapshotfiles with files contains in the IMA list
-    let mut filehashes = SnapshotFiles(
-        ima.entries
-            .iter()
-            .map(|item| (item.filename_hint.clone(), item.filedata_hash.clone()))
-            .collect(),
-    );
+            // Create the snapshotfiles with files contains in the IMA list
+            let mut filehashes = SnapshotFiles(
+                ima.entries
+                    .iter()
+                    .map(|item| (item.filename_hint.clone(), item.filedata_hash.clone()))
+                    .collect(),
+            );
 
-    // Add to the snapshotfiles all the file on the system
-    for file in WalkDir::new(ROOT_PATH)
-        .into_iter()
-        .filter_entry(filter_whilelist)
-        .filter_map(|file| file.ok())
-    {
-        // Only keeps files
-        if !file.file_type().is_file() {
-            continue;
+            // Add to the snapshotfiles all the file on the system
+            for file in WalkDir::new(ROOT_PATH)
+                .into_iter()
+                .filter_entry(filter_whilelist)
+                .filter_map(|file| file.ok())
+            {
+                // Only keeps files
+                if !file.file_type().is_file() {
+                    continue;
+                }
+
+                filehashes.0.insert((
+                    file.path().display().to_string(),
+                    hash_file(file.path(), &hash_method)?,
+                ));
+            }
+
+            filehashes
         }
-
-        filehashes.0.insert((
-            file.path().display().to_string(),
-            hash_file(file.path(), &hash_method)?,
-        ));
-    }
+    };
 
     // Get the measurement of the tee (the report data does not matter)
     let quote = get_quote(&[])?;
@@ -140,14 +149,23 @@ pub async fn get_tee_quote(
     conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<Vec<u8>>> {
     let data = data.into_inner();
-    let report_data = forge_report_data_with_nonce(
-        &data.nonce.try_into().map_err(|_| {
-            Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
-        })?,
-        std::fs::read_to_string(&conf.agent.ssl_certificate)?.as_bytes(),
-    )?;
-    let quote = get_quote(&report_data)?;
-    Ok(Json(quote))
+    // First: get the leaf certificate
+    let mut reader = std::io::BufReader::new(File::open(&conf.agent.ssl_certificate)?);
+    let certificate = rustls_pemfile::read_one(&mut reader)?;
+    if let Some(rustls_pemfile::Item::X509Certificate(certificate)) = certificate {
+        let report_data = forge_report_data_with_nonce(
+            &data.nonce.try_into().map_err(|_| {
+                Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
+            })?,
+            &certificate,
+        )?;
+        let quote = get_quote(&report_data)?;
+        return Ok(Json(quote));
+    }
+
+    Err(Error::Certificate(
+        "No PEM certificate found to build the report data".to_string(),
+    ))
 }
 
 /// Return the TPM quote
