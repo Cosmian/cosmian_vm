@@ -99,13 +99,13 @@ pem_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
 
 [app]
 service_app_name = "cosmian_helloworld"
-encrypted_folder = "/mnt/cosmian_vm/data"
-secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
+decrypted_folder = "/mnt/cosmian_vm/data"
+encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
 ```
 
 In that example, `cosmian_helloworld` is the name of the application (as a service). 
-- `encrypted_folder` stands for the directory where the application expects to find its decrypted configuration file (which should be located into an encrypted RAMFS)
-- `secret_app_conf` stands for the location where `cosmian_vm_agent` store the application configuration encrypted
+- `decrypted_folder` stands for the directory where the application expects to find its decrypted configuration file (which should be located into an encrypted RAMFS)
+- `encrypted_secret_app_conf` stands for the location where `cosmian_vm_agent` store the application configuration encrypted
 
 Now, you can provide the secret file from your localhost to the Cosmian VM as follow:
 
@@ -115,8 +115,8 @@ $ cosmian_vm app init --url https://cosmianvm.cosmian.dev --conf secrets.json
 
 The configuration file can be anything the application expects. Here, a json file. 
 
-The configuration file will be encrypted by the `cosmian_vm_agent` and stored encrypted in the value set in `secret_app_conf`. 
-A decrypted version of this file will be saved in the value set in `encrypted_folder`. The `init` subcommand will finally start the application identified in `service_app_name` field. 
+The configuration file will be encrypted by the `cosmian_vm_agent` and stored encrypted in the value set in `encrypted_secret_app_conf`. 
+A decrypted version of this file will be saved in the value set in `decrypted_folder`. The `init` subcommand will finally start the application identified in `service_app_name` field. 
 
 The key used to encrypt this file will be prompted in the output of the `init` command if you don't provide it as an args of the command using `--key`.
 

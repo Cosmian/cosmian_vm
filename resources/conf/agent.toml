@@ -3,5 +3,5 @@ pem_certificate = "/etc/letsencrypt/live/DN_PLACEHOLDER/cert.pem"
 
 [app]
 service_app_name = "cosmian_helloworld"
-encrypted_folder = "/mnt/cosmian_vm/data"
-secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
+decrypted_folder = "/mnt/cosmian_vm/data"
+encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"

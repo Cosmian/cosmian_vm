@@ -194,11 +194,11 @@ pub async fn init_app(
     let json = serde_json::to_string(&eac).map_err(Error::Serialization)?;
 
     // write encrypted app conf to non-encrypted fs
-    std::fs::write(&app_conf_agent.secret_app_conf, json.as_bytes())?;
+    std::fs::write(&app_conf_agent.encrypted_secret_app_conf, json.as_bytes())?;
 
     // write plaintext conf to encrypted tmpfs
     std::fs::write(
-        app_conf_agent.encrypted_folder.join(APP_CONF_FILENAME),
+        app_conf_agent.decrypted_folder.join(APP_CONF_FILENAME),
         app_conf_param.content,
     )?;
 
@@ -227,7 +227,7 @@ pub async fn restart_app(
     Supervisor::stop(&app_conf_agent.service_app_name)?;
 
     // read app json conf
-    let raw_json = std::fs::read_to_string(&app_conf_agent.secret_app_conf)?;
+    let raw_json = std::fs::read_to_string(&app_conf_agent.encrypted_secret_app_conf)?;
     let eac: EncryptedAppConf = serde_json::from_str(&raw_json).map_err(Error::Serialization)?;
 
     // decrypt conf
@@ -240,7 +240,7 @@ pub async fn restart_app(
 
     // write decrypted app conf to encrypted tmpfs
     std::fs::write(
-        app_conf_agent.encrypted_folder.join(APP_CONF_FILENAME),
+        app_conf_agent.decrypted_folder.join(APP_CONF_FILENAME),
         app_cfg_content,
     )?;
 
