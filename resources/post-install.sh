@@ -30,6 +30,11 @@ echo '0 12 * * * certbot renew --nginx --post-hook "service nginx restart"' | cr
 systemctl enable nginx
 systemctl start nginx
 
+# Replace domain name in agent.toml
+AGENT_CONF_PATH="/etc/cosmian_vm/agent.toml"
+sed -i "s/$DN_PLACEHOLDER/$DN/g" "$AGENT_CONF_PATH"
+
+# Replace domain name in supervisor conf file
 COSMIAN_VM_AGENT_CERTIFICATE="/etc/letsencrypt/live/$DN/cert.pem"
 
 OS_NAME=$(source /etc/os-release; echo "$NAME")

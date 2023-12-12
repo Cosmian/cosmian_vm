@@ -31,6 +31,39 @@
     group: root
     mode: 0500
 
+- name: Create cosmian_vm directory 
+  file:
+    path: /etc/cosmian_vm
+    state: directory
+    owner: root
+    group: root
+    mode: 0500
+
+- name: Copy agent.toml
+  ansible.builtin.copy:
+    src: /tmp/agent.toml
+    dest: /etc/cosmian_vm/agent.toml
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0500
+
+- name: Create a mountable directory 
+  file:
+    path: /mnt/cosmian_vm/data
+    state: directory
+    owner: root
+    group: root
+    mode: 0500
+
+- name: Mount a tmpfs volume
+  ansible.posix.mount:
+    src: tmpfs
+    path: /mnt/cosmian_vm/data
+    opts: "size=512m"
+    state: mounted
+    fstype: tmpfs
+
 - name: Create cosmian agent log directory
   ansible.builtin.file:
     path: /var/log/cosmian_vm
