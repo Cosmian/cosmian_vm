@@ -1,4 +1,6 @@
 #!/usr/bin/bash
+# shellcheck source=/dev/null
+# doc : https://www.shellcheck.net/wiki/SC1091
 
 set -e 
 
@@ -29,7 +31,18 @@ systemctl enable nginx
 systemctl start nginx
 
 COSMIAN_VM_AGENT_CERTIFICATE="/etc/letsencrypt/live/$DN/cert.pem"
-SUPERVISOR_CONF_PATH="/etc/supervisor/conf.d/cosmian_vm_agent.conf"
+
+OS_NAME=$(source /etc/os-release; echo "$NAME")
+
+if [[ $OS_NAME == "Ubuntu" ]]; then
+    SUPERVISOR_CONF_PATH="/etc/supervisor/conf.d/cosmian_vm_agent.conf"
+
+elif [[ $OS_NAME == "Red Hat Enterprise Linux" || $OS_NAME == "Rocky Linux" || $OS_NAME == "CentOS Linux" ]]; then
+    SUPERVISOR_CONF_PATH="/etc/supervisord.d/cosmian_vm_agent.ini"
+else
+        echo "unknown OS"
+        exit 1
+fi
 
 sed -i "s@$DN_PLACEHOLDER@$COSMIAN_VM_AGENT_CERTIFICATE@g" "$SUPERVISOR_CONF_PATH"
 supervisorctl reread

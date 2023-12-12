@@ -1,43 +1,91 @@
 ---
 # tasks file for roles/nginx
 
-- name: Update all packages to their latest version
-  apt:
-    update_cache: yes
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
 
-- name: Install Certbot
-  apt:
-    name: certbot
-    state: latest
-    update_cache: yes
+- name: Cerbot and Nginx install on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+  - name: Update all packages to their latest version
+    apt:
+      update_cache: yes
 
-- name: Install Nginx Mainline Key
-  ansible.builtin.apt_key:
-    url: https://nginx.org/keys/nginx_signing.key
-    state: present
-  tags: key
+  - name: Install Certbot
+    apt:
+      name: certbot
+      state: latest
+      update_cache: yes
 
-- name: Add Nginx Mainline Repo into sources lists
-  ansible.builtin.apt_repository:
-    repo: "deb https://nginx.org/packages/mainline/ubuntu jammy nginx"
-    state: present
-    update_cache: false
-  tags: repo
+  - name: Install Nginx Mainline Key
+    ansible.builtin.apt_key:
+      url: https://nginx.org/keys/nginx_signing.key
+      state: present
+    tags: key
 
-- name: Generate DH Parameters
-  community.crypto.openssl_dhparam:
-    path: /etc/letsencrypt/ssl-dhparams.pem
-    size: 2048
-    mode: 0644
-    state: present
-  tags: dhparam
+  - name: Add Nginx Mainline Repo into sources lists
+    ansible.builtin.apt_repository:
+      repo: "deb https://nginx.org/packages/mainline/ubuntu jammy nginx"
+      state: present
+      update_cache: false
+    tags: repo
 
-- name: Install Nginx
-  apt:
-    name: nginx
-    state: latest
-    update_cache: yes
-  tags: nginx
+  - name: Generate DH Parameters
+    community.crypto.openssl_dhparam:
+      path: /etc/letsencrypt/ssl-dhparams.pem
+      size: 2048
+      mode: 0644
+      state: present
+    tags: dhparam
+
+  - name: Install Nginx
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+    tags: nginx
+
+  - name: Install custom nginx.conf
+    ansible.builtin.template:
+      src: ubuntu_default_nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      owner: root
+      group: root
+      mode: 0644
+    changed_when: false
+
+- name: Cerbot and Nginx install on RedHat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  block:
+  - name: Update all packages to their latest version
+    dnf:
+      update_cache: yes
+
+  - name: Install epel-release
+    ansible.builtin.dnf:
+      name: 
+        - 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm'
+      state: present
+      update_cache: yes
+      disable_gpg_check: true
+
+  - name: Install Nginx and Certbot
+    ansible.builtin.dnf:
+      name: 
+        - nginx
+        - certbot
+      state: latest
+      update_cache: yes
+
+  - name: Install custom nginx.conf
+    ansible.builtin.template:
+      src: redhat_default_nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      owner: root
+      group: root
+      mode: 0644
+    changed_when: false
 
 - name: Make sure the sites-available, sites-enabled and conf.d directories exist
   file:
@@ -58,11 +106,3 @@
     mode: 0644
   changed_when: false
 
-- name: Install custom nginx.conf
-  ansible.builtin.template:
-    src: default_nginx.conf.j2
-    dest: /etc/nginx/nginx.conf
-    owner: root
-    group: root
-    mode: 0644
-  changed_when: false

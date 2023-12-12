@@ -1,6 +1,10 @@
 ---
 # tasks file for ansible/roles/configure_ima
 
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
+
 - name: Create ima folder
   file:
     path: /etc/ima
@@ -18,17 +22,57 @@
     group: root
     mode: "0400"
 
-# Hash and template method
-- name: Set hash and template method
-  lineinfile:
-    path: /etc/default/grub
-    regex: 'GRUB_CMDLINE_LINUX="'
-    line: 'GRUB_CMDLINE_LINUX="ima_hash=sha256 ima_template=ima-ng"'
-    insertafter: "GRUB_CMDLINE_LINUX_DEFAULT"
-    state: present
-    backup: yes
+- name: Copier le script Bash sur la machine distante
+  copy:
+    content: |
+          #!/usr/bin/bash
+          f=/etc/default/grub
+
+          ## Hash method
+          if grep -q ima_hash= $f ; then
+            # Hash method already set
+            sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
+          else
+            # Hash method not set
+            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
+          fi
+
+          ## Template format
+          if grep -q ima_template= $f ; then
+            # Template format already set
+            sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
+          else
+            # Template format not set
+            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
+          fi
+    dest: /tmp/grub.sh
+    mode: '0755'  # Assurez-vous que le script est exécutable
+    remote_src: yes
+
+- name: Exécuter le script Bash sur la machine distante
+  command: "/tmp/grub.sh"
+
+
+- name: Supprimer le script Bash sur la machine distante
+  file:
+    path: "/tmp/grub.sh"
+    state: absent
 
 # Update grub
-- name: Update grub
-  ansible.builtin.command:
-    cmd: update-grub
+- name: Update grub on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+    - name: Update grub
+      ansible.builtin.command:
+        cmd: update-grub
+
+- name: Update grub on RedHat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  block:
+    - name: Update grub
+      ansible.builtin.command:
+        cmd: grub2-mkconfig -o /etc/grub2.cfg
+    
+    - name: Selinux - allow https
+      ansible.builtin.command:
+        cmd: setsebool -P httpd_can_network_connect 1

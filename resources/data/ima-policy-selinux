@@ -29,3 +29,4 @@ measure func=BPRM_CHECK
 measure func=FILE_MMAP mask=MAY_EXEC
 measure func=MODULE_CHECK uid=0
 measure obj_type=etc_t
+measure obj_type=httpd_config_t

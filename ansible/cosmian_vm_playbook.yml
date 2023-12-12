@@ -5,5 +5,5 @@
   roles:
     - configure_ima
     - nginx
-    - no_updates
     - cosmian_vm_agent
+    - no_updates

@@ -22,7 +22,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      
+      - uses: geekyeggo/delete-artifact@v2
+        with:
+            name: cosmian_vm_agent
+      
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -39,7 +43,7 @@ jobs:
           name: cosmian_vm_agent
           path: target/debug/cosmian_vm_agent
 
-  packer-docker-base:
+  deploy-cosmian-vm-image:
     needs: build-cosmian-vm
     name: Build Cosmian VM Image
     runs-on: ubuntu-22.04
@@ -57,16 +61,29 @@ jobs:
           name: cosmian_vm_agent
           path: packer/cosmian_vm_agent
 
-      - name: "Authenticate to Google Cloud"
-        id: "auth"
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-3
+
+      - name: Authenticate to Google Cloud
         uses: "google-github-actions/auth@v1"
         with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+            credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
-        id: setup
+
+      - name: Run `packer init`
+        run: packer init -machine-readable gcp.pkr.hcl
+
+      - name: Install plugins
+        run: |
+          packer plugins install github.com/hashicorp/amazon
+          packer plugins install github.com/hashicorp/googlecompute
+          packer plugins install github.com/hashicorp/ansible
 
       - name: Run `packer build`
-        id: build
-        run: packer build gcp_ansible.json
+        run: packer build gcp.pkr.hcl
