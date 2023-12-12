@@ -2,10 +2,10 @@
 
 Cosmian VM allows you to deploy an application on a cloud provider instance, running in a confidential context with verifiability at any time.
 
-- No binary modification: the application doesn’t need any third party library or any specific adaptation
-- Simplicity is gold: reduce at its minimum the number of manual actions the user has to do to spawn a Cosmian VM
-- Confidentiality: the application runs in a Trusted Execution Environment (encrypted memory)
-- Verifiability: a user is able to verify the integrity of the system (OS & application) at any time
+- **No binary modification**: the application doesn’t need any third party library or any specific adaptation
+- **Simplicity is gold**: reduce at its minimum the number of manual actions the user has to do to spawn a Cosmian VM
+- **Confidentiality**: the application runs in a Trusted Execution Environment (encrypted memory)
+- **Verifiability**: a user is able to verify the integrity of the system (OS & application) at any time
 
 ## Setup flow
 
@@ -34,21 +34,32 @@ Cosmian VM supports these kinds of TEE:
 - Intel TDX
 - AMD SEV
 
-## Setup a Cosmian VM
+## Setup a Cosmian VM on SEV/TDX
 
 A Cosmian VM image containing a full configured environment can be built as follow:
 
 ```sh
 $ cd packer
+$ # Create a service account on GCP and download the JSON file
+$ # https://console.cloud.google.com/iam-admin/serviceaccounts?cloudshell=false&project=MY_PROJECT
+$ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/my-project-d42061429e6a.json"
 $ packer build gcp.pkr.hcl
 ```
 
 This image:
 - contains the fully configured IMA
 - contains the fully configured SELinux 
-- disable the auto-update (to avoid any modification of the Cosmian VM after having snapshoted it)
+- disables the auto-update (to avoid any modification of the Cosmian VM after having snapshoted it)
 - contains the fully configured `cosmian_vm_agent` and a nginx to redirect queries to it
 - contains a script `cosmian_vm_post_install.sh` to finalize the configuration of the Cosmian VM after installing the image on a fresh environment. It will setup the SSL certificate and finalize the configuration of the nginx & `cosmian_vm_agent`
+
+You can start/restart/stop the Cosmian VM Agent as follow:
+
+```sh
+$ supervisorctl start cosmian_vm_agent
+$ supervisorctl restart cosmian_vm_agent
+$ supervisorctl stop cosmian_vm_agent
+ ```
 
 ## Compile
 
@@ -89,7 +100,7 @@ $ cosmian_vm verify --url https://cosmianvm.cosmian.dev --snapshot cosmian_vm.sn
 
 ## Provide secrets
 
-You can also provide a secret file to an application running inside the `cosmian_vm`. 
+You can also provide a secret file to an application running inside the Cosmian VM. 
 
 Prio to send the secrets, you should have configured the  `app` section in the `agent.conf` as follow:
 
@@ -103,7 +114,7 @@ decrypted_folder = "/mnt/cosmian_vm/data"
 encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
 ```
 
-In that example, `cosmian_helloworld` is the name of the application (as a service). 
+In that example, `cosmian_helloworld` is the name of the application (as a `supervisor` service). 
 - `decrypted_folder` stands for the directory where the application expects to find its decrypted configuration file (which should be located into an encrypted RAMFS)
 - `encrypted_secret_app_conf` stands for the location where `cosmian_vm_agent` store the application configuration encrypted
 
