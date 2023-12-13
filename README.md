@@ -12,7 +12,7 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
 A confidential VM is instanciated from a cloud provider platform, including Cosmian VM solution. After installing all dependencies, a snapshot of the VM is done and integrity checks can be performed on the running application, in order to verify the running code and infrastructure.
 
 <p align="center">
-  <img src="resources/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
+  <img src="resources/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
 ## Verification steps
@@ -24,7 +24,7 @@ Cosmian verification process is performed by the admin sys, requesting on the ru
 - TPM (Trusted Platform Module) elements to attest a TEE and the integrity of the system (IMA)
 
 <p align="center">
-  <img src="resources/confidential_vm_verification_flow.drawio.svg" alt="verification flow">
+  <img src="resources/images/confidential_vm_verification_flow.drawio.svg" alt="verification flow">
 </p>
 
 ## Coverage
@@ -149,6 +149,9 @@ encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
 In that example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service) is the name of the application (as a `supervisor` service). 
 - `decrypted_folder` stands for the directory where the application expects to find its decrypted configuration file (which should be located into an encrypted RAMFS)
 - `encrypted_secret_app_conf` stands for the location where `cosmian_vm_agent` stores the application configuration encrypted
+
+Note that the Cosmian VM is configured with a tmpfs directory: `/mnt/cosmian_vm/data` (size=512MB). The application can put volatile data in it. They are encrypted due to the fact that the RAM is encrypted. 
+If you change the value of `decrypted_folder`, make sure to create a tmpfs to keep the encryption property of the data located in it. 
 
 Now, you can provide the secret file from your localhost to the Cosmian VM as follow:
 
