@@ -1,18 +1,18 @@
 name: Build and Publish VM Image
 
-on: [push]
+on:
   # Only run when pull request is closed and merged into main
-  # pull_request:
-  #   branches:
-  #     - main
-  #   types:
-  #     - closed
-  # # Do not run on push except on tags
-  # push:
-  #   branches-ignore:
-  #     - "**"
-  #   tags:
-  #     - "**"
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  # Do not run on push except on tags
+  push:
+    branches-ignore:
+      - "**"
+    tags:
+      - "**"
 
 jobs:
   build-cosmian-vm:
