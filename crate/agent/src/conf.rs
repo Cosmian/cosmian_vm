@@ -3,13 +3,13 @@ use std::path::PathBuf;
 use cosmian_vm_client::ser_de::base64_serde;
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, PartialEq, Debug)]
 pub struct CosmianVmAgent {
     pub agent: Agent,
     pub app: Option<App>,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, PartialEq, Debug)]
 pub struct Agent {
     /// The host to listen on
     pub host: String,
@@ -21,7 +21,7 @@ pub struct Agent {
     pub ssl_private_key: PathBuf,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, PartialEq, Debug)]
 pub struct App {
     /// Name of the Linux service (ie: nginx)
     pub service_app_name: String,
@@ -57,12 +57,12 @@ pub enum EncryptedAppConfAlgorithm {
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
-
+    use crate::conf::App;
     use crate::{
-        conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
+        conf::{Agent, EncryptedAppConf, EncryptedAppConfAlgorithm},
         CosmianVmAgent,
     };
+    use std::path::PathBuf;
 
     #[test]
     fn test_agent_toml() {
@@ -81,8 +81,20 @@ mod tests {
 
         let config: CosmianVmAgent = toml::from_str(cfg_str).unwrap();
         assert_eq!(
-            config.agent.ssl_certificate,
-            PathBuf::from("../tests/data/cert.pem")
+            config,
+            CosmianVmAgent {
+                agent: Agent {
+                    host: "127.0.0.1".to_string(),
+                    port: 5355,
+                    ssl_certificate: PathBuf::from("../tests/data/cert.pem"),
+                    ssl_private_key: PathBuf::from("../../tests/data/key.pem")
+                },
+                app: Some(App {
+                    service_app_name: "cosmian_kms".to_string(),
+                    decrypted_folder: PathBuf::from("/mnt/cosmian_vm/data"),
+                    encrypted_secret_app_conf: PathBuf::from("/etc/cosmian_vm/app_secrets.json")
+                })
+            }
         );
     }
 

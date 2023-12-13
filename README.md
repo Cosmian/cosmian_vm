@@ -69,14 +69,14 @@ This image:
 
 ## Start a Cosmian VM on SEV/TDX
 
-Now, instanciate a VM based on the built image.
+Now, instantiate a VM based on the built image.
 
-On a fresh installation, the `cosmian_vm_agent` uses a self-signed certificate generated at the start of the service and set the `CommonName` of the certificat to the value of the machine hostname. 
+On a fresh installation, the `cosmian_vm_agent` uses a self-signed certificate generated at the start of the service and set the `CommonName` of the certificate to the value of the machine hostname. 
 
 You can change that at will:
 - Edit your DNS register to point to that VM 
-- Create a trusted certificat using the method of your choice (*Let's encrypt* for instance)
-- Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and privat key. 
+- Create a trusted certificate using the method of your choice (*Let's encrypt* for instance)
+- Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key. 
 
 The Cosmian VM Agent relies on a configuration file located at `/etc/cosmian_vm/agent.toml`. Feel free to edit it. 
 A minimal configuration file is:
@@ -150,7 +150,7 @@ In that example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-se
 - `decrypted_folder` stands for the directory where the application expects to find its decrypted configuration file (which should be located into an encrypted RAMFS)
 - `encrypted_secret_app_conf` stands for the location where `cosmian_vm_agent` stores the application configuration encrypted
 
-Note that the Cosmian VM is configured with a tmpfs directory: `/mnt/cosmian_vm/data` (size=512MB). The application can put volatile data in it. They are encrypted due to the fact that the RAM is encrypted. 
+Note that the Cosmian VM is configured with a tmpfs directory: `/mnt/cosmian_vm/data` (size=512MB). The application can put volatile data in it. Data in this directory is encrypted due to the fact that the RAM is encrypted. 
 If you change the value of `decrypted_folder`, make sure to create a tmpfs to keep the encryption property of the data located in it. 
 
 Now, you can provide the secret file from your localhost to the Cosmian VM as follow:

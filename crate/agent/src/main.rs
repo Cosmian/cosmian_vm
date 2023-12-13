@@ -44,7 +44,7 @@ async fn main() -> Result<()> {
             let hostname = hostname.to_string_lossy();
             let subject = format!("CN={hostname},O=Cosmian Tech,C=FR,L=Paris,ST=Ile-de-France");
             let (sk, cert) =
-                generate_self_signed_cert(&subject, vec![&host], TLS_DAYS_BEFORE_EXPIRATION)?;
+                generate_self_signed_cert(&subject, &[&host], TLS_DAYS_BEFORE_EXPIRATION)?;
 
             let mut file = File::create(&ssl_certificate)?;
             file.write_all(cert.as_bytes())?;
@@ -52,9 +52,9 @@ async fn main() -> Result<()> {
             let mut file = File::create(&ssl_private_key)?;
             file.write_all(sk.as_bytes())?;
 
-            tracing::info!("The certificat has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}")
+            tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}")
         }
-        (true, true) => tracing::info!("The certificat has been read from {ssl_certificate:?}"),
+        (true, true) => tracing::info!("The certificate has been read from {ssl_certificate:?}"),
         (false, true) => {
             return Err(anyhow::anyhow!(
                 "The private key file doesn't exist whereas the certificat exists"

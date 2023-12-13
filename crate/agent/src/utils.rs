@@ -79,7 +79,7 @@ pub fn _filter_whilelist(entry: &DirEntry) -> Result<bool, Error> {
 /// Generate a self-signed certificate
 pub fn generate_self_signed_cert(
     subject: &str,
-    subject_alternative_names: Vec<&str>,
+    subject_alternative_names: &[&str],
     days_before_expiration: u64,
 ) -> Result<(String, String), Error> {
     let mut rng = ChaCha20Rng::from_entropy();
