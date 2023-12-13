@@ -4,6 +4,5 @@
   become: true
   roles:
     - configure_ima
-    - nginx
     - cosmian_vm_agent
     - no_updates

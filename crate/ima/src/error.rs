@@ -3,17 +3,17 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error(transparent)]
-    BincodeError(#[from] bincode::Error),
+    Bincode(#[from] bincode::Error),
     #[error("{0}")]
-    ParsingError(String),
+    Parsing(String),
     #[error("{0}")]
     NotImplemented(String),
     #[error("{0}")]
-    ImaParsingError(String),
+    ImaParsing(String),
     #[error(transparent)]
-    IntParsingError(#[from] std::num::ParseIntError),
+    IntParsing(#[from] std::num::ParseIntError),
     #[error(transparent)]
-    HexParsingError(#[from] hex::FromHexError),
+    HexParsing(#[from] hex::FromHexError),
     #[error(transparent)]
-    IOError(#[from] std::io::Error),
+    IO(#[from] std::io::Error),
 }

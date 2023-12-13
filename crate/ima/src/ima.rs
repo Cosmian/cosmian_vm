@@ -71,7 +71,7 @@ impl TryFrom<&str> for ImaTemplate {
             "ima" => Ok(ImaTemplate::Ima),
             "ima-ng" => Ok(ImaTemplate::ImaNg),
             "ima-sig" => Ok(ImaTemplate::ImaSig),
-            _ => Err(Error::ParsingError(format!(
+            _ => Err(Error::Parsing(format!(
                 "Unsupported '{string}' ima template",
             ))),
         }
@@ -100,19 +100,19 @@ impl TryFrom<&str> for ImaEntry {
         // The filename_hint can't contain whitespaces. If the filename contains file, they are replace by '_' before being inserted in the IMA
         // We can therefore simply split the line using the whitespaces
 
-        let pcr = split.first().ok_or(Error::ImaParsingError(
+        let pcr = split.first().ok_or(Error::ImaParsing(
             "Ima entry line malformed (index: 0)".to_string(),
         ))?;
 
-        let template_hash = split.get(1).ok_or(Error::ImaParsingError(
+        let template_hash = split.get(1).ok_or(Error::ImaParsing(
             "Ima entry line malformed (index: 1)".to_string(),
         ))?;
 
-        let template_name = ImaTemplate::try_from(*split.get(2).ok_or(Error::ImaParsingError(
+        let template_name = ImaTemplate::try_from(*split.get(2).ok_or(Error::ImaParsing(
             "Ima entry line malformed (index: 2)".to_string(),
         ))?)?;
 
-        let raw_filedata_hash = split.get(3).ok_or(Error::ImaParsingError(
+        let raw_filedata_hash = split.get(3).ok_or(Error::ImaParsing(
             "Ima entry line malformed (index: 3)".to_string(),
         ))?;
 
@@ -139,13 +139,13 @@ impl TryFrom<&str> for ImaEntry {
 
         let filename_hint = split
             .get(4)
-            .ok_or(Error::ImaParsingError(
+            .ok_or(Error::ImaParsing(
                 "Ima entry line malformed (index: 4)".to_string(),
             ))?
             .to_string();
 
         let file_signature = if template_name == ImaTemplate::ImaSig && split.len() == 6 {
-            Some(hex::decode(split.get(5).ok_or(Error::ImaParsingError(
+            Some(hex::decode(split.get(5).ok_or(Error::ImaParsing(
                 "Ima entry line malformed (index: 5)".to_string(),
             ))?)?)
         } else {
@@ -154,13 +154,13 @@ impl TryFrom<&str> for ImaEntry {
 
         if template_name == ImaTemplate::ImaSig {
             if split.len() > 6 {
-                return Err(Error::ImaParsingError(format!(
+                return Err(Error::ImaParsing(format!(
                     "Extra field detected: {}",
                     split.len()
                 )));
             }
         } else if split.len() > 5 {
-            return Err(Error::ImaParsingError(format!(
+            return Err(Error::ImaParsing(format!(
                 "Extra field detected: {}",
                 split.len()
             )));
@@ -206,7 +206,7 @@ impl TryFrom<&[u8]> for Ima {
             // Parse the name of the template
             let template_name = &data
                 .get(cursor..(cursor + event.name_length as usize))
-                .ok_or(Error::ImaParsingError(
+                .ok_or(Error::ImaParsing(
                     "Not enough bytes in the buffer to parse IMA entry template name".to_string(),
                 ))?;
             let template_name = String::from_utf8_lossy(template_name).to_string();
@@ -217,21 +217,20 @@ impl TryFrom<&[u8]> for Ima {
             // Parse the length of the template data
             let length = bincode::deserialize::<u32>(
                 data.get(cursor..(cursor + (u32::BITS as usize / 8)))
-                    .ok_or(Error::ImaParsingError(
+                    .ok_or(Error::ImaParsing(
                         "Not enough bytes in the buffer to parse IMA entry length".to_string(),
                     ))?,
             )? as usize;
             cursor += u32::BITS as usize / 8;
 
             // Parse the template data
-            let template_data =
-                &data
-                    .get(cursor..(cursor + length))
-                    .ok_or(Error::ImaParsingError(format!(
-                        "Not enough bytes in the buffer to parse IMA entry template: {} > {}",
-                        cursor + length,
-                        data.len(),
-                    )))?;
+            let template_data = &data
+                .get(cursor..(cursor + length))
+                .ok_or(Error::ImaParsing(format!(
+                    "Not enough bytes in the buffer to parse IMA entry template: {} > {}",
+                    cursor + length,
+                    data.len(),
+                )))?;
             cursor += length;
 
             // From the template data, parse the size of the hash field
@@ -275,7 +274,7 @@ impl TryFrom<&[u8]> for Ima {
             };
 
             if template_cursor != length {
-                return Err(Error::ImaParsingError(format!(
+                return Err(Error::ImaParsing(format!(
                     "Extra bytes {} unparsed in buffer",
                     template_cursor - length
                 )));

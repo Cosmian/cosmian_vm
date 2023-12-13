@@ -1,8 +1,8 @@
+use std::io::Write;
 use std::sync::Arc;
 use std::time::Duration;
 
 use http::{HeaderMap, HeaderValue, StatusCode};
-use ratls::verify::get_server_certificate;
 use reqwest::{Client, ClientBuilder, Response, Url};
 use rustls::{client::WebPkiVerifier, Certificate};
 use serde::{Deserialize, Serialize};
@@ -256,4 +256,36 @@ pub fn build_tls_client_tee(
 
     // Create a client builder
     Ok(Client::builder().use_preconfigured_tls(config))
+}
+
+/// Get the a certificate from a `host`:`port`
+pub fn get_server_certificate(host: &str, port: u32) -> Result<Vec<u8>, Error> {
+    let root_store = rustls::RootCertStore::empty();
+    let mut socket =
+        std::net::TcpStream::connect(format!("{host}:{port}")).map_err(|_| Error::Connection)?;
+
+    let mut config = rustls::ClientConfig::builder()
+        .with_safe_defaults()
+        .with_root_certificates(root_store)
+        .with_no_client_auth();
+    config
+        .dangerous()
+        .set_certificate_verifier(std::sync::Arc::new(NoVerifier));
+
+    let rc_config = std::sync::Arc::new(config);
+    let dns_name = host.try_into().map_err(|_| Error::DNSName)?;
+
+    let mut client =
+        rustls::ClientConnection::new(rc_config, dns_name).map_err(|_| Error::Connection)?;
+
+    let mut stream = rustls::Stream::new(&mut client, &mut socket);
+    stream.write_all(b"GET / HTTP/1.1\r\nConnection: close\r\n\r\n")?;
+
+    let certificates = client.peer_certificates().ok_or(Error::ServerCertificate)?;
+
+    Ok(certificates
+        .get(0)
+        .ok_or(Error::ServerCertificate)?
+        .as_ref()
+        .to_vec())
 }

@@ -3,21 +3,26 @@ use std::path::PathBuf;
 use cosmian_vm_client::ser_de::base64_serde;
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize)]
-pub(crate) struct CosmianVmAgent {
+#[derive(Deserialize, Clone, PartialEq, Debug)]
+pub struct CosmianVmAgent {
     pub agent: Agent,
     pub app: Option<App>,
 }
 
-#[derive(Deserialize)]
-pub(crate) struct Agent {
-    /// Certificate of the VM in PEM format
-    #[serde(with = "pem_reader")]
-    pub pem_certificate: String,
+#[derive(Deserialize, Clone, PartialEq, Debug)]
+pub struct Agent {
+    /// The host to listen on
+    pub host: String,
+    /// The port to listen on
+    pub port: u16,
+    /// SSL certificate of the VM in PEM format
+    pub ssl_certificate: PathBuf,
+    /// SSL private key of the VM in PEM format
+    pub ssl_private_key: PathBuf,
 }
 
-#[derive(Deserialize)]
-pub(crate) struct App {
+#[derive(Deserialize, Clone, PartialEq, Debug)]
+pub struct App {
     /// Name of the Linux service (ie: nginx)
     pub service_app_name: String,
     /// Decrypted data storage (ie: tmpfs)
@@ -50,32 +55,24 @@ pub enum EncryptedAppConfAlgorithm {
     Aes256Gcm,
 }
 
-mod pem_reader {
-    use serde::{Deserialize as _, Deserializer};
-
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<String, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s = String::deserialize(deserializer)?;
-        let pem_content = std::fs::read_to_string(s).map_err(serde::de::Error::custom)?;
-        Ok(pem_content)
-    }
-}
-
 #[cfg(test)]
 mod tests {
+    use crate::conf::App;
     use crate::{
-        conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
+        conf::{Agent, EncryptedAppConf, EncryptedAppConfAlgorithm},
         CosmianVmAgent,
     };
+    use std::path::PathBuf;
 
     #[test]
     fn test_agent_toml() {
         let cfg_str = r#"
             [agent]
-            pem_certificate = "../../tests/data/cert.pem"
-    
+            host = "127.0.0.1"
+            port = 5355
+            ssl_certificate = "../tests/data/cert.pem"
+            ssl_private_key = "../../tests/data/key.pem"
+
             [app]
             service_app_name = "cosmian_kms"
             decrypted_folder = "/mnt/cosmian_vm/data"
@@ -83,11 +80,22 @@ mod tests {
             "#;
 
         let config: CosmianVmAgent = toml::from_str(cfg_str).unwrap();
-        // test that the content of PEM cert is read
-        assert!(config
-            .agent
-            .pem_certificate
-            .starts_with("-----BEGIN CERTIFICATE"));
+        assert_eq!(
+            config,
+            CosmianVmAgent {
+                agent: Agent {
+                    host: "127.0.0.1".to_string(),
+                    port: 5355,
+                    ssl_certificate: PathBuf::from("../tests/data/cert.pem"),
+                    ssl_private_key: PathBuf::from("../../tests/data/key.pem")
+                },
+                app: Some(App {
+                    service_app_name: "cosmian_kms".to_string(),
+                    decrypted_folder: PathBuf::from("/mnt/cosmian_vm/data"),
+                    encrypted_secret_app_conf: PathBuf::from("/etc/cosmian_vm/app_secrets.json")
+                })
+            }
+        );
     }
 
     #[test]
