@@ -18,6 +18,11 @@ variable "ubuntu_ssh_username" {
   default = "ubuntu"
 }
 
+variable "redhat_ssh_username" {
+  type    = string
+  default = "ec2-user"
+}
+
 variable "ssh_timeout" {
   type    = string
   default = "10m"
@@ -46,8 +51,41 @@ source "amazon-ebs" "ubuntu" {
   instance_type          = var.instance_type
 }
 
+source "amazon-ebs" "redhat" {
+  source_ami             = var.redhat_source_ami
+  region                 = var.region
+  ssh_username           = var.redhat_ssh_username
+  ami_name               = var.redhat_ami_name
+  instance_type          = var.instance_type
+}
+
 build {
   sources = ["sources.amazon-ebs.ubuntu"]
+
+  provisioner "file" {
+    source      = "../resources/data/ima-policy"
+    destination = "/tmp/ima-policy"
+  }
+
+  provisioner "file" {
+    source      = "../resources/conf/agent.toml"
+    destination = "/tmp/agent.toml"
+  }
+
+  provisioner "file" {
+    source      = "./cosmian_vm_agent"
+    destination = "/tmp/"
+  }
+
+  provisioner "ansible" {
+    playbook_file = "../ansible/cosmian_vm_playbook.yml"
+    local_port    = 22
+    use_proxy     = false
+  }
+}
+
+build {
+  sources = ["sources.amazon-ebs.redhat"]
 
   provisioner "file" {
     source      = "../resources/data/ima-policy"
