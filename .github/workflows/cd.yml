@@ -1,18 +1,18 @@
 name: Build and Publish VM Image
 
-on:
-  # Only run when pull request is closed and merged into main
-  pull_request:
-    branches:
-      - main
-    types:
-      - closed
-  # Do not run on push except on tags
-  push:
-    branches-ignore:
-      - "**"
-    tags:
-      - "**"
+on: [push]
+  # # Only run when pull request is closed and merged into main
+  # pull_request:
+  #   branches:
+  #     - main
+  #   types:
+  #     - closed
+  # # Do not run on push except on tags
+  # push:
+  #   branches-ignore:
+  #     - "**"
+  #   tags:
+  #     - "**"
 
 jobs:
   build-cosmian-vm:
@@ -86,4 +86,4 @@ jobs:
           packer plugins install github.com/hashicorp/ansible
 
       - name: Run `packer build`
-        run: packer build gcp.pkr.hcl
+        run: packer build aws.pkr.hcl

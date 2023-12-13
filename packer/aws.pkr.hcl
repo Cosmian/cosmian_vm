@@ -48,10 +48,6 @@ source "amazon-ebs" "ubuntu" {
 
 build {
   sources = ["sources.amazon-ebs.ubuntu"]
-  provisioner "file" {
-    source      = "../resources/post-install.sh"
-    destination = "/tmp/cosmian_vm_post_install.sh"
-  }
 
   provisioner "file" {
     source      = "../resources/data/ima-policy"
@@ -59,8 +55,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "../resources/conf/nginx.conf"
-    destination = "/tmp/cosmian_vm_agent.conf"
+    source      = "../resources/conf/agent.toml"
+    destination = "/tmp/agent.toml"
   }
 
   provisioner "file" {
