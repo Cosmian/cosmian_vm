@@ -22,15 +22,6 @@
     group: root
     mode: 0500
 
-- name: Copy post-install.sh
-  ansible.builtin.copy:
-    src: /tmp/cosmian_vm_post_install.sh
-    dest: /usr/sbin/cosmian_vm_post_install.sh
-    remote_src: true
-    owner: root
-    group: root
-    mode: 0500
-
 - name: Create cosmian_vm directory 
   file:
     path: /etc/cosmian_vm
@@ -93,7 +84,7 @@
       group: root
       mode: 0644
 
-  - name: Check if Supervisor is started"
+  - name: Check if Supervisor is started
     systemd:
       name: supervisor
       state: started
@@ -105,6 +96,14 @@
   - name: Update all packages to their latest version
     dnf:
       update_cache: yes
+
+  - name: Install epel-release
+    ansible.builtin.dnf:
+      name: 
+        - 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm'
+      state: present
+      update_cache: yes
+      disable_gpg_check: true
 
   - name: Install supervisor
     ansible.builtin.dnf:
