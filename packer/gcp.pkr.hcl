@@ -128,6 +128,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "../resources/conf/agent.toml"
+    destination = "/tmp/agent.toml"
+  }
+
+  provisioner "file" {
     source      = "./cosmian_vm_agent"
     destination = "/tmp/"
   }
@@ -154,6 +159,11 @@ build {
   provisioner "file" {
     source      = "../resources/conf/nginx.conf"
     destination = "/tmp/cosmian_vm_agent.conf"
+  }
+
+  provisioner "file" {
+    source      = "../resources/conf/agent.toml"
+    destination = "/tmp/agent.toml"
   }
 
   provisioner "file" {

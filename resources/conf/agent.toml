@@ -1,5 +1,5 @@
 [agent]
-pem_certificate = "/etc/letsencrypt/live/DN_PLACEHOLDER/cert.pem"
+pem_certificate = "/etc/letsencrypt/live/COSMIAN_VM_DN_PLACEHOLDER/cert.pem"
 
 [app]
 service_app_name = "cosmian_helloworld"
