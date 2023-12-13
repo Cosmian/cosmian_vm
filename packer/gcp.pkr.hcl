@@ -112,19 +112,10 @@ source "googlecompute" "redhat" {
 
 build {
   sources = ["sources.googlecompute.ubuntu"]
-  provisioner "file" {
-    source      = "../resources/post-install.sh"
-    destination = "/tmp/cosmian_vm_post_install.sh"
-  }
 
   provisioner "file" {
     source      = "../resources/data/ima-policy"
     destination = "/tmp/ima-policy"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/nginx.conf"
-    destination = "/tmp/cosmian_vm_agent.conf"
   }
 
   provisioner "file" {
@@ -146,19 +137,10 @@ build {
 
 build {
   sources = ["sources.googlecompute.redhat"]
-  provisioner "file" {
-    source      = "../resources/post-install.sh"
-    destination = "/tmp/cosmian_vm_post_install.sh"
-  }
 
   provisioner "file" {
     source      = "../resources/data/ima-policy-selinux"
     destination = "/tmp/ima-policy"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/nginx.conf"
-    destination = "/tmp/cosmian_vm_agent.conf"
   }
 
   provisioner "file" {
