@@ -9,34 +9,43 @@ pub enum Error {
     #[error("{0}")]
     BadRequest(String),
     #[error("{0}")]
-    CommandError(String),
+    Certificate(String),
+    #[error("{0}")]
+    Command(String),
+    #[error("{0}")]
+    Configuration(String),
     #[error("{0}")]
     Cryptography(String),
     #[error(transparent)]
-    HexParsingError(#[from] hex::FromHexError),
+    HexParsing(#[from] hex::FromHexError),
     #[error(transparent)]
-    ImaError(#[from] ima::error::Error),
+    Ima(#[from] ima::error::Error),
     #[error(transparent)]
-    IOError(#[from] std::io::Error),
+    IO(#[from] std::io::Error),
+    #[error(transparent)]
+    Rustls(#[from] rustls::Error),
     #[error(transparent)]
     Serialization(#[from] serde_json::Error),
     #[error(transparent)]
     TeeAttestation(#[from] tee_attestation::error::Error),
     #[error(transparent)]
-    WalkDirError(#[from] walkdir::Error),
+    WalkDir(#[from] walkdir::Error),
 }
 
 impl ResponseError for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::CommandError(_)
-            | Error::HexParsingError(_)
-            | Error::ImaError(_)
-            | Error::IOError(_)
+            Error::Certificate(_)
+            | Error::Command(_)
+            | Error::Configuration(_)
+            | Error::HexParsing(_)
+            | Error::Ima(_)
+            | Error::IO(_)
             | Error::TeeAttestation(_)
             | Error::Cryptography(_)
             | Error::Serialization(_)
-            | Error::WalkDirError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            | Error::Rustls(_)
+            | Error::WalkDir(_) => StatusCode::INTERNAL_SERVER_ERROR,
 
             Error::BadRequest(_) => StatusCode::BAD_REQUEST,
         }

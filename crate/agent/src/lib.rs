@@ -1,3 +1,5 @@
+use std::{fs::File, path::Path};
+
 use actix_cors::Cors;
 use actix_http::Method;
 use actix_web::{
@@ -5,8 +7,8 @@ use actix_web::{
     web::{scope, Data, PayloadConfig, ServiceConfig},
 };
 use conf::CosmianVmAgent;
-
-static AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
+use error::Error;
+use rustls::ServerConfig;
 
 pub mod conf;
 pub mod endpoints;
@@ -25,13 +27,7 @@ pub fn endpoints(cfg: &mut ServiceConfig) {
     cfg.service(endpoints::restart_app);
 }
 
-pub fn config() -> impl FnOnce(&mut ServiceConfig) {
-    let conf: CosmianVmAgent = toml::from_str(
-        &std::fs::read_to_string(AGENT_CONF)
-            .unwrap_or_else(|_| panic!("cannot read agent conf at: `{AGENT_CONF:?}`")),
-    )
-    .expect("failed to parse agent configuration as a valid toml file");
-
+pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
     move |cfg: &mut ServiceConfig| {
         cfg.app_data(PayloadConfig::new(10_000_000_000))
             .app_data(Data::new(conf))
@@ -58,4 +54,28 @@ pub fn config() -> impl FnOnce(&mut ServiceConfig) {
                     .configure(endpoints)
             });
     }
+}
+
+/// Create a TLS config builder
+pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerConfig, Error> {
+    let mut cert_reader = std::io::BufReader::new(File::open(certificate)?);
+    let mut sk_reader = std::io::BufReader::new(File::open(private_key)?);
+
+    let certificate = rustls_pemfile::certs(&mut cert_reader)?
+        .into_iter()
+        .map(rustls::Certificate)
+        .collect();
+    let key = rustls_pemfile::pkcs8_private_keys(&mut sk_reader)?;
+
+    Ok(ServerConfig::builder()
+        .with_safe_defaults()
+        .with_no_client_auth()
+        .with_single_cert(
+            certificate,
+            rustls::PrivateKey(
+                key.get(0)
+                    .ok_or_else(|| Error::Certificate("TLS private key not found!".to_owned()))?
+                    .clone(),
+            ),
+        )?)
 }

@@ -15,14 +15,14 @@ pub(crate) mod internal {
                     if output.status.success() {
                         Ok(String::from_utf8_lossy(&output.stdout).to_string())
                     } else {
-                        Err(Error::CommandError(format!(
+                        Err(Error::Command(format!(
                             "Output: {} - error: {}",
                             String::from_utf8_lossy(&output.stdout),
                             String::from_utf8_lossy(&output.stderr)
                         )))
                     }
                 }
-                Err(e) => Err(Error::CommandError(e.to_string())),
+                Err(e) => Err(Error::Command(e.to_string())),
             }
         }
     }

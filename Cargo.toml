@@ -11,14 +11,19 @@ strip = true
 # strip = true
 
 [workspace.dependencies]
+aes-gcm = "0.10"
 anyhow = "1.0"
+der = { version = "0.7", features = ["alloc", "derive", "flagset", "oid"] }
+ecdsa = { version = "0.16", features = ["sha2", "spki"] }
 hex = "0.4"
 sha1 = "0.10"
 sha2 = "0.10"
-# ratls = { path = "../microservice_encryption/tee-tools/ratls" }
-# tee_attestation = { path = "../microservice_encryption/tee-tools/tee_attestation" }
-ratls = { git = "https://github.com/Cosmian/tee-tools", branch = "get_quote" }
+p256 = { version = "0.13", features = ["arithmetic", "pkcs8"] }
+rand = "0.8"
+rand_chacha = "0.3"
+spki = "0.7"
 tee_attestation = { git = "https://github.com/Cosmian/tee-tools", branch = "get_quote" }
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.96"
+x509-cert = { version = "0.2", features = ["builder", "hazmat"] }

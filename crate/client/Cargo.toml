@@ -8,7 +8,6 @@ license = "MIT/Apache-2.0"
 base64 = "0.21"
 hex = { workspace = true }
 http = "0.2"
-ratls = { workspace = true }
 # Important: align the rustls version with reqwest rustls dependency
 reqwest = { version = "0.11.22", features = [
     "json",

@@ -10,20 +10,15 @@ use tokio::task::spawn_blocking;
 /// Verify a Cosmian VM
 #[derive(Args, Debug)]
 pub struct VerifyArgs {
-    /// The URL of the Cosmian VM
-    #[arg(long, action)]
-    url: String,
-
     /// Path of the Cosmian VM snapshot
     #[arg(short, long)]
     snapshot: PathBuf,
 }
 
 impl VerifyArgs {
-    pub async fn run(&self) -> Result<()> {
+    pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
         println!("Fetching the collaterals...");
 
-        let client = CosmianVmClient::instantiate(&self.url, false)?;
         let ima_binary = client.ima_binary().await?;
 
         if ima_binary.is_empty() {

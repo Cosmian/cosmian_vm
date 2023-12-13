@@ -4,18 +4,27 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aes-gcm = "0.10"
+aes-gcm = { workspace = true }
 anyhow = { workspace = true }
 actix-cors = "0.6"
 actix-http = "3"
-actix-web = "4"
+actix-web = { version = "4", features = ["rustls"] }
 cosmian_vm_client = { path = "../client" }
+ecdsa = { workspace = true }
+der = { workspace = true }
+gethostname = "0.4"
 hex = { workspace = true }
 ima = { path = "../ima" }
+p256 = { workspace = true }
+rand_chacha = { workspace = true }
+# Important: align the rustls version with actix rustls dependency
+rustls = { version = "0.20", features = ["dangerous_configuration"] }
+rustls-pemfile = "1.0"
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha1 = { workspace = true }
 sha2 = { workspace = true }
+spki = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
 toml = "0.8"
@@ -24,3 +33,4 @@ tracing-actix-web = "0.7"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uuid = { version = "1.3", features = ["serde", "v4"] }
 walkdir = "2.4"
+x509-cert = { workspace = true }

@@ -110,7 +110,7 @@ pub async fn get_pcr_value(path: Path<u32>) -> ResponseWithError<Json<String>> {
         .output()?;
 
     if !output.status.success() {
-        return Err(Error::CommandError(
+        return Err(Error::Command(
             format!(
                 "Command returns an error (code: {}): , {}",
                 output.status,
@@ -130,7 +130,7 @@ pub async fn get_pcr_value(path: Path<u32>) -> ResponseWithError<Json<String>> {
         return Ok(Json(output[(output.len() - 40)..].to_owned()));
     }
 
-    Err(Error::CommandError("Can't parse GOTPM output".to_string()))
+    Err(Error::Command("Can't parse GOTPM output".to_string()))
 }
 
 /// Return the TEE quote
@@ -144,7 +144,7 @@ pub async fn get_tee_quote(
         &data.nonce.try_into().map_err(|_| {
             Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
         })?,
-        conf.agent.pem_certificate.as_bytes(),
+        std::fs::read_to_string(&conf.agent.ssl_certificate)?.as_bytes(),
     )?;
     let quote = get_quote(&report_data)?;
     Ok(Json(quote))

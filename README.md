@@ -65,28 +65,34 @@ This image:
 - contains the fully configured IMA
 - contains the fully configured SELinux 
 - disables the auto-update (to avoid any modification of the Cosmian VM after having snapshoted it)
-- contains the fully configured `cosmian_vm_agent` and a nginx to redirect queries to it
-- contains a script `cosmian_vm_post_install.sh` to finalize the configuration of the Cosmian VM after installing the image on a fresh environment. It will setup the SSL certificate and finalize the configuration of the nginx & `cosmian_vm_agent`
+- contains the fully configured `cosmian_vm_agent` 
 
 ## Start a Cosmian VM on SEV/TDX
 
-Now, instanciate a VM based on the built image. After having instanciated it: 
-- Edit your DNS register to point to that VM and configure the networking/users on GCP
-- On the VM, run `sudo cosmian_vm_post_install.sh YOUR_DOMAIN_NAME` 
+Now, instanciate a VM based on the built image.
+
+On a fresh installation, the `cosmian_vm_agent` uses a self-signed certificate generated at the start of the service and set the `CommonName` of the certificat to the value of the machine hostname. 
+
+You can change that at will:
+- Edit your DNS register to point to that VM 
+- Create a trusted certificat using the method of your choice (*Let's encrypt* for instance)
+- Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and privat key. 
 
 The Cosmian VM Agent relies on a configuration file located at `/etc/cosmian_vm/agent.toml`. Feel free to edit it. 
 A minimal configuration file is:
 
 ```toml
 [agent]
-pem_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
+host = "127.0.0.1"
+port = 5355
+ssl_certificate = "/etc/cosmian_vm/cert.pem"
+ssl_private_key = "/etc/cosmian_vm/key.pem"
 ```
-
 
 Note, that you can start/restart/stop the Cosmian VM Agent as follow:
 
 ```sh
-$ # If the surpervisor configuration file has been editer, reload it first
+$ # If the surpervisor configuration file has been edited, reload it first
 $ supervisorctl reload cosmian_vm_agent
 $ supervisorctl start cosmian_vm_agent
 $ # Or
@@ -106,13 +112,19 @@ Then on your localhost, when you are sure your VM is fully configured and should
 1. Create a snapshot (once)
    
 ```sh
-$ cosmian_vm snapshot --url https://cosmianvm.cosmian.dev
+$ cosmian_vm --url https://cosmianvm.cosmian.dev snapshot
 ```
 
 2. Verify the current state of the machine
 
 ```sh
-$ cosmian_vm verify --url https://cosmianvm.cosmian.dev --snapshot cosmian_vm.snapshot  
+$ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.snapshot  
+```
+
+If you use the default Cosmian VM setup relying on a self-signed certificate, you need to add the argument: `--allow-self-signed` as follow:
+
+```sh
+$ cosmian_vm --url https://cosmianvm.cosmian.dev --allow-self-signed snapshot
 ```
 
 ## Provide secrets
@@ -123,7 +135,10 @@ Prior to send the secrets, you should have configured the  `app` section in the 
 
 ```toml
 [agent]
-pem_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
+host = "cosmianvm.cosmian.dev"
+port = 443
+ssl_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
+ssl_private_key = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/key.pem"
 
 [app]
 service_app_name = "cosmian_helloworld"
@@ -138,7 +153,7 @@ In that example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-se
 Now, you can provide the secret file from your localhost to the Cosmian VM as follow:
 
 ```sh
-$ cosmian_vm app init --url https://cosmianvm.cosmian.dev --conf secrets.json
+$ cosmian_vm --url https://cosmianvm.cosmian.dev app init --conf secrets.json
 ```
 
 The configuration file can be anything the application expects. Here, a json file. 
@@ -153,7 +168,7 @@ If you call again `init` the previous secrets file is overwritten.
 Note that `cosmian_vm_agent` won't save the key on its side. Therefore, in the event of a reboot, you need to provide the key to decrypt the secrets. To do so, use: 
 
 ```sh
-$ cosmian_vm app restart --url https://cosmianvm.cosmian.dev --key abcdefghij0123456789abcdefghij0123456789abcdefghij0123456789
+$ cosmian_vm --url https://cosmianvm.cosmian.dev app restart --key abcdefghij0123456789abcdefghij0123456789abcdefghij0123456789
 ```
 
 The `restart` subcommand will finally start the application identified in `service_app_name` field. 

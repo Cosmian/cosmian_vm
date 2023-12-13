@@ -13,10 +13,6 @@ pub enum AppConfArgs {
 /// Init the deployed application by providing the conf
 #[derive(Args, Debug)]
 pub struct InitArgs {
-    /// The URL of the cosmian VM
-    #[arg(long, action)]
-    url: String,
-
     /// Path of the app configuration to upload
     #[arg(short, long)]
     configuration: PathBuf,
@@ -31,7 +27,7 @@ pub struct InitArgs {
 }
 
 impl InitArgs {
-    pub async fn run(&self) -> Result<()> {
+    pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
         println!("Proceeding the init of the deployed app...");
 
         let cfg_content = std::fs::read(&self.configuration)?;
@@ -41,7 +37,6 @@ impl InitArgs {
             None
         };
 
-        let client = CosmianVmClient::instantiate(&self.url, false)?;
         if let Some(key) = client.init_app(&cfg_content, key.as_deref()).await? {
             println!("Save the key: `{}`", hex::encode(key));
         }
@@ -55,10 +50,6 @@ impl InitArgs {
 /// Restart the deployed application
 #[derive(Args, Debug)]
 pub struct RestartArgs {
-    /// The URL of the cosmian VM
-    #[arg(long, action)]
-    url: String,
-
     /// Optional key/password used to decrypt the app configuration
     ///
     /// The key must be provided hex encoded.
@@ -67,10 +58,9 @@ pub struct RestartArgs {
 }
 
 impl RestartArgs {
-    pub async fn run(&self) -> Result<()> {
+    pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
         println!("Proceeding the restart of the deployed app...");
 
-        let client = CosmianVmClient::instantiate(&self.url, false)?;
         client.restart_app(&hex::decode(&self.key)?).await?;
 
         println!("The app has been restarted");
