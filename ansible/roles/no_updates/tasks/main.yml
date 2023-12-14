@@ -38,11 +38,15 @@
 - name: Disable automatic updates on Red Hat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
+    - name: Populate service facts
+      service_facts:
+
     - name: Disable dnf-automatic service
       systemd:
         name: dnf-automatic.timer
         enabled: no
         state: stopped
+      when: "'dnf-automatic' in services"
 
     - name: Disable automatic updates in dnf.conf
       lineinfile:
@@ -50,12 +54,18 @@
         line: "check_update=0"
         backup: yes
 
+    - name: Check if automatic.conf exists
+      stat:
+        path: /etc/dnf/automatic.conf
+      register: __dnf_automatic_conf
+
     - name: Update automatic.conf to disable automatic updates download
       lineinfile:
         path: /etc/dnf/automatic.conf
         regexp: "download_updates = yes"
         line: "download_updates = no"
         backup: yes
+      when: __dnf_automatic_conf.stat.exists
 
     - name: Update automatic.conf to disable automatic updates apply
       lineinfile:
@@ -63,6 +73,7 @@
         regexp: "apply_updates = yes"
         line: "apply_updates = no"
         backup: yes
+      when: __dnf_automatic_conf.stat.exists
 
     - name: Clean Yum metadata
       command: dnf clean all
