@@ -1,16 +1,16 @@
 variable "ubuntu_source_ami" {
   type    = string
-  default = "ami-00983e8a26e4c9bd9"
+  default = "ami-0694d931cee176e7d"
 }
 
 variable "redhat_source_ami" {
   type    = string
-  default = "ami-0bd23a7080ec75f4d"
+  default = "ami-049b0abf844cab8d7"
 }
 
 variable "region" {
   type    = string
-  default = "eu-west-3"
+  default = "eu-west-1"
 }
 
 variable "ubuntu_ssh_username" {
@@ -40,7 +40,7 @@ variable "redhat_ami_name" {
 
 variable "instance_type" {
   type    = string
-  default = "t2.small"
+  default = "c6a.large"
 }
 
 
