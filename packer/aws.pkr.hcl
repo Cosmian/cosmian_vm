@@ -40,8 +40,9 @@ variable "redhat_ami_name" {
 
 variable "instance_type" {
   type    = string
-  default = "t2.micro"
+  default = "t2.small"
 }
+
 
 source "amazon-ebs" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
@@ -49,6 +50,7 @@ source "amazon-ebs" "ubuntu" {
   ssh_username           = var.ubuntu_ssh_username
   ami_name               = var.ubuntu_ami_name
   instance_type          = var.instance_type
+  ssh_timeout            = var.ssh_timeout
 }
 
 source "amazon-ebs" "redhat" {
@@ -57,6 +59,7 @@ source "amazon-ebs" "redhat" {
   ssh_username           = var.redhat_ssh_username
   ami_name               = var.redhat_ami_name
   instance_type          = var.instance_type
+  ssh_timeout            = var.ssh_timeout
 }
 
 build {
