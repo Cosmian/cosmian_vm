@@ -28,9 +28,14 @@ pub fn endpoints(cfg: &mut ServiceConfig) {
 }
 
 pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
+    let certificate = conf
+        .read_leaf_certificate()
+        .expect("TLS certificate malformed (PEM expecting)");
+
     move |cfg: &mut ServiceConfig| {
         cfg.app_data(PayloadConfig::new(10_000_000_000))
             .app_data(Data::new(conf))
+            .app_data(Data::new(certificate))
             .service({
                 // cannot call `.wrap()` on the `ServiceConfig` directly, so an empty scope is created for the entire app
                 scope("")

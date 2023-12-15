@@ -1,5 +1,11 @@
 [workspace]
-members = ["crate/agent", "crate/cli", "crate/client", "crate/ima"]
+members = [
+    "crate/agent",
+    "crate/certtool",
+    "crate/cli",
+    "crate/client",
+    "crate/ima",
+]
 resolver = "2"
 
 [profile.release]

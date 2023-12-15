@@ -23,7 +23,6 @@ clap = { version = "4", default-features = false, features = [
 cosmian_vm_client = { path = "../client" }
 hex = { workspace = true }
 ima = { path = "../ima" }
-pem-rfc7468 = "0.7"
 rand = "0.8"
 serde = { workspace = true }
 serde_json = { workspace = true }

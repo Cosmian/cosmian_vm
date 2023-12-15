@@ -21,6 +21,11 @@ const TLS_DAYS_BEFORE_EXPIRATION: u64 = 365 * 10;
 async fn main() -> Result<()> {
     init_logging();
 
+    tracing::info!(
+        "Cosmain VM Agent version {}",
+        option_env!("CARGO_PKG_VERSION").unwrap_or("unknown")
+    );
+
     // Read the configuration of the Cosmian VM Agent
     let conf: CosmianVmAgent = toml::from_str(
         &std::fs::read_to_string(

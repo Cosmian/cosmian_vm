@@ -36,18 +36,20 @@ Cosmian VM supports these kinds of TEE:
 
 ## Compile and run tests
 
-The Cosmian VM agent contains two majors binaries:
-- `cosmian_vm_agent` designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
+The Cosmian VM contains three majors binaries:
+- `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
+- `cosmian_vm_certtool` is designed to generate a certificate signed by *Let's Encrypt*
 - `cosmian_vm` is a CLI designed to be used on your own host. It queries the `cosmian_vm_agent` in order to get the collaterals used to verify the trustworthiness of the Cosmian VM
 
 You can compile and test these both binaries as follow:
 
 ```sh
+$ sudo apt install libssl-dev
 $ cargo build
 $ cargo test
 ```
 
-## Setup a Cosmian VM on SEV/TDX
+## Build a Cosmian VM image for SEV/TDX
 
 A Cosmian VM image containing a full configured environment can be built as follow:
 
@@ -121,10 +123,10 @@ $ cosmian_vm --url https://cosmianvm.cosmian.dev snapshot
 $ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.snapshot  
 ```
 
-If you use the default Cosmian VM setup relying on a self-signed certificate, you need to add the argument: `--allow-self-signed` as follow:
+If you use the default Cosmian VM setup relying on a self-signed certificate, you need to add the argument: `--allow-insecure-tls` as follow:
 
 ```sh
-$ cosmian_vm --url https://cosmianvm.cosmian.dev --allow-self-signed snapshot
+$ cosmian_vm --url https://cosmianvm.cosmian.dev --allow-insecure-tls snapshot
 ```
 
 ## Provide secrets
@@ -175,3 +177,7 @@ $ cosmian_vm --url https://cosmianvm.cosmian.dev app restart --key abcdefghij012
 ```
 
 The `restart` subcommand will finally start the application identified in `service_app_name` field. 
+
+# How to use Cosmian VM on SGX
+
+See [`how to use cosmian VM on SGX`](resources/sgx/README.md)

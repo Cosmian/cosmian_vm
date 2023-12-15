@@ -1,0 +1,29 @@
+[package]
+name = "cosmian_vm_certtool"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "cosmian_vm_certtool"
+path = "src/main.rs"
+
+[dependencies]
+# We use our own acme-lib. We have removed timeout set to ureq
+# For a reason we ignore right now, it fails inside the enclave if we set timeout
+acme-lib = { git = "https://github.com/Cosmian/acme-lib" }
+actix-files = "0.6"
+actix-web = { version = "4", features = ["rustls"] }
+anyhow = { workspace = true }
+clap = { version = "4", default-features = false, features = [
+    "cargo",
+    "derive",
+    "error-context",
+    "help",
+    "std",
+    "string",
+    "usage",
+] }
+hex = { workspace = true }
+openssl = { version = "0.10", features = ["vendored"] }
+tee_attestation = { workspace = true }
+thiserror = { workspace = true }
