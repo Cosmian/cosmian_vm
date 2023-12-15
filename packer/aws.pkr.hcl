@@ -43,27 +43,55 @@ variable "instance_type" {
   default = "c6a.large"
 }
 
+variable "boot_mode" {
+  type    = string
+  default = "uefi"
+}
 
-source "amazon-ebs" "ubuntu" {
+
+source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
   region                 = var.region
   ssh_username           = var.ubuntu_ssh_username
   ami_name               = var.ubuntu_ami_name
   instance_type          = var.instance_type
   ssh_timeout            = var.ssh_timeout
+  boot_mode              = var.boot_mode
+  ami_virtualization_type = "hvm"
+  launch_block_device_mappings {
+    volume_type = "gp2"
+    device_name = "/dev/xvda" 
+    volume_size = 10
+  }
+  ami_root_device {
+    source_device_name = "/dev/xvda"
+    device_name = "/dev/xvda"
+  }
 }
 
-source "amazon-ebs" "redhat" {
+source "amazon-ebssurrogate" "redhat" {
   source_ami             = var.redhat_source_ami
   region                 = var.region
   ssh_username           = var.redhat_ssh_username
   ami_name               = var.redhat_ami_name
   instance_type          = var.instance_type
   ssh_timeout            = var.ssh_timeout
+  boot_mode              = var.boot_mode
+  ami_virtualization_type = "hvm"
+  ami_root_device {
+    source_device_name = "/dev/xvda"
+    device_name = "/dev/xvda"
+  }
+  launch_block_device_mappings {
+    volume_type = "gp2"
+    device_name = "/dev/xvda"
+    delete_on_termination = false
+    volume_size = 10
+  }
 }
 
 build {
-  sources = ["sources.amazon-ebs.ubuntu"]
+  sources = ["sources.amazon-ebssurrogate.ubuntu"]
 
   provisioner "file" {
     source      = "../resources/data/ima-policy"
@@ -88,7 +116,7 @@ build {
 }
 
 build {
-  sources = ["sources.amazon-ebs.redhat"]
+  sources = ["sources.amazon-ebssurrogate.redhat"]
 
   provisioner "file" {
     source      = "../resources/data/ima-policy"
