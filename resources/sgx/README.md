@@ -23,8 +23,8 @@ $ sudo apt install nginx
 Four enclaves will be generated:
 - One to generate the ssl certificate using `cosmian_vm_certtool`. This enclave is shutdown after the certificate is generated
 - One for `cosmian_vm_agent` binary
-- One for `app` binary
-- On for the nginx redirecting the https data to the http `app`
+- One for `app` binary (your application)
+- One for the nginx redirecting the https data to the http `app`
 
 If one enclave raises an error, the whole program stops. 
 
@@ -63,7 +63,7 @@ Fetching the collaterals...
 ```
 
 On SGX the snapshot won't contain the filehashes due to the fact that:
-- IMA is not enable inside an SGX enclave
+- IMA is not part of SGX technology
 - The `mr_enclave` measurement is designed (and sufficient) to prove the integrity of the code running inside the enclave
 
 Therefore, the verification step will only rely on the last one called `Verifying TEE attestation`.
