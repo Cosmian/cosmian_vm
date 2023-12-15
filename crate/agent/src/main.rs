@@ -16,13 +16,15 @@ use tracing_subscriber::{
 
 const AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
 const TLS_DAYS_BEFORE_EXPIRATION: u64 = 365 * 10;
-const VERSION: Option<&str> = option_env!("CARGO_PKG_VERSION");
 
 #[actix_web::main]
 async fn main() -> Result<()> {
     init_logging();
 
-    tracing::info!("Cosmain VM Agent version {}", VERSION.unwrap_or("unknown"));
+    tracing::info!(
+        "Cosmain VM Agent version {}",
+        option_env!("CARGO_PKG_VERSION").unwrap_or("unknown")
+    );
 
     // Read the configuration of the Cosmian VM Agent
     let conf: CosmianVmAgent = toml::from_str(

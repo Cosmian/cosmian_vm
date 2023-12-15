@@ -1,6 +1,6 @@
 # How to use Cosmian VM on SGX
 
-Working with Cosmian VM on SGX enables an application to be execute in zero trust environment: 
+Working with Cosmian VM on SGX enables an application to be executed in zero trust environment: 
 - The memory is fully encrypted
 - The filesystem is fully encrypted
 - The network is fully encrypted (the certificate is generated right inside the enclave)

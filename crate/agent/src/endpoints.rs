@@ -20,7 +20,7 @@ use cosmian_vm_client::{
 };
 use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
 use sha1::digest::generic_array::GenericArray;
-use std::{collections::HashSet, fs::File, process::Command};
+use std::{collections::HashSet, process::Command};
 use tee_attestation::{forge_report_data_with_nonce, get_quote, guess_tee, TeePolicy, TeeType};
 use walkdir::WalkDir;
 
@@ -77,12 +77,9 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
                 .into_iter()
                 .filter_entry(filter_whilelist)
                 .filter_map(|file| file.ok())
-            {
                 // Only keeps files
-                if !file.file_type().is_file() {
-                    continue;
-                }
-
+                .filter(|file| file.file_type().is_file())
+            {
                 filehashes.0.insert((
                     file.path().display().to_string(),
                     hash_file(file.path(), &hash_method)?,
@@ -146,26 +143,17 @@ pub async fn get_pcr_value(path: Path<u32>) -> ResponseWithError<Json<String>> {
 #[get("/quote/tee")]
 pub async fn get_tee_quote(
     data: Query<QuoteParam>,
-    conf: Data<CosmianVmAgent>,
+    certificate: Data<Vec<u8>>,
 ) -> ResponseWithError<Json<Vec<u8>>> {
     let data = data.into_inner();
-    // First: get the leaf certificate
-    let mut reader = std::io::BufReader::new(File::open(&conf.agent.ssl_certificate)?);
-    let certificate = rustls_pemfile::read_one(&mut reader)?;
-    if let Some(rustls_pemfile::Item::X509Certificate(certificate)) = certificate {
-        let report_data = forge_report_data_with_nonce(
-            &data.nonce.try_into().map_err(|_| {
-                Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
-            })?,
-            &certificate,
-        )?;
-        let quote = get_quote(&report_data)?;
-        return Ok(Json(quote));
-    }
-
-    Err(Error::Certificate(
-        "No PEM certificate found to build the report data".to_string(),
-    ))
+    let report_data = forge_report_data_with_nonce(
+        &data.nonce.try_into().map_err(|_| {
+            Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
+        })?,
+        &certificate,
+    )?;
+    let quote = get_quote(&report_data)?;
+    Ok(Json(quote))
 }
 
 /// Return the TPM quote
