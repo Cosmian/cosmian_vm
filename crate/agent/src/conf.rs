@@ -3,7 +3,7 @@ use std::{fs::File, path::PathBuf};
 use cosmian_vm_client::ser_de::base64_serde;
 use serde::{Deserialize, Serialize};
 
-use crate::error::Error;
+use crate::{error::Error, service::ServiceType};
 
 #[derive(Deserialize, Clone, PartialEq, Debug)]
 pub struct CosmianVmAgent {
@@ -41,6 +41,8 @@ pub struct Agent {
 
 #[derive(Deserialize, Clone, PartialEq, Debug)]
 pub struct App {
+    /// Type of application
+    pub service_type: ServiceType,
     /// Name of the Linux service (ie: nginx)
     pub service_app_name: String,
     /// Decrypted data storage (ie: tmpfs)
@@ -76,6 +78,7 @@ pub enum EncryptedAppConfAlgorithm {
 #[cfg(test)]
 mod tests {
     use crate::conf::App;
+    use crate::service::ServiceType;
     use crate::{
         conf::{Agent, EncryptedAppConf, EncryptedAppConfAlgorithm},
         CosmianVmAgent,
@@ -92,6 +95,7 @@ mod tests {
             ssl_private_key = "data/key.pem"
 
             [app]
+            service_type = "supervisor"
             service_app_name = "cosmian_kms"
             decrypted_folder = "/mnt/cosmian_vm/data"
             encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
@@ -108,6 +112,7 @@ mod tests {
                     ssl_private_key: PathBuf::from("data/key.pem")
                 },
                 app: Some(App {
+                    service_type: ServiceType::Supervisor,
                     service_app_name: "cosmian_kms".to_string(),
                     decrypted_folder: PathBuf::from("/mnt/cosmian_vm/data"),
                     encrypted_secret_app_conf: PathBuf::from("/etc/cosmian_vm/app_secrets.json")

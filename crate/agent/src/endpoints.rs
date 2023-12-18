@@ -1,7 +1,6 @@
 use crate::{
     conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
     error::{Error, ResponseWithError},
-    service::{Supervisor, UnixService as _},
     utils::{filter_whilelist, hash_file},
     CosmianVmAgent,
 };
@@ -209,7 +208,9 @@ pub async fn init_app(
     )?;
 
     // start app service
-    Supervisor::start(&app_conf_agent.service_app_name)?;
+    app_conf_agent
+        .service_type
+        .start(&app_conf_agent.service_app_name)?;
 
     Ok(Json(key))
 }
@@ -230,7 +231,9 @@ pub async fn restart_app(
     };
 
     // ensure app service is stopped
-    Supervisor::stop(&app_conf_agent.service_app_name)?;
+    app_conf_agent
+        .service_type
+        .stop(&app_conf_agent.service_app_name)?;
 
     // read app json conf
     let raw_json = std::fs::read_to_string(&app_conf_agent.encrypted_secret_app_conf)?;
@@ -251,7 +254,9 @@ pub async fn restart_app(
     )?;
 
     // start app service
-    Supervisor::start(&app_conf_agent.service_app_name)?;
+    app_conf_agent
+        .service_type
+        .start(&app_conf_agent.service_app_name)?;
 
     Ok(Json(()))
 }
