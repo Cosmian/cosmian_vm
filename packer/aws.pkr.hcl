@@ -1,6 +1,6 @@
 variable "ubuntu_source_ami" {
   type    = string
-  default = "ami-0694d931cee176e7d"
+  default = "ami-0905a3c97561e0b69"
 }
 
 variable "redhat_source_ami" {
@@ -48,6 +48,11 @@ variable "boot_mode" {
   default = "uefi"
 }
 
+variable "ami_virtualization_type" {
+  type    = string
+  default = "hvm"
+}
+
 
 source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
@@ -57,15 +62,21 @@ source "amazon-ebssurrogate" "ubuntu" {
   instance_type          = var.instance_type
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
-  ami_virtualization_type = "hvm"
+  ami_virtualization_type = var.ami_virtualization_type
+
   launch_block_device_mappings {
     volume_type = "gp2"
     device_name = "/dev/xvda" 
+    delete_on_termination = false
     volume_size = 10
   }
+
   ami_root_device {
     source_device_name = "/dev/xvda"
     device_name = "/dev/xvda"
+    delete_on_termination = true
+    volume_size = 16
+    volume_type = "gp2"
   }
 }
 

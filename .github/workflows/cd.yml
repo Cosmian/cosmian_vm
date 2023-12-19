@@ -17,7 +17,7 @@ on: [push]
 jobs:
   build-cosmian-vm:
     name: Build Cosmian VM Agent
-    runs-on: ubuntu-22.04
+    runs-on: [self-hosted, sev]
 
     steps:
       - name: Checkout
