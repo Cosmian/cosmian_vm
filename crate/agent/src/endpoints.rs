@@ -20,11 +20,13 @@ use cosmian_vm_client::{
 use ima::ima::{read_ima_ascii, read_ima_ascii_first_line, read_ima_binary, Ima};
 use sha1::digest::generic_array::GenericArray;
 use std::{collections::HashSet, str::FromStr};
+
 use tee_attestation::{
     forge_report_data_with_nonce, get_quote as tee_get_quote, guess_tee, TeePolicy, TeeType,
 };
 use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
 use tss_esapi::{tcti_ldr::TctiNameConf, Context};
+
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";

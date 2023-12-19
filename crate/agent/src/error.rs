@@ -32,6 +32,7 @@ pub enum Error {
     Tpm(#[from] tpm_quote::error::Error),
     #[error("{0}")]
     Unexpected(String),
+
     #[error(transparent)]
     WalkDir(#[from] walkdir::Error),
 }
