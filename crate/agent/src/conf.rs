@@ -37,6 +37,8 @@ pub struct Agent {
     pub ssl_certificate: PathBuf,
     /// SSL private key of the VM in PEM format
     pub ssl_private_key: PathBuf,
+    /// Transmission interface with the TPM (ie: "device:/dev/tpmrm0")
+    pub tcti: String,
 }
 
 #[derive(Deserialize, Clone, PartialEq, Debug)]
@@ -90,6 +92,7 @@ mod tests {
             port = 5355
             ssl_certificate = "data/cert.pem"
             ssl_private_key = "data/key.pem"
+            tcti = "device:/dev/tpmrm0"
 
             [app]
             service_app_name = "cosmian_kms"
@@ -105,7 +108,8 @@ mod tests {
                     host: "127.0.0.1".to_string(),
                     port: 5355,
                     ssl_certificate: PathBuf::from("data/cert.pem"),
-                    ssl_private_key: PathBuf::from("data/key.pem")
+                    ssl_private_key: PathBuf::from("data/key.pem"),
+                    tcti: "device:/dev/tpmrm0".to_string()
                 },
                 app: Some(App {
                     service_app_name: "cosmian_kms".to_string(),
