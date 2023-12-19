@@ -29,6 +29,10 @@ pub enum Error {
     #[error(transparent)]
     TeeAttestation(#[from] tee_attestation::error::Error),
     #[error(transparent)]
+    Tpm(#[from] tpm_quote::error::Error),
+    #[error("{0}")]
+    UnexpectedError(String),
+    #[error(transparent)]
     WalkDir(#[from] walkdir::Error),
 }
 
@@ -40,8 +44,10 @@ impl ResponseError for Error {
             | Error::Configuration(_)
             | Error::HexParsing(_)
             | Error::Ima(_)
+            | Error::UnexpectedError(_)
             | Error::IO(_)
             | Error::TeeAttestation(_)
+            | Error::Tpm(_)
             | Error::Cryptography(_)
             | Error::Serialization(_)
             | Error::Rustls(_)
