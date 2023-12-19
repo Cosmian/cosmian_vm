@@ -3,7 +3,7 @@ use serde::Deserialize;
 use std::process::Command;
 use sysinfo::{ProcessExt, System, SystemExt};
 
-pub(crate) fn _call(exe: &str, args: &[&str]) -> Result<String, Error> {
+fn _call(exe: &str, args: &[&str]) -> Result<String, Error> {
     match Command::new(exe).args(args).output() {
         Ok(output) => {
             if output.status.success() {
