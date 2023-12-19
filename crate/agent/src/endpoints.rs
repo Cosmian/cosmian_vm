@@ -130,6 +130,7 @@ pub async fn get_tpm_quote(
     let mut tpm_context = tpm_context
         .lock()
         .map_err(|_| Error::Unexpected("TPM already in use".to_owned()))?;
+
     let quote_param = quote_param.into_inner();
 
     if quote_param.nonce.len() > 64 {

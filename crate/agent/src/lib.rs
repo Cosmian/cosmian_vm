@@ -35,6 +35,9 @@ pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
     let tpm_context = Mutex::new(Context::new(tcti).expect("can't build context from TCTI"));
 
     move |cfg: &mut ServiceConfig| {
+        let tcti = TctiNameConf::from_environment_variable().expect("TCTI not found");
+        let context = Mutex::new(Context::new(tcti).expect("Can't build context from TCTI"));
+
         cfg.app_data(PayloadConfig::new(10_000_000_000))
             .app_data(Data::new(conf))
             .app_data(Data::new(certificate))
