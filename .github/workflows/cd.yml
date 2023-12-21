@@ -26,6 +26,10 @@ jobs:
       - uses: geekyeggo/delete-artifact@v2
         with:
             name: cosmian_vm_agent
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y libtss2-dev
       
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1

@@ -14,9 +14,7 @@
 
   - name: Install packages
     apt:
-      name: 
-        - tpm2-tools
-        - libtss2-dev
+      name: tpm2-tools
       state: latest
       update_cache: yes
 
@@ -29,8 +27,6 @@
 
   - name: Install packages
     ansible.builtin.dnf:
-      name: 
-        - tpm2-tools
-        - libtss2-dev
+      name: tpm2-tools
       state: present
       update_cache: yes
