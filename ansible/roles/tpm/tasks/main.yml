@@ -1,0 +1,36 @@
+---
+# tasks file for ansible/roles/tpm
+
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
+
+- name: TPM packages installation on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+  - name: Update all packages to their latest version
+    apt:
+      update_cache: yes
+
+  - name: Install packages
+    apt:
+      name: 
+        - tpm2-tools
+        - libtss2-dev
+      state: latest
+      update_cache: yes
+
+- name: TPM packages installation on RedHat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  block:
+  - name: Update all packages to their latest version
+    dnf:
+      update_cache: yes
+
+  - name: Install packages
+    ansible.builtin.dnf:
+      name: 
+        - tpm2-tools
+        - libtss2-dev
+      state: present
+      update_cache: yes
