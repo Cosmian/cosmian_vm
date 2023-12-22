@@ -89,6 +89,7 @@ jobs:
           packer plugins install github.com/hashicorp/amazon
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
+          packer plugins install github.com/ethanmdavidson/git
 
       - name: Build image - main
         if: ${{ github.event.pull_request.merged == true && github.ref_name == 'main' }}
