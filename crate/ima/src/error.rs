@@ -16,4 +16,6 @@ pub enum Error {
     HexParsing(#[from] hex::FromHexError),
     #[error(transparent)]
     IO(#[from] std::io::Error),
+    #[error("{0}")]
+    Unexpected(String),
 }

@@ -17,18 +17,14 @@ use cosmian_vm_client::{
     client::{AppConf, QuoteParam, RestartParam, TpmQuoteResponse},
     snapshot::{CosmianVmSnapshot, SnapshotFiles},
 };
-use ima::ima::{read_ima_ascii, read_ima_binary, Ima, ImaEntry};
+use ima::ima::{read_ima_ascii, read_ima_ascii_first_line, read_ima_binary, Ima};
 use sha1::digest::generic_array::GenericArray;
-use std::{
-    collections::HashSet,
-    io::{BufRead, BufReader},
-    sync::Mutex,
-};
+use std::{collections::HashSet, str::FromStr};
 use tee_attestation::{
     forge_report_data_with_nonce, get_quote as tee_get_quote, guess_tee, TeePolicy, TeeType,
 };
 use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
-use tss_esapi::Context;
+use tss_esapi::{tcti_ldr::TctiNameConf, Context};
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
@@ -125,40 +121,43 @@ pub async fn get_tee_quote(
 #[get("/quote/tpm")]
 pub async fn get_tpm_quote(
     quote_param: Query<QuoteParam>,
-    tpm_context: Data<Mutex<Context>>,
+    conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<TpmQuoteResponse>> {
-    let mut tpm_context = tpm_context
-        .lock()
-        .map_err(|_| Error::Unexpected("TPM already in use".to_owned()))?;
+    match &conf.agent.tpm_device {
+        None => Err(Error::BadRequest(
+            "The agent is not configured to support TPM".to_string(),
+        )),
+        Some(tpm_device) => {
+            let tcti = TctiNameConf::from_str(&format!("device:{}", &tpm_device.to_string_lossy()))
+                .map_err(|e| Error::Unexpected(format!("Incorrect TCTI (TPM device): {e}")))?;
 
-    let quote_param = quote_param.into_inner();
+            let mut tpm_context = Context::new(tcti).map_err(|e| {
+                Error::Unexpected(format!("Can't build context from TCTI (TPM device): {e}"))
+            })?;
 
-    if quote_param.nonce.len() > 64 {
-        return Err(Error::Tpm(TpmError::AttestationError(
-            "Nonce too long (> 64 bytes)".to_owned(),
-        )));
+            let quote_param = quote_param.into_inner();
+
+            if quote_param.nonce.len() > 64 {
+                return Err(Error::Tpm(TpmError::AttestationError(
+                    "Nonce too long (> 64 bytes)".to_owned(),
+                )));
+            }
+
+            let pcr_slot = Ima::try_from(read_ima_ascii_first_line()?.as_str())?.pcr_id();
+
+            let (quote, signature, public_key) = tpm_get_quote(
+                &mut tpm_context,
+                &[pcr_slot as u8],
+                Some(&quote_param.nonce),
+            )?;
+
+            Ok(Json(TpmQuoteResponse {
+                quote,
+                signature,
+                public_key,
+            }))
+        }
     }
-
-    let ima_file = std::fs::File::open(ima::ima::IMA_ASCII_PATH)?;
-    let reader = BufReader::new(ima_file);
-    let ima_first_line = reader
-        .lines()
-        .next()
-        .ok_or_else(|| Error::Unexpected("Event log is empty".to_owned()))??;
-    let ima_entry = ImaEntry::try_from(ima_first_line.as_str())?;
-    let pcr_slot = ima_entry.pcr;
-
-    let (quote, signature, public_key) = tpm_get_quote(
-        &mut tpm_context,
-        &[pcr_slot as u8],
-        Some(&quote_param.nonce),
-    )?;
-
-    Ok(Json(TpmQuoteResponse {
-        quote,
-        signature,
-        public_key,
-    }))
 }
 
 /// Initialize the application configuration

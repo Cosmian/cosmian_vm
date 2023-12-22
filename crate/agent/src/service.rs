@@ -1,31 +1,13 @@
-use crate::error::Error;
+use crate::{error::Error, utils::call};
 use serde::Deserialize;
-use std::process::Command;
 use sysinfo::{ProcessExt, System, SystemExt};
-
-fn _call(exe: &str, args: &[&str]) -> Result<String, Error> {
-    match Command::new(exe).args(args).output() {
-        Ok(output) => {
-            if output.status.success() {
-                Ok(String::from_utf8_lossy(&output.stdout).to_string())
-            } else {
-                Err(Error::Command(format!(
-                    "Output: {} - error: {}",
-                    String::from_utf8_lossy(&output.stdout),
-                    String::from_utf8_lossy(&output.stderr)
-                )))
-            }
-        }
-        Err(e) => Err(Error::Command(e.to_string())),
-    }
-}
 
 pub trait UnixService {
     const NAME: &'static str;
 
     fn start(service_app_name: &str) -> Result<String, Error>;
     fn stop(service_app_name: &str) -> Result<String, Error>;
-    fn reload(service_app_name: &str) -> Result<String, Error>;
+    fn restart(service_app_name: &str) -> Result<String, Error>;
 }
 
 pub struct Supervisor;
@@ -33,15 +15,15 @@ impl UnixService for Supervisor {
     const NAME: &'static str = "supervisorctl";
 
     fn start(service_app_name: &str) -> Result<String, Error> {
-        _call(Self::NAME, &["start", service_app_name])
+        call(Self::NAME, &["start", service_app_name], false)
     }
 
     fn stop(service_app_name: &str) -> Result<String, Error> {
-        _call(Self::NAME, &["stop", service_app_name])
+        call(Self::NAME, &["stop", service_app_name], false)
     }
 
-    fn reload(service_app_name: &str) -> Result<String, Error> {
-        _call(Self::NAME, &["reload", service_app_name])
+    fn restart(service_app_name: &str) -> Result<String, Error> {
+        call(Self::NAME, &["restart", service_app_name], false)
     }
 }
 
@@ -50,15 +32,15 @@ impl UnixService for Systemd {
     const NAME: &'static str = "system";
 
     fn start(service_app_name: &str) -> Result<String, Error> {
-        _call(Self::NAME, &[service_app_name, "start"])
+        call(Self::NAME, &[service_app_name, "start"], false)
     }
 
     fn stop(service_app_name: &str) -> Result<String, Error> {
-        _call(Self::NAME, &[service_app_name, "stop"])
+        call(Self::NAME, &[service_app_name, "stop"], false)
     }
 
-    fn reload(service_app_name: &str) -> Result<String, Error> {
-        _call(Self::NAME, &[service_app_name, "reload"])
+    fn restart(service_app_name: &str) -> Result<String, Error> {
+        call(Self::NAME, &[service_app_name, "restart"], false)
     }
 }
 
@@ -67,7 +49,7 @@ impl UnixService for Standalone {
     const NAME: &'static str = "";
 
     fn start(app_name: &str) -> Result<String, Error> {
-        _call(app_name, &[])
+        call(app_name, &[], true)
     }
 
     fn stop(app_name: &str) -> Result<String, Error> {
@@ -80,7 +62,7 @@ impl UnixService for Standalone {
         Ok(String::from(""))
     }
 
-    fn reload(app_name: &str) -> Result<String, Error> {
+    fn restart(app_name: &str) -> Result<String, Error> {
         Self::stop(app_name)?;
         Self::start(app_name)
     }
@@ -113,9 +95,9 @@ impl ServiceType {
 
     pub fn reload(&self, service_app_name: &str) -> Result<String, Error> {
         match self {
-            ServiceType::Supervisor => Supervisor::reload(service_app_name),
-            ServiceType::Systemd => Systemd::reload(service_app_name),
-            ServiceType::Standalone => Standalone::reload(service_app_name),
+            ServiceType::Supervisor => Supervisor::restart(service_app_name),
+            ServiceType::Systemd => Systemd::restart(service_app_name),
+            ServiceType::Standalone => Standalone::restart(service_app_name),
         }
     }
 }

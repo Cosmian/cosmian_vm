@@ -709,7 +709,6 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
- "sha2",
  "tee_attestation",
  "tokio",
  "tpm_quote",
@@ -1972,7 +1971,7 @@ checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 [[package]]
 name = "pccs_client"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#ab2eb6cd6dd2c0a54880570c78076d7c9562c670"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#f276ccd26e016cceaedde24420bfd4b61b0b23d3"
 dependencies = [
  "hex",
  "reqwest",
@@ -2688,7 +2687,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#ab2eb6cd6dd2c0a54880570c78076d7c9562c670"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#f276ccd26e016cceaedde24420bfd4b61b0b23d3"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2709,7 +2708,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "0.1.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#ab2eb6cd6dd2c0a54880570c78076d7c9562c670"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#f276ccd26e016cceaedde24420bfd4b61b0b23d3"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2720,7 +2719,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#ab2eb6cd6dd2c0a54880570c78076d7c9562c670"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#f276ccd26e016cceaedde24420bfd4b61b0b23d3"
 dependencies = [
  "chrono",
  "hex",
@@ -2943,7 +2942,7 @@ checksum = "14c39fd04924ca3a864207c66fc2cd7d22d7c016007f9ce846cbb9326331930a"
 [[package]]
 name = "tdx_quote"
 version = "0.0.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#ab2eb6cd6dd2c0a54880570c78076d7c9562c670"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#f276ccd26e016cceaedde24420bfd4b61b0b23d3"
 dependencies = [
  "hex",
  "log",
@@ -2962,7 +2961,7 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#ab2eb6cd6dd2c0a54880570c78076d7c9562c670"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#f276ccd26e016cceaedde24420bfd4b61b0b23d3"
 dependencies = [
  "bincode",
  "hex",
@@ -3191,8 +3190,9 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "tpm_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#ab2eb6cd6dd2c0a54880570c78076d7c9562c670"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#f276ccd26e016cceaedde24420bfd4b61b0b23d3"
 dependencies = [
+ "hex",
  "p256",
  "sha2",
  "thiserror",

@@ -9,6 +9,7 @@ use rand_chacha::{
 use sha1::{Digest, Sha1};
 use sha2::{Sha256, Sha512};
 use spki::{EncodePublicKey, SubjectPublicKeyInfoOwned};
+use std::process::Command;
 use std::{
     convert::TryFrom,
     fs, io,
@@ -27,7 +28,7 @@ use x509_cert::{
 };
 
 #[inline(always)]
-pub fn hash_file(path: &Path, hash_method: &ImaHashMethod) -> Result<Vec<u8>, Error> {
+pub(crate) fn hash_file(path: &Path, hash_method: &ImaHashMethod) -> Result<Vec<u8>, Error> {
     let mut file = fs::File::open(path)?;
 
     match hash_method {
@@ -151,4 +152,111 @@ pub fn generate_self_signed_cert(
         .map_err(|_| Error::Certificate("Failed to convert certificate to PEM".to_owned()))?;
 
     Ok((pem_sk, pem_cert))
+}
+
+pub(crate) fn call(exe: &str, args: &[&str], background: bool) -> Result<String, Error> {
+    if background {
+        let _ = Command::new(exe).args(args).spawn()?;
+        return Ok(String::from(""));
+    }
+
+    match Command::new(exe).args(args).output() {
+        Ok(output) => {
+            if output.status.success() {
+                Ok(String::from_utf8_lossy(&output.stdout).to_string())
+            } else {
+                Err(Error::Command(format!(
+                    "Output: {} - error: {}",
+                    String::from_utf8_lossy(&output.stdout).trim(),
+                    String::from_utf8_lossy(&output.stderr).trim(),
+                )))
+            }
+        }
+        Err(e) => Err(Error::Command(e.to_string())),
+    }
+}
+
+/// Generate the TPM keys during the first startup of the agent
+/// - Ignore generation if already done previously
+/// - Raise an error if no TPM detected
+///
+/// Note: this function should be replace in a near feature (waiting for a patch in the tpm lib)
+pub fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
+    if !tpm_device_path.exists() {
+        return Err(Error::Configuration(format!(
+            "TPM device path unknown: {tpm_device_path:?} "
+        )));
+    }
+
+    // Verify the keys has not been already generated
+    match Command::new("tpm2_readpublic")
+        .args(["-c", "0x81000000"])
+        .output()
+    {
+        Ok(output) => {
+            if output.status.success() {
+                return Ok(());
+            }
+        }
+        Err(e) => return Err(Error::Command(e.to_string())),
+    }
+
+    // Otherwise generated them
+    //
+    // # create EK and make it persistent
+    // sudo tpm2_createek --ek-context=ek.ctx --key-algorithm=ecc --public=ek.pub --format=pem
+    // sudo tpm2_evictcontrol --hierarchy=o --object-context=ek.ctx --output=ek.handle
+    // # create AK and make it persistent
+    // sudo tpm2_createak --ek-context=ek.handle --ak-context=ak.ctx --key-algorithm=ecc --hash-algorithm=sha256 --public=ak.pub --format pem --ak-name=ak.name
+    // sudo tpm2_evictcontrol --hierarchy=o --object-context=ak.ctx --output=ak.handle
+
+    // Create EK and make it persistent
+    tracing::info!("Generating TPM EK & AK...");
+    call(
+        "tpm2_createek",
+        &[
+            "--ek-context=/tmp/ek.ctx",
+            "--key-algorithm=ecc",
+            "--public=/tmp/ek.pub",
+            "--format=pem",
+        ],
+        false,
+    )?;
+
+    call(
+        "tpm2_evictcontrol",
+        &[
+            "--hierarchy=o",
+            "--object-context=/tmp/ek.ctx",
+            "--output=/tmp/ek.handle",
+        ],
+        false,
+    )?;
+
+    // Create AK and make it persistent
+    call(
+        "tpm2_createak",
+        &[
+            "--ek-context=/tmp/ek.handle",
+            "--ak-context=/tmp/ak.ctx",
+            "--key-algorithm=ecc",
+            "--hash-algorithm=sha256",
+            "--public=/tmp/ak.pub",
+            "--format=pem",
+            "--ak-name=/tmp/ak.name",
+        ],
+        false,
+    )?;
+
+    call(
+        "tpm2_evictcontrol",
+        &[
+            "--hierarchy=o",
+            "--object-context=/tmp/ak.ctx",
+            "--output=/tmp/ak.handle",
+        ],
+        false,
+    )?;
+
+    Ok(())
 }

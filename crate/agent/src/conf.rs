@@ -37,8 +37,8 @@ pub struct Agent {
     pub ssl_certificate: PathBuf,
     /// SSL private key of the VM in PEM format
     pub ssl_private_key: PathBuf,
-    /// Transmission interface with the TPM (ie: "device:/dev/tpmrm0")
-    pub tcti: String,
+    /// Transmission interface with the TPM (ie: "/dev/tpmrm0")
+    pub tpm_device: Option<PathBuf>,
 }
 
 #[derive(Deserialize, Clone, PartialEq, Debug)]
@@ -95,7 +95,7 @@ mod tests {
             port = 5355
             ssl_certificate = "data/cert.pem"
             ssl_private_key = "data/key.pem"
-            tcti = "device:/dev/tpmrm0"
+            tpm_device = "/dev/tpmrm0"
 
             [app]
             service_type = "supervisor"
@@ -113,7 +113,7 @@ mod tests {
                     port: 5355,
                     ssl_certificate: PathBuf::from("data/cert.pem"),
                     ssl_private_key: PathBuf::from("data/key.pem"),
-                    tcti: "device:/dev/tpmrm0".to_string()
+                    tpm_device: Some(PathBuf::from("/dev/tpmrm0"))
                 },
                 app: Some(App {
                     service_type: ServiceType::Supervisor,
