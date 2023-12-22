@@ -4,7 +4,6 @@ use crate::{
     utils::{filter_whilelist, hash_file},
     CosmianVmAgent,
 };
-
 use actix_web::{
     get, post,
     web::{Data, Json, Query},
@@ -20,7 +19,6 @@ use cosmian_vm_client::{
 use ima::ima::{read_ima_ascii, read_ima_ascii_first_line, read_ima_binary, Ima};
 use sha1::digest::generic_array::GenericArray;
 use std::{collections::HashSet, str::FromStr};
-
 use tee_attestation::{
     forge_report_data_with_nonce, get_quote as tee_get_quote, guess_tee, TeePolicy, TeeType,
 };

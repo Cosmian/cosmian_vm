@@ -709,7 +709,6 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
- "sha2",
  "tee_attestation",
  "tokio",
  "tpm_quote",

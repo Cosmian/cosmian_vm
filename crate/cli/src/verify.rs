@@ -67,7 +67,6 @@ impl VerifyArgs {
             )?;
 
             verify_pcr_value(&quote_info, &ima_entries.pcr_value()?)?;
-
             println!("[ OK ] Verifying TPM attestation");
         }
 

@@ -10,8 +10,8 @@ use sha1::{Digest, Sha1};
 use crate::error::Error;
 
 const EVENT_ENTRY_SIZE: usize = 28;
-pub const IMA_ASCII_PATH: &str = "/sys/kernel/security/ima/ascii_runtime_measurements";
-pub const IMA_BINARY_PATH: &str = "/sys/kernel/security/ima/binary_runtime_measurements";
+const IMA_ASCII_PATH: &str = "/sys/kernel/security/ima/ascii_runtime_measurements";
+const IMA_BINARY_PATH: &str = "/sys/kernel/security/ima/binary_runtime_measurements";
 
 /// Read the ascii IMA values
 pub fn read_ima_ascii() -> Result<String, Error> {
