@@ -28,17 +28,19 @@ fs.mounts = [
     { path = "/run.sh", uri = "file:run.sh" },
 
     {#
-     # Mount application directories 
+     # Mount application directories, conf and data dir
     -#}
     { path = "/bin/app", uri = "file:bin/app" },
-
+    { path = "/etc/app/server.toml", uri = "file:etc/app/server.toml" },
+    { path = "/var/lib/app/", uri = "file:app_data/", type="encrypted", key_name="_sgx_mrsigner" },
+ 
     {#
-     # Mount cosmian vm agent bin and conf
+     # Mount cosmian vm agent bin, conf and data dir
     -#}
     { path = "/bin/cosmian_vm_agent", uri = "file:bin/cosmian_vm_agent" },
     { path = "/bin/cosmian_vm_certtool", uri = "file:bin/cosmian_vm_certtool" },
-    { path = "/etc/cosmian_vm/agent.toml", uri = "file:etc/cosmian/agent.toml" },
-    { path = "/var/lib/cosmian_vm/", uri = "file:var/", type="encrypted", key_name="_sgx_mrenclave" },
+    { path = "/etc/cosmian_vm/agent.toml", uri = "file:etc/cosmian_vm/agent.toml" },
+    { path = "/var/lib/cosmian_vm/", uri = "file:cosmian_vm_data/", type="encrypted", key_name="_sgx_mrenclave" },
 
     {#
      # Mount directories for nginx
@@ -89,7 +91,8 @@ sgx.trusted_files = [
 
     "file:/usr/sbin/nginx",
 
-    "file:etc/cosmian/agent.toml",
+    "file:etc/app/",
+    "file:etc/cosmian_vm/agent.toml",
     "file:etc/nginx/nginx.conf",
 
     "file:/usr{{ arch_libdir }}/",
