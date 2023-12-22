@@ -17,7 +17,7 @@ Also, install some extra packages:
 ```sh
 $ sudo apt install nginx
 ```
-5. Edit the `etc/app/` as you need. This directory is designed to contains all configurations of the application. 
+5. Edit the `etc/app/` as you need. This directory is designed to contain all configurations of the application. 
 
 ## Usage
 
