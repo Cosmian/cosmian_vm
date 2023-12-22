@@ -29,6 +29,10 @@ pub enum Error {
     #[error(transparent)]
     TeeAttestation(#[from] tee_attestation::error::Error),
     #[error(transparent)]
+    Tpm(#[from] tpm_quote::error::Error),
+    #[error("{0}")]
+    Unexpected(String),
+    #[error(transparent)]
     WalkDir(#[from] walkdir::Error),
 }
 
@@ -38,13 +42,15 @@ impl ResponseError for Error {
             Error::Certificate(_)
             | Error::Command(_)
             | Error::Configuration(_)
+            | Error::Cryptography(_)
             | Error::HexParsing(_)
             | Error::Ima(_)
             | Error::IO(_)
-            | Error::TeeAttestation(_)
-            | Error::Cryptography(_)
-            | Error::Serialization(_)
             | Error::Rustls(_)
+            | Error::Serialization(_)
+            | Error::TeeAttestation(_)
+            | Error::Tpm(_)
+            | Error::Unexpected(_)
             | Error::WalkDir(_) => StatusCode::INTERNAL_SERVER_ERROR,
 
             Error::BadRequest(_) => StatusCode::BAD_REQUEST,

@@ -1,4 +1,4 @@
-use std::{fs::File, path::Path};
+use std::{fs::File, path::Path, str::FromStr, sync::Mutex};
 
 use actix_cors::Cors;
 use actix_http::Method;
@@ -9,6 +9,7 @@ use actix_web::{
 use conf::CosmianVmAgent;
 use error::Error;
 use rustls::ServerConfig;
+use tss_esapi::{tcti_ldr::TctiNameConf, Context};
 
 pub mod conf;
 pub mod endpoints;
@@ -19,7 +20,6 @@ pub mod utils;
 pub fn endpoints(cfg: &mut ServiceConfig) {
     cfg.service(endpoints::get_ima_ascii);
     cfg.service(endpoints::get_ima_binary);
-    cfg.service(endpoints::get_pcr_value);
     cfg.service(endpoints::get_snapshot);
     cfg.service(endpoints::get_tee_quote);
     cfg.service(endpoints::get_tpm_quote);
@@ -31,11 +31,14 @@ pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
     let certificate = conf
         .read_leaf_certificate()
         .expect("TLS certificate malformed (PEM expecting)");
+    let tcti = TctiNameConf::from_str(&conf.agent.tcti).expect("incorrect TCTI");
+    let tpm_context = Mutex::new(Context::new(tcti).expect("can't build context from TCTI"));
 
     move |cfg: &mut ServiceConfig| {
         cfg.app_data(PayloadConfig::new(10_000_000_000))
             .app_data(Data::new(conf))
             .app_data(Data::new(certificate))
+            .app_data(Data::new(tpm_context))
             .service({
                 // cannot call `.wrap()` on the `ServiceConfig` directly, so an empty scope is created for the entire app
                 scope("")

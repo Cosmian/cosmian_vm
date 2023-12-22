@@ -7,20 +7,28 @@ use crate::{
 
 use actix_web::{
     get, post,
-    web::{Data, Json, Path, Query},
+    web::{Data, Json, Query},
 };
 use aes_gcm::{
     aead::{Aead, OsRng},
     AeadCore as _, Aes256Gcm, KeyInit as _, Nonce,
 };
 use cosmian_vm_client::{
-    client::{AppConf, QuoteParam, RestartParam},
+    client::{AppConf, QuoteParam, RestartParam, TpmQuoteResponse},
     snapshot::{CosmianVmSnapshot, SnapshotFiles},
 };
-use ima::ima::{read_ima_ascii, read_ima_binary, Ima};
+use ima::ima::{read_ima_ascii, read_ima_binary, Ima, ImaEntry};
 use sha1::digest::generic_array::GenericArray;
-use std::{collections::HashSet, process::Command};
-use tee_attestation::{forge_report_data_with_nonce, get_quote, guess_tee, TeePolicy, TeeType};
+use std::{
+    collections::HashSet,
+    io::{BufRead, BufReader},
+    sync::Mutex,
+};
+use tee_attestation::{
+    forge_report_data_with_nonce, get_quote as tee_get_quote, guess_tee, TeePolicy, TeeType,
+};
+use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
+use tss_esapi::Context;
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
@@ -90,52 +98,10 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
     };
 
     // Get the measurement of the tee (the report data does not matter)
-    let quote = get_quote(&[])?;
+    let quote = tee_get_quote(&[])?;
     let policy = TeePolicy::try_from(quote.as_ref())?;
 
     Ok(Json(CosmianVmSnapshot { filehashes, policy }))
-}
-
-/// Return the #id PCR value
-///
-/// TODO: remove that endpoint when the `/quote/tpm` will be implemented`
-///
-/// Note: require root privileges
-#[get("/tmp_endpoint/pcr/{id}")]
-pub async fn get_pcr_value(path: Path<u32>) -> ResponseWithError<Json<String>> {
-    let pcr_id = path.into_inner();
-
-    let output = Command::new("/root/go/bin/gotpm")
-        .arg("read")
-        .arg("pcr")
-        .arg("--pcrs")
-        .arg(pcr_id.to_string())
-        .arg("--hash-algo")
-        .arg("sha1")
-        .output()?;
-
-    if !output.status.success() {
-        return Err(Error::Command(
-            format!(
-                "Command returns an error (code: {}): , {}",
-                output.status,
-                String::from_utf8_lossy(&output.stderr)
-            )
-            .to_string(),
-        ));
-    }
-
-    // Example of output:
-    //SHA1:
-    //  10: 0x3CF23C475157764A6CD0B17EDA92F75C5C3F9FBB
-    let output = String::from_utf8_lossy(&output.stdout);
-    let output = output.lines().last();
-
-    if let Some(output) = output {
-        return Ok(Json(output[(output.len() - 40)..].to_owned()));
-    }
-
-    Err(Error::Command("Can't parse GOTPM output".to_string()))
 }
 
 /// Return the TEE quote
@@ -151,15 +117,47 @@ pub async fn get_tee_quote(
         })?,
         &certificate,
     )?;
-    let quote = get_quote(&report_data)?;
+    let quote = tee_get_quote(&report_data)?;
     Ok(Json(quote))
 }
 
 /// Return the TPM quote
 #[get("/quote/tpm")]
-pub async fn get_tpm_quote(_data: Query<QuoteParam>) -> ResponseWithError<Json<Vec<u8>>> {
-    // TODO
-    Ok(Json(vec![]))
+pub async fn get_tpm_quote(
+    quote_param: Query<QuoteParam>,
+    tpm_context: Data<Mutex<Context>>,
+) -> ResponseWithError<Json<TpmQuoteResponse>> {
+    let mut tpm_context = tpm_context
+        .lock()
+        .map_err(|_| Error::Unexpected("TPM already in use".to_owned()))?;
+    let quote_param = quote_param.into_inner();
+
+    if quote_param.nonce.len() > 64 {
+        return Err(Error::Tpm(TpmError::AttestationError(
+            "Nonce too long (> 64 bytes)".to_owned(),
+        )));
+    }
+
+    let ima_file = std::fs::File::open(ima::ima::IMA_ASCII_PATH)?;
+    let reader = BufReader::new(ima_file);
+    let ima_first_line = reader
+        .lines()
+        .next()
+        .ok_or_else(|| Error::Unexpected("Event log is empty".to_owned()))??;
+    let ima_entry = ImaEntry::try_from(ima_first_line.as_str())?;
+    let pcr_slot = ima_entry.pcr;
+
+    let (quote, signature, public_key) = tpm_get_quote(
+        &mut tpm_context,
+        &[pcr_slot as u8],
+        Some(&quote_param.nonce),
+    )?;
+
+    Ok(Json(TpmQuoteResponse {
+        quote,
+        signature,
+        public_key,
+    }))
 }
 
 /// Initialize the application configuration

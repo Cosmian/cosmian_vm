@@ -1,22 +1,32 @@
-use std::io::Write;
-use std::sync::Arc;
-use std::time::Duration;
+use std::{io::Write, sync::Arc, time::Duration};
 
 use http::{HeaderMap, HeaderValue, StatusCode};
 use reqwest::{Client, ClientBuilder, Response, Url};
 use rustls::{client::WebPkiVerifier, Certificate};
 use serde::{Deserialize, Serialize};
 
-use crate::certificate_verifier::{LeafCertificateVerifier, NoVerifier};
-use crate::error::Error;
-use crate::ser_de::{base64_serde, base64_serde_opt};
-use crate::snapshot::CosmianVmSnapshot;
+use crate::{
+    certificate_verifier::{LeafCertificateVerifier, NoVerifier},
+    error::Error,
+    ser_de::{base64_serde, base64_serde_opt},
+    snapshot::CosmianVmSnapshot,
+};
 
 #[derive(Clone)]
 pub struct CosmianVmClient {
     pub agent_url: String,
     client: Client,
     pub certificate: Certificate,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct TpmQuoteResponse {
+    #[serde(with = "base64_serde")]
+    pub quote: Vec<u8>,
+    #[serde(with = "base64_serde")]
+    pub signature: Vec<u8>,
+    #[serde(with = "base64_serde")]
+    pub public_key: Vec<u8>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -41,12 +51,6 @@ impl CosmianVmClient {
         self.get("/ima/binary", None::<&()>).await
     }
 
-    /// Get the PCR value for register number `id`
-    pub async fn pcr_value(&self, id: u32) -> Result<String, Error> {
-        self.get(&format!("/tmp_endpoint/pcr/{id}"), None::<&()>)
-            .await
-    }
-
     /// Get the quote of the tee
     pub async fn tee_quote(&self, nonce: &[u8]) -> Result<Vec<u8>, Error> {
         self.get(
@@ -59,7 +63,7 @@ impl CosmianVmClient {
     }
 
     /// Get the quote of the tpm
-    pub async fn tpm_quote(&self, nonce: &[u8]) -> Result<Vec<u8>, Error> {
+    pub async fn tpm_quote(&self, nonce: &[u8]) -> Result<TpmQuoteResponse, Error> {
         self.get(
             "/quote/tpm",
             Some(&QuoteParam {
