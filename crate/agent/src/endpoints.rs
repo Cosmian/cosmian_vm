@@ -123,41 +123,40 @@ pub async fn get_tpm_quote(
     quote_param: Query<QuoteParam>,
     conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<TpmQuoteResponse>> {
-    match &conf.agent.tpm_device {
-        None => Err(Error::BadRequest(
+    let Some(tpm_device) = &conf.agent.tpm_device else {
+        return Err(Error::BadRequest(
             "The agent is not configured to support TPM".to_string(),
-        )),
-        Some(tpm_device) => {
-            let tcti = TctiNameConf::from_str(&format!("device:{}", &tpm_device.to_string_lossy()))
-                .map_err(|e| Error::Unexpected(format!("Incorrect TCTI (TPM device): {e}")))?;
+        ));
+    };
 
-            let mut tpm_context = Context::new(tcti).map_err(|e| {
-                Error::Unexpected(format!("Can't build context from TCTI (TPM device): {e}"))
-            })?;
+    let tcti = TctiNameConf::from_str(&format!("device:{}", &tpm_device.to_string_lossy()))
+        .map_err(|e| Error::Unexpected(format!("Incorrect TCTI (TPM device): {e}")))?;
 
-            let quote_param = quote_param.into_inner();
+    let mut tpm_context = Context::new(tcti).map_err(|e| {
+        Error::Unexpected(format!("Can't build context from TCTI (TPM device): {e}"))
+    })?;
 
-            if quote_param.nonce.len() > 64 {
-                return Err(Error::Tpm(TpmError::AttestationError(
-                    "Nonce too long (> 64 bytes)".to_owned(),
-                )));
-            }
+    let quote_param = quote_param.into_inner();
 
-            let pcr_slot = Ima::try_from(read_ima_ascii_first_line()?.as_str())?.pcr_id();
-
-            let (quote, signature, public_key) = tpm_get_quote(
-                &mut tpm_context,
-                &[pcr_slot as u8],
-                Some(&quote_param.nonce),
-            )?;
-
-            Ok(Json(TpmQuoteResponse {
-                quote,
-                signature,
-                public_key,
-            }))
-        }
+    if quote_param.nonce.len() > 64 {
+        return Err(Error::Tpm(TpmError::AttestationError(
+            "Nonce too long (> 64 bytes)".to_owned(),
+        )));
     }
+
+    let pcr_slot = Ima::try_from(read_ima_ascii_first_line()?.as_str())?.pcr_id();
+
+    let (quote, signature, public_key) = tpm_get_quote(
+        &mut tpm_context,
+        &[pcr_slot as u8],
+        Some(&quote_param.nonce),
+    )?;
+
+    Ok(Json(TpmQuoteResponse {
+        quote,
+        signature,
+        public_key,
+    }))
 }
 
 /// Initialize the application configuration

@@ -1,5 +1,3 @@
-use std::{fs::File, io::Write};
-
 use anyhow::Result;
 use gethostname::gethostname;
 
@@ -104,24 +102,17 @@ fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
                 TLS_DAYS_BEFORE_EXPIRATION,
             )?;
 
-            let mut file = File::create(ssl_certificate)?;
-            file.write_all(cert.as_bytes())?;
-
-            let mut file = File::create(ssl_private_key)?;
-            file.write_all(sk.as_bytes())?;
+            std::fs::write(ssl_certificate, cert)?;
+            std::fs::write(ssl_private_key, sk)?;
 
             tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}")
         }
         (true, true) => tracing::info!("The certificate has been read from {ssl_certificate:?}"),
         (false, true) => {
-            return Err(anyhow::anyhow!(
-                "The private key file doesn't exist whereas the certificat exists"
-            ));
+            anyhow::bail!("The private key file doesn't exist whereas the certificat exists");
         }
         (true, false) => {
-            return Err(anyhow::anyhow!(
-                "The certificate file doesn't exist whereas the private key exists"
-            ));
+            anyhow::bail!("The certificate file doesn't exist whereas the private key exists");
         }
     };
 
