@@ -76,12 +76,12 @@ variable "wait_to_add_ssh_keys" {
 
 variable "main_version" {
   type    = string
-  defautl = "alpha"
+  default = "alpha"
 }
 
 variable "tag_version" {
   type    = string
-  defautl = "${locals.tag}"
+  default = "${locals.tag}"
 }
 
 source "googlecompute" "ubuntu" {
