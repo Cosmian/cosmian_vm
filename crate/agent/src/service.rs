@@ -17,8 +17,8 @@ pub(crate) mod internal {
                     } else {
                         Err(Error::Command(format!(
                             "Output: {} - error: {}",
-                            String::from_utf8_lossy(&output.stdout),
-                            String::from_utf8_lossy(&output.stderr)
+                            String::from_utf8_lossy(&output.stdout).trim(),
+                            String::from_utf8_lossy(&output.stderr).trim()
                         )))
                     }
                 }
