@@ -3,6 +3,8 @@ variable "prefix" {}
 locals {
   ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
   redhat_ami_name = "${var.prefix}-cosmian-vm-redhat-{{timestamp}}"
+}
+
 
 variable "project_id" {
   type    = string
@@ -77,11 +79,6 @@ variable "wait_to_add_ssh_keys" {
 variable "main_version" {
   type    = string
   default = "alpha"
-}
-
-variable "tag_version" {
-  type    = string
-  default = "${locals.tag}"
 }
 
 source "googlecompute" "ubuntu" {
