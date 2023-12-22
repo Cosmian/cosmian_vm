@@ -5,7 +5,6 @@ locals {
   redhat_ami_name = "${var.prefix}-cosmian-vm-redhat-{{timestamp}}"
 }
 
-
 variable "project_id" {
   type    = string
   default = "amd-sev-snp"
