@@ -44,7 +44,7 @@ The Cosmian VM contains three majors binaries:
 You can compile and test these both binaries as follow:
 
 ```sh
-$ sudo apt install libssl-dev
+$ sudo apt install libssl-dev libtss2-dev
 $ cargo build
 $ cargo test
 ```
@@ -143,6 +143,7 @@ ssl_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
 ssl_private_key = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/key.pem"
 
 [app]
+service_type = "supervisor"
 service_app_name = "cosmian_helloworld"
 decrypted_folder = "/mnt/cosmian_vm/data"
 encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"

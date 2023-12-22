@@ -1,4 +1,8 @@
-use std::{collections::HashSet, fs};
+use std::{
+    collections::HashSet,
+    fs,
+    io::{BufRead, BufReader},
+};
 
 use serde::{Deserialize, Serialize};
 use sha1::{Digest, Sha1};
@@ -6,12 +10,24 @@ use sha1::{Digest, Sha1};
 use crate::error::Error;
 
 const EVENT_ENTRY_SIZE: usize = 28;
-pub const IMA_ASCII_PATH: &str = "/sys/kernel/security/ima/ascii_runtime_measurements";
-pub const IMA_BINARY_PATH: &str = "/sys/kernel/security/ima/binary_runtime_measurements";
+const IMA_ASCII_PATH: &str = "/sys/kernel/security/ima/ascii_runtime_measurements";
+const IMA_BINARY_PATH: &str = "/sys/kernel/security/ima/binary_runtime_measurements";
 
 /// Read the ascii IMA values
 pub fn read_ima_ascii() -> Result<String, Error> {
     Ok(fs::read_to_string(IMA_ASCII_PATH)?)
+}
+
+/// Read the first line of the ascii IMA values (probably: boot_aggregate)
+pub fn read_ima_ascii_first_line() -> Result<String, Error> {
+    let ima_file = std::fs::File::open(IMA_ASCII_PATH)?;
+    let reader = BufReader::new(ima_file);
+    let ima_first_line = reader
+        .lines()
+        .next()
+        .ok_or_else(|| Error::Unexpected("Event log is empty".to_owned()))??;
+
+    Ok(ima_first_line)
 }
 
 /// Read the binary IMA values

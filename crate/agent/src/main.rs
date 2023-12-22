@@ -1,10 +1,12 @@
-use std::{fs::File, io::Write};
-
 use anyhow::Result;
 use gethostname::gethostname;
 
 use actix_web::{App, HttpServer};
-use cosmian_vm_agent::{conf::CosmianVmAgent, get_tls_config, utils::generate_self_signed_cert};
+use cosmian_vm_agent::{
+    conf::CosmianVmAgent,
+    get_tls_config,
+    utils::{generate_self_signed_cert, generate_tpm_keys},
+};
 use tracing_actix_web::TracingLogger;
 use tracing_subscriber::{
     filter::{filter_fn, EnvFilter, FilterExt, LevelFilter},
@@ -22,8 +24,9 @@ async fn main() -> Result<()> {
     init_logging();
 
     tracing::info!(
-        "Cosmain VM Agent version {}",
-        option_env!("CARGO_PKG_VERSION").unwrap_or("unknown")
+        "Cosmain VM Agent version {} (TEE detected: {})",
+        option_env!("CARGO_PKG_VERSION").unwrap_or("unknown"),
+        tee_attestation::guess_tee()?.to_string()
     );
 
     // Read the configuration of the Cosmian VM Agent
@@ -42,35 +45,8 @@ async fn main() -> Result<()> {
     let ssl_private_key = conf.agent.ssl_private_key.clone();
     let ssl_certificate = conf.agent.ssl_certificate.clone();
 
-    // Generate the certificate if not present
-    match (ssl_private_key.exists(), ssl_certificate.exists()) {
-        (false, false) => {
-            let hostname = gethostname();
-            let hostname = hostname.to_string_lossy();
-            let subject = format!("CN={hostname},O=Cosmian Tech,C=FR,L=Paris,ST=Ile-de-France");
-            let (sk, cert) =
-                generate_self_signed_cert(&subject, &[&host], TLS_DAYS_BEFORE_EXPIRATION)?;
-
-            let mut file = File::create(&ssl_certificate)?;
-            file.write_all(cert.as_bytes())?;
-
-            let mut file = File::create(&ssl_private_key)?;
-            file.write_all(sk.as_bytes())?;
-
-            tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}")
-        }
-        (true, true) => tracing::info!("The certificate has been read from {ssl_certificate:?}"),
-        (false, true) => {
-            return Err(anyhow::anyhow!(
-                "The private key file doesn't exist whereas the certificat exists"
-            ));
-        }
-        (true, false) => {
-            return Err(anyhow::anyhow!(
-                "The certificate file doesn't exist whereas the private key exists"
-            ));
-        }
-    };
+    // First startup: initialize the agent
+    initialize_agent(&conf)?;
 
     // Start REST server thread
     tracing::info!("Starting server on {host}:{port}...");
@@ -107,4 +83,45 @@ fn init_logging() {
         .with(fmt::layer().with_filter(filter))
         .with(stdout_layer)
         .init();
+}
+
+fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
+    let ssl_private_key = &conf.agent.ssl_private_key;
+    let ssl_certificate = &conf.agent.ssl_certificate;
+
+    // Generate the certificate if not present
+    match (ssl_private_key.exists(), ssl_certificate.exists()) {
+        (false, false) => {
+            tracing::info!("Generating certificates...");
+            let hostname = gethostname();
+            let hostname = hostname.to_string_lossy();
+            let subject = format!("CN={hostname},O=Cosmian Tech,C=FR,L=Paris,ST=Ile-de-France");
+            let (sk, cert) = generate_self_signed_cert(
+                &subject,
+                &[&conf.agent.host],
+                TLS_DAYS_BEFORE_EXPIRATION,
+            )?;
+
+            std::fs::write(ssl_certificate, cert)?;
+            std::fs::write(ssl_private_key, sk)?;
+
+            tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}")
+        }
+        (true, true) => tracing::info!("The certificate has been read from {ssl_certificate:?}"),
+        (false, true) => {
+            anyhow::bail!("The private key file doesn't exist whereas the certificat exists");
+        }
+        (true, false) => {
+            anyhow::bail!("The certificate file doesn't exist whereas the private key exists");
+        }
+    };
+
+    // Generate TPM keys if not already done
+    if let Some(tpm_device) = &conf.agent.tpm_device {
+        generate_tpm_keys(tpm_device)?
+    } else {
+        tracing::info!("No TPM configuration found: TPM generation keys skipped!");
+    }
+
+    Ok(())
 }

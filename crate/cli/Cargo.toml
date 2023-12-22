@@ -26,7 +26,6 @@ ima = { path = "../ima" }
 rand = "0.8"
 serde = { workspace = true }
 serde_json = { workspace = true }
-sha2 = { workspace = true }
 tee_attestation = { workspace = true }
 tpm_quote = { workspace = true }
 tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }

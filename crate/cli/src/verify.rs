@@ -1,12 +1,11 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::Args;
 use cosmian_vm_client::{client::CosmianVmClient, snapshot::CosmianVmSnapshot};
 use rand::RngCore;
-use sha2::Digest;
-use std::{convert::TryInto, fs, path::PathBuf};
+use std::{fs, path::PathBuf};
 use tee_attestation::{forge_report_data_with_nonce, verify_quote as tee_verify_quote};
 use tokio::task::spawn_blocking;
-use tpm_quote::verify_quote as tpm_verify_quote;
+use tpm_quote::{verify_pcr_value, verify_quote as tpm_verify_quote};
 
 /// Verify a Cosmian VM
 #[derive(Args, Debug)]
@@ -67,24 +66,7 @@ impl VerifyArgs {
                 Some(&nonce),
             )?;
 
-            let hpcr_value: [u8; 32] = quote_info
-                .pcr_digest()
-                .to_owned()
-                .try_into()
-                .context("PCR digest must be SHA-256 (32 bytes)")?;
-
-            let pcr_value = ima_entries.pcr_value()?;
-            println!("PCR-10: {}", hex::encode(&pcr_value));
-            let expected_hpcr_value = sha2::Sha256::digest(pcr_value).to_vec();
-            if expected_hpcr_value != hpcr_value[..] {
-                println!("[ FAIL ] Verifying TPM attestation");
-                anyhow::bail!(
-                    "Bad Hash(PCR digest) in quote '{}', expected: '{}'",
-                    hex::encode(hpcr_value),
-                    hex::encode(expected_hpcr_value)
-                );
-            }
-
+            verify_pcr_value(&quote_info, &ima_entries.pcr_value()?)?;
             println!("[ OK ] Verifying TPM attestation");
         }
 
