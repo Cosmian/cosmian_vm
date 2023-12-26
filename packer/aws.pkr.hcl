@@ -1,5 +1,10 @@
 variable "prefix" {}
 
+locals {
+  ubuntu_ami_name = "{var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
+  redhat_ami_name = "{var.prefix}-cosmian-vm-redhat-{{timestamp}}"
+}
+
 variable "ubuntu_source_ami" {
   type    = string
   default = "ami-0905a3c97561e0b69"
@@ -30,16 +35,6 @@ variable "ssh_timeout" {
   default = "20m"
 }
 
-variable "ubuntu_ami_name" {
-  type    = string
-  default = "{{var.prefix}}-cosmian-vm-ubuntu-{{timestamp}}"
-}
-
-variable "redhat_ami_name" {
-  type    = string
-  default = "{{var.prefix}}-cosmian-vm-redhat-{{timestamp}}"
-}
-
 variable "instance_type" {
   type    = string
   default = "c6a.large"
@@ -60,7 +55,7 @@ source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
   region                 = var.region
   ssh_username           = var.ubuntu_ssh_username
-  ami_name               = var.ubuntu_ami_name
+  ami_name               = local.ubuntu_ami_name
   instance_type          = var.instance_type
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
@@ -86,7 +81,7 @@ source "amazon-ebssurrogate" "redhat" {
   source_ami             = var.redhat_source_ami
   region                 = var.region
   ssh_username           = var.redhat_ssh_username
-  ami_name               = var.redhat_ami_name
+  ami_name               = local.redhat_ami_name
   instance_type          = var.instance_type
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
