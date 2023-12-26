@@ -89,10 +89,5 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: packer build -var "prefix=alpha" aws.pkr.hcl
 
-      - name: Build image - tags
-        if: startsWith(github.ref, 'refs/tags/')
-        run: packer build -var "prefix=${{github.ref_name}}" aws.pkr.hcl
-
-      - name: Build image - pull request
-        if: startsWith(github.ref, 'refs/pull/')
+      - name: Build image
         run: packer build -debug -var "prefix=${{github.ref_name}}" aws.pkr.hcl
