@@ -15,9 +15,9 @@ on: [push]
   #     - "**"
 
 env:
-  PACKER_LOG=1
-  AWS_POLL_DELAY_SECONDS=10
-  AWS_MAX_ATTEMPTS=600
+  PACKER_LOG: 1
+  AWS_POLL_DELAY_SECONDS: 10
+  AWS_MAX_ATTEMPTS: 600
 
 jobs:
   build-cosmian-vm:
