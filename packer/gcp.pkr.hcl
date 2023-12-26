@@ -1,17 +1,8 @@
 variable "prefix" {}
 
 locals {
-<<<<<<< HEAD
   ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
   redhat_ami_name = "${var.prefix}-cosmian-vm-redhat-{{timestamp}}"
-=======
-  onMain = data.git-repository.cosmian_vm.head == "main"
-<<<<<<< HEAD
-  prefix  = local.onMain ? "${var.main_version}" : join(",", data.git-repository.cosmian_vm.branches)
->>>>>>> b5a8008 (fix invalid image name error)
-=======
-  prefix  = local.onMain ? "${var.main_version}" : join(",", data.git-repository.cosmian_vm.tags)
->>>>>>> c0b50ba (check for prefix in image name)
 }
 
 variable "project_id" {
