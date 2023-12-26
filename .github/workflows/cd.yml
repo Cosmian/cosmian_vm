@@ -85,5 +85,14 @@ jobs:
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
 
-      - name: Run `packer build`
-        run: packer build aws.pkr.hcl
+      - name: Build image - main
+        if: github.ref == 'refs/heads/main'
+        run: packer build -var "prefix=alpha" aws.pkr.hcl
+
+      - name: Build image - tags
+        if: startsWith(github.ref, 'refs/tags/')
+        run: packer build -var "prefix=${{github.ref_name}}" aws.pkr.hcl
+
+      - name: Build image - pull request
+        if: startsWith(github.ref, 'refs/pull/')
+        run: packer build -debug -var "prefix=${{github.ref_name}}" aws.pkr.hcl
