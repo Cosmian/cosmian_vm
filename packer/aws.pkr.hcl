@@ -64,15 +64,15 @@ source "amazon-ebssurrogate" "ubuntu" {
   launch_block_device_mappings {
     volume_type = "gp2"
     device_name = "/dev/xvda" 
-    delete_on_termination = false
-    volume_size = 20
+    delete_on_termination = true
+    volume_size = 10
   }
 
   ami_root_device {
     source_device_name = "/dev/xvda"
     device_name = "/dev/xvda"
-    delete_on_termination = false
-    volume_size = 32
+    delete_on_termination = true
+    volume_size = 16
     volume_type = "gp2"
   }
 }
@@ -90,15 +90,15 @@ source "amazon-ebssurrogate" "redhat" {
   launch_block_device_mappings {
     volume_type = "gp2"
     device_name = "/dev/xvda" 
-    delete_on_termination = false
-    volume_size = 20
+    delete_on_termination = true
+    volume_size = 10
   }
 
   ami_root_device {
     source_device_name = "/dev/xvda"
     device_name = "/dev/xvda"
-    delete_on_termination = false
-    volume_size = 32
+    delete_on_termination = true
+    volume_size = 16
     volume_type = "gp2"
   }
 }
@@ -152,3 +152,4 @@ build {
     use_proxy     = false
   }
 }
+
