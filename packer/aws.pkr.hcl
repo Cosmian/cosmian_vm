@@ -50,6 +50,10 @@ variable "ami_virtualization_type" {
   default = "hvm"
 }
 
+variable "ena_support" {
+  type    = bool
+  default = true
+}
 
 source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
@@ -60,6 +64,7 @@ source "amazon-ebssurrogate" "ubuntu" {
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
+  ena_support            = var.ena_support
 
   launch_block_device_mappings {
     volume_type = "gp2"
@@ -86,7 +91,7 @@ source "amazon-ebssurrogate" "redhat" {
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
-
+  ena_support            = var.ena_support
   launch_block_device_mappings {
     volume_type = "gp2"
     device_name = "/dev/xvda" 
