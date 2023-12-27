@@ -1,3 +1,10 @@
+variable "prefix" {}
+
+locals {
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
+  redhat_ami_name = "${var.prefix}-cosmian-vm-redhat-{{timestamp}}"
+}
+
 variable "project_id" {
   type    = string
   default = "amd-sev-snp"
@@ -38,16 +45,6 @@ variable "ssh_timeout" {
   default = "10m"
 }
 
-variable "ubuntu_image_name" {
-  type    = string
-  default = "cosmian-vm-ubuntu-{{timestamp}}"
-}
-
-variable "redhat_image_name" {
-  type    = string
-  default = "cosmian-vm-redhat-{{timestamp}}"
-}
-
 variable "image_guest_os_features" {
   type    = list(string)
   default = ["SEV_SNP_CAPABLE"]
@@ -85,7 +82,7 @@ source "googlecompute" "ubuntu" {
   zone                   = var.zone
   ssh_username           = var.ssh_username
   ssh_timeout            = var.ssh_timeout
-  image_name             = var.ubuntu_image_name
+  image_name             = local.ubuntu_ami_name
   image_guest_os_features = var.image_guest_os_features
   network                = var.network
   subnetwork             = var.subnetwork
@@ -101,7 +98,7 @@ source "googlecompute" "redhat" {
   zone                   = var.zone
   ssh_username           = var.ssh_username
   ssh_timeout            = var.ssh_timeout
-  image_name             = var.redhat_image_name
+  image_name             = local.redhat_ami_name
   image_guest_os_features = var.image_guest_os_features
   network                = var.network
   subnetwork             = var.subnetwork
