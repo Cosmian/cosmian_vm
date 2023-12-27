@@ -55,6 +55,11 @@ variable "ena_support" {
   default = true
 }
 
+variable "imds_support" {
+  type    = string
+  default = "v2.0"
+}
+
 source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
   region                 = var.region
@@ -65,6 +70,7 @@ source "amazon-ebssurrogate" "ubuntu" {
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
+  imds_support           = var.imds_support
 
   launch_block_device_mappings {
     volume_type = "gp2"
@@ -92,6 +98,8 @@ source "amazon-ebssurrogate" "redhat" {
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
+  imds_support           = var.imds_support
+
   launch_block_device_mappings {
     volume_type = "gp2"
     device_name = "/dev/xvda" 
