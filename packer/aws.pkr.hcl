@@ -60,7 +60,6 @@ source "amazon-ebssurrogate" "ubuntu" {
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
-  disable_stop_instance=true
 
   launch_block_device_mappings {
     volume_type = "gp2"
@@ -87,8 +86,7 @@ source "amazon-ebssurrogate" "redhat" {
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
-  disable_stop_instance=true
-  
+
   launch_block_device_mappings {
     volume_type = "gp2"
     device_name = "/dev/xvda" 

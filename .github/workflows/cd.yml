@@ -14,11 +14,6 @@ on: [push]
   #   tags:
   #     - "**"
 
-env:
-  PACKER_LOG: 1
-  AWS_POLL_DELAY_SECONDS: 30
-  AWS_MAX_ATTEMPTS: 600
-
 jobs:
   build-cosmian-vm:
     name: Build Cosmian VM Agent
@@ -92,7 +87,11 @@ jobs:
 
       - name: Build image - main
         if: github.ref == 'refs/heads/main'
-        run: packer build -var "prefix=alpha" aws.pkr.hcl
+        run: |
+          packer build -var "prefix=alpha" aws.pkr.hcl
+          packer build -var "prefix=alpha" gcp.pkr.hcl
 
       - name: Build image
-        run: packer build -debug -var "prefix=${{github.ref_name}}" aws.pkr.hcl
+        run: |
+          packer build -var "prefix=${{github.ref_name}}" aws.pkr.hcl
+          packer build -var "prefix=${{github.ref_name}}" gcp.pkr.hcl
