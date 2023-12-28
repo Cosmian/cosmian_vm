@@ -55,9 +55,29 @@ variable "ena_support" {
   default = true
 }
 
-variable "imds_support" {
+variable "volume_type" {
   type    = string
-  default = "v2.0"
+  default = "gp2"
+}
+
+variable "device_name" {
+  type    = string
+  default = "/dev/xvda"
+}
+
+variable "source_device_name" {
+  type    = string
+  default = "/dev/sda1"
+}
+
+variable "volume_size" {
+  type    = number
+  default = 8
+}
+
+variable "delete_on_termination" {
+  type    = bool
+  default = true
 }
 
 source "amazon-ebssurrogate" "ubuntu" {
@@ -70,21 +90,19 @@ source "amazon-ebssurrogate" "ubuntu" {
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
-  imds_support           = var.imds_support
 
   launch_block_device_mappings {
-    volume_type = "gp2"
-    device_name = "/dev/xvda" 
-    delete_on_termination = true
-    volume_size = 10
+    volume_type = var.volume_type
+    device_name = var.device_name 
+    volume_size = var.volume_size
   }
 
   ami_root_device {
-    source_device_name = "/dev/xvda"
-    device_name = "/dev/xvda"
-    delete_on_termination = true
-    volume_size = 16
-    volume_type = "gp2"
+    source_device_name = var.source_device_name
+    device_name = var.device_name
+    delete_on_termination = var.delete_on_termination
+    volume_size = var.volume_size
+    volume_type = var.volume_type
   }
 }
 
@@ -98,21 +116,19 @@ source "amazon-ebssurrogate" "redhat" {
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
-  imds_support           = var.imds_support
 
   launch_block_device_mappings {
-    volume_type = "gp2"
-    device_name = "/dev/xvda" 
-    delete_on_termination = true
-    volume_size = 10
+    volume_type = var.volume_type
+    device_name = var.device_name 
+    volume_size = var.volume_size
   }
 
   ami_root_device {
-    source_device_name = "/dev/xvda"
-    device_name = "/dev/xvda"
-    delete_on_termination = true
-    volume_size = 16
-    volume_type = "gp2"
+    source_device_name = var.source_device_name
+    device_name = var.device_name
+    delete_on_termination = var.delete_on_termination
+    volume_size = var.volume_size
+    volume_type = var.volume_type
   }
 }
 
