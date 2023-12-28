@@ -95,6 +95,11 @@ variable "throughput" {
   default = 125
 }
 
+variable "tpm_support" {
+  type    = string
+  default = "v2.0"
+}
+
 source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
   region                 = var.region
@@ -113,6 +118,7 @@ source "amazon-ebssurrogate" "ubuntu" {
     delete_on_termination = var.delete_on_termination
     iops = var.iops
     throughput = var.throughput
+    tpm_support = var.tpm_support
   }
 
   ami_root_device {
@@ -142,6 +148,7 @@ source "amazon-ebssurrogate" "redhat" {
     delete_on_termination = var.delete_on_termination
     iops = var.iops
     throughput = var.throughput
+    tpm_support = var.tpm_support
   }
 
   ami_root_device {
