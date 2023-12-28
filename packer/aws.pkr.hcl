@@ -110,6 +110,7 @@ source "amazon-ebssurrogate" "ubuntu" {
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
+  tpm_support            = var.tpm_support
 
   launch_block_device_mappings {
     volume_type = var.volume_type
@@ -118,7 +119,6 @@ source "amazon-ebssurrogate" "ubuntu" {
     delete_on_termination = var.delete_on_termination
     iops = var.iops
     throughput = var.throughput
-    tpm_support = var.tpm_support
   }
 
   ami_root_device {
@@ -139,7 +139,8 @@ source "amazon-ebssurrogate" "redhat" {
   ssh_timeout            = var.ssh_timeout
   boot_mode              = var.boot_mode
   ami_virtualization_type = var.ami_virtualization_type
-  ena_support            = var.ena_support
+  ena_support            = var.
+  tpm_support            = var.tpm_support
 
   launch_block_device_mappings {
     volume_type = var.volume_type
@@ -148,7 +149,6 @@ source "amazon-ebssurrogate" "redhat" {
     delete_on_termination = var.delete_on_termination
     iops = var.iops
     throughput = var.throughput
-    tpm_support = var.tpm_support
   }
 
   ami_root_device {
