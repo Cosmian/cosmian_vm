@@ -57,7 +57,7 @@ variable "ena_support" {
 
 variable "volume_type" {
   type    = string
-  default = "gp2"
+  default = "gp3"
 }
 
 variable "launch_block_device_mappings_device_name" {
@@ -80,6 +80,21 @@ variable "volume_size" {
   default = 8
 }
 
+variable "delete_on_termination" {
+  type    = bool
+  default = true
+}
+
+variable "iops {
+  type    = number
+  default = 3000
+}
+
+variable "throughput" {
+  type    = number
+  default = 125
+}
+
 source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
   region                 = var.region
@@ -95,6 +110,9 @@ source "amazon-ebssurrogate" "ubuntu" {
     volume_type = var.volume_type
     device_name = var.launch_block_device_mappings_device_name 
     volume_size = var.volume_size
+    delete_on_termination = var.delete_on_termination
+    iops = var.iops
+    throughput = var.throughput
   }
 
   ami_root_device {
@@ -102,6 +120,7 @@ source "amazon-ebssurrogate" "ubuntu" {
     device_name = var.ami_root_device_name
     volume_size = var.volume_size
     volume_type = var.volume_type
+    delete_on_termination = var.delete_on_termination
   }
 }
 
@@ -120,6 +139,9 @@ source "amazon-ebssurrogate" "redhat" {
     volume_type = var.volume_type
     device_name = var.launch_block_device_mappings_device_name 
     volume_size = var.volume_size
+    delete_on_termination = var.delete_on_termination
+    iops = var.iops
+    throughput = var.throughput
   }
 
   ami_root_device {
@@ -127,6 +149,7 @@ source "amazon-ebssurrogate" "redhat" {
     device_name = var.ami_root_device_name
     volume_size = var.volume_size
     volume_type = var.volume_type
+    delete_on_termination = var.delete_on_termination
   }
 }
 
