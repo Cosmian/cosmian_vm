@@ -60,12 +60,17 @@ variable "volume_type" {
   default = "gp2"
 }
 
-variable "device_name" {
+variable "launch_block_device_mappings_device_name" {
   type    = string
   default = "/dev/xvda"
 }
 
 variable "source_device_name" {
+  type    = string
+  default = "/dev/xvda"
+}
+
+variable "ami_root_device_name" {
   type    = string
   default = "/dev/sda1"
 }
@@ -93,13 +98,13 @@ source "amazon-ebssurrogate" "ubuntu" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.device_name 
+    device_name = var.launch_block_device_mappings_device_name 
     volume_size = var.volume_size
   }
 
   ami_root_device {
     source_device_name = var.source_device_name
-    device_name = var.device_name
+    device_name = var.ami_root_device_name
     delete_on_termination = var.delete_on_termination
     volume_size = var.volume_size
     volume_type = var.volume_type
@@ -119,13 +124,13 @@ source "amazon-ebssurrogate" "redhat" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.device_name 
+    device_name = var.launch_block_device_mappings_device_name 
     volume_size = var.volume_size
   }
 
   ami_root_device {
     source_device_name = var.source_device_name
-    device_name = var.device_name
+    device_name = var.ami_root_device_name
     delete_on_termination = var.delete_on_termination
     volume_size = var.volume_size
     volume_type = var.volume_type
