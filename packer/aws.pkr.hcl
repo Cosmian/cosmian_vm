@@ -72,17 +72,12 @@ variable "source_device_name" {
 
 variable "ami_root_device_name" {
   type    = string
-  default = "/dev/sda1"
+  default = "/dev/xvda"
 }
 
 variable "volume_size" {
   type    = number
   default = 8
-}
-
-variable "delete_on_termination" {
-  type    = bool
-  default = true
 }
 
 source "amazon-ebssurrogate" "ubuntu" {
@@ -105,7 +100,6 @@ source "amazon-ebssurrogate" "ubuntu" {
   ami_root_device {
     source_device_name = var.source_device_name
     device_name = var.ami_root_device_name
-    delete_on_termination = var.delete_on_termination
     volume_size = var.volume_size
     volume_type = var.volume_type
   }
