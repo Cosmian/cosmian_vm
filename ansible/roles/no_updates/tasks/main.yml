@@ -36,7 +36,7 @@
   tags: ubuntu
 
 - name: Disable automatic updates on Red Hat
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
   block:
     - name: Populate service facts
       service_facts:
