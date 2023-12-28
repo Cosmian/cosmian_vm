@@ -85,7 +85,7 @@ variable "delete_on_termination" {
   default = true
 }
 
-variable "iops {
+variable "iops" {
   type    = number
   default = 3000
 }
