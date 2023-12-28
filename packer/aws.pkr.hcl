@@ -125,7 +125,6 @@ source "amazon-ebssurrogate" "redhat" {
   ami_root_device {
     source_device_name = var.source_device_name
     device_name = var.ami_root_device_name
-    delete_on_termination = var.delete_on_termination
     volume_size = var.volume_size
     volume_type = var.volume_type
   }
