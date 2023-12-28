@@ -62,12 +62,12 @@ variable "volume_type" {
 
 variable "launch_block_device_mappings_device_name" {
   type    = string
-  default = "/dev/xvda"
+  default = "/dev/xvdf"
 }
 
 variable "source_device_name" {
   type    = string
-  default = "/dev/xvda"
+  default = "/dev/xvdf"
 }
 
 variable "ami_root_device_name" {
