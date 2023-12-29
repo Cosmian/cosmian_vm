@@ -221,4 +221,16 @@ build {
     local_port    = 22
     use_proxy     = false
   }
+
+    provisioner "shelll" {
+    inline = [
+      "sudo mkdir -p /var/run/supervisor/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable supervisord",
+      "sudo systemctl start supervisord",
+      "sudo supervisorctl update",
+      "sudo supervisorctl reread"
+    ]
+  }
+
 }

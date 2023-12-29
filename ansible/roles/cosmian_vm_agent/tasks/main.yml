@@ -89,6 +89,13 @@
       name: supervisor
       state: started
     changed_when: false
+  
+  - name: Reread Supervisor conf file
+    command: supervisorctl reread
+
+  - name: Update Supervisor process
+    command: supervisorctl update
+
 
 - name: Supervisor install on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
@@ -125,6 +132,12 @@
       enabled: true
       state: started
     changed_when: false
+
+  - name: Reread Supervisor conf file
+    command: supervisorctl reread
+
+  - name: Update Supervisor process
+    command: supervisorctl update
 
 - name: Supervisor install on Amazon Linux
   when: ansible_distribution == 'Amazon'
@@ -166,28 +179,3 @@
       owner: root
       group: root
       mode: 0500
-
-  - name: Create supervisor sock folder
-    ansible.builtin.file:
-      path: /var/run/supervisor/
-      state: directory
-      owner: root
-      group: root
-      mode: 0755
-
-  - name: Service daemon reload
-    ansible.builtin.systemd_service:
-      daemon_reload: true
-
-  - name: Check if Supervisor is started
-    systemd:
-      name: supervisord
-      enabled: true
-      state: started
-    changed_when: false
-
-- name: Reread Supervisor conf file
-  command: supervisorctl reread
-
-- name: Update Supervisor process
-  command: supervisorctl update
