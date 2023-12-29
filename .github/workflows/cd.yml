@@ -94,4 +94,3 @@ jobs:
       - name: Build image
         run: |
           packer build -var "prefix=${{github.ref_name}}" aws.pkr.hcl
-          packer build -var "prefix=${{github.ref_name}}" gcp.pkr.hcl
