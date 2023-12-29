@@ -167,14 +167,6 @@
       group: root
       mode: 0500
 
-  - name: Create supervisor sock folder
-    ansible.builtin.file:
-      path: /var/run/supervisor/
-      state: directory
-      owner: root
-      group: root
-      mode: 0755
-
   - name: Change permission on supervisord binary
     file:
       path: /usr/local/bin/supervisord
