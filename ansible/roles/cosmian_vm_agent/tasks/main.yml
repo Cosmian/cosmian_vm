@@ -145,7 +145,7 @@
 
   - name: Create supervisord.service file
     template:
-      src: supervisord.conf.j2
+      src: supervisord.service.j2
       dest: /lib/systemd/system/supervisord.service
       owner: root
       group: root
