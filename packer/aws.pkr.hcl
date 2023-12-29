@@ -80,11 +80,6 @@ variable "delete_on_termination" {
   default = true
 }
 
-variable "tpm_support" {
-  type    = string
-  default = "v2.0"
-}
-
 source "amazon-ebssurrogate" "amazon-linux" {
   source_ami             = var.amazon_linux_source_ami
   region                 = var.region
@@ -94,7 +89,6 @@ source "amazon-ebssurrogate" "amazon-linux" {
   ssh_timeout            = var.ssh_timeout
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
-  tpm_support            = var.tpm_support
 
   launch_block_device_mappings {
     volume_type = var.volume_type
@@ -121,7 +115,6 @@ source "amazon-ebssurrogate" "redhat" {
   ssh_timeout            = var.ssh_timeout
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
-  tpm_support            = var.tpm_support
 
   launch_block_device_mappings {
     volume_type = var.volume_type
