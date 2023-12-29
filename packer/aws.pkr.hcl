@@ -222,7 +222,7 @@ build {
     use_proxy     = false
   }
 
-    provisioner "shelll" {
+    provisioner "shell" {
     inline = [
       "sudo mkdir -p /var/run/supervisor/",
       "sudo systemctl daemon-reload",
