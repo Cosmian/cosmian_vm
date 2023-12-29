@@ -170,11 +170,9 @@
       - /var/log/supervisor/
       - /var/run/supervisor/
 
-  - name: Enable supervisord service
+  - name: Service daemon reload
     ansible.builtin.systemd_service:
-      name: supervisord
       daemon_reload: true
-      enabled: true
 
   - name: Check if Supervisor is started
     systemd:
