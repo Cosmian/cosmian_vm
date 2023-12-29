@@ -197,17 +197,6 @@ build {
     use_proxy     = false
   }
 
-    provisioner "shell" {
-    inline = [
-      "sudo mkdir -p /var/run/supervisor/",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable supervisord",
-      "sudo systemctl start supervisord",
-      "sudo supervisorctl update",
-      "sudo supervisorctl reread"
-    ]
-  }
-
 }
 
 build {
