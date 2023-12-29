@@ -110,6 +110,11 @@ variable "boot_mode" {
   default = "uefi"
 }
 
+variable "imds_support" {
+  type    = string
+  default = "v2.0"
+}
+
 source "amazon-ebssurrogate" "amazon-linux" {
   source_ami             = var.amazon_linux_source_ami
   region                 = var.region
@@ -121,6 +126,7 @@ source "amazon-ebssurrogate" "amazon-linux" {
   ena_support            = var.ena_support
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
+  imds_support           = var.imds_support
 
   launch_block_device_mappings {
     volume_type = var.volume_type
@@ -149,6 +155,7 @@ source "amazon-ebssurrogate" "redhat" {
   ena_support            = var.ena_support
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
+  imds_support           = var.imds_support
 
   launch_block_device_mappings {
     volume_type = var.volume_type
