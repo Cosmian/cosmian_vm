@@ -159,16 +159,21 @@
       group: root
       mode: 0644
 
-  - name: Create supervisor log and sock folder
+  - name: Create supervisor log folder
     ansible.builtin.file:
-      path: "{{ item }}"
+      path: /var/log/supervisor/
       state: directory
       owner: root
       group: root
       mode: 0500
-    with_items: 
-      - /var/log/supervisor/
-      - /var/run/supervisor/
+
+  - name: Create supervisor sock folder
+    ansible.builtin.file:
+      path: /var/run/supervisor/
+      state: directory
+      owner: root
+      group: root
+      mode: 0500
 
   - name: Service daemon reload
     ansible.builtin.systemd_service:

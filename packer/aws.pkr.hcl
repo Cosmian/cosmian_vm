@@ -55,19 +55,34 @@ variable "volume_type" {
   default = "gp3"
 }
 
-variable "launch_block_device_mappings_device_name" {
+variable "amazon_linux_launch_block_device_mappings_device_name" {
   type    = string
   default = "/dev/xvda"
 }
 
-variable "source_device_name" {
+variable "amazon_linux_source_device_name" {
   type    = string
   default = "/dev/xvda"
 }
 
-variable "ami_root_device_name" {
+variable "amazon_linux_ami_root_device_name" {
   type    = string
   default = "/dev/xvda"
+}
+
+variable "redhat_launch_block_device_mappings_device_name" {
+  type    = string
+  default = "/dev/nvme0n1"
+}
+
+variable "redhat_source_device_name" {
+  type    = string
+  default = "/dev/nvme0n1"
+}
+
+variable "redhat_ami_root_device_name" {
+  type    = string
+  default = "/dev/nvme0n1"
 }
 
 variable "volume_size" {
@@ -104,14 +119,14 @@ source "amazon-ebssurrogate" "amazon-linux" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.launch_block_device_mappings_device_name 
+    device_name = var.amazon_linux_launch_block_device_mappings_device_name 
     volume_size = var.volume_size
     delete_on_termination = var.delete_on_termination
   }
 
   ami_root_device {
-    source_device_name = var.source_device_name
-    device_name = var.ami_root_device_name
+    source_device_name = var.amazon_linux_source_device_name
+    device_name = var.amazon_linux_ami_root_device_name
     volume_size = var.volume_size
     volume_type = var.volume_type
     delete_on_termination = var.delete_on_termination
@@ -132,14 +147,14 @@ source "amazon-ebssurrogate" "redhat" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.launch_block_device_mappings_device_name 
+    device_name = var.redhat_launch_block_device_mappings_device_name 
     volume_size = var.volume_size
     delete_on_termination = var.delete_on_termination
   }
 
   ami_root_device {
-    source_device_name = var.source_device_name
-    device_name = var.ami_root_device_name
+    source_device_name = var.redhat_source_device_name
+    device_name = var.redhat_ami_root_device_name
     volume_size = var.volume_size
     volume_type = var.volume_type
     delete_on_termination = var.delete_on_termination
