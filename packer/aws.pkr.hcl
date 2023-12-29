@@ -72,17 +72,17 @@ variable "amazon_linux_ami_root_device_name" {
 
 variable "redhat_launch_block_device_mappings_device_name" {
   type    = string
-  default = "/dev/nvme0n1"
+  default = "/dev/sda1"
 }
 
 variable "redhat_source_device_name" {
   type    = string
-  default = "/dev/nvme0n1"
+  default = "/dev/sda1"
 }
 
 variable "redhat_ami_root_device_name" {
   type    = string
-  default = "/dev/nvme0n1"
+  default = "/dev/sda1"
 }
 
 variable "volume_size" {
