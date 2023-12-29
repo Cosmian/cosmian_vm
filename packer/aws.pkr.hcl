@@ -196,6 +196,18 @@ build {
     local_port    = 22
     use_proxy     = false
   }
+
+    provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /var/run/supervisor/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable supervisord",
+      "sudo systemctl start supervisord",
+      "sudo supervisorctl update",
+      "sudo supervisorctl reread"
+    ]
+  }
+
 }
 
 build {
@@ -220,17 +232,6 @@ build {
     playbook_file = "../ansible/cosmian_vm_playbook.yml"
     local_port    = 22
     use_proxy     = false
-  }
-
-    provisioner "shell" {
-    inline = [
-      "sudo mkdir -p /var/run/supervisor/",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable supervisord",
-      "sudo systemctl start supervisord",
-      "sudo supervisorctl update",
-      "sudo supervisorctl reread"
-    ]
   }
 
 }
