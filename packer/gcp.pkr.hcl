@@ -75,11 +75,6 @@ variable "wait_to_add_ssh_keys" {
   default = "20s"
 }
 
-variable "main_version" {
-  type    = string
-  default = "alpha"
-}
-
 source "googlecompute" "ubuntu" {
   project_id             = var.project_id
   source_image           = var.ubuntu_source_image

@@ -1,19 +1,18 @@
 name: Build and Publish VM Image
 
 on:
-  [push]
-  # # Only run when pull request is closed and merged into main
-  # pull_request:
-  #   branches:
-  #     - main
-  #   types:
-  #     - closed
-  # # Do not run on push except on tags
-  # push:
-  #   branches-ignore:
-  #     - "**"
-  #   tags:
-  #     - "**"
+  # Only run when pull request is closed and merged into main
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  # Do not run on push except on tags
+  push:
+    branches-ignore:
+      - "**"
+    tags:
+      - "**"
 
 jobs:
   build-cosmian-vm:
@@ -89,7 +88,6 @@ jobs:
           packer plugins install github.com/hashicorp/amazon
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
-          packer plugins install github.com/ethanmdavidson/git
 
       - name: Build image - main
         if: ${{ github.event.pull_request.merged == true && github.ref_name == 'main' }}
