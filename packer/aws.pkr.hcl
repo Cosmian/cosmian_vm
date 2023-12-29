@@ -132,8 +132,8 @@ source "amazon-ebssurrogate" "amazon-linux" {
   ami_root_device {
     source_device_name = var.amazon_linux_source_device_name
     device_name = var.amazon_linux_ami_root_device_name
-    volume_size = var.volume_size
-    volume_type = var.amazon_linux_volume_type
+    volume_size = var.amazon_linux_volume_size
+    volume_type = var.volume_type
     delete_on_termination = var.delete_on_termination
   }
 }
