@@ -22,11 +22,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - uses: geekyeggo/delete-artifact@v2
         with:
-            name: cosmian_vm_agent
-      
+          name: cosmian_vm_agent
+
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -66,12 +66,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-3
+          aws-region: eu-west-1
 
       - name: Authenticate to Google Cloud
         uses: "google-github-actions/auth@v1"
         with:
-            credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -85,5 +85,14 @@ jobs:
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
 
-      - name: Run `packer build`
-        run: packer build gcp.pkr.hcl
+      - name: Build image - main
+        if: ${{ github.event.pull_request.merged == true && github.ref_name == 'main' }}
+        run: |
+          packer build -var "prefix=alpha" aws.pkr.hcl
+          packer build -var "prefix=alpha" gcp.pkr.hcl
+
+      - name: Build image - release
+        if: startsWith(github.ref, 'refs/tags')
+        run: |
+          packer build -var "prefix=${{github.ref_name}}" aws.pkr.hcl
+          packer build -var "prefix=${{github.ref_name}}" gcp.pkr.hcl

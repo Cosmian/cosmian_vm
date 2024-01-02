@@ -66,7 +66,7 @@
         cmd: update-grub
 
 - name: Update grub on RedHat
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
   block:
     - name: Update grub
       ansible.builtin.command:

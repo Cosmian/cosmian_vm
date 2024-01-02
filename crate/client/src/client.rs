@@ -288,7 +288,7 @@ pub fn get_server_certificate(host: &str, port: u32) -> Result<Vec<u8>, Error> {
     let certificates = client.peer_certificates().ok_or(Error::ServerCertificate)?;
 
     Ok(certificates
-        .get(0)
+        .first()
         .ok_or(Error::ServerCertificate)?
         .as_ref()
         .to_vec())
