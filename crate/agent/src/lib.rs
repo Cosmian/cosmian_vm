@@ -77,7 +77,7 @@ pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerCo
         .with_single_cert(
             certificate,
             rustls::PrivateKey(
-                key.get(0)
+                key.first()
                     .ok_or_else(|| Error::Certificate("TLS private key not found!".to_owned()))?
                     .clone(),
             ),

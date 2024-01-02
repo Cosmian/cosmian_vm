@@ -342,7 +342,7 @@ impl Ima {
     ///
     /// If the IMA is empty, the default value is: `IMA_DEFAULT_PCR_ID`
     pub fn pcr_id(&self) -> u32 {
-        self.entries.get(0).map_or(IMA_DEFAULT_PCR_ID, |e| e.pcr)
+        self.entries.first().map_or(IMA_DEFAULT_PCR_ID, |e| e.pcr)
     }
 
     /// Return the hash method used to hash the files
@@ -350,7 +350,7 @@ impl Ima {
     /// If the IMA is empty, the default value is: `ImaHashMethod::Sha1`
     pub fn hash_file_method(&self) -> ImaHashMethod {
         self.entries
-            .get(0)
+            .first()
             .map_or(IMA_DEFAULT_FILEHASH_FUNCTION, |e| {
                 e.filedata_hash_method.clone()
             })
