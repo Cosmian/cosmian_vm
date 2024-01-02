@@ -28,7 +28,10 @@ if [ $# -eq 2 ]; then
             exit 1
         fi
         
-        mkdir -p "$(dirname "$0")/var"
+        # Cosmian VM data directory
+        mkdir -p "$(dirname "$0")/cosmian_vm_data"
+        # User application data directory
+        mkdir -p "$(dirname "$0")/app_data"
 
         # Start the enclave
         make clean && make DEBUG=$DEBUG DOMAIN_NAME="$1" EMAIL="$2" && gramine-sgx ./cosmian_vm

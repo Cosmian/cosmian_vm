@@ -17,6 +17,7 @@ Also, install some extra packages:
 ```sh
 $ sudo apt install nginx
 ```
+5. Edit the `etc/app/` as you need. This directory is designed to contain all configurations of the application. 
 
 ## Usage
 
@@ -28,11 +29,13 @@ Four enclaves will be generated:
 
 If one enclave raises an error, the whole program stops. 
 
-The Cosmian VM Agent & App certificate is written in `./var` which is readable outside the enclave but can't be decrypted. 
+The Cosmian VM Agent & App certificate is written in `./cosmian_vm_data` which is readable outside the enclave but can't be decrypted. 
+The user application data are written in `./app_data` which is readable outside the enclave but can only be decrypted by other enclaves signed by the same key. 
+By default, the nginx is configured to redirect HTTPS from 443 to 3000. 
 
 ```sh
 $ cd enclave
-$ sudo ./entrypoint.sh sgx.cosmian.com tech@cosmian.com
+$ sudo ./entrypoint.bash sgx.cosmian.dev tech@cosmian.com
 ```
 
 It starts the four enclaves. 
@@ -42,18 +45,18 @@ For testing, you can add `--staging` as an argument of `cosmian_vm_certtool` in 
 You can query the application by doing:
 
 ```sh
-$ curl https://sgx.cosmian.com
+$ curl https://sgx.cosmian.dev
 Hello, World!
 ```
 
 You can verify the enclave by running:
 
 ```sh
-$ cosmian_vm --url https://sgx.cosmian.com:5355 snapshot 
+$ cosmian_vm --url https://sgx.cosmian.dev:5355 snapshot 
 Proceeding the snapshot...
 The snapshot has been saved at ./cosmian_vm.snapshot
 
-$ cosmian_vm --url https://sgx.cosmian.com:5355 verify --snapshot ./cosmian_vm.snapshot
+$ cosmian_vm --url https://sgx.cosmian.dev:5355 verify --snapshot ./cosmian_vm.snapshot
 Reading the snapshot...
 Fetching the collaterals...
 [ WARNING ] No files hash in the snapshot
