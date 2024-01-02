@@ -4,7 +4,6 @@ use crate::{
     utils::{filter_whilelist, hash_file},
     CosmianVmAgent,
 };
-
 use actix_web::{
     get, post,
     web::{Data, Json, Query},
@@ -25,6 +24,7 @@ use tee_attestation::{
 };
 use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
 use tss_esapi::{tcti_ldr::TctiNameConf, Context};
+
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
