@@ -1,4 +1,4 @@
-use std::{fs::File, path::Path};
+use std::{fs::File, path::Path, sync::Mutex};
 
 use actix_cors::Cors;
 use actix_http::Method;
@@ -9,6 +9,7 @@ use actix_web::{
 use conf::CosmianVmAgent;
 use error::Error;
 use rustls::ServerConfig;
+use utils::create_tpm_context;
 
 pub mod conf;
 pub mod endpoints;
@@ -31,10 +32,13 @@ pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
         .read_leaf_certificate()
         .expect("TLS certificate malformed (PEM expecting)");
 
+    let tpm_context = Mutex::new(create_tpm_context(&conf).expect("Fail to build the TPM context"));
+
     move |cfg: &mut ServiceConfig| {
         cfg.app_data(PayloadConfig::new(10_000_000_000))
             .app_data(Data::new(conf))
             .app_data(Data::new(certificate))
+            .app_data(Data::new(tpm_context))
             .service({
                 // cannot call `.wrap()` on the `ServiceConfig` directly, so an empty scope is created for the entire app
                 scope("")

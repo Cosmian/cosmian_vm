@@ -5,7 +5,7 @@ use rand::RngCore;
 use std::{fs, path::PathBuf};
 use tee_attestation::{forge_report_data_with_nonce, verify_quote as tee_verify_quote};
 use tokio::task::spawn_blocking;
-use tpm_quote::{verify_pcr_value, verify_quote as tpm_verify_quote};
+use tpm_quote::verify_quote as tpm_verify_quote;
 
 /// Verify a Cosmian VM
 #[derive(Args, Debug)]
@@ -29,51 +29,61 @@ impl VerifyArgs {
 
         let quote = client.tee_quote(&nonce).await?;
 
-        if snapshot.filehashes.0.is_empty() {
-            println!("[ WARNING ] No files hash in the snapshot");
-            println!("[ SKIP ] Verifying VM integrity");
-            println!("[ SKIP ] Verifying TPM attestation");
-        } else {
-            let ima_binary = client.ima_binary().await?;
-
-            if ima_binary.is_empty() {
-                anyhow::bail!("No IMA list recovered");
+        match snapshot.filehashes {
+            None => {
+                println!("[ WARNING ] No files hash in the snapshot");
+                println!("[ SKIP ] Verifying VM integrity");
+                println!("[ SKIP ] Verifying TPM attestation");
             }
+            Some(filehashes) => {
+                let ima_binary = client.ima_binary().await?;
 
-            let ima_binary: &[u8] = ima_binary.as_ref();
-            let ima_entries = ima::ima::Ima::try_from(ima_binary)?;
+                if ima_binary.is_empty() {
+                    anyhow::bail!("No IMA list recovered");
+                }
 
-            let failures = ima_entries.compare(&snapshot.filehashes.0);
-            if !failures.entries.is_empty() {
-                failures.entries.iter().for_each(|entry| {
+                let ima_binary: &[u8] = ima_binary.as_ref();
+                let ima_entries = ima::ima::Ima::try_from(ima_binary)?;
+
+                let tpm_quote_reponse = client.tpm_quote(&nonce).await?;
+                tpm_verify_quote(
+                    &tpm_quote_reponse.quote,
+                    &tpm_quote_reponse.signature,
+                    &tpm_quote_reponse.public_key,
+                    Some(&nonce),
+                    &ima_entries.pcr_value()?,
+                    &snapshot
+                        .tpm_policy
+                        .ok_or_else(|| anyhow::anyhow!("TPM policy is missing in the snapshot"))?,
+                )?;
+
+                println!("[ OK ] Verifying TPM attestation");
+
+                let failures = ima_entries.compare(&filehashes.0);
+                if !failures.entries.is_empty() {
+                    failures.entries.iter().for_each(|entry| {
+                        println!(
+                            "Entry ({},{}) can't be found in the snapshot!",
+                            entry.filename_hint,
+                            hex::encode(&entry.filedata_hash)
+                        );
+                    });
+                    println!("[ FAIL ] Verifying VM integrity");
+                    anyhow::bail!("Unexpected binaries found!");
+                } else {
                     println!(
-                        "Entry ({},{}) can't be found in the snapshot!",
-                        entry.filename_hint,
-                        hex::encode(&entry.filedata_hash)
+                        "[ OK ] Verifying VM integrity (against {} files)",
+                        filehashes.0.len()
                     );
-                });
-                println!("[ FAIL ] Verifying VM integrity");
-                anyhow::bail!("Unexpected binaries found");
-            } else {
-                println!("[ OK ] Verifying VM integrity");
+                }
             }
+        };
 
-            let tpm_quote_reponse = client.tpm_quote(&nonce).await?;
-            let quote_info = tpm_verify_quote(
-                &tpm_quote_reponse.quote,
-                &tpm_quote_reponse.signature,
-                &tpm_quote_reponse.public_key,
-                Some(&nonce),
-            )?;
-
-            verify_pcr_value(&quote_info, &ima_entries.pcr_value()?)?;
-            println!("[ OK ] Verifying TPM attestation");
-        }
-
-        let report_data = forge_report_data_with_nonce(&nonce, &client.certificate.0)?;
-
-        let mut policy = snapshot.policy;
-        policy.set_report_data(&report_data)?;
+        let mut policy = snapshot.tee_policy;
+        policy.set_report_data(&forge_report_data_with_nonce(
+            &nonce,
+            &client.certificate.0,
+        )?)?;
         spawn_blocking(move || tee_verify_quote(&quote, Some(&policy))).await??;
 
         println!("[ OK ] Verifying TEE attestation");
