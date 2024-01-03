@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::{conf::CosmianVmAgent, error::Error};
 use der::{asn1::Ia5String, pem::LineEnding, EncodePem};
 use ima::ima::ImaHashMethod;
 use p256::{ecdsa::DerSignature, ecdsa::SigningKey, pkcs8::EncodePrivateKey, SecretKey};
@@ -18,6 +18,7 @@ use std::{
     str::FromStr,
     time::Duration,
 };
+use tss_esapi::{Context, TctiNameConf};
 use walkdir::DirEntry;
 use x509_cert::{
     builder::{Builder, CertificateBuilder, Profile},
@@ -154,16 +155,16 @@ pub fn generate_self_signed_cert(
     Ok((pem_sk, pem_cert))
 }
 
-pub(crate) fn call(exe: &str, args: &[&str], background: bool) -> Result<String, Error> {
+pub(crate) fn call(exe: &str, args: &[&str], background: bool) -> Result<Option<String>, Error> {
     if background {
         let _ = Command::new(exe).args(args).spawn()?;
-        return Ok(String::from(""));
+        return Ok(None);
     }
 
     match Command::new(exe).args(args).output() {
         Ok(output) => {
             if output.status.success() {
-                Ok(String::from_utf8_lossy(&output.stdout).to_string())
+                Ok(Some(String::from_utf8_lossy(&output.stdout).to_string()))
             } else {
                 Err(Error::Command(format!(
                     "Output: {} - error: {}",
@@ -259,4 +260,21 @@ pub fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
     )?;
 
     Ok(())
+}
+
+pub(crate) fn create_tpm_context(conf: &CosmianVmAgent) -> Result<Context, Error> {
+    let Some(tpm_device) = &conf.agent.tpm_device else {
+        return Err(Error::BadRequest(
+            "The agent is not configured to support TPM".to_string(),
+        ));
+    };
+
+    let tcti = TctiNameConf::from_str(&format!("device:{}", &tpm_device.to_string_lossy()))
+        .map_err(|e| Error::Unexpected(format!("Incorrect TCTI (TPM device): {e}")))?;
+
+    let tpm_context = Context::new(tcti).map_err(|e| {
+        Error::Unexpected(format!("Can't build context from TCTI (TPM device): {e}"))
+    })?;
+
+    Ok(tpm_context)
 }

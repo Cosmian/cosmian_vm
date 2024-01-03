@@ -17,11 +17,10 @@ impl SnapshotArgs {
         println!("Proceeding the snapshot...");
 
         let snapshot = client.snapshot().await?;
-
         fs::write(&self.output, serde_json::to_string(&snapshot)?)?;
 
         println!(
-            "The snapshot has been saved at {}",
+            "The snapshot has been saved at: {}",
             self.output.to_string_lossy()
         );
 

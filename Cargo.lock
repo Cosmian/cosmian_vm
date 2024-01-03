@@ -780,6 +780,7 @@ dependencies = [
  "serde_json",
  "tee_attestation",
  "thiserror",
+ "tpm_quote",
  "url",
  "webpki-roots 0.25.3",
 ]
@@ -1961,7 +1962,7 @@ checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 [[package]]
 name = "pccs_client"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#9c6f067610adb2f6c947a3eec0665b15cf1b6ee0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#0cce3b7e6d8e6230b5cb1dba997fc6b379d1ae47"
 dependencies = [
  "hex",
  "reqwest",
@@ -2677,7 +2678,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#9c6f067610adb2f6c947a3eec0665b15cf1b6ee0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#0cce3b7e6d8e6230b5cb1dba997fc6b379d1ae47"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2698,7 +2699,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "0.1.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#9c6f067610adb2f6c947a3eec0665b15cf1b6ee0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#0cce3b7e6d8e6230b5cb1dba997fc6b379d1ae47"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2709,7 +2710,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#9c6f067610adb2f6c947a3eec0665b15cf1b6ee0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#0cce3b7e6d8e6230b5cb1dba997fc6b379d1ae47"
 dependencies = [
  "chrono",
  "hex",
@@ -2932,7 +2933,7 @@ checksum = "14c39fd04924ca3a864207c66fc2cd7d22d7c016007f9ce846cbb9326331930a"
 [[package]]
 name = "tdx_quote"
 version = "0.0.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#9c6f067610adb2f6c947a3eec0665b15cf1b6ee0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#0cce3b7e6d8e6230b5cb1dba997fc6b379d1ae47"
 dependencies = [
  "hex",
  "log",
@@ -2951,7 +2952,7 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#9c6f067610adb2f6c947a3eec0665b15cf1b6ee0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#0cce3b7e6d8e6230b5cb1dba997fc6b379d1ae47"
 dependencies = [
  "bincode",
  "hex",
@@ -3201,10 +3202,12 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "tpm_quote"
 version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?branch=main#9c6f067610adb2f6c947a3eec0665b15cf1b6ee0"
+source = "git+https://github.com/Cosmian/tee-tools?branch=main#0cce3b7e6d8e6230b5cb1dba997fc6b379d1ae47"
 dependencies = [
  "hex",
  "p256",
+ "serde",
+ "serde_json",
  "sha2",
  "thiserror",
  "tss-esapi",

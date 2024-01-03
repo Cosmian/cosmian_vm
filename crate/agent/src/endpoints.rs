@@ -1,3 +1,5 @@
+use std::sync::Mutex;
+
 use crate::{
     conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
     error::{Error, ResponseWithError},
@@ -18,13 +20,12 @@ use cosmian_vm_client::{
 };
 use ima::ima::{read_ima_ascii, read_ima_ascii_first_line, read_ima_binary, Ima};
 use sha1::digest::generic_array::GenericArray;
-use std::{collections::HashSet, str::FromStr};
 use tee_attestation::{
     forge_report_data_with_nonce, get_quote as tee_get_quote, guess_tee, TeePolicy, TeeType,
 };
-use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
-use tss_esapi::{tcti_ldr::TctiNameConf, Context};
+use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote, policy::TpmPolicy};
 
+use tss_esapi::Context;
 use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
@@ -54,12 +55,27 @@ pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
 ///
 /// Note: require root privileges
 #[get("/snapshot")]
-pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
-    let filehashes = match guess_tee()? {
+pub async fn get_snapshot(
+    tpm_context: Data<Mutex<Context>>,
+) -> ResponseWithError<Json<CosmianVmSnapshot>> {
+    // Get the measurements of the tee (the report data does not matter)
+    let tee_quote = tee_get_quote(&[])?;
+    let tee_policy = TeePolicy::try_from(tee_quote.as_ref())?;
+
+    let (filehashes, tpm_policy) = match guess_tee()? {
         // No reason to snapshot the filesystem on SGX
         // The `mr_enclave` is sufficient to verify the integrity
-        TeeType::Sgx => SnapshotFiles(HashSet::new()),
+        TeeType::Sgx => (None, None),
         TeeType::Sev | TeeType::Tdx => {
+            // Get the policy of the tpm (the nonce and the pcr_list don't matter)
+            let mut tpm_context = tpm_context
+                .lock()
+                .map_err(|_| Error::Unexpected("TPM already in use".to_owned()))?;
+
+            let (tpm_quote, _, _) = tpm_get_quote(&mut tpm_context, &[], None)?;
+            let tpm_policy = TpmPolicy::try_from(tpm_quote.as_ref())?;
+
+            // Get the IMA hashes
             let ima_ascii = read_ima_ascii()?;
             let ima_ascii: &str = ima_ascii.as_ref();
             let ima = Ima::try_from(ima_ascii)?;
@@ -89,15 +105,15 @@ pub async fn get_snapshot() -> ResponseWithError<Json<CosmianVmSnapshot>> {
                 ));
             }
 
-            filehashes
+            (Some(filehashes), Some(tpm_policy))
         }
     };
 
-    // Get the measurement of the tee (the report data does not matter)
-    let quote = tee_get_quote(&[])?;
-    let policy = TeePolicy::try_from(quote.as_ref())?;
-
-    Ok(Json(CosmianVmSnapshot { filehashes, policy }))
+    Ok(Json(CosmianVmSnapshot {
+        tee_policy,
+        tpm_policy,
+        filehashes,
+    }))
 }
 
 /// Return the TEE quote
@@ -121,20 +137,11 @@ pub async fn get_tee_quote(
 #[get("/quote/tpm")]
 pub async fn get_tpm_quote(
     quote_param: Query<QuoteParam>,
-    conf: Data<CosmianVmAgent>,
+    tpm_context: Data<Mutex<Context>>,
 ) -> ResponseWithError<Json<TpmQuoteResponse>> {
-    let Some(tpm_device) = &conf.agent.tpm_device else {
-        return Err(Error::BadRequest(
-            "The agent is not configured to support TPM".to_string(),
-        ));
-    };
-
-    let tcti = TctiNameConf::from_str(&format!("device:{}", &tpm_device.to_string_lossy()))
-        .map_err(|e| Error::Unexpected(format!("Incorrect TCTI (TPM device): {e}")))?;
-
-    let mut tpm_context = Context::new(tcti).map_err(|e| {
-        Error::Unexpected(format!("Can't build context from TCTI (TPM device): {e}"))
-    })?;
+    let mut tpm_context = tpm_context
+        .lock()
+        .map_err(|_| Error::Unexpected("TPM already in use".to_owned()))?;
 
     let quote_param = quote_param.into_inner();
 

@@ -5,6 +5,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::HashSet;
 use std::fmt;
 use tee_attestation::TeePolicy;
+use tpm_quote::policy::TpmPolicy;
 
 /// Serializes a `HashSet<(String, Vec<u8>)>` to a json string.
 pub fn serialize_hex<S>(
@@ -64,6 +65,7 @@ pub struct SnapshotFiles(
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 pub struct CosmianVmSnapshot {
-    pub filehashes: SnapshotFiles,
-    pub policy: TeePolicy,
+    pub tee_policy: TeePolicy,
+    pub tpm_policy: Option<TpmPolicy>,
+    pub filehashes: Option<SnapshotFiles>,
 }
