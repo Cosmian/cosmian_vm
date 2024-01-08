@@ -12,7 +12,7 @@ variable "redhat_source_ami" {
 
 variable "ubuntu_source_ami" {
   type    = string
-  default = " ami-02d014f12327de757"
+  default = "ami-02d014f12327de757"
 }
 
 variable "region" {
