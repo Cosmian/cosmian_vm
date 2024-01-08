@@ -127,7 +127,7 @@ source "amazon-ebssurrogate" "redhat" {
 source "amazon-ebssurrogate" "ubuntu" {
   source_ami             = var.ubuntu_source_ami
   region                 = var.region
-  ssh_username           = var.redhat_ssh_username
+  ssh_username           = var.ubuntu_ssh_username
   ami_name               = local.ubuntu_ami_name
   instance_type          = var.instance_type
   ssh_timeout            = var.ssh_timeout
