@@ -32,7 +32,11 @@ pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
         .read_leaf_certificate()
         .expect("TLS certificate malformed (PEM expecting)");
 
-    let tpm_context = Mutex::new(create_tpm_context(&conf).expect("Fail to build the TPM context"));
+    let tpm_context = Mutex::new(if let Some(tpm_device) = &conf.agent.tpm_device {
+        create_tpm_context(tpm_device).expect("Fail to build the TPM context")
+    } else {
+        None
+    });
 
     move |cfg: &mut ServiceConfig| {
         cfg.app_data(PayloadConfig::new(10_000_000_000))

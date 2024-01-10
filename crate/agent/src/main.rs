@@ -120,7 +120,10 @@ fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
     if let Some(tpm_device) = &conf.agent.tpm_device {
         generate_tpm_keys(tpm_device)?
     } else {
-        tracing::info!("No TPM configuration found: TPM generation keys skipped!");
+        tracing::warn!("No TPM configuration found: TPM generation keys skipped!");
+        tracing::warn!(
+            "The agent is not configured to support TPM and files integrity verification"
+        );
     }
 
     Ok(())
