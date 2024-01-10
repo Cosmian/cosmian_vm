@@ -264,7 +264,7 @@ pub fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
 
 pub(crate) fn create_tpm_context(conf: &CosmianVmAgent) -> Result<Context, Error> {
     let Some(tpm_device) = &conf.agent.tpm_device else {
-        return Err(Error::BadRequest(
+        return Err(Error::Unexpected(
             "The agent is not configured to support TPM".to_string(),
         ));
     };
