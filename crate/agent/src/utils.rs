@@ -262,7 +262,7 @@ pub fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
     Ok(())
 }
 
-pub(crate) fn create_tpm_context(tpm_device: &Path) -> Result<Option<Context>, Error> {
+pub(crate) fn create_tpm_context(tpm_device: &Path) -> Result<Context, Error> {
     let tcti = TctiNameConf::from_str(&format!("device:{}", &tpm_device.to_string_lossy()))
         .map_err(|e| Error::Unexpected(format!("Incorrect TCTI (TPM device): {e}")))?;
 
@@ -270,5 +270,5 @@ pub(crate) fn create_tpm_context(tpm_device: &Path) -> Result<Option<Context>, E
         Error::Unexpected(format!("Can't build context from TCTI (TPM device): {e}"))
     })?;
 
-    Ok(Some(tpm_context))
+    Ok(tpm_context)
 }
