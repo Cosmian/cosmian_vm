@@ -3,6 +3,7 @@ host = "127.0.0.1"
 port = 5355
 ssl_certificate = "/etc/cosmian_vm/cert.pem"
 ssl_private_key = "/etc/cosmian_vm/key.pem"
+tpm_device = "/dev/tmprm0"
 
 [app]
 service_type = "supervisor"

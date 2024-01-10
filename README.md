@@ -89,6 +89,7 @@ host = "127.0.0.1"
 port = 5355
 ssl_certificate = "/etc/cosmian_vm/cert.pem"
 ssl_private_key = "/etc/cosmian_vm/key.pem"
+tpm_device = "/dev/tpmrm0
 ```
 
 Note, that you can start/restart/stop the Cosmian VM Agent as follow:
@@ -141,6 +142,7 @@ host = "cosmianvm.cosmian.dev"
 port = 443
 ssl_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
 ssl_private_key = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/key.pem"
+tpm_device = "/dev/tpmrm0"
 
 [app]
 service_type = "supervisor"
