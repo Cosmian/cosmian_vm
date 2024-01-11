@@ -38,7 +38,7 @@ fs.mounts = [
      # Mount cosmian vm agent bin, conf and data dir
     -#}
     { path = "/bin/cosmian_vm_agent", uri = "file:bin/cosmian_vm_agent" },
-    { path = "/bin/cosmian_vm_certtool", uri = "file:bin/cosmian_vm_certtool" },
+    { path = "/bin/cosmian_certtool", uri = "file:bin/cosmian_certtool" },
     { path = "/etc/cosmian_vm/agent.toml", uri = "file:etc/cosmian_vm/agent.toml" },
     { path = "/var/lib/cosmian_vm/", uri = "file:cosmian_vm_data/", type="encrypted", key_name="_sgx_mrenclave" },
 
@@ -87,7 +87,7 @@ sgx.trusted_files = [
     "file:/usr/bin/sh",
     "file:bin/app",
     "file:bin/cosmian_vm_agent",
-    "file:bin/cosmian_vm_certtool",
+    "file:bin/cosmian_certtool",
 
     "file:/usr/sbin/nginx",
 

@@ -8,7 +8,7 @@ Working with Cosmian VM on SGX enables an application to be executed in zero tru
 ## Pre-requesites
 
 1. Setup the SGX host
-2. Compile `cosmian_vm_certtool` and move it to `./enclave/bin/cosmian_vm_certtool`
+2. Compile `cosmian_certtool` and move it to `./enclave/bin/cosmian_certtool`
 3. Compile `cosmian_vm_agent` and move it to `./enclave/bin/cosmian_vm_agent`
 4. Compile your application and move it to `./enclave/bin/app`. You can find an example here: [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service)
 
@@ -22,7 +22,7 @@ $ sudo apt install nginx
 ## Usage
 
 Four enclaves will be generated:
-- One to generate the ssl certificate using `cosmian_vm_certtool`. This enclave is shutdown after the certificate is generated
+- One to generate the ssl certificate using `cosmian_certtool`. This enclave is shutdown after the certificate is generated
 - One for `cosmian_vm_agent` binary
 - One for `app` binary (your application)
 - One for the nginx redirecting the https data to the http `app`
@@ -40,7 +40,7 @@ $ sudo ./entrypoint.bash sgx.cosmian.dev tech@cosmian.com
 
 It starts the four enclaves. 
 
-For testing, you can add `--staging` as an argument of `cosmian_vm_certtool` in `run.sh`. It will remove ACME API limitations.
+For testing, you can add `--staging` as an argument of `cosmian_certtool` in `run.sh`. It will remove ACME API limitations.
 
 You can query the application by doing:
 

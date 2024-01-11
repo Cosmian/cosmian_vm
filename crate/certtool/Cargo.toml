@@ -1,10 +1,12 @@
 [package]
-name = "cosmian_vm_certtool"
+name = "cosmian_certtool"
 version = "0.1.0"
 edition = "2021"
+license = "MIT/Apache-2.0"
+description = "Intel SGX/AMD SEV verification of Remote Attestation based TLS certificate tool"
 
 [[bin]]
-name = "cosmian_vm_certtool"
+name = "cosmian_certtool"
 path = "src/main.rs"
 
 [dependencies]
@@ -23,7 +25,11 @@ clap = { version = "4", default-features = false, features = [
     "string",
     "usage",
 ] }
+curve25519-dalek = "3.2"
 hex = { workspace = true }
 openssl = { version = "0.10", features = ["vendored"] }
+pem-rfc7468 = "0.7"
+ratls = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
+x509-parser = "0.15"

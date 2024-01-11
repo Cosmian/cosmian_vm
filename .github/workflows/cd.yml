@@ -54,7 +54,7 @@ jobs:
           files: |
             - target/release/cosmian_vm_agent
             - target/release/cosmian_vm
-            - target/release/cosmian_vm_certtool
+            - target/release/cosmian_certtool
 
       - name: Push to package.cosmian.com - tags
         if: startsWith(github.ref, 'refs/tags/')
@@ -62,7 +62,7 @@ jobs:
           set -x
           DESTINATION_DIR=/mnt/package/cosmian_vm/$VERSION
           ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
-          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_vm_certtool cosmian@package.cosmian.com:$DESTINATION_DIR/
+          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool cosmian@package.cosmian.com:$DESTINATION_DIR/
         env:
           VERSION: ${{ github.ref_name }}
 

@@ -1,10 +1,10 @@
 [workspace]
 members = [
     "crate/agent",
-    "crate/certtool",
     "crate/cli",
     "crate/client",
     "crate/ima",
+    "crate/certtool",
 ]
 resolver = "2"
 
@@ -27,9 +27,10 @@ sha2 = "0.10"
 p256 = { version = "0.13", features = ["arithmetic", "pkcs8"] }
 rand = "0.8"
 rand_chacha = "0.3"
+ratls = { git = "https://github.com/Cosmian/tee-tools", tag = "1.0.0" }
 spki = "0.7"
-tee_attestation = { git = "https://github.com/Cosmian/tee-tools", branch = "main" }
-tpm_quote = { git = "https://github.com/Cosmian/tee-tools", branch = "main" }
+tee_attestation = { git = "https://github.com/Cosmian/tee-tools", tag = "1.0.0" }
+tpm_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.0.0" }
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.96"

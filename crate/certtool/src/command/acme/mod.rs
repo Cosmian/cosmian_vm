@@ -5,7 +5,6 @@ use std::{
 };
 
 use acme_lib::{create_p384_key, persist::FilePersist, Account, Directory, DirectoryUrl};
-use error::Error;
 use openssl::{
     bn::{BigNum, BigNumContext},
     ec::{EcGroup, EcKey, EcPoint},
@@ -13,7 +12,10 @@ use openssl::{
     pkey::{PKey, Private},
 };
 
-pub mod error;
+mod error;
+pub mod generate;
+
+use error::Error;
 
 const CERT_FILE: &str = "cert.pem";
 const KEY_FILE: &str = "key.pem";

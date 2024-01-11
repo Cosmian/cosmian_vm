@@ -42,7 +42,7 @@ Cosmian VM supports these kinds of TEE:
 
 The Cosmian VM contains three majors binaries:
 - `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
-- `cosmian_vm_certtool` is designed to generate a certificate signed by *Let's Encrypt*
+- `cosmian_certtool` is designed to generate a certificate signed by *Let's Encrypt* or an RATLS certificate
 - `cosmian_vm` is a CLI designed to be used on your own host. It queries the `cosmian_vm_agent` in order to get the collaterals used to verify the trustworthiness of the Cosmian VM
 
 You can compile and test these both binaries as follow:
