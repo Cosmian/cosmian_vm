@@ -47,7 +47,7 @@ variable "ssh_timeout" {
 
 variable "image_guest_os_features" {
   type    = list(string)
-  default = ["SEV_SNP_CAPABLE"]
+  default = ["SEV_SNP_CAPABLE","TDX_CAPABLE"]
 }
 
 variable "network" {
