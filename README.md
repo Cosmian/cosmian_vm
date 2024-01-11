@@ -7,6 +7,10 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
 - **Confidentiality**: the application runs in a Trusted Execution Environment (encrypted memory)
 - **Verifiability**: a user is able to verify the integrity of the system (OS & application) at any time
 
+<p align="center">
+  <img src="resources/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
+</p>
+
 ## Setup flow
 
 A confidential VM is instanciated from a cloud provider platform, including Cosmian VM solution. After installing all dependencies, a snapshot of the VM is done and integrity checks can be performed on the running application, in order to verify the running code and infrastructure.
@@ -17,7 +21,7 @@ A confidential VM is instanciated from a cloud provider platform, including Cosm
 
 ## Verification steps
 
-Cosmian verification process is performed by the admin sys, requesting on the running confidential VM, and checks:
+Cosmian verification process is performed by the sys admin, requesting on the running confidential VM, and checks:
 
 - IMA measurement list (containing the list of executed file's hash digest)
 - TEE (Trusted Execution Environment) elements to provide assurance that the code is running on secure and confidential hardware
