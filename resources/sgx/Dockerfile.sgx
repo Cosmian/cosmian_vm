@@ -119,6 +119,6 @@ WORKDIR /root
 COPY resources/sgx/enclave /root/
 
 COPY --from=minimal-rust /root/target/release/cosmian_vm_agent bin/cosmian_vm_agent
-COPY --from=minimal-rust /root/target/release/cosmian_vm_certtool bin/cosmian_vm_certtool
+COPY --from=minimal-rust /root/target/release/cosmian_certtool bin/cosmian_certtool
 
 ENTRYPOINT ["./entrypoint.bash"]

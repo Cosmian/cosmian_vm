@@ -1,7 +1,7 @@
 #!/usr/bin/sh
 
 # Generate a certificate inside the enclave
-/bin/cosmian_vm_certtool --workspace /var/lib/cosmian_vm --output /var/lib/cosmian_vm --domain "$1" --email "$2" && 
+/bin/cosmian_certtool acme --workspace /var/lib/cosmian_vm --output /var/lib/cosmian_vm --domain "$1" --email "$2" && 
 
 (
 # Start the Cosmian VM Agent
