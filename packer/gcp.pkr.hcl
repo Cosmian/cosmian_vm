@@ -116,7 +116,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "../resources/conf/agent.toml"
+    source      = "../resources/conf/gcp_agent.toml"
     destination = "/tmp/agent.toml"
   }
 
@@ -141,7 +141,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "../resources/conf/agent.toml"
+    source      = "../resources/conf/gcp_agent.toml"
     destination = "/tmp/agent.toml"
   }
 

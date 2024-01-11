@@ -1,0 +1,11 @@
+[agent]
+host = "127.0.0.1"
+port = 5355
+ssl_certificate = "/etc/cosmian_vm/cert.pem"
+ssl_private_key = "/etc/cosmian_vm/key.pem"
+
+[app]
+service_type = "supervisor"
+service_app_name = "cosmian_helloworld"
+decrypted_folder = "/mnt/cosmian_vm/data"
+encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"

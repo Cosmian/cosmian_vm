@@ -162,7 +162,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "../resources/conf/agent.toml"
+    source      = "../resources/conf/aws_agent.toml"
     destination = "/tmp/agent.toml"
   }
 
@@ -187,7 +187,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "../resources/conf/agent.toml"
+    source      = "../resources/conf/aws_agent.toml"
     destination = "/tmp/agent.toml"
   }
 
