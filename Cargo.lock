@@ -2167,6 +2167,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "rafs-tool"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bincode",
+ "clap",
+ "hex",
+ "openssl",
+ "ratls",
+ "sev_quote",
+ "sgx_quote",
+ "x509-parser",
+]
+
+[[package]]
 name = "rand"
 version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
