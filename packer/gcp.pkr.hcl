@@ -12,7 +12,7 @@ variable "project_id" {
 
 variable "ubuntu_source_image" {
   type    = string
-  default = "ubuntu-2204-tdx-v20231011"
+  default = "ubuntu-2204-jammy-v20231030"
 }
 
 variable "ubuntu_source_image_family" {
@@ -47,7 +47,7 @@ variable "ssh_timeout" {
 
 variable "image_guest_os_features" {
   type    = list(string)
-  default = ["TDX_CAPABLE"]
+  default = ["SEV_SNP_CAPABLE","TDX_CAPABLE"]
 }
 
 variable "network" {

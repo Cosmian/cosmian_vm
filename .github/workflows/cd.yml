@@ -13,7 +13,9 @@ on: [push]
   #     - "**"
   #   tags:
   #     - "**"
-
+env:
+  PACKER_LOG=1
+  
 jobs:
   build-cosmian-vm:
     name: Build Cosmian VM Agent
