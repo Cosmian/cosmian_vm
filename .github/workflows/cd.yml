@@ -83,7 +83,19 @@ jobs:
         with:
           name: cosmian_vm_agent
           path: packer/cosmian_vm_agent
-
+          
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+    
+      - name: Run `packer init`
+        run: packer init -machine-readable gcp.pkr.hcl
+    
+      - name: Install plugins
+        run: |
+          packer plugins install github.com/hashicorp/amazon
+          packer plugins install github.com/hashicorp/googlecompute
+          packer plugins install github.com/hashicorp/ansible
+  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -95,23 +107,16 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: Build image
+        run: |
+          packer build -debug -var "prefix=${{github.ref_name}}" aws.pkr.hcl
+          packer build -var "prefix=${{github.ref_name}}" gcp.pkr.hcl
       
       - name: Authenticate to Google Cloud tdx project
         uses: "google-github-actions/auth@v1"
         with:
           credentials_json: "${{ secrets.TDX_GOOGLE_CREDENTIALS }}"
-
-      - name: Setup `packer`
-        uses: hashicorp/setup-packer@main
-
-      - name: Run `packer init`
-        run: packer init -machine-readable gcp.pkr.hcl
-
-      - name: Install plugins
-        run: |
-          packer plugins install github.com/hashicorp/amazon
-          packer plugins install github.com/hashicorp/googlecompute
-          packer plugins install github.com/hashicorp/ansible
 
       # - name: Build image - main
       #   if: ${{ github.event.pull_request.merged == true && github.ref_name == 'main' }}
@@ -128,5 +133,4 @@ jobs:
 
       - name: Build image
         run: |
-          packer build -debug -var "prefix=${{github.ref_name}}" aws.pkr.hcl
           packer build -var "prefix=${{github.ref_name}}" gcp.pkr.hcl
