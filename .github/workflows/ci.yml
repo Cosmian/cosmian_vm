@@ -1,4 +1,10 @@
-on: [push]
+on:
+  # Run on push except on tags
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
 
 name: Rust compilation, check and test
 
@@ -6,6 +12,7 @@ jobs:
   check:
     name: Check
     runs-on: ubuntu-22.04
+
     steps:
       - name: Install dependencies
         run: |
