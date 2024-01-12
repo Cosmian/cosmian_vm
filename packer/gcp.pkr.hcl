@@ -7,7 +7,7 @@ locals {
 
 variable "project_id" {
   type    = string
-  default = "amd-sev-snp"
+  default = "intel-enclaves"
 }
 
 variable "ubuntu_source_image" {
