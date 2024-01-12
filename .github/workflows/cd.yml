@@ -103,15 +103,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      - name: Authenticate to Google Cloud sev project
-        uses: "google-github-actions/auth@v1"
-        with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+      # - name: Authenticate to Google Cloud sev project
+      #   uses: "google-github-actions/auth@v1"
+      #   with:
+      #     credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
-      - name: Build image
-        run: |
-          packer build -debug -var "prefix=${{github.ref_name}}" aws.pkr.hcl
-          packer build -var "prefix=${{github.ref_name}}" gcp.pkr.hcl
+      # - name: Build image
+      #   run: |
+      #     packer build -debug -var "prefix=${{github.ref_name}}" aws.pkr.hcl
+      #     packer build -var "prefix=${{github.ref_name}}" gcp.pkr.hcl
       
       - name: Authenticate to Google Cloud tdx project
         uses: "google-github-actions/auth@v1"
