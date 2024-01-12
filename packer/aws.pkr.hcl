@@ -1,18 +1,17 @@
 variable "prefix" {}
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
+ amazon_linux_ami_name = "${var.prefix}-cosmian-vm-amazon-linux-{{timestamp}}"
   redhat_ami_name = "${var.prefix}-cosmian-vm-redhat-{{timestamp}}"
 }
 
+variable "amazon_linux_source_ami" {
+  type    = string
+  default = "ami-02cad064a29d4550c"
+}
 variable "redhat_source_ami" {
   type    = string
   default = "ami-049b0abf844cab8d7"
-}
-
-variable "ubuntu_source_ami" {
-  type    = string
-  default = "ami-02d014f12327de757"
 }
 
 variable "region" {
@@ -25,9 +24,9 @@ variable "redhat_ssh_username" {
   default = "ec2-user"
 }
 
-variable "ubuntu_ssh_username" {
+variable "amazon_linux_ssh_username" {
   type    = string
-  default = "ubuntu"
+  default = "ec2-user"
 }
 
 variable "ssh_timeout" {
@@ -55,24 +54,44 @@ variable "volume_type" {
   default = "gp3"
 }
 
-variable "launch_block_device_mappings_device_name" {
+variable "amazon_linux_launch_block_device_mappings_device_name" {
+  type    = string
+  default = "/dev/xvda"
+}
+
+variable "amazon_linux_source_device_name" {
+  type    = string
+  default = "/dev/xvda"
+}
+
+variable "amazon_linux_ami_root_device_name" {
+  type    = string
+  default = "/dev/xvda"
+}
+
+variable "redhat_launch_block_device_mappings_device_name" {
   type    = string
   default = "/dev/sda1"
 }
 
-variable "source_device_name" {
+variable "redhat_source_device_name" {
   type    = string
   default = "/dev/sda1"
 }
 
-variable "ami_root_device_name" {
+variable "redhat_ami_root_device_name" {
   type    = string
   default = "/dev/sda1"
 }
 
-variable "volume_size" {
+variable "redhat_volume_size" {
   type    = number
   default = 12
+}
+
+variable "amazon_linux_volume_size" {
+  type    = number
+  default = 8
 }
 
 variable "delete_on_termination" {
@@ -110,21 +129,21 @@ source "amazon-ebssurrogate" "redhat" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.launch_block_device_mappings_device_name 
-    volume_size = var.volume_size
+    device_name = var.redhat_launch_block_device_mappings_device_name 
+    volume_size = var.redhat_volume_size
     delete_on_termination = var.delete_on_termination
   }
 
   ami_root_device {
-    source_device_name = var.source_device_name
-    device_name = var.ami_root_device_name
-    volume_size = var.volume_size
+    source_device_name = var.redhat_source_device_name
+    device_name = var.redhat_ami_root_device_name
+    volume_size = var.redhat_volume_size
     volume_type = var.volume_type
     delete_on_termination = var.delete_on_termination
   }
 }
 
-source "amazon-ebssurrogate" "ubuntu" {
+source "amazon-ebssurrogate" "amazon-linux" {
   source_ami             = var.ubuntu_source_ami
   region                 = var.region
   ssh_username           = var.ubuntu_ssh_username
@@ -139,15 +158,15 @@ source "amazon-ebssurrogate" "ubuntu" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.launch_block_device_mappings_device_name 
-    volume_size = var.volume_size
+    device_name = var.amazon_linux_launch_block_device_mappings_device_name 
+    volume_size = var.amazon_linux_volume_size
     delete_on_termination = var.delete_on_termination
   }
 
   ami_root_device {
-    source_device_name = var.source_device_name
-    device_name = var.ami_root_device_name
-    volume_size = var.volume_size
+    source_device_name = var.amazon_linux_source_device_name
+    device_name = var.amazon_linux_ami_root_device_name
+    volume_size = var.amazon_linux_volume_size
     volume_type = var.volume_type
     delete_on_termination = var.delete_on_termination
   }
@@ -179,7 +198,7 @@ build {
 }
 
 build {
-  sources = ["sources.amazon-ebssurrogate.ubuntu"]
+  sources = ["sources.amazon-ebssurrogate.amazon-linux"]
 
   provisioner "file" {
     source      = "../resources/data/ima-policy"

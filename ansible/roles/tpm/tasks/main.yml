@@ -19,7 +19,7 @@
       update_cache: yes
 
 - name: TPM packages installation on RedHat
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
   block:
   - name: Update all packages to their latest version
     dnf:

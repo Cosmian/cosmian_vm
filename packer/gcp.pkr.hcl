@@ -7,7 +7,7 @@ locals {
 
 variable "project_id" {
   type    = string
-  default = "intel-enclaves"
+  default = "amd-sev-snp"
 }
 
 variable "ubuntu_source_image" {
@@ -47,7 +47,7 @@ variable "ssh_timeout" {
 
 variable "image_guest_os_features" {
   type    = list(string)
-  default = ["SEV_SNP_CAPABLE","TDX_CAPABLE"]
+  default = ["SEV_SNP_CAPABLE"]
 }
 
 variable "network" {

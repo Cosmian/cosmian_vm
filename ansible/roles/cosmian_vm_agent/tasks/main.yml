@@ -126,6 +126,68 @@
       state: started
     changed_when: false
 
+- name: Supervisor install on Amazon Linux
+  when: ansible_distribution == 'Amazon'
+  block:
+  - name: Update all packages to their latest version
+    dnf:
+      update_cache: yes
+
+  - name: Install pip
+    ansible.builtin.dnf:
+      name: pip
+      state: present
+      update_cache: yes
+
+  - name: Install supervisor python package
+    ansible.builtin.pip:
+      name: supervisor
+
+  - name: Create supervisord.service file
+    template:
+      src: supervisord.service.j2
+      dest: /lib/systemd/system/supervisord.service
+      owner: root
+      group: root
+      mode: 0644
+
+  - name:  Create supervisor.conf file
+    template:
+      src: supervisord.conf.j2
+      dest: /etc/supervisord.conf
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Create supervisor log folder
+    ansible.builtin.file:
+      path: /var/log/supervisor/
+      state: directory
+      owner: root
+      group: root
+      mode: 0500
+
+  - name: Change permission on supervisord binary
+    file:
+      path: /usr/local/bin/supervisord
+      state: file
+      owner: root
+      group: root
+      mode: 0755
+
+  - name: Service daemon reload
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+
+  - name: Check if Supervisor is started
+    ansible.builtin.systemd_service:
+      name: supervisord
+      enabled: true
+      state: started
+    changed_when: false
+
+
+
 - name: Reread Supervisor conf file
   command: supervisorctl reread
 
