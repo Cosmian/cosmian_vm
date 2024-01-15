@@ -51,7 +51,7 @@ impl VerifyArgs {
                     &tpm_quote_reponse.signature,
                     &tpm_quote_reponse.public_key,
                     Some(&nonce),
-                    &ima_entries.pcr_value()?,
+                    &ima_entries.pcr_value(tpm_quote_reponse.pcr_value_hash_method)?,
                     &snapshot
                         .tpm_policy
                         .ok_or_else(|| anyhow::anyhow!("TPM policy is missing in the snapshot"))?,
