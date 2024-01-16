@@ -28,6 +28,7 @@ use walkdir::WalkDir;
 
 const ROOT_PATH: &str = "/";
 const APP_CONF_FILENAME: &str = "app.conf";
+const DEFAULT_TPM_HASH_METHOD: tpm_quote::PcrHashMethod = tpm_quote::PcrHashMethod::Sha256;
 
 /// Get the IMA hashes list (ASCII format)
 ///
@@ -68,13 +69,13 @@ pub async fn get_snapshot(
         None => (None, None),
         Some(tpm_context) => {
             // Get the policy of the tpm (the nonce and the pcr_list don't matter)
-            let (tpm_quote, _, _) = tpm_get_quote(tpm_context, &[], None)?;
+            let (tpm_quote, _, _) = tpm_get_quote(tpm_context, &[], None, DEFAULT_TPM_HASH_METHOD)?;
             let tpm_policy = TpmPolicy::try_from(tpm_quote.as_ref())?;
 
             // Get the IMA hashes
-            let ima_ascii = read_ima_ascii()?;
-            let ima_ascii: &str = ima_ascii.as_ref();
-            let ima = Ima::try_from(ima_ascii)?;
+            let ima = read_ima_binary()?;
+            let ima: &[u8] = ima.as_ref();
+            let ima = Ima::try_from(ima)?;
 
             // We use the same hash method as the one IMA used
             let hash_method = ima.hash_file_method();
@@ -153,13 +154,18 @@ pub async fn get_tpm_quote(
 
     let pcr_slot = Ima::try_from(read_ima_ascii_first_line()?.as_str())?.pcr_id();
 
-    let (quote, signature, public_key) =
-        tpm_get_quote(tpm_context, &[pcr_slot as u8], Some(&quote_param.nonce))?;
+    let (quote, signature, public_key) = tpm_get_quote(
+        tpm_context,
+        &[pcr_slot as u8],
+        Some(&quote_param.nonce),
+        DEFAULT_TPM_HASH_METHOD,
+    )?;
 
     Ok(Json(TpmQuoteResponse {
         quote,
         signature,
         public_key,
+        pcr_value_hash_method: DEFAULT_TPM_HASH_METHOD,
     }))
 }
 

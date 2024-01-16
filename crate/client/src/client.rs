@@ -4,6 +4,7 @@ use http::{HeaderMap, HeaderValue, StatusCode};
 use reqwest::{Client, ClientBuilder, Response, Url};
 use rustls::{client::WebPkiVerifier, Certificate};
 use serde::{Deserialize, Serialize};
+use tpm_quote::PcrHashMethod;
 
 use crate::{
     certificate_verifier::{LeafCertificateVerifier, NoVerifier},
@@ -21,6 +22,7 @@ pub struct CosmianVmClient {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TpmQuoteResponse {
+    pub pcr_value_hash_method: PcrHashMethod,
     #[serde(with = "base64_serde")]
     pub quote: Vec<u8>,
     #[serde(with = "base64_serde")]
