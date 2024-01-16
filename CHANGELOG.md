@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.X] - XXXX-XX-XX
+
+### Fix
+
+- Support TPM in Amazon Linux image
+
 ## [0.2.0] - 2024-01-16
 
 ### New
