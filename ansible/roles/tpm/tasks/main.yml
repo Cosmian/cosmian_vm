@@ -53,3 +53,9 @@
     file:
       path: /tmp/tpm2-tools/
       state: absent
+
+  - name: Install packages tpm2-tss
+    ansible.builtin.dnf:
+      name: tpm2-tss
+      state: present
+      update_cache: yes
