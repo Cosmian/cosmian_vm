@@ -125,6 +125,11 @@ build {
     destination = "/tmp/"
   }
 
+  provisioner "file" {
+    source      = "./cosmian_certtool"
+    destination = "/tmp/"
+  }
+
   provisioner "ansible" {
     playbook_file = "../ansible/cosmian_vm_playbook.yml"
     local_port    = 22
@@ -147,6 +152,11 @@ build {
 
   provisioner "file" {
     source      = "./cosmian_vm_agent"
+    destination = "/tmp/"
+  }
+
+  provisioner "file" {
+    source      = "./cosmian_certtool"
     destination = "/tmp/"
   }
 

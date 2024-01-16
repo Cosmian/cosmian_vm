@@ -15,6 +15,15 @@
     group: root
     mode: 0500
 
+- name: Copy cosmian_cert
+  ansible.builtin.copy:
+    src: /tmp/cosmian_certtool/
+    dest: /usr/sbin/
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0500
+
 - name: Change file ownership, group and permissions
   ansible.builtin.file:
     path: /usr/sbin/cosmian_vm_agent
