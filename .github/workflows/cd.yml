@@ -25,7 +25,7 @@ jobs:
 
       - uses: geekyeggo/delete-artifact@v2
         with:
-          name: cosmian_vm_agent
+          name: cosmian_vm
 
       - name: Install dependencies
         run: |
