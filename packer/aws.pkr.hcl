@@ -191,7 +191,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "./cosmian_cert"
+    source      = "./cosmian_certtool"
     destination = "/tmp/"
   }
 
@@ -221,7 +221,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "./cosmian_cert"
+    source      = "./cosmian_certtool"
     destination = "/tmp/"
   }
   
