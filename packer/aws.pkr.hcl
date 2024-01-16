@@ -144,10 +144,10 @@ source "amazon-ebssurrogate" "redhat" {
 }
 
 source "amazon-ebssurrogate" "amazon-linux" {
-  source_ami             = var.ubuntu_source_ami
+  source_ami             = var.amazon_linux_source_ami
   region                 = var.region
-  ssh_username           = var.ubuntu_ssh_username
-  ami_name               = local.ubuntu_ami_name
+  ssh_username           = var.amazon_linux_ssh_username
+  ami_name               = local.amazon_linux_ami_name
   instance_type          = var.instance_type
   ssh_timeout            = var.ssh_timeout
   ami_virtualization_type = var.ami_virtualization_type
