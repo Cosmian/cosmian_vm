@@ -5,7 +5,7 @@
     name: apt-daily.timer
     state: restarted
   when: "'ubuntu' in tags"
-  
+
 - name: Restart DNF service
   service:
     name: dnf-automatic.timer

@@ -11,7 +11,7 @@
     state: directory
     owner: root
     group: root
-    mode: "0700"
+    mode: "0500"
 
 - name: Copy ima policy
   ansible.builtin.copy:
@@ -46,7 +46,7 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
       fi
     dest: /tmp/grub.sh
-    mode: "0755" # Make the script executable
+    mode: "0700" # Make the script executable
     remote_src: yes
 
 - name: Update the grub configuration

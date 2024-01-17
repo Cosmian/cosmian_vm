@@ -176,7 +176,7 @@ build {
   sources = ["sources.amazon-ebssurrogate.redhat"]
 
   provisioner "file" {
-    source      = "../resources/data/ima-policy"
+    source      = "../resources/conf/ima-policy"
     destination = "/tmp/ima-policy"
   }
 
@@ -206,7 +206,7 @@ build {
   sources = ["sources.amazon-ebssurrogate.amazon-linux"]
 
   provisioner "file" {
-    source      = "../resources/data/ima-policy"
+    source      = "../resources/conf/ima-policy"
     destination = "/tmp/ima-policy"
   }
 

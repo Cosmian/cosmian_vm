@@ -6,6 +6,7 @@
     var: ansible_distribution
 
 - name: Disable automatic updates on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
   block:
     - name: Disable auto upgrade services
       systemd:
@@ -32,7 +33,6 @@
       ansible.builtin.apt:
         autoclean: yes
         update_cache: yes
-  when: ansible_distribution == 'Ubuntu'
   tags: ubuntu
 
 - name: Disable automatic updates on Red Hat
