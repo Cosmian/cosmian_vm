@@ -111,7 +111,7 @@ build {
   sources = ["sources.googlecompute.ubuntu"]
 
   provisioner "file" {
-    source      = "../resources/data/ima-policy"
+    source      = "../resources/conf/ima-policy"
     destination = "/tmp/ima-policy"
   }
 
@@ -141,7 +141,7 @@ build {
   sources = ["sources.googlecompute.redhat"]
 
   provisioner "file" {
-    source      = "../resources/data/ima-policy-selinux"
+    source      = "../resources/conf/ima-policy-selinux"
     destination = "/tmp/ima-policy"
   }
 
