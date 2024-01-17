@@ -136,4 +136,4 @@ jobs:
       #     packer build -var "prefix=release-${GITHUB_REF_NAME//./-}" gcp.pkr.hcl
 
       - name: Build GCP TDX image
-        run: packer build -var "prefix={GITHUB_REF_NAME//./-}" gcp-tdx.pkr.hcl
+        run: packer build -var "prefix=${GITHUB_REF_NAME//./-}" gcp-tdx.pkr.hcl
