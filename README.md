@@ -73,6 +73,40 @@ This image:
 - disables the auto-update (to avoid any modification of the Cosmian VM after having snapshoted it)
 - contains the fully configured `cosmian_vm_agent` 
 
+This is a abstract of the updated file tree:
+
+```
+.
+├── etc
+│   ├── apt
+│   │    └── apt.conf.d
+│   │       └── 10periodic
+│   ├── cosmian_vm
+│   │   ├── agent.toml
+│   │   ├── cert.pem
+│   │   └── cert.key
+│   ├── default
+│   │   └── grub
+│   ├── ima
+│   │   └── ima-policy
+│   └── supervisor
+│       ├── supervisord.conf
+│       └── conf.d
+│           └── cosmian_vm_agent.conf 
+├── mnt
+│   └── cosmian_vm
+│       └── data
+├── usr
+│   └── sbin
+│       ├── cosmian_certtool
+│       └── cosmian_vm_agent
+└── var
+    └── log
+        └── cosmian_vm
+            ├── agent.err.log 
+            └── agent.out.log
+```
+
 ## Start a Cosmian VM on SEV/TDX
 
 Now, instantiate a VM based on the built image.
