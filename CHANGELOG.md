@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.X] - XXXX-XX-XX
+## [0.3.0] - XXXX-XX-XX
+
+### New
+
+- Set CLI 'min-version' into the user agent
 
 ### Fix
 

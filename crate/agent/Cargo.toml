@@ -9,6 +9,7 @@ anyhow = { workspace = true }
 actix-cors = "0.6"
 actix-http = "3"
 actix-web = { version = "4", features = ["rustls"] }
+actix-web-lab = "0.20"
 cosmian_vm_client = { path = "../client" }
 ecdsa = { workspace = true }
 der = { workspace = true }
@@ -16,6 +17,7 @@ gethostname = "0.4"
 hex = { workspace = true }
 ima = { path = "../ima" }
 p256 = { workspace = true }
+pep440 = "0.2"
 rand_chacha = { workspace = true }
 # Important: align the rustls version with actix rustls dependency
 rustls = { version = "0.20", features = ["dangerous_configuration"] }
