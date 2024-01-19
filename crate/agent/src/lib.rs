@@ -58,7 +58,7 @@ pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
                                     Err(err) => {
                                         tracing::warn!(
                                             "Invalid method inside x-http-method-override {err}"
-                                        )
+                                        );
                                     }
                                 }
                             }

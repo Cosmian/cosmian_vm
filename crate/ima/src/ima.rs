@@ -18,7 +18,7 @@ pub fn read_ima_ascii() -> Result<String, Error> {
     Ok(fs::read_to_string(IMA_ASCII_PATH)?)
 }
 
-/// Read the first line of the ascii IMA values (probably: boot_aggregate)
+/// Read the first line of the ascii IMA values (probably: `boot_aggregate`)
 pub fn read_ima_ascii_first_line() -> Result<String, Error> {
     let ima_file = std::fs::File::open(IMA_ASCII_PATH)?;
     let reader = BufReader::new(ima_file);
@@ -166,6 +166,7 @@ pub enum ImaHashMethod {
 }
 
 impl ImaHashMethod {
+    #[must_use]
     pub fn size(&self) -> usize {
         match self {
             ImaHashMethod::Sha1 => 20,
@@ -219,7 +220,7 @@ const IMA_DEFAULT_FILEHASH_FUNCTION: ImaHashMethod = ImaHashMethod::Sha1;
 impl TryFrom<&str> for ImaEntry {
     type Error = Error;
 
-    /// Convert a string line to a ImaEntry
+    /// Convert a string line to a `ImaEntry`
     fn try_from(line: &str) -> Result<Self, Error> {
         // Example of a line:
         // 10 2c7020ad8cab6b7419e4973171cb704bdbf52f77 ima e09e048c48301268ff38645f4c006137e42951d0 /init
@@ -269,12 +270,10 @@ impl TryFrom<&str> for ImaEntry {
 
         let filedata_hash = hex::decode(filedata_hash)?;
 
-        let filename_hint = split
-            .get(4)
-            .ok_or(Error::ImaParsing(
-                "Ima entry line malformed (index: 4)".to_string(),
-            ))?
-            .to_string();
+        let filename_hint = (*split.get(4).ok_or(Error::ImaParsing(
+            "Ima entry line malformed (index: 4)".to_string(),
+        ))?)
+        .to_string();
 
         let file_signature = if template_name == ImaTemplate::ImaSig && split.len() == 6 {
             Some(hex::decode(split.get(5).ok_or(Error::ImaParsing(
@@ -317,7 +316,7 @@ impl TryFrom<&str> for Ima {
     fn try_from(data: &str) -> Result<Self, Error> {
         let mut ima = vec![];
         for line in data.lines() {
-            ima.push(ImaEntry::try_from(line)?)
+            ima.push(ImaEntry::try_from(line)?);
         }
         Ok(Ima { entries: ima })
     }
@@ -502,35 +501,36 @@ impl Ima {
             PcrHashMethod::Sha1 => {
                 old_entry = vec![0u8; 20];
                 for entry in &self.entries {
-                    old_entry = entry.sha1_pcr_value(&old_entry).into()
+                    old_entry = entry.sha1_pcr_value(&old_entry).into();
                 }
             }
             PcrHashMethod::Sha256 => {
                 old_entry = vec![0u8; 32];
                 for entry in &self.entries {
-                    old_entry = entry.sha256_pcr_value(&old_entry).into()
+                    old_entry = entry.sha256_pcr_value(&old_entry).into();
                 }
             }
             PcrHashMethod::Sha384 => {
                 old_entry = vec![0u8; 48];
                 for entry in &self.entries {
-                    old_entry = entry.sha384_pcr_value(&old_entry).into()
+                    old_entry = entry.sha384_pcr_value(&old_entry).into();
                 }
             }
             PcrHashMethod::Sha512 => {
                 old_entry = vec![0u8; 64];
                 for entry in &self.entries {
-                    old_entry = entry.sha512_pcr_value(&old_entry).into()
+                    old_entry = entry.sha512_pcr_value(&old_entry).into();
                 }
             }
         };
 
-        Ok(old_entry.to_vec())
+        Ok(old_entry.clone())
     }
 
     /// Return the id of the extended pcr value
     ///
     /// If the IMA is empty, the default value is: `IMA_DEFAULT_PCR_ID`
+    #[must_use]
     pub fn pcr_id(&self) -> u32 {
         self.entries.first().map_or(IMA_DEFAULT_PCR_ID, |e| e.pcr)
     }
@@ -538,6 +538,7 @@ impl Ima {
     /// Return the hash method used to hash the files
     ///
     /// If the IMA is empty, the default value is: `ImaHashMethod::Sha1`
+    #[must_use]
     pub fn hash_file_method(&self) -> ImaHashMethod {
         self.entries
             .first()
@@ -547,6 +548,7 @@ impl Ima {
     }
 
     /// Return the couple (file, hash) from the current IMA list not present in the given snapshot
+    #[must_use]
     pub fn compare(&self, snapshot: &HashSet<(String, Vec<u8>)>) -> Ima {
         // Pre-process the snapshot to be use later:
         // - Replace all whitespaces in filenames by underscores (to fit IMA filename-hint)
@@ -766,7 +768,7 @@ mod tests {
             .unwrap()
         );
 
-        assert_eq!(ima.entries.len(), 446)
+        assert_eq!(ima.entries.len(), 446);
     }
 
     #[test]
@@ -902,7 +904,7 @@ mod tests {
             .unwrap()
         );
 
-        assert_eq!(ima.entries.len(), 446)
+        assert_eq!(ima.entries.len(), 446);
     }
 
     #[test]

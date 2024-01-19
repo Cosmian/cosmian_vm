@@ -105,11 +105,11 @@ fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
             std::fs::write(ssl_certificate, cert)?;
             std::fs::write(ssl_private_key, sk)?;
 
-            tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}")
+            tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}");
         }
         (true, true) => tracing::info!("The certificate has been read from {ssl_certificate:?}"),
         (false, true) => {
-            anyhow::bail!("The private key file doesn't exist whereas the certificat exists");
+            anyhow::bail!("The private key file doesn't exist whereas the certificate exists");
         }
         (true, false) => {
             anyhow::bail!("The certificate file doesn't exist whereas the private key exists");
@@ -118,7 +118,7 @@ fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
 
     // Generate TPM keys if not already done
     if let Some(tpm_device) = &conf.agent.tpm_device {
-        generate_tpm_keys(tpm_device)?
+        generate_tpm_keys(tpm_device)?;
     } else {
         tracing::warn!("No TPM configuration found: TPM generation keys skipped!");
         tracing::warn!(
