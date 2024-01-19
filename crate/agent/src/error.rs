@@ -8,6 +8,8 @@ pub type ResponseWithError<T> = Result<T, Error>;
 pub enum Error {
     #[error("{0}")]
     BadRequest(String),
+    #[error("Please update the cosmian_vm cli to version {0}")]
+    BadUserAgent(String),
     #[error("{0}")]
     Certificate(String),
     #[error("{0}")]
@@ -53,7 +55,7 @@ impl ResponseError for Error {
             | Error::Unexpected(_)
             | Error::WalkDir(_) => StatusCode::INTERNAL_SERVER_ERROR,
 
-            Error::BadRequest(_) => StatusCode::BAD_REQUEST,
+            Error::BadRequest(_) | Error::BadUserAgent(_) => StatusCode::BAD_REQUEST,
         }
     }
 

@@ -100,7 +100,11 @@ impl CosmianVmClient {
     /// Instantiate a new cosmian VM client
     #[allow(clippy::too_many_arguments)]
     #[allow(dead_code)]
-    pub fn instantiate(agent_url: &str, accept_invalid_certs: bool) -> Result<Self, Error> {
+    pub fn instantiate(
+        agent_url: &str,
+        cli_version: &str,
+        accept_invalid_certs: bool,
+    ) -> Result<Self, Error> {
         let agent_url = agent_url.strip_suffix('/').unwrap_or(agent_url).to_string();
 
         let mut headers = HeaderMap::new();
@@ -125,6 +129,7 @@ impl CosmianVmClient {
         // Build the client
         Ok(Self {
             client: builder
+                .user_agent(format!("min-version/{cli_version}"))
                 .connect_timeout(Duration::from_secs(5))
                 .tcp_keepalive(Duration::from_secs(30))
                 .default_headers(headers)

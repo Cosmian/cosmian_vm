@@ -38,7 +38,11 @@ enum CliCommands {
 async fn main() -> Result<()> {
     let opts = Cli::parse();
 
-    let client = CosmianVmClient::instantiate(&opts.url, opts.allow_insecure_tls)?;
+    let client = CosmianVmClient::instantiate(
+        &opts.url,
+        env!("CARGO_PKG_VERSION"),
+        opts.allow_insecure_tls,
+    )?;
 
     match opts.command {
         CliCommands::Snapshot(args) => args.run(&client).await,

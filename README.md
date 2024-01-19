@@ -176,8 +176,8 @@ Prior to send the secrets, you should have configured the  `app` section in the 
 
 ```toml
 [agent]
-host = "cosmianvm.cosmian.dev"
-port = 443
+host = "0.0.0.0"
+port = 5355
 ssl_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
 ssl_private_key = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/key.pem"
 tpm_device = "/dev/tpmrm0"

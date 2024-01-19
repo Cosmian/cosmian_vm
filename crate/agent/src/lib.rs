@@ -6,15 +6,19 @@ use actix_web::{
     dev::Service as _,
     web::{scope, Data, PayloadConfig, ServiceConfig},
 };
+use actix_web_lab::middleware::from_fn;
+
 use conf::CosmianVmAgent;
 use error::Error;
 use rustls::ServerConfig;
+use user_agent::check_user_agent_middleware;
 use utils::create_tpm_context;
 
 pub mod conf;
 pub mod endpoints;
 pub mod error;
 pub mod service;
+pub mod user_agent;
 pub mod utils;
 
 pub fn endpoints(cfg: &mut ServiceConfig) {
@@ -62,6 +66,7 @@ pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
 
                         srv.call(req)
                     })
+                    .wrap(from_fn(check_user_agent_middleware))
                     .configure(endpoints)
             });
     }
