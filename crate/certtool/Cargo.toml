@@ -25,6 +25,7 @@ clap = { version = "4", default-features = false, features = [
     "string",
     "usage",
 ] }
+cosmian_vm_client = { path = "../client" }
 curve25519-dalek = "3.2"
 hex = { workspace = true }
 openssl = { version = "0.10", features = ["vendored"] }

@@ -168,6 +168,14 @@ If you use the default Cosmian VM setup relying on a self-signed certificate, yo
 $ cosmian_vm --url https://cosmianvm.cosmian.dev --allow-insecure-tls snapshot
 ```
 
+When verifying a Cosmian VM you can also check that the TLS certificate of services installed inside this VM are the one used when querying the Cosmian VM Agent during the verification. To do so use `--application` (as many times as you want) as follow:
+
+```sh
+$ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.snapshot \
+                                                        --application service1.cosmian.dev:3655 \
+                                                        --application service2.cosmian.dev 
+```
+
 ## Provide secrets
 
 Before snapshotting the Cosmian VM, you can also provide a secret file to an application running inside the Cosmian VM. 
