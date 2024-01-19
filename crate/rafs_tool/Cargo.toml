@@ -1,0 +1,29 @@
+[package]
+name = "rafs-tool"
+version = "0.1.0"
+edition = "2021"
+license = "MIT/Apache-2.0"
+description = "Intel SGX/AMD SEV verification of Remote Attestation based on FS data sharing"
+
+[[bin]]
+name = "rafs-tool"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+bincode = { workspace = true }
+clap = { version = "4", default-features = false, features = [
+    "cargo",
+    "derive",
+    "error-context",
+    "help",
+    "std",
+    "string",
+    "usage",
+] }
+hex = { workspace = true }
+openssl = { workspace = true }
+ratls = { workspace = true }
+sev_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.0.0" }
+sgx_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.0.0" }
+x509-parser = { workspace = true }

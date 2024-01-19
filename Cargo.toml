@@ -5,6 +5,7 @@ members = [
     "crate/client",
     "crate/ima",
     "crate/certtool",
+    "crate/rafs_tool",
 ]
 resolver = "2"
 
@@ -19,9 +20,11 @@ strip = true
 [workspace.dependencies]
 aes-gcm = "0.10"
 anyhow = "1.0"
+bincode = "1.3"
 der = { version = "0.7", features = ["alloc", "derive", "flagset", "oid"] }
 ecdsa = { version = "0.16", features = ["sha2", "spki"] }
 hex = "0.4"
+openssl = { version = "0.10", features = ["vendored"] }
 sha1 = "0.10"
 sha2 = "0.10"
 p256 = { version = "0.13", features = ["arithmetic", "pkcs8"] }
@@ -35,3 +38,4 @@ thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.96"
 x509-cert = { version = "0.2", features = ["builder", "hazmat"] }
+x509-parser = "0.15"
