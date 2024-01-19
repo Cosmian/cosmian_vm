@@ -9,11 +9,6 @@ variable "project_id" {
   default = "intel-enclaves"
 }
 
-variable "image_project_id" {
-  type    = string
-  default = "tdx_guest_images"
-}
-
 variable "ubuntu_source_image" {
   type    = string
   default = "ubuntu-2204-tdx-v20231011"
@@ -71,7 +66,6 @@ variable "wait_to_add_ssh_keys" {
 
 source "googlecompute" "ubuntu" {
   project_id             = var.project_id
-  image_project_id       = var.image_project_id
   source_image           = var.ubuntu_source_image
   source_image_family    = var.ubuntu_source_image_family
   zone                   = var.zone
