@@ -2,8 +2,8 @@ use std::{fs, path::PathBuf};
 
 use anyhow::{anyhow, Result};
 use clap::Args;
+use cosmian_vm_client::client::get_server_certificate;
 use pem_rfc7468::LineEnding;
-use ratls::verify::get_server_certificate;
 
 /// Fetch an RATLS certificate from a domain name
 #[derive(Args, Debug)]
@@ -14,7 +14,7 @@ pub struct FetchArgs {
 
     /// The port to fetch
     #[arg(long, short, action, default_value_t = 443)]
-    port: u32,
+    port: u16,
 
     /// Path of the fetched certificate
     #[arg(short, long, default_value = PathBuf::from(".").into_os_string())]

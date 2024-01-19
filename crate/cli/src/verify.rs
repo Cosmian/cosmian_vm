@@ -1,6 +1,9 @@
 use anyhow::Result;
 use clap::Args;
-use cosmian_vm_client::{client::CosmianVmClient, snapshot::CosmianVmSnapshot};
+use cosmian_vm_client::{
+    client::{get_server_certificate_from_url, CosmianVmClient},
+    snapshot::CosmianVmSnapshot,
+};
 use rand::RngCore;
 use std::{fs, path::PathBuf};
 use tee_attestation::{forge_report_data_with_nonce, verify_quote as tee_verify_quote};
@@ -13,6 +16,10 @@ pub struct VerifyArgs {
     /// Path of the Cosmian VM snapshot
     #[arg(short, long)]
     snapshot: PathBuf,
+
+    /// Application urls (domain_name:port) to verify against Cosmian VM TLS certificate
+    #[arg(short, long)]
+    application: Option<Vec<String>>,
 }
 
 impl VerifyArgs {
@@ -87,6 +94,30 @@ impl VerifyArgs {
         spawn_blocking(move || tee_verify_quote(&quote, Some(&policy))).await??;
 
         println!("[ OK ] Verifying TEE attestation");
+
+        if let Some(application_urls) = &self.application {
+            for application_url in application_urls {
+                let mut application_url = application_url.clone();
+                if !application_url.starts_with("http://")
+                    && !application_url.starts_with("https://")
+                {
+                    application_url.insert_str(0, "https://")
+                }
+
+                let app_certificate =
+                    get_server_certificate_from_url(&application_url).map_err(|e| {
+                        anyhow::anyhow!(format!(
+                            "Can't get the application certificate for {application_url}: {e}"
+                        ))
+                    })?;
+
+                if app_certificate != client.certificate.0 {
+                    println!("[ FAIL ] TLS certificate for application {application_url} differs from Cosmian VM Agent TLS certificate");
+                } else {
+                    println!("[ OK ] Verifying TLS application for {application_url}");
+                }
+            }
+        }
 
         Ok(())
     }
