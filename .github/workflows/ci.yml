@@ -17,29 +17,41 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
+
       - uses: actions/checkout@v2
+
       - name: Rustup setup
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
-      - run: rustup component add rustfmt && rustup component add clippy
+
+      - run: rustup component add rustfmt && rustup component add clippy && cargo install cargo-machete
+
       - name: Cargo fmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
+
       - name: Cargo check
         uses: actions-rs/cargo@v1
         with:
           command: check
-      - name: Cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+
       - name: Clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
           args: -- -D warnings
+              
+      - name: Machete (deps checker)
+        uses: actions-rs/cargo@v1
+        with:
+          command: machete
+
+      - name: Cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test

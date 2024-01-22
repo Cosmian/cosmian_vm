@@ -28,7 +28,7 @@ pub struct InitArgs {
 
 impl InitArgs {
     pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
-        println!("Proceeding the init of the deployed app...");
+        println!("Processing the init of the deployed app...");
 
         let cfg_content = std::fs::read(&self.configuration)?;
         let key = if let Some(key) = &self.key {
@@ -59,7 +59,7 @@ pub struct RestartArgs {
 
 impl RestartArgs {
     pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
-        println!("Proceeding the restart of the deployed app...");
+        println!("Processing the restart of the deployed app...");
 
         client.restart_app(&hex::decode(&self.key)?).await?;
 

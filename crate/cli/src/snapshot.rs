@@ -14,7 +14,7 @@ pub struct SnapshotArgs {
 
 impl SnapshotArgs {
     pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
-        println!("Proceeding the snapshot...");
+        println!("Processing the snapshot...");
 
         let snapshot = client.snapshot().await?;
         fs::write(&self.output, serde_json::to_string(&snapshot)?)?;
