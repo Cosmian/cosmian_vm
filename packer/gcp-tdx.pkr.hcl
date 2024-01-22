@@ -1,18 +1,23 @@
+/*
+Copy the tdx capable image into the intel-enclaves project before building the image with packer.
+To do so, run the command below :
+gcloud alpha compute --project=intel-enclaves images create ubuntu-2204-tdx-v20231011 --family=ubuntu-2204-lts  --source-image=ubuntu-2204-tdx-v20231011  --source-image-project=tdx-guest-image
+*/
+
 variable "prefix" {}
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-sev-ubuntu-{{timestamp}}"
-  redhat_ami_name = "${var.prefix}-cosmian-vm-sev-redhat-{{timestamp}}"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-tdx-ubuntu-{{timestamp}}"
 }
 
 variable "project_id" {
   type    = string
-  default = "amd-sev-snp"
+  default = "intel-enclaves"
 }
 
 variable "ubuntu_source_image" {
   type    = string
-  default = "ubuntu-2204-jammy-v20231030"
+  default = "ubuntu-2204-tdx-v20231011"
 }
 
 variable "ubuntu_source_image_family" {
@@ -20,19 +25,9 @@ variable "ubuntu_source_image_family" {
   default = "ubuntu-2204-lts"
 }
 
-variable "redhat_source_image" {
-  type    = string
-  default = "rhel-9-v20231115"
-}
-
-variable "redhat_source_image_family" {
-  type    = string
-  default = "rhel-9"
-}
-
 variable "zone" {
   type    = string
-  default = "europe-west4-a"
+  default = "us-central1-a"
 }
 
 variable "ssh_username" {
@@ -47,7 +42,7 @@ variable "ssh_timeout" {
 
 variable "image_guest_os_features" {
   type    = list(string)
-  default = ["SEV_SNP_CAPABLE"]
+  default = ["UEFI_COMPATIBLE","VIRTIO_SCSI_MULTIQUEUE","GVNIC","TDX_CAPABLE"]
 }
 
 variable "network" {
@@ -91,57 +86,11 @@ source "googlecompute" "ubuntu" {
   wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
 }
 
-source "googlecompute" "redhat" {
-  project_id             = var.project_id
-  source_image           = var.redhat_source_image
-  source_image_family    = var.redhat_source_image_family
-  zone                   = var.zone
-  ssh_username           = var.ssh_username
-  ssh_timeout            = var.ssh_timeout
-  image_name             = local.redhat_ami_name
-  image_guest_os_features = var.image_guest_os_features
-  network                = var.network
-  subnetwork             = var.subnetwork
-  tags                   = var.tags
-  use_os_login           = var.use_os_login
-  wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
-}
-
 build {
   sources = ["sources.googlecompute.ubuntu"]
 
   provisioner "file" {
     source      = "../resources/conf/ima-policy"
-    destination = "/tmp/ima-policy"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/agent.toml"
-    destination = "/tmp/agent.toml"
-  }
-
-  provisioner "file" {
-    source      = "./cosmian_vm_agent"
-    destination = "/tmp/"
-  }
-
-  provisioner "file" {
-    source      = "./cosmian_certtool"
-    destination = "/tmp/"
-  }
-
-  provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_playbook.yml"
-    local_port    = 22
-    use_proxy     = false
-  }
-}
-
-build {
-  sources = ["sources.googlecompute.redhat"]
-
-  provisioner "file" {
-    source      = "../resources/conf/ima-policy-selinux"
     destination = "/tmp/ima-policy"
   }
 
