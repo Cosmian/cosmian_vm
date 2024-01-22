@@ -53,7 +53,7 @@ You can verify the enclave by running:
 
 ```sh
 $ cosmian_vm --url https://sgx.cosmian.dev:5355 snapshot 
-Proceeding the snapshot...
+Processing the snapshot...
 The snapshot has been saved at ./cosmian_vm.snapshot
 
 $ cosmian_vm --url https://sgx.cosmian.dev:5355 verify --snapshot ./cosmian_vm.snapshot

@@ -13,6 +13,7 @@ RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-docker
 RUN apt-get update && apt-get install --no-install-recommends -qq -y \
     build-essential \
     protobuf-compiler \
+    libtss2-dev \
     libprotobuf-dev \
     libprotobuf-c-dev \
     python3 \
@@ -80,6 +81,7 @@ RUN apt-get update \
     curl \
     build-essential \
     libssl-dev \
+    libtss2-dev \
     ca-certificates \
     libclang-dev \
     libsodium-dev \

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2023-01-30
+
+### Update
+
+- Use tee-tools 1.2
+- Use acme lib from original repository instead of Cosmian fork
+
+### New 
+
+- Support TDX build with packer on GCP
+
+### Fix
+
+- Dockerker sgx
+
+
 ## [0.3.0] - 2023-01-19
 
 ### New

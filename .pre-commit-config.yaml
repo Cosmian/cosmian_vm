@@ -149,4 +149,4 @@ repos:
       - id: clippy-autofix-pedantic
       - id: clippy-autofix-others
       - id: clippy-all-targets-all-features
-      - id: cargo-format # in last du to clippy fixes
+      - id: cargo-format # in last due to clippy fixes
