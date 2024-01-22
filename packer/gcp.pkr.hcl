@@ -1,8 +1,8 @@
 variable "prefix" {}
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
-  redhat_ami_name = "${var.prefix}-cosmian-vm-redhat-{{timestamp}}"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-sev-ubuntu-{{timestamp}}"
+  redhat_ami_name = "${var.prefix}-cosmian-vm-sev-redhat-{{timestamp}}"
 }
 
 variable "project_id" {

@@ -1,7 +1,13 @@
+/*
+Copy the tdx capable image into the intel-enclaves project before building the image with packer.
+To do so, run the command below :
+gcloud alpha compute --project=intel-enclaves images create ubuntu-2204-tdx-v20231011 --family=ubuntu-2204-lts  --source-image=ubuntu-2204-tdx-v20231011  --source-image-project=tdx-guest-image
+*/
+
 variable "prefix" {}
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-tdx-ubuntu-{{timestamp}}"
 }
 
 variable "project_id" {
