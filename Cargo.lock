@@ -774,7 +774,6 @@ dependencies = [
  "ratls",
  "tee_attestation",
  "thiserror",
- "x509-parser",
 ]
 
 [[package]]
@@ -787,7 +786,6 @@ dependencies = [
  "hex",
  "ima",
  "rand",
- "serde",
  "serde_json",
  "tee_attestation",
  "tokio",
@@ -844,7 +842,6 @@ dependencies = [
  "reqwest",
  "rustls 0.21.10",
  "serde",
- "serde_json",
  "tee_attestation",
  "thiserror",
  "tpm_quote",
@@ -1361,9 +1358,9 @@ dependencies = [
 
 [[package]]
 name = "h2"
-version = "0.3.23"
+version = "0.3.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b553656127a00601c8ae5590fcfdc118e4083a7924b6cf4ffc1ea4b99dc429d7"
+checksum = "bb2c4422095b67ee78da96fbb51a4cc413b3b25883c7717ff7ca1ab31022c9c9"
 dependencies = [
  "bytes",
  "fnv",
@@ -1560,7 +1557,6 @@ dependencies = [
  "bincode",
  "hex",
  "serde",
- "serde_json",
  "sha1",
  "sha2",
  "thiserror",

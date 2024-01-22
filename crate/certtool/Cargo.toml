@@ -17,13 +17,13 @@ actix-files = "0.6"
 actix-web = { version = "4", features = ["rustls"] }
 anyhow = { workspace = true }
 clap = { version = "4", default-features = false, features = [
-    "cargo",
-    "derive",
-    "error-context",
-    "help",
-    "std",
-    "string",
-    "usage",
+  "cargo",
+  "derive",
+  "error-context",
+  "help",
+  "std",
+  "string",
+  "usage",
 ] }
 cosmian_vm_client = { path = "../client" }
 curve25519-dalek = "3.2"
@@ -33,4 +33,3 @@ pem-rfc7468 = "0.7"
 ratls = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
-x509-parser = "0.15"

@@ -129,7 +129,7 @@ source "amazon-ebssurrogate" "redhat" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.redhat_launch_block_device_mappings_device_name 
+    device_name = var.redhat_launch_block_device_mappings_device_name
     volume_size = var.redhat_volume_size
     delete_on_termination = var.delete_on_termination
   }
@@ -158,7 +158,7 @@ source "amazon-ebssurrogate" "amazon-linux" {
 
   launch_block_device_mappings {
     volume_type = var.volume_type
-    device_name = var.amazon_linux_launch_block_device_mappings_device_name 
+    device_name = var.amazon_linux_launch_block_device_mappings_device_name
     volume_size = var.amazon_linux_volume_size
     delete_on_termination = var.delete_on_termination
   }
@@ -224,7 +224,7 @@ build {
     source      = "./cosmian_certtool"
     destination = "/tmp/"
   }
-  
+
   provisioner "ansible" {
     playbook_file = "../ansible/cosmian_vm_playbook.yml"
     local_port    = 22

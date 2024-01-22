@@ -4,15 +4,15 @@ version = "0.2.0"
 edition = "2021"
 
 [dependencies]
-aes-gcm = { workspace = true }
-anyhow = { workspace = true }
 actix-cors = "0.6"
 actix-http = "3"
 actix-web = { version = "4", features = ["rustls"] }
 actix-web-lab = "0.20"
+aes-gcm = { workspace = true }
+anyhow = { workspace = true }
 cosmian_vm_client = { path = "../client" }
-ecdsa = { workspace = true }
 der = { workspace = true }
+ecdsa = { workspace = true }
 gethostname = "0.4"
 hex = { workspace = true }
 ima = { path = "../ima" }
@@ -29,9 +29,9 @@ sha2 = { workspace = true }
 spki = { workspace = true }
 sysinfo = "0.29"
 tee_attestation = { workspace = true }
-tpm_quote = { workspace = true }
 thiserror = { workspace = true }
 toml = "0.8"
+tpm_quote = { workspace = true }
 tracing = "0.1"
 tracing-actix-web = "0.7"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

@@ -37,7 +37,7 @@
   - name: Update all packages to their latest version
     dnf:
       update_cache: yes
-  
+
   - name: download and unzip tpm2-tools
     unarchive:
       src: https://package.cosmian.com/tpm2-tools/tpm2-tools-amazonlinux-20240116.zip

@@ -85,7 +85,7 @@ impl CosmianVmClient {
             "/app/init",
             Some(&AppConf {
                 content: content.to_vec(),
-                key: key.map(|k| k.to_vec()),
+                key: key.map(<[u8]>::to_vec),
             }),
         )
         .await
@@ -313,7 +313,7 @@ mod tests {
     fn test_ratls_get_server_certificate() {
         let server_cert = get_server_certificate("self-signed.badssl.com", 443).unwrap();
 
-        let b64_server_cert = r#"
+        let b64_server_cert = r"
         MIIDeTCCAmGgAwIBAgIJAMrlEvmXqB1TMA0GCSqGSIb3DQEBCwUAMGIxCzAJBgNV
         BAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNp
         c2NvMQ8wDQYDVQQKDAZCYWRTU0wxFTATBgNVBAMMDCouYmFkc3NsLmNvbTAeFw0y
@@ -333,7 +333,7 @@ mod tests {
         L5ghqMrDUZTkxgwlXs3OyJi/S/Rfv9OGiEua/T+h3yHEzOL53d+IiagOUCjUg7mP
         5g4MP8zks3VcxERVjtzOahBH7fvhsMuJ/i+lSiNMMVaOr/U9Y1Y9kq96YIPax6Re
         Jok9KYiYJsWbiimaCxWFT/HbLvD+qri7lD2Gm8A=
-        "#
+        "
         .replace(['\n', ' '], "");
         let expected_server_cert = general_purpose::STANDARD.decode(b64_server_cert).unwrap();
         assert_eq!(expected_server_cert, server_cert);

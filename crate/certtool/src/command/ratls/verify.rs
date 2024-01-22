@@ -2,8 +2,8 @@ use anyhow::Result;
 use clap::Args;
 use hex::decode;
 use ratls::verify::verify_ratls;
+use std::fs;
 use std::path::PathBuf;
-use std::{fs, ops::Deref};
 use tee_attestation::{SevQuoteVerificationPolicy, SgxQuoteVerificationPolicy, TeePolicy};
 
 /// Verify a RATLS certificate
@@ -49,7 +49,7 @@ impl VerifyArgs {
 
         let mut policy = match (public_signer_key, mrenclave, sev_measurement) {
             (None, None, None) => None,
-            (Some(s), Some(e), None) => Some(TeePolicy::Sgx(SgxQuoteVerificationPolicy::new(e, s.deref())?)),
+            (Some(s), Some(e), None) => Some(TeePolicy::Sgx(SgxQuoteVerificationPolicy::new(e, &s)?)),
             (None, None, Some(m)) => Some(TeePolicy::Sev(SevQuoteVerificationPolicy::new(m))),
             _ => anyhow::bail!("Bad measurements combination. It should be [None | (--mrenclave & --signer_key) | measurement]")
         };

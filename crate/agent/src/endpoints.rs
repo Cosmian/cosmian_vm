@@ -92,7 +92,7 @@ pub async fn get_snapshot(
             for file in WalkDir::new(ROOT_PATH)
                 .into_iter()
                 .filter_entry(filter_whilelist)
-                .filter_map(|file| file.ok())
+                .filter_map(std::result::Result::ok)
                 // Only keeps files
                 .filter(|file| file.file_type().is_file())
             {
