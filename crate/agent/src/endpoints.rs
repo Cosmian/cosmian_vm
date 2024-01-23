@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use crate::{
     conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
     error::{Error, ResponseWithError},
-    utils::{filter_whilelist, hash_file},
+    utils::hash_filesystem,
     CosmianVmAgent,
 };
 use actix_web::{
@@ -24,9 +24,7 @@ use tee_attestation::{forge_report_data_with_nonce, get_quote as tee_get_quote, 
 use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote, policy::TpmPolicy};
 
 use tss_esapi::Context;
-use walkdir::WalkDir;
 
-const ROOT_PATH: &str = "/";
 const APP_CONF_FILENAME: &str = "app.conf";
 const DEFAULT_TPM_HASH_METHOD: tpm_quote::PcrHashMethod = tpm_quote::PcrHashMethod::Sha256;
 
@@ -89,18 +87,7 @@ pub async fn get_snapshot(
             );
 
             // Add to the snapshotfiles all the file on the system
-            for file in WalkDir::new(ROOT_PATH)
-                .into_iter()
-                .filter_entry(filter_whilelist)
-                .filter_map(std::result::Result::ok)
-                // Only keeps files
-                .filter(|file| file.file_type().is_file())
-            {
-                filehashes.0.insert((
-                    file.path().display().to_string(),
-                    hash_file(file.path(), &hash_method)?,
-                ));
-            }
+            filehashes.0.extend(hash_filesystem(&hash_method)?);
 
             (Some(filehashes), Some(tpm_policy))
         }

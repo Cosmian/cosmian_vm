@@ -6,6 +6,7 @@ use rand_chacha::{
     rand_core::{RngCore, SeedableRng},
     ChaCha20Rng,
 };
+use rayon::prelude::*;
 use sha1::{Digest, Sha1};
 use sha2::{Sha256, Sha512};
 use spki::{EncodePublicKey, SubjectPublicKeyInfoOwned};
@@ -19,7 +20,7 @@ use std::{
     time::Duration,
 };
 use tss_esapi::{Context, TctiNameConf};
-use walkdir::DirEntry;
+use walkdir::{DirEntry, WalkDir};
 use x509_cert::{
     builder::{Builder, CertificateBuilder, Profile},
     ext::pkix::{name::GeneralName, BasicConstraints, SubjectAltName},
@@ -27,6 +28,8 @@ use x509_cert::{
     serial_number::SerialNumber,
     time::Validity,
 };
+
+const ROOT_PATH: &str = "/";
 
 #[inline(always)]
 pub(crate) fn hash_file(path: &Path, hash_method: &ImaHashMethod) -> Result<Vec<u8>, Error> {
@@ -49,6 +52,28 @@ pub(crate) fn hash_file(path: &Path, hash_method: &ImaHashMethod) -> Result<Vec<
             Ok(hasher.finalize().to_vec())
         }
     }
+}
+
+#[inline(always)]
+pub fn hash_filesystem(hash_method: &ImaHashMethod) -> Result<Vec<(String, Vec<u8>)>, Error> {
+    // Collect the files first
+    // We store all the files in memory. It's a tradeoff to then quickly hash in parallel all the files
+    // Listing the files is pretty quick: negligeable against hashing the files
+    let files: Vec<_> = WalkDir::new(ROOT_PATH)
+        .into_iter()
+        .filter_entry(filter_whilelist)
+        .filter_map(std::result::Result::ok)
+        // Only keeps files
+        .filter(|file| file.file_type().is_file())
+        .map(|file| file.into_path())
+        .collect();
+
+    // Hash the files in parallel
+    files
+        .par_iter()
+        // .par_bridge()
+        .map(|file| Ok((file.display().to_string(), hash_file(file, hash_method)?)))
+        .collect::<Result<Vec<_>, Error>>()
 }
 
 #[must_use]
