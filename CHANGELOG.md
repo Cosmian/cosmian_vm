@@ -2,21 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.3.1] - 2023-01-30
+## [0.4.0] - 2023-01-23
 
 ### Update
 
 - Use tee-tools 1.2
 - Use acme lib from original repository instead of Cosmian fork
+- Improve snapshotting performance (25% CPU time gain)
 
 ### New 
 
 - Support TDX build with packer on GCP
+- Log received requests
 
 ### Fix
 
 - Dockerker sgx
-
 
 ## [0.3.0] - 2023-01-19
 
