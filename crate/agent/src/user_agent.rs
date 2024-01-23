@@ -7,6 +7,7 @@ use actix_web_lab::middleware::Next;
 use pep440::Version;
 
 use crate::error::Error;
+use cosmian_vm_client::client::USER_AGENT_ATTRIBUTE;
 
 pub async fn check_user_agent_middleware(
     req: ServiceRequest,
@@ -41,7 +42,7 @@ fn check_user_agent(user_agent: &str) -> Result<(), Error> {
 
 fn _check_user_agent(user_agent: &str, minimum_version: Version) -> Result<(), Error> {
     match user_agent.rsplit_once('/') {
-        Some(("min-version", version_as_string)) => {
+        Some((USER_AGENT_ATTRIBUTE, version_as_string)) => {
             let version = Version::parse(version_as_string);
 
             if let Some(mut version) = version {
@@ -66,7 +67,7 @@ fn _check_user_agent(user_agent: &str, minimum_version: Version) -> Result<(), E
 pub fn minimum_version() -> Version {
     Version {
         epoch: 0,
-        release: vec![0, 3],
+        release: vec![0, 4],
         pre: None,
         post: None,
         dev: None,
@@ -93,24 +94,24 @@ mod tests {
 
     #[test]
     fn test_check_user_agent() {
-        let error_1_0 = _check_user_agent("min-version/0.10", minimum_version());
+        let error_1_0 = _check_user_agent("cli-version/0.10", minimum_version());
         assert_eq!(
             error_1_0.unwrap_err().to_string(),
             "Please update the cosmian_vm cli to version 1.2"
         );
 
-        assert!(_check_user_agent("min-version/0.11", minimum_version()).is_err());
-        assert!(_check_user_agent("min-version/1.0", minimum_version()).is_err());
-        assert!(_check_user_agent("min-version/2.0", minimum_version()).is_ok());
-        assert!(_check_user_agent("min-version/1.2", minimum_version()).is_ok());
-        assert!(_check_user_agent("min-version/1.2.0", minimum_version()).is_ok());
-        assert!(_check_user_agent("min-version/1.2.1", minimum_version()).is_ok());
-        assert!(_check_user_agent("min-version/1.3.1", minimum_version()).is_ok());
-        assert!(_check_user_agent("min-version/1.2a1", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version/0.11", minimum_version()).is_err());
+        assert!(_check_user_agent("cli-version/1.0", minimum_version()).is_err());
+        assert!(_check_user_agent("cli-version/2.0", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version/1.2", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version/1.2.0", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version/1.2.1", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version/1.3.1", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version/1.2a1", minimum_version()).is_ok());
 
         assert!(_check_user_agent("bad_client/1.0", minimum_version()).is_ok());
-        assert!(_check_user_agent("min-version/bad_version", minimum_version()).is_ok());
-        assert!(_check_user_agent("min-version", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version/bad_version", minimum_version()).is_ok());
+        assert!(_check_user_agent("cli-version", minimum_version()).is_ok());
         assert!(_check_user_agent(
             "Mozilla/5.0 (X11; Linux x86_64; rv:101.0) Gecko/20100101 Firefox/101.0",
             minimum_version()

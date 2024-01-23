@@ -37,6 +37,8 @@ pub struct QuoteParam {
     pub nonce: Vec<u8>,
 }
 
+pub const USER_AGENT_ATTRIBUTE: &str = "cli-version";
+
 impl CosmianVmClient {
     /// Proceed a snapshot of the VM
     pub async fn snapshot(&self) -> Result<CosmianVmSnapshot, Error> {
@@ -121,7 +123,7 @@ impl CosmianVmClient {
         // Build the client
         Ok(Self {
             client: builder
-                .user_agent(format!("min-version/{cli_version}"))
+                .user_agent(format!("{USER_AGENT_ATTRIBUTE}/{cli_version}"))
                 .connect_timeout(Duration::from_secs(5))
                 .tcp_keepalive(Duration::from_secs(30))
                 .default_headers(headers)
