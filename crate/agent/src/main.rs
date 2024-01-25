@@ -69,9 +69,9 @@ async fn main() -> Result<()> {
     snapshot_worker_cancel.cancel();
 
     // wait for the snapshot worker to exit its loop gracefully
-    snapshot_worker_handle.await.unwrap();
+    snapshot_worker_handle.await?;
 
-    tracing::info!("Cosmian VM Agent successfully shutdown gracefully FFF");
+    tracing::info!("Cosmian VM Agent successfully shutdown gracefully");
     Ok(())
 }
 

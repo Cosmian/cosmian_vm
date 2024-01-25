@@ -61,14 +61,11 @@ pub fn init_snapshot_worker(
 /// Return `Error::SnapshotIsProcessing` if the snapshot is processing
 pub(crate) fn get_snapshot(snapshot: &Snapshot) -> Result<Option<CosmianVmSnapshot>, Error> {
     if let Ok(snapshot) = snapshot.try_lock() {
-        if let Some(result) = &snapshot.result {
-            match result {
-                Ok(s) => return Ok(Some(s.clone())),
-                Err(e) => return Err(Error::Unexpected(e.to_string())),
-            }
-        } else {
-            return Ok(None);
-        }
+        return match &snapshot.result {
+            Some(Ok(result)) => Ok(Some(result.clone())),
+            Some(Err(e)) => Err(Error::Unexpected(e.to_string())),
+            None => Ok(None),
+        };
     }
 
     Err(Error::SnapshotIsProcessing)
@@ -244,19 +241,10 @@ const BASE_EXCLUDE_DIRS: [&str; 8] = [
     "/tmp/",
 ];
 
-fn _filter_whilelist(entry: &DirEntry) -> Result<bool, Error> {
-    // Do not keep files in some folders
-    if BASE_EXCLUDE_DIRS
-        .iter()
-        .any(|exclude_dir| entry.path().starts_with(exclude_dir))
-    {
-        return Ok(false);
-    }
-
-    Ok(true)
-}
-
 #[must_use]
 pub fn filter_whilelist(entry: &DirEntry) -> bool {
-    _filter_whilelist(entry).unwrap_or(false)
+    // Do not keep files in some folders
+    !BASE_EXCLUDE_DIRS
+        .iter()
+        .any(|exclude_dir| entry.path().starts_with(exclude_dir))
 }

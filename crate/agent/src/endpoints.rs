@@ -46,8 +46,8 @@ pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
 
 /// Get a system snapshot.
 ///
-/// If the snashot is ready, return it and return a HTTP STATUS CODE = 200
-/// If not, order a snapshot and return a HTTP STATUS CODE = 202
+/// If the snapshot is ready, return it with a HTTP status code `200 OK`
+/// If not, start a snapshot and return a HTTP status code `202 Accepted`
 ///
 /// Note: require root privileges
 #[get("/snapshot")]

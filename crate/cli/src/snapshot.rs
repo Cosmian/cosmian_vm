@@ -16,7 +16,7 @@ impl SnapshotArgs {
     pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
         println!("Processing the snapshot...");
 
-        // Reset the previous snapshot (or fail is the snapshotting process is still running)
+        // Reset the previous snapshot (or fail if the snapshot process is still running)
         client.reset_snapshot().await?;
 
         let snapshot = client.get_snapshot().await?;
