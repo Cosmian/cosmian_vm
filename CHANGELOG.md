@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file.
 
 - Support TDX build with packer on GCP
 - Log received requests
+- Can't process a snapshot when another is currently processing
+- Endpoint `/snapshot` is no more blocking (a task is spawned)
 
 ### Fix
 

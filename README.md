@@ -134,6 +134,8 @@ ssl_private_key = "/etc/cosmian_vm/key.pem"
 tpm_device = "/dev/tpmrm0
 ```
 
+You can chage the default location of the configuration file by setting the environement variable: `COSMIAN_VM_AGENT_CONF`.
+
 Note, that you can start/restart/stop the Cosmian VM Agent as follow:
 
 ```sh
@@ -159,6 +161,8 @@ Then on your localhost, when you are sure your VM is fully configured and should
 ```sh
 cosmian_vm --url https://cosmianvm.cosmian.dev snapshot
 ```
+
+You can process a snapshot once at a time. 
 
 2. Verify the current state of the machine
 

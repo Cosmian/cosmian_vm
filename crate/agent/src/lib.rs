@@ -1,4 +1,4 @@
-use std::{fs::File, path::Path, sync::Mutex};
+use std::{fs::File, path::Path, sync::Arc};
 
 use actix_cors::Cors;
 use actix_http::Method;
@@ -7,10 +7,12 @@ use actix_web::{
     web::{scope, Data, PayloadConfig, ServiceConfig},
 };
 use actix_web_lab::middleware::from_fn;
+use tokio::sync::Mutex;
 
 use conf::CosmianVmAgent;
 use error::Error;
 use rustls::ServerConfig;
+use snapshot::Snapshot;
 use user_agent::check_user_agent_middleware;
 use utils::create_tpm_context;
 
@@ -18,10 +20,14 @@ pub mod conf;
 pub mod endpoints;
 pub mod error;
 pub mod service;
+pub mod snapshot;
 pub mod user_agent;
 pub mod utils;
 
+const DEFAULT_TPM_HASH_METHOD: tpm_quote::PcrHashMethod = tpm_quote::PcrHashMethod::Sha256;
+
 pub fn endpoints(cfg: &mut ServiceConfig) {
+    cfg.service(endpoints::delete_snapshot);
     cfg.service(endpoints::get_ima_ascii);
     cfg.service(endpoints::get_ima_binary);
     cfg.service(endpoints::get_snapshot);
@@ -31,7 +37,10 @@ pub fn endpoints(cfg: &mut ServiceConfig) {
     cfg.service(endpoints::restart_app);
 }
 
-pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
+pub fn config(
+    conf: CosmianVmAgent,
+    snapshot_worker: Arc<Snapshot>,
+) -> impl FnOnce(&mut ServiceConfig) {
     let certificate = conf
         .read_leaf_certificate()
         .expect("TLS certificate malformed (PEM expecting)");
@@ -43,6 +52,7 @@ pub fn config(conf: CosmianVmAgent) -> impl FnOnce(&mut ServiceConfig) {
 
     move |cfg: &mut ServiceConfig| {
         cfg.app_data(PayloadConfig::new(10_000_000_000))
+            .app_data(Data::from(Arc::clone(&snapshot_worker)))
             .app_data(Data::new(conf))
             .app_data(Data::new(certificate))
             .app_data(Data::new(tpm_context))

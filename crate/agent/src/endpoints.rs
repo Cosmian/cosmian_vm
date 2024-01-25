@@ -3,12 +3,13 @@ use std::sync::Mutex;
 use crate::{
     conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
     error::{Error, ResponseWithError},
-    utils::hash_filesystem,
-    CosmianVmAgent,
+    snapshot::{self, order_snapshot, reset_snapshot, Snapshot},
+    CosmianVmAgent, DEFAULT_TPM_HASH_METHOD,
 };
 use actix_web::{
-    get, post,
+    delete, get, post,
     web::{Data, Json, Query},
+    HttpResponse,
 };
 use aes_gcm::{
     aead::{Aead, OsRng},
@@ -16,17 +17,16 @@ use aes_gcm::{
 };
 use cosmian_vm_client::{
     client::{AppConf, QuoteParam, RestartParam, TpmQuoteResponse},
-    snapshot::{CosmianVmSnapshot, SnapshotFiles},
+    snapshot::CosmianVmSnapshot,
 };
 use ima::ima::{read_ima_ascii, read_ima_ascii_first_line, read_ima_binary, Ima};
 use sha1::digest::generic_array::GenericArray;
-use tee_attestation::{forge_report_data_with_nonce, get_quote as tee_get_quote, TeePolicy};
-use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote, policy::TpmPolicy};
+use tee_attestation::{forge_report_data_with_nonce, get_quote as tee_get_quote};
+use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
 
 use tss_esapi::Context;
 
 const APP_CONF_FILENAME: &str = "app.conf";
-const DEFAULT_TPM_HASH_METHOD: tpm_quote::PcrHashMethod = tpm_quote::PcrHashMethod::Sha256;
 
 /// Get the IMA hashes list (ASCII format)
 ///
@@ -44,60 +44,35 @@ pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
     Ok(Json(read_ima_binary()?))
 }
 
-/// Snapshot the system.
+/// Get a system snapshot.
 ///
-/// Return the list of all files hashes and all IMA hashes
-///
-/// Remark: suboptimal => the connection holds during the hashing process
+/// If the snashot is ready, return it and return a HTTP STATUS CODE = 200
+/// If not, order a snapshot and return a HTTP STATUS CODE = 202
 ///
 /// Note: require root privileges
 #[get("/snapshot")]
-pub async fn get_snapshot(
-    tpm_context: Data<Mutex<Option<Context>>>,
-) -> ResponseWithError<Json<CosmianVmSnapshot>> {
-    // Get the measurements of the tee (the report data does not matter)
-    let tee_quote = tee_get_quote(&[])?;
-    let tee_policy = TeePolicy::try_from(tee_quote.as_ref())?;
-
-    let mut tpm_context = tpm_context
-        .lock()
-        .map_err(|_| Error::Unexpected("TPM already in use".to_owned()))?;
-
-    let (filehashes, tpm_policy) = match tpm_context.as_mut() {
-        None => (None, None),
-        Some(tpm_context) => {
-            // Get the policy of the tpm (the nonce and the pcr_list don't matter)
-            let (tpm_quote, _, _) = tpm_get_quote(tpm_context, &[], None, DEFAULT_TPM_HASH_METHOD)?;
-            let tpm_policy = TpmPolicy::try_from(tpm_quote.as_ref())?;
-
-            // Get the IMA hashes
-            let ima = read_ima_binary()?;
-            let ima: &[u8] = ima.as_ref();
-            let ima = Ima::try_from(ima)?;
-
-            // We use the same hash method as the one IMA used
-            let hash_method = ima.hash_file_method();
-
-            // Create the snapshot files with files contained in the IMA list
-            let mut filehashes = SnapshotFiles(
-                ima.entries
-                    .iter()
-                    .map(|item| (item.filename_hint.clone(), item.filedata_hash.clone()))
-                    .collect(),
-            );
-
-            // Add to the snapshotfiles all the file on the system
-            filehashes.0.extend(hash_filesystem(&hash_method)?);
-
-            (Some(filehashes), Some(tpm_policy))
+pub async fn get_snapshot(snapshot_worker: Data<Snapshot>) -> ResponseWithError<HttpResponse> {
+    match snapshot::get_snapshot(&snapshot_worker) {
+        Ok(snapshot) => {
+            if let Some(snapshot) = snapshot {
+                Ok(HttpResponse::Ok().json(Some(snapshot)))
+            } else {
+                order_snapshot(&snapshot_worker)?;
+                Ok(HttpResponse::Accepted().json(None::<CosmianVmSnapshot>))
+            }
         }
-    };
+        Err(Error::SnapshotIsProcessing) => {
+            Ok(HttpResponse::Accepted().json(None::<CosmianVmSnapshot>))
+        }
+        Err(e) => Err(e),
+    }
+}
 
-    Ok(Json(CosmianVmSnapshot {
-        tee_policy,
-        tpm_policy,
-        filehashes,
-    }))
+/// Remove the previously computed snapshot.
+#[delete("/snapshot")]
+pub async fn delete_snapshot(snapshot_worker: Data<Snapshot>) -> ResponseWithError<Json<()>> {
+    reset_snapshot(&snapshot_worker)?;
+    Ok(Json(()))
 }
 
 /// Return the TEE quote
