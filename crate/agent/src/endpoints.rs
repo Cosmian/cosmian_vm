@@ -53,13 +53,10 @@ pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
 #[get("/snapshot")]
 pub async fn get_snapshot(snapshot_worker: Data<Snapshot>) -> ResponseWithError<HttpResponse> {
     match snapshot::get_snapshot(&snapshot_worker) {
-        Ok(snapshot) => {
-            if let Some(snapshot) = snapshot {
-                Ok(HttpResponse::Ok().json(Some(snapshot)))
-            } else {
-                order_snapshot(&snapshot_worker)?;
-                Ok(HttpResponse::Accepted().json(None::<CosmianVmSnapshot>))
-            }
+        Ok(Some(snapshot)) => Ok(HttpResponse::Ok().json(Some(snapshot))),
+        Ok(None) => {
+            order_snapshot(&snapshot_worker)?;
+            Ok(HttpResponse::Accepted().json(None::<CosmianVmSnapshot>))
         }
         Err(Error::SnapshotIsProcessing) => {
             Ok(HttpResponse::Accepted().json(None::<CosmianVmSnapshot>))

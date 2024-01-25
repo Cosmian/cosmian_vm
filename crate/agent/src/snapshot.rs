@@ -46,9 +46,9 @@ pub fn init_snapshot_worker(
 
     // spawn snapshot worker
     (
-        Arc::clone(&snapshot),
+        snapshot.clone(),
         actix_web::rt::spawn(process_snapshot_orders(
-            Arc::clone(&snapshot),
+            snapshot,
             snapshot_cancel.clone(),
             tpm_device.clone(),
         )),
@@ -216,9 +216,8 @@ pub async fn hash_filesystem(hash_method: &ImaHashMethod) -> Result<Vec<(String,
     // Note: processing like that doesn't block the main thread when stopping
     Ok(futures::stream::iter(files.into_iter())
         .map(|file| {
-            let hash_method2 = hash_method.clone();
             async move {
-                hash_file(&file, &hash_method2)
+                hash_file(&file, hash_method)
                     .await
                     .ok() // We ignore file if the hashing fails
                     .map(|hash| (file.display().to_string(), hash))
