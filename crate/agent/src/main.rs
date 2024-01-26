@@ -1,19 +1,13 @@
 use anyhow::Result;
+use cosmian_vm_agent::snapshot;
 use gethostname::gethostname;
 
+use actix_web::middleware::Logger;
 use actix_web::{App, HttpServer};
 use cosmian_vm_agent::{
     conf::CosmianVmAgent,
     get_tls_config,
     utils::{generate_self_signed_cert, generate_tpm_keys},
-};
-use tracing_actix_web::TracingLogger;
-use tracing_subscriber::{
-    filter::{filter_fn, EnvFilter, FilterExt, LevelFilter},
-    fmt,
-    layer::SubscriberExt,
-    util::SubscriberInitExt,
-    Layer,
 };
 
 const AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
@@ -21,7 +15,7 @@ const TLS_DAYS_BEFORE_EXPIRATION: u64 = 365 * 10;
 
 #[actix_web::main]
 async fn main() -> Result<()> {
-    init_logging();
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     tracing::info!(
         "Cosmain VM Agent version {} (TEE detected: {})",
@@ -48,12 +42,20 @@ async fn main() -> Result<()> {
     // First startup: initialize the agent
     initialize_agent(&conf)?;
 
+    // Background worker relating to the snapshot processing
+    tracing::info!("Starting the snapshot worker...");
+    let (snapshot_worker, snapshot_worker_handle, snapshot_worker_cancel) =
+        snapshot::init_snapshot_worker(conf.agent.tpm_device.clone());
+
     // Start REST server thread
-    tracing::info!("Starting server on {host}:{port}...");
+    tracing::info!("Starting Cosmian VM Agent on {host}:{port}...");
     HttpServer::new(move || {
         App::new()
-            .wrap(TracingLogger::default())
-            .configure(cosmian_vm_agent::config(conf.clone()))
+            .wrap(Logger::default())
+            .configure(cosmian_vm_agent::config(
+                conf.clone(),
+                snapshot_worker.clone(),
+            ))
     })
     .bind_rustls(
         format!("{host}:{port}"),
@@ -62,27 +64,15 @@ async fn main() -> Result<()> {
     .run()
     .await?;
 
+    tracing::info!("Stopping the snapshot worker...");
+    // signal snapshot worker to stop running
+    snapshot_worker_cancel.cancel();
+
+    // wait for the snapshot worker to exit its loop gracefully
+    snapshot_worker_handle.await?;
+
+    tracing::info!("Cosmian VM Agent successfully shutdown gracefully");
     Ok(())
-}
-
-fn init_logging() {
-    let stdout_layer = EnvFilter::builder()
-        .with_default_directive(LevelFilter::DEBUG.into())
-        .from_env_lossy()
-        .add_directive("rustls=info".parse().unwrap())
-        .add_directive("h2=info".parse().unwrap())
-        .add_directive("tokio=info".parse().unwrap())
-        .add_directive("hyper=info".parse().unwrap())
-        .add_directive("reqwest=info".parse().unwrap());
-
-    // filters elements from `tracing_actix_web` (wanted only for telemetry export)
-    let filter = filter_fn(|metadata| !metadata.target().starts_with("tracing_actix_web"))
-        .and(LevelFilter::DEBUG);
-
-    tracing_subscriber::registry()
-        .with(fmt::layer().with_filter(filter))
-        .with(stdout_layer)
-        .init();
 }
 
 fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {

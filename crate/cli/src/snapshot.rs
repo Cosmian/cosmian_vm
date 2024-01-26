@@ -7,7 +7,7 @@ use cosmian_vm_client::client::CosmianVmClient;
 /// Snapshot a cosmian VM
 #[derive(Args, Debug)]
 pub struct SnapshotArgs {
-    /// Path of the fetched snapshot
+    /// Path to save the snapshot
     #[arg(short, long, default_value = PathBuf::from("./cosmian_vm.snapshot").into_os_string())]
     output: PathBuf,
 }
@@ -16,7 +16,10 @@ impl SnapshotArgs {
     pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
         println!("Processing the snapshot...");
 
-        let snapshot = client.snapshot().await?;
+        // Reset the previous snapshot (or fail if the snapshot process is still running)
+        client.reset_snapshot().await?;
+
+        let snapshot = client.get_snapshot().await?;
         fs::write(&self.output, serde_json::to_string(&snapshot)?)?;
 
         println!(

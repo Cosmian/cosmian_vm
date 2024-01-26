@@ -12,6 +12,8 @@ pub enum Error {
     BadUserAgent(String),
     #[error("{0}")]
     Certificate(String),
+    #[error("A snapshot is currently processing (hold on before processing other actions)")]
+    SnapshotIsProcessing,
     #[error("{0}")]
     Command(String),
     #[error("{0}")]
@@ -55,6 +57,8 @@ impl ResponseError for Error {
             | Error::Unexpected(_)
             | Error::WalkDir(_) => StatusCode::INTERNAL_SERVER_ERROR,
 
+            Error::SnapshotIsProcessing => StatusCode::CONFLICT,
+
             Error::BadRequest(_) | Error::BadUserAgent(_) => StatusCode::BAD_REQUEST,
         }
     }
@@ -65,7 +69,7 @@ impl ResponseError for Error {
                 let error_uuid = Uuid::new_v4();
                 tracing::error!(error = ?self, "[{error_uuid}] {}", self.to_string());
                 HttpResponseBuilder::new(StatusCode::INTERNAL_SERVER_ERROR).body(
-                    format!("Something went wrong from the cosmian_vm agent. See cosmian_vm logs for additional information. (error id: {error_uuid})"))
+                    format!("Something went wrong from the cosmian_vm agent. See cosmian_vm_agent logs for additional information. (error id: {error_uuid})"))
             }
             status_code => HttpResponseBuilder::new(status_code).body(self.to_string()),
         }

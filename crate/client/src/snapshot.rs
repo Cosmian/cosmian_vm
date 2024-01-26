@@ -57,13 +57,13 @@ where
     deserializer.deserialize_seq(HashSetDeserializer)
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct SnapshotFiles(
     #[serde(serialize_with = "serialize_hex", deserialize_with = "deserialize_hex")]
     pub  HashSet<(String, Vec<u8>)>,
 );
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct CosmianVmSnapshot {
     pub tee_policy: TeePolicy,
     pub tpm_policy: Option<TpmPolicy>,

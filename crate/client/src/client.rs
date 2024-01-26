@@ -1,4 +1,4 @@
-use std::{io::Write, sync::Arc, time::Duration};
+use std::{io::Write, sync::Arc, thread::sleep, time::Duration};
 
 use http::{HeaderMap, HeaderValue, StatusCode};
 use reqwest::{Client, ClientBuilder, Response, Url};
@@ -37,10 +37,26 @@ pub struct QuoteParam {
     pub nonce: Vec<u8>,
 }
 
+pub const USER_AGENT_ATTRIBUTE: &str = "cli-version";
+
 impl CosmianVmClient {
     /// Proceed a snapshot of the VM
-    pub async fn snapshot(&self) -> Result<CosmianVmSnapshot, Error> {
-        self.get("/snapshot", None::<&()>).await
+    pub async fn get_snapshot(&self) -> Result<CosmianVmSnapshot, Error> {
+        loop {
+            let snapshot: Option<CosmianVmSnapshot> = self.get("/snapshot", None::<&()>).await?;
+
+            if let Some(snapshot) = snapshot {
+                return Ok(snapshot);
+            } else {
+                // Not ready
+                sleep(Duration::from_secs(10))
+            }
+        }
+    }
+
+    /// Proceed a snapshot of the VM
+    pub async fn reset_snapshot(&self) -> Result<(), Error> {
+        self.delete("/snapshot", None::<&()>).await
     }
 
     /// Get the IMA list as an ascii string
@@ -121,7 +137,7 @@ impl CosmianVmClient {
         // Build the client
         Ok(Self {
             client: builder
-                .user_agent(format!("min-version/{cli_version}"))
+                .user_agent(format!("{USER_AGENT_ATTRIBUTE}/{cli_version}"))
                 .connect_timeout(Duration::from_secs(5))
                 .tcp_keepalive(Duration::from_secs(30))
                 .default_headers(headers)
@@ -161,6 +177,27 @@ impl CosmianVmClient {
         let response = match data {
             Some(d) => self.client.post(agent_url).json(d).send().await?,
             None => self.client.post(agent_url).send().await?,
+        };
+
+        let status_code = response.status();
+        if status_code.is_success() {
+            return Ok(response.json::<R>().await?);
+        }
+
+        // process error
+        let p = handle_error(response).await?;
+        Err(Error::RequestFailed(p))
+    }
+
+    pub async fn delete<R, O>(&self, endpoint: &str, data: Option<&O>) -> Result<R, Error>
+    where
+        R: serde::de::DeserializeOwned + Sized + 'static,
+        O: Serialize,
+    {
+        let agent_url = format!("{}{endpoint}", self.agent_url);
+        let response = match data {
+            Some(d) => self.client.delete(agent_url).query(d).send().await?,
+            None => self.client.delete(agent_url).send().await?,
         };
 
         let status_code = response.status();

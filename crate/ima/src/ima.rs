@@ -93,6 +93,7 @@ impl ImaEntry {
     // Ref: https://elixir.bootlin.com/linux/v5.12.12/source/security/integrity/ima/ima_main.c#L101
     const INVALID_HASH: [u8; 20] = [0u8; 20];
 
+    #[inline(always)]
     pub(crate) fn sha256_pcr_value(&self, old_entry: &[u8]) -> [u8; 32] {
         use sha2::{Digest, Sha256};
 
@@ -109,6 +110,7 @@ impl ImaEntry {
         hasher.finalize().into()
     }
 
+    #[inline(always)]
     pub(crate) fn sha384_pcr_value(&self, old_entry: &[u8]) -> [u8; 48] {
         use sha2::{Digest, Sha384};
 
@@ -125,6 +127,7 @@ impl ImaEntry {
         hasher.finalize().into()
     }
 
+    #[inline(always)]
     pub(crate) fn sha512_pcr_value(&self, old_entry: &[u8]) -> [u8; 64] {
         use sha2::{Digest, Sha512};
 
@@ -141,6 +144,7 @@ impl ImaEntry {
         hasher.finalize().into()
     }
 
+    #[inline(always)]
     pub(crate) fn sha1_pcr_value(&self, old_entry: &[u8]) -> [u8; 20] {
         use sha1::{Digest, Sha1};
 
@@ -495,36 +499,20 @@ fn _template_data(
 impl Ima {
     /// Compute the PCR value from the actual IMA list
     pub fn pcr_value(&self, pcr_hash_method: PcrHashMethod) -> Result<Vec<u8>, Error> {
-        let mut old_entry;
-
-        match pcr_hash_method {
-            PcrHashMethod::Sha1 => {
-                old_entry = vec![0u8; 20];
-                for entry in &self.entries {
-                    old_entry = entry.sha1_pcr_value(&old_entry).into();
-                }
-            }
-            PcrHashMethod::Sha256 => {
-                old_entry = vec![0u8; 32];
-                for entry in &self.entries {
-                    old_entry = entry.sha256_pcr_value(&old_entry).into();
-                }
-            }
-            PcrHashMethod::Sha384 => {
-                old_entry = vec![0u8; 48];
-                for entry in &self.entries {
-                    old_entry = entry.sha384_pcr_value(&old_entry).into();
-                }
-            }
-            PcrHashMethod::Sha512 => {
-                old_entry = vec![0u8; 64];
-                for entry in &self.entries {
-                    old_entry = entry.sha512_pcr_value(&old_entry).into();
-                }
-            }
-        };
-
-        Ok(old_entry.clone())
+        Ok(match pcr_hash_method {
+            PcrHashMethod::Sha1 => self.entries.iter().fold(vec![0u8; 20], |old, entry| {
+                entry.sha1_pcr_value(&old).into()
+            }),
+            PcrHashMethod::Sha256 => self.entries.iter().fold(vec![0u8; 32], |old, entry| {
+                entry.sha256_pcr_value(&old).into()
+            }),
+            PcrHashMethod::Sha384 => self.entries.iter().fold(vec![0u8; 48], |old, entry| {
+                entry.sha384_pcr_value(&old).into()
+            }),
+            PcrHashMethod::Sha512 => self.entries.iter().fold(vec![0u8; 64], |old, entry| {
+                entry.sha512_pcr_value(&old).into()
+            }),
+        })
     }
 
     /// Return the id of the extended pcr value
