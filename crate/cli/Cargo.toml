@@ -2,7 +2,7 @@
 name = "cosmian_vm"
 version = "0.4.0"
 edition = "2021"
-license = "MIT/Apache-2.0"
+license-file = "../../LICENSE.md"
 description = "Cosmian VM CLI"
 
 [[bin]]

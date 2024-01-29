@@ -1,4 +1,5 @@
 /target
+/.cargo_check
 /cosmian_vm.snapshot
 /ima.ascii
 /ima.binary
