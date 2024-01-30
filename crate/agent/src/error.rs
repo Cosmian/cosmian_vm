@@ -43,23 +43,23 @@ pub enum Error {
 impl ResponseError for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::Certificate(_)
-            | Error::Command(_)
-            | Error::Configuration(_)
-            | Error::Cryptography(_)
-            | Error::HexParsing(_)
-            | Error::Ima(_)
-            | Error::IO(_)
-            | Error::Rustls(_)
-            | Error::Serialization(_)
-            | Error::TeeAttestation(_)
-            | Error::Tpm(_)
-            | Error::Unexpected(_)
-            | Error::WalkDir(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Certificate(_)
+            | Self::Command(_)
+            | Self::Configuration(_)
+            | Self::Cryptography(_)
+            | Self::HexParsing(_)
+            | Self::Ima(_)
+            | Self::IO(_)
+            | Self::Rustls(_)
+            | Self::Serialization(_)
+            | Self::TeeAttestation(_)
+            | Self::Tpm(_)
+            | Self::Unexpected(_)
+            | Self::WalkDir(_) => StatusCode::INTERNAL_SERVER_ERROR,
 
-            Error::SnapshotIsProcessing => StatusCode::CONFLICT,
+            Self::SnapshotIsProcessing => StatusCode::CONFLICT,
 
-            Error::BadRequest(_) | Error::BadUserAgent(_) => StatusCode::BAD_REQUEST,
+            Self::BadRequest(_) | Self::BadUserAgent(_) => StatusCode::BAD_REQUEST,
         }
     }
 

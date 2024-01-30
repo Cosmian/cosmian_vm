@@ -18,7 +18,7 @@ async fn main() -> Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     tracing::info!(
-        "Cosmain VM Agent version {} (TEE detected: {})",
+        "Cosmian VM Agent version {} (TEE detected: {})",
         option_env!("CARGO_PKG_VERSION").unwrap_or("unknown"),
         tee_attestation::guess_tee()?.to_string()
     );
