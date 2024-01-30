@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{error::Error, service::ServiceType};
 
-#[derive(Deserialize, Clone, PartialEq, Debug)]
+#[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct CosmianVmAgent {
     pub agent: Agent,
     pub app: Option<App>,
@@ -27,7 +27,7 @@ impl CosmianVmAgent {
     }
 }
 
-#[derive(Deserialize, Clone, PartialEq, Debug)]
+#[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct Agent {
     /// The host to listen on
     pub host: String,
@@ -41,7 +41,7 @@ pub struct Agent {
     pub tpm_device: Option<PathBuf>,
 }
 
-#[derive(Deserialize, Clone, PartialEq, Debug)]
+#[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct App {
     /// Type of application
     pub service_type: ServiceType,

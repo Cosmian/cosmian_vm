@@ -67,7 +67,7 @@ impl ImaEntry {
         file_signature: Option<Vec<u8>>,
         template_data: Option<Vec<u8>>,
     ) -> Result<Self, Error> {
-        Ok(ImaEntry {
+        Ok(Self {
             pcr,
             template_data: template_data.unwrap_or(_template_data(
                 &template_name,
@@ -171,11 +171,11 @@ pub enum ImaHashMethod {
 
 impl ImaHashMethod {
     #[must_use]
-    pub fn size(&self) -> usize {
+    pub const fn size(&self) -> usize {
         match self {
-            ImaHashMethod::Sha1 => 20,
-            ImaHashMethod::Sha256 => 32,
-            ImaHashMethod::Sha512 => 64,
+            Self::Sha1 => 20,
+            Self::Sha256 => 32,
+            Self::Sha512 => 64,
         }
     }
 }
@@ -203,9 +203,9 @@ impl TryFrom<&str> for ImaTemplate {
 
     fn try_from(string: &str) -> Result<Self, Error> {
         match string {
-            "ima" => Ok(ImaTemplate::Ima),
-            "ima-ng" => Ok(ImaTemplate::ImaNg),
-            "ima-sig" => Ok(ImaTemplate::ImaSig),
+            "ima" => Ok(Self::Ima),
+            "ima-ng" => Ok(Self::ImaNg),
+            "ima-sig" => Ok(Self::ImaSig),
             _ => Err(Error::Parsing(format!(
                 "Unsupported '{string}' ima template",
             ))),
@@ -301,7 +301,7 @@ impl TryFrom<&str> for ImaEntry {
             )));
         }
 
-        ImaEntry::new(
+        Self::new(
             pcr.parse::<u32>()?,
             template_hash,
             template_name,
@@ -322,7 +322,7 @@ impl TryFrom<&str> for Ima {
         for line in data.lines() {
             ima.push(ImaEntry::try_from(line)?);
         }
-        Ok(Ima { entries: ima })
+        Ok(Self { entries: ima })
     }
 }
 
@@ -330,7 +330,7 @@ impl TryFrom<&[u8]> for Ima {
     type Error = Error;
 
     fn try_from(data: &[u8]) -> Result<Self, Error> {
-        let mut ima = Ima { entries: vec![] };
+        let mut ima = Self { entries: vec![] };
         let mut cursor = 0;
         while (cursor + EVENT_ENTRY_SIZE) < data.len() {
             // Parse the header (first 28 bytes of the ima entry)
@@ -537,7 +537,7 @@ impl Ima {
 
     /// Return the couple (file, hash) from the current IMA list not present in the given snapshot
     #[must_use]
-    pub fn compare(&self, snapshot: &HashSet<(String, Vec<u8>)>) -> Ima {
+    pub fn compare(&self, snapshot: &HashSet<(String, Vec<u8>)>) -> Self {
         // Pre-process the snapshot to be use later:
         // - Replace all whitespaces in filenames by underscores (to fit IMA filename-hint)
         let snapshot_ima = snapshot
@@ -545,7 +545,7 @@ impl Ima {
             .map(|(path, hash)| (path.replace(' ', "_"), hash))
             .collect::<HashSet<_>>();
 
-        Ima {
+        Self {
             entries: self
                 .entries
                 .iter()

@@ -42,7 +42,6 @@ pub fn generate_self_signed_cert(
     let secret_key = SecretKey::random(&mut rng);
 
     let pem_sk = secret_key
-        .clone()
         .to_pkcs8_pem(LineEnding::LF)
         .map_err(|_| Error::Certificate("Can't convert secret key to PEM".to_owned()))?
         .to_string();

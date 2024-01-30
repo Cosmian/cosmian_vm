@@ -11,6 +11,22 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
   <img src="resources/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
+# Table of contents
+
+<!-- toc -->
+
+- [Setup flow](#setup-flow)
+- [Verification steps](#verification-steps)
+- [Coverage](#coverage)
+- [Compile and run tests](#compile-and-run-tests)
+- [Build a Cosmian VM image for SEV/TDX](#build-a-cosmian-vm-image-for-sevtdx)
+- [Start a Cosmian VM on SEV/TDX](#start-a-cosmian-vm-on-sevtdx)
+- [Usage](#usage)
+- [Provide secrets](#provide-secrets)
+- [How to use Cosmian VM on SGX](#how-to-use-cosmian-vm-on-sgx)
+
+<!-- tocstop -->
+
 ## Setup flow
 
 A confidential VM is instantiated from a cloud provider platform, including Cosmian VM solution. After installing all dependencies, a snapshot of the VM is done and integrity checks can be performed on the running application, in order to verify the running code and infrastructure.

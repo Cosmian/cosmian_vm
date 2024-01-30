@@ -35,6 +35,7 @@ pub struct SnapshotJob {
 pub type Snapshot = Mutex<SnapshotJob>;
 
 /// Create the worker dedicated to the snapshotting of the Cosmian VM
+#[must_use]
 pub fn init_snapshot_worker(
     tpm_device: Option<PathBuf>,
 ) -> (Arc<Snapshot>, JoinHandle<()>, CancellationToken) {
@@ -50,7 +51,7 @@ pub fn init_snapshot_worker(
         actix_web::rt::spawn(process_snapshot_orders(
             snapshot,
             snapshot_cancel.clone(),
-            tpm_device.clone(),
+            tpm_device,
         )),
         snapshot_cancel,
     )
@@ -107,7 +108,7 @@ async fn process_snapshot_orders(
     let mut interval = actix_web::rt::time::interval(Duration::from_secs(10));
 
     tokio::select! {
-        _ = async move {
+        () = async move {
             loop {
                 interval.tick().await;
 
@@ -125,7 +126,7 @@ async fn process_snapshot_orders(
             }
         } => {}
 
-        _ = stop_signal.cancelled() => {
+        () = stop_signal.cancelled() => {
             tracing::info!("Gracefully shutting down snapshot worker");
         }
     }
@@ -202,14 +203,14 @@ pub(crate) async fn hash_file(path: &Path, hash_method: &ImaHashMethod) -> Resul
 pub async fn hash_filesystem(hash_method: &ImaHashMethod) -> Result<Vec<(String, Vec<u8>)>, Error> {
     // Collect the files first
     // We store all the files in memory. It's a tradeoff to then quickly hash in parallel all the files
-    // Listing the files is pretty quick: negligeable against hashing the files
+    // Listing the files is pretty quick: negligible against hashing the files
     let files: Vec<_> = WalkDir::new(ROOT_PATH)
         .into_iter()
         .filter_entry(filter_whilelist)
         .filter_map(std::result::Result::ok)
         // Only keeps files
         .filter(|file| file.file_type().is_file())
-        .map(|file| file.into_path())
+        .map(walkdir::DirEntry::into_path)
         .collect();
 
     // Create threads to compute the hash in parallel

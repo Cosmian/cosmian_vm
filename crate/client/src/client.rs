@@ -49,7 +49,7 @@ impl CosmianVmClient {
                 return Ok(snapshot);
             } else {
                 // Not ready
-                sleep(Duration::from_secs(10))
+                sleep(Duration::from_secs(10));
             }
         }
     }

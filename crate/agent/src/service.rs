@@ -68,7 +68,7 @@ impl UnixService for Standalone {
     }
 }
 
-#[derive(Deserialize, Clone, PartialEq, Debug)]
+#[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum ServiceType {
     Supervisor,
@@ -79,25 +79,25 @@ pub enum ServiceType {
 impl ServiceType {
     pub fn start(&self, service_app_name: &str) -> Result<Option<String>, Error> {
         match self {
-            ServiceType::Supervisor => Supervisor::start(service_app_name),
-            ServiceType::Systemd => Systemd::start(service_app_name),
-            ServiceType::Standalone => Standalone::start(service_app_name),
+            Self::Supervisor => Supervisor::start(service_app_name),
+            Self::Systemd => Systemd::start(service_app_name),
+            Self::Standalone => Standalone::start(service_app_name),
         }
     }
 
     pub fn stop(&self, service_app_name: &str) -> Result<Option<String>, Error> {
         match self {
-            ServiceType::Supervisor => Supervisor::stop(service_app_name),
-            ServiceType::Systemd => Systemd::stop(service_app_name),
-            ServiceType::Standalone => Standalone::stop(service_app_name),
+            Self::Supervisor => Supervisor::stop(service_app_name),
+            Self::Systemd => Systemd::stop(service_app_name),
+            Self::Standalone => Standalone::stop(service_app_name),
         }
     }
 
     pub fn reload(&self, service_app_name: &str) -> Result<Option<String>, Error> {
         match self {
-            ServiceType::Supervisor => Supervisor::restart(service_app_name),
-            ServiceType::Systemd => Systemd::restart(service_app_name),
-            ServiceType::Standalone => Standalone::restart(service_app_name),
+            Self::Supervisor => Supervisor::restart(service_app_name),
+            Self::Systemd => Systemd::restart(service_app_name),
+            Self::Standalone => Standalone::restart(service_app_name),
         }
     }
 }
