@@ -70,7 +70,7 @@ jobs:
 
   deploy-sev-cosmian-vm-image:
     needs: build-cosmian-vm
-    name: Build Cosmian VM Image
+    name: Build Cosmian VM Image for SEV
     runs-on: ubuntu-22.04
     defaults:
       run:
@@ -132,7 +132,7 @@ jobs:
 
   deploy-tdx-cosmian-vm-image:
     needs: build-cosmian-vm
-    name: Build Cosmian VM Image
+    name: Build Cosmian VM Image for TDX
     runs-on: ubuntu-22.04
     defaults:
       run:
