@@ -7,7 +7,7 @@ use actix_web::{
     web::{scope, Data, PayloadConfig, ServiceConfig},
 };
 use actix_web_lab::middleware::from_fn;
-use tokio::sync::Mutex;
+use std::sync::Mutex;
 
 use conf::CosmianVmAgent;
 use error::Error;
