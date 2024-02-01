@@ -22,6 +22,7 @@ ima = { path = "../ima" }
 num_cpus = "1.0"
 p256 = { workspace = true }
 pep440 = "0.2"
+rand = { workspace = true }
 rand_chacha = { workspace = true }
 # Important: align the rustls version with actix rustls dependency
 rustls = { version = "0.20", features = ["dangerous_configuration"] }

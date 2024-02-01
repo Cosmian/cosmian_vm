@@ -1,5 +1,6 @@
 use anyhow::Result;
 use cosmian_vm_agent::snapshot;
+use cosmian_vm_agent::utils::generate_encrypted_fs;
 use gethostname::gethostname;
 
 use actix_web::middleware::Logger;
@@ -36,8 +37,8 @@ async fn main() -> Result<()> {
 
     let host = conf.agent.host.clone();
     let port = conf.agent.port;
-    let ssl_private_key = conf.agent.ssl_private_key.clone();
-    let ssl_certificate = conf.agent.ssl_certificate.clone();
+    let ssl_private_key = conf.agent.ssl_private_key();
+    let ssl_certificate = conf.agent.ssl_certificate();
 
     // First startup: initialize the agent
     initialize_agent(&conf)?;
@@ -76,13 +77,16 @@ async fn main() -> Result<()> {
 }
 
 fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
-    let ssl_private_key = &conf.agent.ssl_private_key;
-    let ssl_certificate = &conf.agent.ssl_certificate;
+    // Generate the encrypted fs
+    generate_encrypted_fs(&conf.agent.data_storage)?;
 
     // Generate the certificate if not present
+    let (ssl_private_key, ssl_certificate) =
+        (conf.agent.ssl_private_key(), conf.agent.ssl_certificate());
+
     match (ssl_private_key.exists(), ssl_certificate.exists()) {
         (false, false) => {
-            tracing::info!("Generating certificates...");
+            tracing::info!("Generating default certificates...");
             let hostname = gethostname();
             let hostname = hostname.to_string_lossy();
             let subject = format!("CN={hostname},O=Cosmian Tech,C=FR,L=Paris,ST=Ile-de-France");
@@ -92,8 +96,8 @@ fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
                 TLS_DAYS_BEFORE_EXPIRATION,
             )?;
 
-            std::fs::write(ssl_certificate, cert)?;
-            std::fs::write(ssl_private_key, sk)?;
+            std::fs::write(&ssl_certificate, cert)?;
+            std::fs::write(&ssl_private_key, sk)?;
 
             tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}");
         }

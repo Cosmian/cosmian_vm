@@ -1,10 +1,10 @@
 [workspace]
 members = [
   "crate/agent",
+  "crate/certtool",
   "crate/cli",
   "crate/client",
   "crate/ima",
-  "crate/certtool",
 ]
 resolver = "2"
 

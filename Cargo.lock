@@ -861,6 +861,7 @@ dependencies = [
  "num_cpus",
  "p256",
  "pep440",
+ "rand",
  "rand_chacha",
  "rustls 0.20.9",
  "rustls-pemfile",

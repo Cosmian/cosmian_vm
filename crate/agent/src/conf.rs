@@ -1,4 +1,7 @@
-use std::{fs::File, path::PathBuf};
+use std::{
+    fs::File,
+    path::{Path, PathBuf},
+};
 
 use cosmian_vm_client::ser_de::base64_serde;
 use serde::{Deserialize, Serialize};
@@ -14,14 +17,14 @@ pub struct CosmianVmAgent {
 impl CosmianVmAgent {
     /// Extract the leaf certificate from a pem file. Returning in DER.
     pub fn read_leaf_certificate(&self) -> Result<Vec<u8>, Error> {
-        let mut reader = std::io::BufReader::new(File::open(&self.agent.ssl_certificate)?);
+        let mut reader = std::io::BufReader::new(File::open(self.agent.ssl_certificate())?);
         let certificate = rustls_pemfile::read_one(&mut reader)?;
         if let Some(rustls_pemfile::Item::X509Certificate(certificate)) = certificate {
             Ok(certificate)
         } else {
             Err(Error::Certificate(format!(
                 "No PEM certificate found in {:?}",
-                &self.agent.ssl_certificate
+                self.agent.ssl_certificate()
             )))
         }
     }
@@ -29,16 +32,36 @@ impl CosmianVmAgent {
 
 #[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct Agent {
+    /// Data storage (encrypted fs, ramfs and session/cache data)
+    pub data_storage: PathBuf,
     /// The host to listen on
     pub host: String,
     /// The port to listen on
     pub port: u16,
     /// SSL certificate of the VM in PEM format
-    pub ssl_certificate: PathBuf,
+    ssl_certificate: PathBuf,
     /// SSL private key of the VM in PEM format
-    pub ssl_private_key: PathBuf,
+    ssl_private_key: PathBuf,
     /// Transmission interface with the TPM (ie: "/dev/tpmrm0")
     pub tpm_device: Option<PathBuf>,
+}
+
+impl Agent {
+    fn _relative_to_data_storage(data_storage: &Path, path: &Path) -> PathBuf {
+        if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            data_storage.join(path)
+        }
+    }
+
+    pub fn ssl_certificate(&self) -> PathBuf {
+        Self::_relative_to_data_storage(&self.data_storage, &self.ssl_certificate)
+    }
+
+    pub fn ssl_private_key(&self) -> PathBuf {
+        Self::_relative_to_data_storage(&self.data_storage, &self.ssl_private_key)
+    }
 }
 
 #[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
@@ -91,6 +114,7 @@ mod tests {
     fn test_agent_toml() {
         let cfg_str = r#"
             [agent]
+            data_storage = "/var/lib/cosmian_vm/"
             host = "127.0.0.1"
             port = 5355
             ssl_certificate = "data/cert.pem"
@@ -113,7 +137,8 @@ mod tests {
                     port: 5355,
                     ssl_certificate: PathBuf::from("data/cert.pem"),
                     ssl_private_key: PathBuf::from("data/key.pem"),
-                    tpm_device: Some(PathBuf::from("/dev/tpmrm0"))
+                    tpm_device: Some(PathBuf::from("/dev/tpmrm0")),
+                    data_storage: PathBuf::from("/var/lib/cosmian_vm/"),
                 },
                 app: Some(App {
                     service_type: ServiceType::Supervisor,

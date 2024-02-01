@@ -1,8 +1,9 @@
 [agent]
+data_storage = "/var/lib/cosmian_vm/"
 host = "127.0.0.1"
 port = 5355
-ssl_certificate = "/etc/cosmian_vm/cert.pem"
-ssl_private_key = "/etc/cosmian_vm/key.pem"
+ssl_certificate = "data/cert.pem"     # Relative to data_storage
+ssl_private_key = "data/key.pem"      # Relative to data_storage
 tpm_device = "/dev/tpmrm0"
 
 [app]
