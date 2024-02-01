@@ -138,6 +138,18 @@ mod tests {
             Some(PathBuf::from("/var/lib/cosmian_vm/data/app"))
         );
 
+        let config = CosmianVmAgent {
+            agent: Agent {
+                host: "127.0.0.1".to_string(),
+                port: 5355,
+                ssl_certificate: PathBuf::from("data/cert.pem"),
+                ssl_private_key: PathBuf::from("data/key.pem"),
+                tpm_device: None,
+                data_storage: PathBuf::from("./"),
+            },
+            app: None,
+        };
+
         assert_eq!(
             config.read_leaf_certificate().unwrap(),
             [

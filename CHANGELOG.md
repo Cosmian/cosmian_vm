@@ -8,7 +8,8 @@ All notable changes to this project will be documented in this file.
 
 - Sending app configuration does not require a key (and file is no more encrypted)
 - Restarting the app does not require a key
-  
+- Relative path in the configuration file is now allowed: related to the `storage_data` path
+
 ### New 
 
 - `cosmian_fstool` is released
