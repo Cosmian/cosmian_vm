@@ -11,6 +11,8 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
   <img src="resources/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
+💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/) 
+
 # Table of contents
 
 <!-- toc -->
@@ -51,16 +53,17 @@ Cosmian verification process is performed by the sys admin, requesting on the ru
 
 Cosmian VM supports these kinds of TEE:
 
-- Intel SGX
-- Intel TDX
-- AMD SEV
+- Intel SGX on OVH - Ubuntu 20.04 & 22.04
+- Intel TDX on GCP - Ubuntu 22.04
+- AMD SEV on GCP - Ubuntu 22.04 | RHEL 9 and AWS - AmazonLinux
 
 ## Compile and run tests
 
-The Cosmian VM contains three majors binaries:
+The Cosmian VM contains four major executables:
 
 - `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
 - `cosmian_certtool` is designed to generate a certificate signed by *Let's Encrypt* or an RATLS certificate
+- `cosmian_fstool` is designed to generate a luks container and enroll the TPM to be automatically started on reboot
 - `cosmian_vm` is a CLI designed to be used on your own host. It queries the `cosmian_vm_agent` in order to get the collaterals used to verify the trustworthiness of the Cosmian VM
 
 You can compile and test these both binaries as follow:
@@ -85,6 +88,8 @@ export GOOGLE_APPLICATION_CREDENTIALS="/home/user/my-project-d42061429e6a.json"
 packer build gcp.pkr.hcl
 ```
 
+The images are also automatically built by the CI when pushing on main or when releasing a tag.
+
 This image:
 
 - contains the fully configured IMA
@@ -94,16 +99,14 @@ This image:
 
 This is a abstract of the updated file tree:
 
-```c
+```
 .
 ├── etc
 │   ├── apt
 │   │    └── apt.conf.d
 │   │       └── 10periodic
 │   ├── cosmian_vm
-│   │   ├── agent.toml
-│   │   ├── cert.pem
-│   │   └── cert.key
+│   │   └── agent.toml
 │   ├── default
 │   │   └── grub
 │   ├── ima
@@ -118,41 +121,62 @@ This is a abstract of the updated file tree:
 ├── usr
 │   └── sbin
 │       ├── cosmian_certtool
+│       ├── cosmian_fstool
 │       └── cosmian_vm_agent
 └── var
+    ├── lib
+    │   └── cosmian_vm
+    │       ├── container
+    │       ├── tmp
+    │       └── data
+    │           ├── cert.pem
+    │           └── cert.key
     └── log
         └── cosmian_vm
             ├── agent.err.log
             └── agent.out.log
 ```
 
-## Start a Cosmian VM on SEV/TDX
-
-Now, instantiate a VM based on the built image.
-
-On a fresh installation, the `cosmian_vm_agent` uses a self-signed certificate generated at the start of the service and set the `CommonName` of the certificate to the value of the machine hostname.
-
-You can change that at will:
-
-- Edit your DNS register to point to that VM
-- Create a trusted certificate using the method of your choice (*Let's encrypt* for instance)
-- Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
+## Configuration file
 
 The Cosmian VM Agent relies on a configuration file located at `/etc/cosmian_vm/agent.toml`. Feel free to edit it.
 A minimal configuration file is:
 
 ```toml
 [agent]
+data_storage = "/var/lib/cosmian_vm/"
 host = "127.0.0.1"
 port = 5355
-ssl_certificate = "/etc/cosmian_vm/cert.pem"
-ssl_private_key = "/etc/cosmian_vm/key.pem"
+ssl_certificate = "data/cert.pem"
+ssl_private_key = "data/key.pem"
 tpm_device = "/dev/tpmrm0
 ```
 
 You can change the default location of the configuration file by setting the environment variable: `COSMIAN_VM_AGENT_CONF`.
 
-Note, that you can start/restart/stop the Cosmian VM Agent as follow:
+## First Cosmian VM launch
+
+When `cosmian_vm_agent` starts for the first time, it initializes several components:
+
+1. It generates a self-signed certificate and set the `CommonName` of the certificate to the value of the machine hostname.
+2. It generates a luks container (`/var/lig/cosmian_vm/container`) and mounted it at `/var/lig/cosmian_vm/data`. Note that,
+`/var/lib/cosmian_vm/tmp` is a tmpfs. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
+3. It generates the TPM endorsement keys
+
+It is recommended to configure 1. and 2. on your own for production systems. 
+
+The certificate can be changed at will:
+- Edit your DNS register to point to that VM
+- Create a trusted certificate using the method of your choice (*Let's encrypt* for instance) or use `cosmian_certtool`
+- Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
+
+The luks container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container. 
+
+## Start a Cosmian VM on SEV/TDX
+
+Now, instantiate a VM based on the built image. The `cosmina_vm_agent` automatically starts when the VM boots.
+
+You can start/restart/stop the Cosmian VM Agent as follow:
 
 ```sh
 # If the surpervisor configuration file has been edited, reload it first
@@ -202,55 +226,40 @@ $ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.sn
 
 ## Provide secrets
 
-Before snapshotting the Cosmian VM, you can also provide a secret file to an application running inside the Cosmian VM.
+Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisionning is made by someone who doesn't have the rights to connect to the VM through SSH for instance. 
 
-Prior to send the secrets, you should have configured the  `app` section in the `agent.toml` as follow:
+Prior to send the secrets, you should have configured the `app` section in the `agent.toml` as follow:
 
 ```toml
 [agent]
+data_storage = "/var/lib/cosmian_vm/"
 host = "0.0.0.0"
 port = 5355
-ssl_certificate = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/cert.pem"
-ssl_private_key = "/etc/letsencrypt/live/cosmianvm.cosmian.dev/key.pem"
+ssl_certificate = "data/cosmianvm.cosmian.dev/cert.pem"
+ssl_private_key = "data/cosmianvm.cosmian.dev/key.pem"
 tpm_device = "/dev/tpmrm0"
 
 [app]
 service_type = "supervisor"
-service_app_name = "cosmian_helloworld"
-decrypted_folder = "/mnt/cosmian_vm/data"
-encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
+service_name = "cosmian_helloworld"
+app_storage = "data/app"
 ```
 
 In that example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service) is the name of the application (as a `supervisor` service).
 
-- `decrypted_folder` stands for the directory where the application expects to find its decrypted configuration file (which should be located into an encrypted RAMFS)
-- `encrypted_secret_app_conf` stands for the location where `cosmian_vm_agent` stores the application configuration encrypted
+The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommended to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
 
-Note that the Cosmian VM is configured with a tmpfs directory: `/mnt/cosmian_vm/data` (size=512MB). The application can put volatile data in it. Data in this directory is encrypted due to the fact that the RAM is encrypted.
-If you change the value of `decrypted_folder`, make sure to create a tmpfs to keep the encryption property of the data located in it.
-
-Now, you can provide the secret file from your localhost to the Cosmian VM as follow:
+Now, you can provide the app configuration file from your localhost to the Cosmian VM as follow:
 
 ```sh
-cosmian_vm --url https://cosmianvm.cosmian.dev app init --conf secrets.json
+cosmian_vm --url https://cosmianvm.cosmian.dev app init --conf app.json
 ```
 
-The configuration file can be anything the application expects. Here, a json file.
+The configuration file can be anything the application expects. Here, a json file. It will be send to the `cosmian_vm_agent` and stored in the luks container in `/var/lib/cosmian_vm/data/app/app.conf`.
 
-The configuration file will be encrypted by the `cosmian_vm_agent` and stored encrypted in the value set in `encrypted_secret_app_conf`.
-A decrypted version of this file will be saved in the value set in `decrypted_folder`. The `init` subcommand will finally start the application identified in `service_app_name` field.
+If you call again `init` the previous configuration file is overwritten.
 
-The key used to encrypt this file will be prompted in the output of the `init` command if you don't provide it as an arg of the command using `--key`.
-
-If you call again `init` the previous secrets file is overwritten.
-
-Note that `cosmian_vm_agent` won't save the key on its side. Therefore, in the event of a reboot, you need to provide the key to decrypt the secrets. To do so, use:
-
-```sh
-cosmian_vm --url https://cosmianvm.cosmian.dev app restart --key abcdefghij0123456789abcdefghij0123456789abcdefghij0123456789
-```
-
-The `restart` subcommand will finally start the application identified in `service_app_name` field.
+The `restart` subcommand can restart the application identified in `service_name` field.
 
 ## How to use Cosmian VM on SGX
 

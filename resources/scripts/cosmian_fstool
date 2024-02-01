@@ -111,6 +111,7 @@ fi
 # Make sure to close/umount existing container
 if [ -e "$CONTAINER_MAPPING_PATH" ]; then
     echo "Closing previous mounted container..."
+    sync || true
     umount "$CONTAINER_MAPPING_PATH" || true
     cryptsetup close "$CONTAINER_MAPPING_NAME" || true
 fi
@@ -122,13 +123,6 @@ fallocate -l "$CONTAINER_SIZE" "$CONTAINER_PATH"
 # Encrypt the container (a password is required to run this command)
 echo "Encrypting the container (with password=$PASSWORD)..."
 echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" -d -
-
-# Make sure to close/umount existing container
-if [ -e "$CONTAINER_MAPPING_PATH" ]; then
-    echo "Closing previous mounted container..."
-    umount "$CONTAINER_MAPPING_PATH" || true
-    cryptsetup close "$CONTAINER_MAPPING_NAME" || true
-fi
 
 # Open the container and map it (a password is required to run this command)
 echo "Opening the container at $CONTAINER_MAPPING_PATH..."
