@@ -9,5 +9,4 @@ tpm_device = "/dev/tpmrm0"
 [app]
 service_type = "supervisor"
 service_app_name = "cosmian_helloworld"
-decrypted_folder = "/mnt/cosmian_vm/data"
-encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
+app_dir = "data/app"

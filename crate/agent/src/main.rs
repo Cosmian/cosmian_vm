@@ -37,8 +37,8 @@ async fn main() -> Result<()> {
 
     let host = conf.agent.host.clone();
     let port = conf.agent.port;
-    let ssl_private_key = conf.agent.ssl_private_key();
-    let ssl_certificate = conf.agent.ssl_certificate();
+    let ssl_private_key = conf.ssl_private_key();
+    let ssl_certificate = conf.ssl_certificate();
 
     // First startup: initialize the agent
     initialize_agent(&conf)?;
@@ -81,8 +81,7 @@ fn initialize_agent(conf: &CosmianVmAgent) -> Result<()> {
     generate_encrypted_fs(&conf.agent.data_storage)?;
 
     // Generate the certificate if not present
-    let (ssl_private_key, ssl_certificate) =
-        (conf.agent.ssl_private_key(), conf.agent.ssl_certificate());
+    let (ssl_private_key, ssl_certificate) = (conf.ssl_private_key(), conf.ssl_certificate());
 
     match (ssl_private_key.exists(), ssl_certificate.exists()) {
         (false, false) => {

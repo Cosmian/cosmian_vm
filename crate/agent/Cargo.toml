@@ -9,7 +9,6 @@ actix-cors = "0.6"
 actix-http = "3"
 actix-web = { version = "4", features = ["rustls"] }
 actix-web-lab = "0.20"
-aes-gcm = { workspace = true }
 anyhow = { workspace = true }
 cosmian_vm_client = { path = "../client" }
 der = { workspace = true }

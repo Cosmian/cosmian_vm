@@ -130,6 +130,11 @@ const FSTOOL_DEFAULT_CONTAINER_MOUNTPOINT: &str = "data";
 const FSTOOL_DEFAULT_CONTAINER_NAME: &str = "cosmian_vm_container";
 const FSTOOL_DEFAULT_PASSWORD_LENGTH: usize = 32;
 
+/// Generate a luks container
+///
+/// If the container already exists: just return `Ok`
+///
+/// Note: the password of the generated container will be prompted in the log
 pub fn generate_encrypted_fs(encrypted_fs_path: &Path) -> Result<(), Error> {
     let container_path = encrypted_fs_path.join(FSTOOL_DEFAULT_CONTAINER_FILE);
     let mountpoint_path = encrypted_fs_path.join(FSTOOL_DEFAULT_CONTAINER_MOUNTPOINT);

@@ -1,7 +1,6 @@
 use std::sync::Mutex;
 
 use crate::{
-    conf::{EncryptedAppConf, EncryptedAppConfAlgorithm},
     error::{Error, ResponseWithError},
     snapshot::{self, order_snapshot, reset_snapshot, Snapshot},
     CosmianVmAgent, DEFAULT_TPM_HASH_METHOD,
@@ -11,16 +10,12 @@ use actix_web::{
     web::{Data, Json, Query},
     HttpResponse,
 };
-use aes_gcm::{
-    aead::{Aead, OsRng},
-    AeadCore as _, Aes256Gcm, KeyInit as _, Nonce,
-};
+
 use cosmian_vm_client::{
-    client::{AppConf, QuoteParam, RestartParam, TpmQuoteResponse},
+    client::{AppConf, QuoteParam, TpmQuoteResponse},
     snapshot::CosmianVmSnapshot,
 };
 use ima::ima::{read_ima_ascii, read_ima_ascii_first_line, read_ima_binary, Ima};
-use sha1::digest::generic_array::GenericArray;
 use tee_attestation::{forge_report_data_with_nonce, get_quote as tee_get_quote};
 use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
 
@@ -133,64 +128,37 @@ pub async fn get_tpm_quote(
 pub async fn init_app(
     data: Json<AppConf>,
     conf: Data<CosmianVmAgent>,
-) -> ResponseWithError<Json<Option<Vec<u8>>>> {
+) -> ResponseWithError<Json<()>> {
     let app_conf_param = data.into_inner();
 
     let Some(app_conf_agent) = &conf.app else {
         return Err(Error::BadRequest(
-            "no app configuration provided".to_string(),
+            "No app section provided in Cosmian VM Agent configuration file".to_string(),
         ));
     };
 
-    let (cipher, key) = if let Some(key) = &app_conf_param.key {
-        // key is provided, no need to return the key to the user
-        (Aes256Gcm::new(GenericArray::from_slice(key)), None)
-    } else {
-        // key generation is needed, the new key is then returned to the user
-        let key = Aes256Gcm::generate_key(OsRng);
-        (Aes256Gcm::new(&key), Some(key.to_vec()))
+    let Some(app_storage) = &conf.app_storage() else {
+        return Err(Error::BadRequest(
+            "No app section provided in Cosmian VM Agent configuration file".to_string(),
+        ));
     };
 
-    let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
-    let ciphertext = cipher
-        .encrypt(&nonce, app_conf_param.content.as_ref())
-        .map_err(|e| Error::Cryptography(format!("cannot encrypt app conf: {e}")))?;
-
-    let eac = EncryptedAppConf {
-        version: "1.0".to_string(),
-        algorithm: EncryptedAppConfAlgorithm::Aes256Gcm,
-        nonce: nonce.to_vec(),
-        data: ciphertext,
-    };
-    let json = serde_json::to_string(&eac).map_err(Error::Serialization)?;
-
-    // write encrypted app conf to non-encrypted fs
-    std::fs::write(&app_conf_agent.encrypted_secret_app_conf, json.as_bytes())?;
-
-    // write plaintext conf to encrypted tmpfs
-    std::fs::write(
-        app_conf_agent.decrypted_folder.join(APP_CONF_FILENAME),
-        app_conf_param.content,
-    )?;
+    // write app conf
+    std::fs::write(app_storage.join(APP_CONF_FILENAME), app_conf_param.content)?;
 
     // start app service
     app_conf_agent
         .service_type
-        .start(&app_conf_agent.service_app_name)?;
+        .start(&app_conf_agent.service_name)?;
 
-    Ok(Json(key))
+    Ok(Json(()))
 }
 
 /// Restart a configured app (after a reboot for example).
 ///
 /// Stop the service, decrypt and copy app conf, start the service.
 #[post("/app/restart")]
-pub async fn restart_app(
-    data: Json<RestartParam>,
-    conf: Data<CosmianVmAgent>,
-) -> ResponseWithError<Json<()>> {
-    let cfg = data.into_inner();
-
+pub async fn restart_app(conf: Data<CosmianVmAgent>) -> ResponseWithError<Json<()>> {
     let Some(app_conf_agent) = &conf.app else {
         // No app configuration provided
         return Ok(Json(()));
@@ -199,30 +167,12 @@ pub async fn restart_app(
     // ensure app service is stopped
     app_conf_agent
         .service_type
-        .stop(&app_conf_agent.service_app_name)?;
-
-    // read app json conf
-    let raw_json = std::fs::read_to_string(&app_conf_agent.encrypted_secret_app_conf)?;
-    let eac: EncryptedAppConf = serde_json::from_str(&raw_json).map_err(Error::Serialization)?;
-
-    // decrypt conf
-    let key = GenericArray::from_slice(&cfg.key);
-    let nonce = Nonce::from_slice(&eac.nonce);
-    let cipher = Aes256Gcm::new(key);
-    let app_cfg_content = cipher
-        .decrypt(nonce, eac.data.as_ref())
-        .map_err(|e| Error::Cryptography(format!("cannot decrypt app conf: {e}")))?;
-
-    // write decrypted app conf to encrypted tmpfs
-    std::fs::write(
-        app_conf_agent.decrypted_folder.join(APP_CONF_FILENAME),
-        app_cfg_content,
-    )?;
+        .stop(&app_conf_agent.service_name)?;
 
     // start app service
     app_conf_agent
         .service_type
-        .start(&app_conf_agent.service_app_name)?;
+        .start(&app_conf_agent.service_name)?;
 
     Ok(Json(()))
 }
