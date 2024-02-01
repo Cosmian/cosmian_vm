@@ -1,3 +1,7 @@
+# alias runner-sgx="ssh cosmian@162.19.87.37" # OVH
+# alias runner-sev="ssh cosmian@34.90.22.143" # GCP
+# alias runner-tdx="ssh cosmian@34.70.122.49" # GCP
+
 on:
   # Run on push except on tags
   push:
@@ -9,6 +13,13 @@ on:
 name: Rust compilation, check and test
 
 jobs:
+  build-cosmian-vm:
+    uses: ./.github/workflows/cargo_build.yml
+
+  test-cosmian-vm:
+    needs: build-cosmian-vm
+    uses: ./.github/workflows/agent.yml
+
   check:
     name: Check
     runs-on: ubuntu-22.04
@@ -20,14 +31,31 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Rustup setup
-        uses: actions-rs/toolchain@v1
+      - uses: actions/cache@v3
+        id: cargo_cache
+        continue-on-error: false
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-lint-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-lint-${{ hashFiles('**/Cargo.lock') }}
 
-      - run: rustup component add rustfmt && rustup component add clippy && cargo install cargo-machete
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.cargo_cache.outputs.cache-hit != 'true'
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Cargo install cargo-machete
+        if: steps.cargo_cache.outputs.cache-hit != 'true'
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-machete
 
       - name: Cargo fmt
         uses: actions-rs/cargo@v1
@@ -45,7 +73,7 @@ jobs:
         with:
           command: clippy
           args: -- -D warnings
-              
+
       - name: Machete (deps checker)
         uses: actions-rs/cargo@v1
         with:
@@ -55,3 +83,29 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
+
+  cargo-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        id: cargo_cache
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-audit-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-audit-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.cargo_cache.outputs.cache-hit != 'true'
+
+      - uses: rustsec/audit-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

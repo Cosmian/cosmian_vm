@@ -11,9 +11,11 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
   <img src="resources/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
-💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/) 
+💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
 
-# Table of contents
+💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
+
+## Table of contents
 
 <!-- toc -->
 
@@ -99,7 +101,7 @@ This image:
 
 This is a abstract of the updated file tree:
 
-```
+```c
 .
 ├── etc
 │   ├── apt
@@ -200,7 +202,7 @@ Then on your localhost, when you are sure your VM is fully configured and should
 cosmian_vm --url https://cosmianvm.cosmian.dev snapshot
 ```
 
-You can process only one snapshot at a time. 
+You can process only one snapshot at a time.
 
 2. Verify the current state of the machine
 
@@ -224,7 +226,7 @@ $ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.sn
 
 ## Provide secrets
 
-Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisionning is made by someone who doesn't have the rights to connect to the VM through SSH for instance. 
+Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisionning is made by someone who doesn't have the rights to connect to the VM through SSH for instance.
 
 Prior to send the secrets, you should have configured the `app` section in the `agent.toml` as follow:
 
@@ -244,7 +246,7 @@ app_storage = "data/app"
 
 In that example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service) is the name of the application (as a `supervisor` service).
 
-The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommended to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
+The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommanded to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
 
 Now, you can provide the app configuration file from your localhost to the Cosmian VM as follow:
 

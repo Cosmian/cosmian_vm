@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file.
 - Use acme lib from original repository instead of Cosmian fork
 - Improve snapshotting performance (25% CPU time gain)
 
-### New 
+### New
 
 - Support TDX build with packer on GCP
 - Log received requests
@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
-- Dockerker sgx
+- Docker sgx
 
 ## [0.3.0] - 2023-01-19
 

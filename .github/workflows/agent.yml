@@ -1,0 +1,39 @@
+name: Cosmian VM agent
+
+on:
+  workflow_call:
+
+jobs:
+  check-cosmian-vm:
+    name: Check Cosmian VM Agent
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: [self-hosted, sev]
+          - runner: [self-hosted, tdx]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/cache@v3
+        id: cargo_cache
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Lookup artifacts
+        run: find .
+
+      - name: Run agent, generate snapshot and verify it
+        run: |
+          echo ${{ matrix.runner }}
+          sh resources/scripts/tests/check_agent.sh
