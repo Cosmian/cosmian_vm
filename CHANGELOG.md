@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2023-02-XX
+
+### Update
+
+- Sending app configuration does not require a key (and file is no more encrypted)
+- Restarting the app does not require a key
+  
+### New 
+
+- `cosmian_fstool` is released
+- Create a LUKS container when starting the `cosmian_vm_agent` for the first time
+
 ## [0.4.0] - 2023-01-23
 
 ### Update
