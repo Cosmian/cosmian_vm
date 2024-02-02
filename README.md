@@ -11,9 +11,9 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
   <img src="resources/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
-💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/) 
+💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
 
-# Table of contents
+## Table of contents
 
 <!-- toc -->
 
@@ -22,6 +22,8 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
 - [Coverage](#coverage)
 - [Compile and run tests](#compile-and-run-tests)
 - [Build a Cosmian VM image for SEV/TDX](#build-a-cosmian-vm-image-for-sevtdx)
+- [Configuration file](#configuration-file)
+- [First Cosmian VM launch](#first-cosmian-vm-launch)
 - [Start a Cosmian VM on SEV/TDX](#start-a-cosmian-vm-on-sevtdx)
 - [Usage](#usage)
 - [Provide secrets](#provide-secrets)
@@ -99,7 +101,7 @@ This image:
 
 This is a abstract of the updated file tree:
 
-```
+```console
 .
 ├── etc
 │   ├── apt
@@ -159,9 +161,10 @@ When `cosmian_vm_agent` starts for the first time, it initializes several compon
 `/var/lib/cosmian_vm/tmp` is a tmpfs. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
 3. It generates the TPM endorsement keys
 
-It is recommended to configure 1. and 2. on your own for production systems. 
+It is recommended to configure 1. and 2. on your own for production systems.
 
 The certificate can be changed at will:
+
 - Edit your DNS register to point to that VM
 - Create a trusted certificate using the method of your choice (*Let's encrypt* for instance) or use `cosmian_certtool`
 - Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
@@ -200,7 +203,7 @@ Then on your localhost, when you are sure your VM is fully configured and should
 cosmian_vm --url https://cosmianvm.cosmian.dev snapshot
 ```
 
-You can process only one snapshot at a time. 
+You can process only one snapshot at a time.
 
 2. Verify the current state of the machine
 
@@ -224,7 +227,7 @@ $ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.sn
 
 ## Provide secrets
 
-Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisionning is made by someone who doesn't have the rights to connect to the VM through SSH for instance. 
+Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisionning is made by someone who doesn't have the rights to connect to the VM through SSH for instance.
 
 Prior to send the secrets, you should have configured the `app` section in the `agent.toml` as follow:
 

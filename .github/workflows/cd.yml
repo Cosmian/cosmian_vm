@@ -16,57 +16,7 @@ on:
 
 jobs:
   build-cosmian-vm:
-    name: Build Cosmian VM Agent
-    runs-on: [self-hosted, no-tee]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: geekyeggo/delete-artifact@v2
-        with:
-          name: cosmian_vm
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y libtss2-dev
-
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Build the agent
-        run: cargo build --release
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: cosmian_vm
-          path: |
-            target/release/cosmian_vm_agent
-            target/release/cosmian_certtool
-
-      - name: Release on tags, attach asset on release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            target/release/cosmian_vm_agent
-            target/release/cosmian_vm
-            target/release/cosmian_certtool
-
-      - name: Push to package.cosmian.com - tags
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          set -x
-          DESTINATION_DIR=/mnt/package/cosmian_vm/$VERSION
-          ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
-          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool cosmian@package.cosmian.com:$DESTINATION_DIR/
-        env:
-          VERSION: ${{ github.ref_name }}
+    uses: ./.github/workflows/cargo_build.yml
 
   deploy-sev-cosmian-vm-image:
     needs: build-cosmian-vm
@@ -137,39 +87,46 @@ jobs:
     defaults:
       run:
         working-directory: ./packer
-        
+
     steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        
-        - name: Download artifacts
-          uses: actions/download-artifact@v3
-          with:
-            name: cosmian_vm
-            path: packer/
-      
-        - name: Setup `packer`
-          uses: hashicorp/setup-packer@main
-        
-        - name: Run `packer init`
-          run: packer init -machine-readable gcp-tdx.pkr.hcl
-        
-        - name: Install plugins
-          run: |
-            packer plugins install github.com/hashicorp/googlecompute
-            packer plugins install github.com/hashicorp/ansible
-      
-        - name: Authenticate to Google Cloud tdx project
-          uses: "google-github-actions/auth@v1"
-          with:
-            credentials_json: "${{ secrets.TDX_GOOGLE_CREDENTIALS }}"
-                
-        - name: Build GCP images - main
-          if: ${{ !startsWith(github.ref, 'refs/tags') }}
-          run: |
-            packer build -var "prefix=alpha" gcp-tdx.pkr.hcl
-        
-        - name: Build GCP images - release
-          if: startsWith(github.ref, 'refs/tags')
-          run: |
-            packer build -var "prefix=release-${GITHUB_REF_NAME//./-}" gcp-tdx.pkr.hcl
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: cosmian_vm
+          path: packer/
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+
+      - name: Run `packer init`
+        run: packer init -machine-readable gcp-tdx.pkr.hcl
+
+      - name: Install plugins
+        run: |
+          packer plugins install github.com/hashicorp/googlecompute
+          packer plugins install github.com/hashicorp/ansible
+
+      - name: Authenticate to Google Cloud tdx project
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.TDX_GOOGLE_CREDENTIALS }}"
+
+      - name: Build GCP images - main
+        if: ${{ !startsWith(github.ref, 'refs/tags') }}
+        run: |
+          packer build -var "prefix=alpha" gcp-tdx.pkr.hcl
+
+      - name: Build GCP images - release
+        if: startsWith(github.ref, 'refs/tags')
+        run: |
+          packer build -var "prefix=release-${GITHUB_REF_NAME//./-}" gcp-tdx.pkr.hcl
+
+  cleanup:
+    needs:
+      - deploy-sev-cosmian-vm-image
+      - deploy-tdx-cosmian-vm-image
+    uses: Cosmian/reusable_workflows/.github/workflows/cleanup_cache.yml@develop
+    secrets: inherit
