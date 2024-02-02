@@ -30,7 +30,7 @@
     group: root
     mode: 0500
 
-- name: Create cosmian_vm directory
+- name: Create cosmian_vm directory in /etc
   file:
     path: /etc/cosmian_vm
     state: directory
@@ -55,10 +55,18 @@
     group: root
     mode: 0755
 
+- name: Create cosmian_vm directory in /var/lib
+  ansible.builtin.file:
+    path: /var/lib/cosmian_vm
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    
 - name: Mount a tmpfs volume
   ansible.posix.mount:
     src: tmpfs
-    path: /mnt/cosmian_vm/data
+    path: /var/lib/cosmian_vm/tmp
     opts: "size=512m"
     state: mounted
     fstype: tmpfs

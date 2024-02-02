@@ -186,6 +186,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "../resources/scripts/cosmian_fstool "
+    destination = "/tmp/cosmian_fstool"
+  }
+
+  provisioner "file" {
     source      = "./cosmian_vm_agent"
     destination = "/tmp/"
   }
@@ -213,6 +218,11 @@ build {
   provisioner "file" {
     source      = "../resources/conf/agent.toml"
     destination = "/tmp/agent.toml"
+  }
+
+  provisioner "file" {
+    source      = "../resources/scripts/cosmian_fstool "
+    destination = "/tmp/cosmian_fstool"
   }
 
   provisioner "file" {
