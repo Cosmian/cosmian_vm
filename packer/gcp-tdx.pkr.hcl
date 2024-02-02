@@ -100,7 +100,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "../resources/scripts/cosmian_fstool "
+    source      = "../resources/scripts/cosmian_fstool"
     destination = "/tmp/cosmian_fstool"
   }
 
