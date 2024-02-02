@@ -4,26 +4,30 @@ use cosmian_vm_agent::worker::snapshot;
 
 use actix_web::middleware::Logger;
 use actix_web::{App, HttpServer};
-use cosmian_vm_agent::{conf::CosmianVmAgent, get_tls_config};
-
-const AGENT_CONF: &str = "/etc/cosmian_vm/agent.toml";
+use cosmian_vm_agent::{conf::CosmianVmAgent, get_tls_config, CONF_PATH};
+use env_logger::{Builder, Target};
 
 #[actix_web::main]
 async fn main() -> Result<()> {
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    let mut builder = Builder::from_env(env_logger::Env::new().default_filter_or("info"));
+    builder.target(Target::Stdout);
+    builder.try_init()?;
 
     tracing::info!(
         "Cosmian VM Agent version {} (TEE detected: {})",
         option_env!("CARGO_PKG_VERSION").unwrap_or("unknown"),
-        tee_attestation::guess_tee()?.to_string()
+        tee_attestation::guess_tee()
+            .ok()
+            .map(|tee| tee.to_string())
+            .unwrap_or("unknown".to_string())
     );
 
     // Read the configuration of the Cosmian VM Agent
     let conf: CosmianVmAgent = toml::from_str(
         &std::fs::read_to_string(
-            std::env::var("COSMIAN_VM_AGENT_CONF").unwrap_or(AGENT_CONF.to_string()),
+            std::env::var("COSMIAN_VM_AGENT_CONF").unwrap_or(CONF_PATH.to_string()),
         )
-        .map_err(|e| anyhow::anyhow!("Cannot read agent conf at: `{AGENT_CONF:?}: {e:?}`"))?,
+        .map_err(|e| anyhow::anyhow!("Cannot read agent conf at: `{CONF_PATH:?}: {e:?}`"))?,
     )
     .map_err(|e| {
         anyhow::anyhow!("Failed to parse agent configuration as a valid toml file: {e:?}`")
@@ -31,11 +35,14 @@ async fn main() -> Result<()> {
 
     let host = conf.agent.host.clone();
     let port = conf.agent.port;
-    let ssl_private_key = conf.ssl_private_key();
-    let ssl_certificate = conf.ssl_certificate();
+    let ssl_private_key = conf.agent.ssl_private_key();
+    let ssl_certificate = conf.agent.ssl_certificate();
 
     // First startup: initialize the agent
-    initialize_agent(&conf)?;
+    // This can be disabled by setting COSMIAN_VM_PREINIT=0 when starting `cosmian_vm_agent`
+    if std::env::var("COSMIAN_VM_PREINIT").unwrap_or("1".to_string()) == "1" {
+        initialize_agent(&conf)?;
+    }
 
     // Background worker relating to the snapshot processing
     tracing::info!("Starting the snapshot worker...");

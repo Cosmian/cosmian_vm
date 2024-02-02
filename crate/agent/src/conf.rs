@@ -5,7 +5,7 @@ use std::{
 
 use serde::Deserialize;
 
-use crate::{app::service::ServiceType, error::Error};
+use crate::{app::service::ServiceType, error::Error, VAR_PATH};
 
 #[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct CosmianVmAgent {
@@ -16,14 +16,14 @@ pub struct CosmianVmAgent {
 impl CosmianVmAgent {
     /// Extract the leaf certificate from a pem file. Returning in DER.
     pub fn read_leaf_certificate(&self) -> Result<Vec<u8>, Error> {
-        let mut reader = std::io::BufReader::new(File::open(self.ssl_certificate())?);
+        let mut reader = std::io::BufReader::new(File::open(self.agent.ssl_certificate())?);
         let certificate = rustls_pemfile::read_one(&mut reader)?;
         if let Some(rustls_pemfile::Item::X509Certificate(certificate)) = certificate {
             Ok(certificate)
         } else {
             Err(Error::Certificate(format!(
                 "No PEM certificate found in {:?}",
-                self.ssl_certificate()
+                self.agent.ssl_certificate()
             )))
         }
     }
@@ -31,8 +31,6 @@ impl CosmianVmAgent {
 
 #[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct Agent {
-    /// Data storage (encrypted fs, ramfs and session/cache data)
-    pub data_storage: PathBuf,
     /// The host to listen to
     pub host: String,
     /// The port to listen to
@@ -55,27 +53,27 @@ pub struct App {
     app_storage: PathBuf,
 }
 
-impl CosmianVmAgent {
-    fn _relative_to_data_storage(data_storage: &Path, path: &Path) -> PathBuf {
-        if path.is_absolute() {
-            path.to_path_buf()
-        } else {
-            data_storage.join(path)
-        }
+fn _relative_to_data_storage(data_storage: &Path, path: &Path) -> PathBuf {
+    if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        data_storage.join(path)
     }
+}
 
+impl Agent {
     pub fn ssl_certificate(&self) -> PathBuf {
-        Self::_relative_to_data_storage(&self.agent.data_storage, &self.agent.ssl_certificate)
+        _relative_to_data_storage(Path::new(VAR_PATH), &self.ssl_certificate)
     }
 
     pub fn ssl_private_key(&self) -> PathBuf {
-        Self::_relative_to_data_storage(&self.agent.data_storage, &self.agent.ssl_private_key)
+        _relative_to_data_storage(Path::new(VAR_PATH), &self.ssl_private_key)
     }
+}
 
-    pub fn app_storage(&self) -> Option<PathBuf> {
-        self.app
-            .as_ref()
-            .map(|app| Self::_relative_to_data_storage(&self.agent.data_storage, &app.app_storage))
+impl App {
+    pub fn app_storage(&self) -> PathBuf {
+        _relative_to_data_storage(Path::new(VAR_PATH), &self.app_storage)
     }
 }
 
@@ -115,7 +113,6 @@ mod tests {
                     ssl_certificate: PathBuf::from("data/cert.pem"),
                     ssl_private_key: PathBuf::from("data/key.pem"),
                     tpm_device: Some(PathBuf::from("/dev/tpmrm0")),
-                    data_storage: PathBuf::from("/var/lib/cosmian_vm/"),
                 },
                 app: Some(App {
                     service_type: ServiceType::Supervisor,
@@ -126,26 +123,28 @@ mod tests {
         );
 
         assert_eq!(
-            config.ssl_certificate(),
+            config.agent.ssl_certificate(),
             PathBuf::from("/var/lib/cosmian_vm/data/cert.pem")
         );
         assert_eq!(
-            config.ssl_private_key(),
+            config.agent.ssl_private_key(),
             PathBuf::from("/var/lib/cosmian_vm/data/key.pem")
         );
         assert_eq!(
-            config.app_storage(),
-            Some(PathBuf::from("/var/lib/cosmian_vm/data/app"))
+            config.app.unwrap().app_storage(),
+            PathBuf::from("/var/lib/cosmian_vm/data/app")
         );
 
         let config = CosmianVmAgent {
             agent: Agent {
                 host: "127.0.0.1".to_string(),
                 port: 5355,
-                ssl_certificate: PathBuf::from("data/cert.pem"),
+                ssl_certificate: PathBuf::from(".")
+                    .canonicalize()
+                    .unwrap()
+                    .join("data/cert.pem"),
                 ssl_private_key: PathBuf::from("data/key.pem"),
                 tpm_device: None,
-                data_storage: PathBuf::from("./"),
             },
             app: None,
         };
@@ -233,8 +232,13 @@ mod tests {
 
         let config: CosmianVmAgent = toml::from_str(cfg_str).unwrap();
 
-        assert_eq!(config.ssl_certificate(), PathBuf::from("/data/cert.pem"));
-        assert_eq!(config.ssl_private_key(), PathBuf::from("/data/key.pem"));
-        assert_eq!(config.app_storage(), None);
+        assert_eq!(
+            config.agent.ssl_certificate(),
+            PathBuf::from("/data/cert.pem")
+        );
+        assert_eq!(
+            config.agent.ssl_private_key(),
+            PathBuf::from("/data/key.pem")
+        );
     }
 }

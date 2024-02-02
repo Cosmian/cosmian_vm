@@ -10,6 +10,7 @@ use actix_web_lab::middleware::from_fn;
 use std::sync::Mutex;
 
 use conf::CosmianVmAgent;
+use const_format::formatcp;
 use error::Error;
 use rustls::ServerConfig;
 use user_agent::check_user_agent_middleware;
@@ -29,6 +30,12 @@ pub mod utils;
 pub mod worker;
 
 const DEFAULT_TPM_HASH_METHOD: tpm_quote::PcrHashMethod = tpm_quote::PcrHashMethod::Sha256;
+
+pub const BIN_PATH: &str = "/usr/sbin/";
+pub const LOG_PATH: &str = "/var/log/cosmian_vm";
+pub const VAR_PATH: &str = "/var/lib/cosmian_vm";
+pub const ETC_PATH: &str = "/etc/cosmian_vm";
+pub const CONF_PATH: &str = formatcp!("{ETC_PATH}/agent.toml");
 
 pub fn endpoints(cfg: &mut ServiceConfig) {
     cfg.service(endpoints::delete_snapshot);

@@ -115,9 +115,6 @@ This is a abstract of the updated file tree:
 │       ├── supervisord.conf
 │       └── conf.d
 │           └── cosmian_vm_agent.conf
-├── mnt
-│   └── cosmian_vm
-│       └── data
 ├── usr
 │   └── sbin
 │       ├── cosmian_certtool
@@ -144,7 +141,6 @@ A minimal configuration file is:
 
 ```toml
 [agent]
-data_storage = "/var/lib/cosmian_vm/"
 host = "127.0.0.1"
 port = 5355
 ssl_certificate = "data/cert.pem"
@@ -170,7 +166,9 @@ The certificate can be changed at will:
 - Create a trusted certificate using the method of your choice (*Let's encrypt* for instance) or use `cosmian_certtool`
 - Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
 
-The luks container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container. 
+The luks container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container.
+
+You can skip all these first startup steps by setting `COSMIAN_VM_PREINIT=0` when starting `cosmian_vm_agent`.
 
 ## Start a Cosmian VM on SEV/TDX
 
@@ -232,7 +230,6 @@ Prior to send the secrets, you should have configured the `app` section in the `
 
 ```toml
 [agent]
-data_storage = "/var/lib/cosmian_vm/"
 host = "0.0.0.0"
 port = 5355
 ssl_certificate = "data/cosmianvm.cosmian.dev/cert.pem"

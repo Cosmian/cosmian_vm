@@ -1,22 +1,15 @@
 [agent]
-# Cosmian VM data storage
-# It contains:
-# - `data/`: a mounted luks container (for persistent data)
-# - `tmp/`: a mounted encrypted tmpfs (for volatile data)
-# - `container`: the luks container
-# Cosmian VM agent will create `data` and `container` at its first start 
-data_storage = "/var/lib/cosmian_vm/"
 # The `cosmian_vm_agent` listens on that host 
 host = "127.0.0.1"
 # The `cosmian_vm_agent` listens on that port 
 port = 5355
 # The location of the SSL certificate used to communicate with the `cosmian_vm_agent`
-# It is recommended to put that directory inside the directory defined in the `data_storage` field
-# If the path is relative, the location path will be joined with the `data_storage` value
+# It is recommended to put that file inside an encrypted filesystem
+# If the path is relative, the location path will be joined with '/var/lib/cosmian_vm/'
 ssl_certificate = "data/cert.pem"
 # The location of the SSL private key used to communicate with the `cosmian_vm_agent`
-# It is recommended to put that directory inside the directory defined by the `data_storage` field
-# If the path is relative, the location path will be joined with the `data_storage` value
+# It is recommended to put that file inside an encrypted filesystem
+# If the path is relative, the location path will be joined with '/var/lib/cosmian_vm/'
 ssl_private_key = "data/key.pem"
 # The TPM device path
 tpm_device = "/dev/tpmrm0"
@@ -26,8 +19,8 @@ tpm_device = "/dev/tpmrm0"
 # Possible values: supervisor|systemd|standalone
 service_type = "supervisor"
 # The name of the service monitoring the used application
-service_app_name = "cosmian_helloworld"
+service_name = "cosmian_helloworld"
 # The location of the user application data
-# It is recommended to put that directory inside the directory defined by the `data_storage` field
-# If the path is relative, the location path will be joined with the `data_storage` value
+# It is recommended to put that directory inside an encrypted filesystem
+# If the path is relative, the location path will be joined with '/var/lib/cosmian_vm/'
 app_storage = "data/app"
