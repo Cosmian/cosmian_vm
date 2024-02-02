@@ -6,17 +6,17 @@
 # - `container`: the luks container
 # Cosmian VM agent will create `data` and `container` at its first start 
 data_storage = "/var/lib/cosmian_vm/"
-# The `cosmian_vm_agent` listens on that host 
+# The `cosmian_vm_agent` listens to that host 
 host = "127.0.0.1"
-# The `cosmian_vm_agent` listens on that port 
+# The `cosmian_vm_agent` listens to that port 
 port = 5355
 # The location of the SSL certificate used to communicate with the `cosmian_vm_agent`
-# It is recommanded to put that directory inside the directory defined in the `data_storage` field
-# If the path is relative, the location will be searched in the `data_storage` value
+# It is recommended to put that directory inside the directory defined by the `data_storage` field
+# If the path is relative, the location path will be joined with the `data_storage` value
 ssl_certificate = "data/cert.pem"
 # The location of the SSL private key used to communicate with the `cosmian_vm_agent`
-# It is recommanded to put that directory inside the directory defined in the `data_storage` field
-# If the path is relative, the location will be searched in the `data_storage` value
+# It is recommended to put that directory inside the directory defined by the `data_storage` field
+# If the path is relative, the location path will be joined with the `data_storage` value
 ssl_private_key = "data/key.pem"
 
 [app]
@@ -26,6 +26,6 @@ service_type = "supervisor"
 # The name of the service monitoring the use application
 service_name = "cosmian_helloworld"
 # The location of the user application data
-# It is recommanded to put that directory inside the directory defined in the `data_storage` field
-# If the path is relative, the location will be searched in the `data_storage` value
+# It is recommended to put that directory inside the directory defined by the `data_storage` field
+# If the path is relative, the location path will be joined with the `data_storage` value
 app_storage = "data/app"

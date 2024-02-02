@@ -33,9 +33,9 @@ impl CosmianVmAgent {
 pub struct Agent {
     /// Data storage (encrypted fs, ramfs and session/cache data)
     pub data_storage: PathBuf,
-    /// The host to listen on
+    /// The host to listen to
     pub host: String,
-    /// The port to listen on
+    /// The port to listen to
     pub port: u16,
     /// SSL certificate of the VM in PEM format
     ssl_certificate: PathBuf,
@@ -74,7 +74,7 @@ impl CosmianVmAgent {
 
     pub fn app_storage(&self) -> Option<PathBuf> {
         self.app
-            .clone()
+            .as_ref()
             .map(|app| Self::_relative_to_data_storage(&self.agent.data_storage, &app.app_storage))
     }
 }
