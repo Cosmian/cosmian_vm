@@ -12,17 +12,21 @@ use std::sync::Mutex;
 use conf::CosmianVmAgent;
 use error::Error;
 use rustls::ServerConfig;
-use snapshot::Snapshot;
 use user_agent::check_user_agent_middleware;
 use utils::create_tpm_context;
+use worker::snapshot::Snapshot;
 
+/// Related to the applications running inside the Cosmian VM
+pub mod app;
 pub mod conf;
 pub mod endpoints;
 pub mod error;
-pub mod service;
-pub mod snapshot;
+/// Related to tasks to process at the first Cosmian VM start
+pub mod init;
 pub mod user_agent;
 pub mod utils;
+/// Workers processing async tasks
+pub mod worker;
 
 const DEFAULT_TPM_HASH_METHOD: tpm_quote::PcrHashMethod = tpm_quote::PcrHashMethod::Sha256;
 

@@ -85,7 +85,7 @@ cd packer
 # Create a service account on GCP and download the JSON file
 # https://console.cloud.google.com/iam-admin/serviceaccounts?cloudshell=false&project=MY_PROJECT
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/my-project-d42061429e6a.json"
-packer build gcp.pkr.hcl
+packer build gcp-sev.pkr.hcl
 ```
 
 The images are also automatically built by the CI when pushing on main or when releasing a tag.
@@ -174,7 +174,7 @@ The luks container can be regenerated using `cosmian_fstool` with your own size 
 
 ## Start a Cosmian VM on SEV/TDX
 
-Now, instantiate a VM based on the built image. The `cosmina_vm_agent` automatically starts when the VM boots.
+Now, instantiate a VM based on the built image. The `cosmian_vm_agent` automatically starts when the VM boots.
 
 You can start/restart/stop the Cosmian VM Agent as follow:
 
