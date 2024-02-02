@@ -29,7 +29,7 @@ pub fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
         Err(e) => return Err(Error::Command(e.to_string())),
     }
 
-    // Otherwise generated them
+    // Otherwise generate them
     //
     // # create EK and make it persistent
     // sudo tpm2_createek --ek-context=ek.ctx --key-algorithm=ecc --public=ek.pub --format=pem
