@@ -2,7 +2,7 @@ use std::sync::Mutex;
 
 use crate::{
     error::{Error, ResponseWithError},
-    snapshot::{self, order_snapshot, reset_snapshot, Snapshot},
+    worker::snapshot::{self, order_snapshot, reset_snapshot, Snapshot},
     CosmianVmAgent, DEFAULT_TPM_HASH_METHOD,
 };
 use actix_web::{

@@ -174,7 +174,7 @@ The luks container can be regenerated using `cosmian_fstool` with your own size 
 
 ## Start a Cosmian VM on SEV/TDX
 
-Now, instantiate a VM based on the built image. The `cosmina_vm_agent` automatically starts when the VM boots.
+Now, instantiate a VM based on the built image. The `cosmian_vm_agent` automatically starts when the VM boots.
 
 You can start/restart/stop the Cosmian VM Agent as follow:
 

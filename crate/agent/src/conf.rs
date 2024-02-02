@@ -5,7 +5,7 @@ use std::{
 
 use serde::Deserialize;
 
-use crate::{error::Error, service::ServiceType};
+use crate::{app::service::ServiceType, error::Error};
 
 #[derive(Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct CosmianVmAgent {
@@ -81,7 +81,7 @@ impl CosmianVmAgent {
 
 #[cfg(test)]
 mod tests {
-    use crate::service::ServiceType;
+    use crate::app::service::ServiceType;
     use crate::{
         conf::{Agent, App},
         CosmianVmAgent,
