@@ -48,8 +48,9 @@ chmod +x $RAND_NAME.sh
 ./$RAND_NAME.sh
 
 set +e
-RET_CODE=$(./cosmian_vm/cosmian_vm --url https://localhost:$RAND_PORT/ --allow-insecure-tls verify --snapshot ./cosmian_vm.snapshot)
-if [ $RET_CODE -eq 0 ]; then
+./cosmian_vm/cosmian_vm --url https://localhost:$RAND_PORT/ --allow-insecure-tls verify --snapshot ./cosmian_vm.snapshot
+if [ $? -eq 0 ];
+then
   echo "MUST fail since new executable file has been run"
   exit 1
 fi

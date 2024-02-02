@@ -1,7 +1,3 @@
-# alias runner-sgx="ssh cosmian@162.19.87.37" # OVH
-# alias runner-sev="ssh cosmian@34.90.22.143" # GCP
-# alias runner-tdx="ssh cosmian@34.70.122.49" # GCP
-
 on:
   # Run on push except on tags
   push:

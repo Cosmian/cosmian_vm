@@ -13,8 +13,6 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
 
 💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
 
-💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
-
 ## Table of contents
 
 <!-- toc -->
@@ -24,6 +22,8 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
 - [Coverage](#coverage)
 - [Compile and run tests](#compile-and-run-tests)
 - [Build a Cosmian VM image for SEV/TDX](#build-a-cosmian-vm-image-for-sevtdx)
+- [Configuration file](#configuration-file)
+- [First Cosmian VM launch](#first-cosmian-vm-launch)
 - [Start a Cosmian VM on SEV/TDX](#start-a-cosmian-vm-on-sevtdx)
 - [Usage](#usage)
 - [Provide secrets](#provide-secrets)
@@ -101,7 +101,7 @@ This image:
 
 This is a abstract of the updated file tree:
 
-```c
+```console
 .
 ├── etc
 │   ├── apt
@@ -161,9 +161,10 @@ When `cosmian_vm_agent` starts for the first time, it initializes several compon
 `/var/lib/cosmian_vm/tmp` is a tmpfs. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
 3. It generates the TPM endorsement keys
 
-It is recommended to configure 1. and 2. on your own for production systems. 
+It is recommended to configure 1. and 2. on your own for production systems.
 
 The certificate can be changed at will:
+
 - Edit your DNS register to point to that VM
 - Create a trusted certificate using the method of your choice (*Let's encrypt* for instance) or use `cosmian_certtool`
 - Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
@@ -246,7 +247,7 @@ app_storage = "data/app"
 
 In that example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service) is the name of the application (as a `supervisor` service).
 
-The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommanded to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
+The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommended to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
 
 Now, you can provide the app configuration file from your localhost to the Cosmian VM as follow:
 
