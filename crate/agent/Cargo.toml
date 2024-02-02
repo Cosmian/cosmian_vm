@@ -10,6 +10,7 @@ actix-http = "3"
 actix-web = { version = "4", features = ["rustls"] }
 actix-web-lab = "0.20"
 anyhow = { workspace = true }
+const_format = "0.2"
 cosmian_vm_client = { path = "../client" }
 der = { workspace = true }
 ecdsa = { workspace = true }

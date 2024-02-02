@@ -9,7 +9,7 @@ use std::process::Command;
 /// - Raise an error if no TPM detected
 ///
 /// Note: this function should be replace in a near feature (waiting for a patch in the tpm lib)
-pub fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
+pub(crate) fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
     if !tpm_device_path.exists() {
         return Err(Error::Configuration(format!(
             "TPM device path unknown: {tpm_device_path:?} "

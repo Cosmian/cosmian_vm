@@ -1,5 +1,6 @@
 use crate::error::Error;
 use der::{asn1::Ia5String, pem::LineEnding, EncodePem};
+use gethostname::gethostname;
 use p256::{ecdsa::DerSignature, ecdsa::SigningKey, pkcs8::EncodePrivateKey, SecretKey};
 use rand_chacha::{
     rand_core::{RngCore, SeedableRng},
@@ -10,6 +11,7 @@ use spki::{EncodePublicKey, SubjectPublicKeyInfoOwned};
 use std::{
     convert::TryFrom,
     net::{IpAddr, Ipv4Addr},
+    path::Path,
     str::FromStr,
     time::Duration,
 };
@@ -21,8 +23,32 @@ use x509_cert::{
     time::Validity,
 };
 
+const TLS_DAYS_BEFORE_EXPIRATION: u64 = 365 * 10;
+
+pub(crate) fn generate_self_signed_cert(
+    ssl_private_key: &Path,
+    ssl_certificate: &Path,
+    host: &str,
+) -> Result<(), Error> {
+    // Generate the certificate if not present
+    if !ssl_private_key.exists() && !ssl_certificate.exists() {
+        tracing::info!("Generating default certificates...");
+        let hostname = gethostname();
+        let hostname = hostname.to_string_lossy();
+        let subject = format!("CN={hostname},O=Cosmian Tech,C=FR,L=Paris,ST=Ile-de-France");
+        let (sk, cert) = _generate_self_signed_cert(&subject, &[host], TLS_DAYS_BEFORE_EXPIRATION)?;
+
+        std::fs::write(ssl_certificate, cert)?;
+        std::fs::write(ssl_private_key, sk)?;
+
+        tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}");
+    }
+
+    Ok(())
+}
+
 /// Generate a self-signed certificate
-pub fn generate_self_signed_cert(
+fn _generate_self_signed_cert(
     subject: &str,
     subject_alternative_names: &[&str],
     days_before_expiration: u64,

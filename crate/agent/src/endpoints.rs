@@ -1,6 +1,7 @@
 use std::sync::Mutex;
 
 use crate::{
+    app::APP_CONF_FILENAME,
     error::{Error, ResponseWithError},
     worker::snapshot::{self, order_snapshot, reset_snapshot, Snapshot},
     CosmianVmAgent, DEFAULT_TPM_HASH_METHOD,
@@ -20,9 +21,6 @@ use tee_attestation::{forge_report_data_with_nonce, get_quote as tee_get_quote};
 use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
 
 use tss_esapi::Context;
-
-const APP_CONF_FILENAME: &str = "app.conf";
-
 /// Get the IMA hashes list (ASCII format)
 ///
 /// Note: require root privileges
@@ -132,21 +130,19 @@ pub async fn init_app(
     let app_conf_param = data.into_inner();
 
     let Some(app_conf_agent) = &conf.app else {
+        // No app configuration provided
         return Err(Error::BadRequest(
             "No app section provided in Cosmian VM Agent configuration file".to_string(),
         ));
     };
 
-    let Some(app_storage) = &conf.app_storage() else {
-        return Err(Error::BadRequest(
-            "No app section provided in Cosmian VM Agent configuration file".to_string(),
-        ));
-    };
+    // Write app conf
+    std::fs::write(
+        app_conf_agent.app_storage().join(APP_CONF_FILENAME),
+        app_conf_param.content,
+    )?;
 
-    // write app conf
-    std::fs::write(app_storage.join(APP_CONF_FILENAME), app_conf_param.content)?;
-
-    // start app service
+    // Start app service
     app_conf_agent
         .service_type
         .start(&app_conf_agent.service_name)?;
@@ -161,15 +157,17 @@ pub async fn init_app(
 pub async fn restart_app(conf: Data<CosmianVmAgent>) -> ResponseWithError<Json<()>> {
     let Some(app_conf_agent) = &conf.app else {
         // No app configuration provided
-        return Ok(Json(()));
+        return Err(Error::BadRequest(
+            "No app section provided in Cosmian VM Agent configuration file".to_string(),
+        ));
     };
 
-    // ensure app service is stopped
+    // Ensure app service is stopped
     app_conf_agent
         .service_type
         .stop(&app_conf_agent.service_name)?;
 
-    // start app service
+    // Start app service
     app_conf_agent
         .service_type
         .start(&app_conf_agent.service_name)?;

@@ -2,13 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 2023-02-XX
+## [1.0.0] - 2023-02-07
 
 ### Update
 
 - Sending app configuration does not require a key (and file is no more encrypted)
 - Restarting the app does not require a key
-- Relative path in the configuration file is now allowed: related to the `storage_data` path
+- Relative path in the configuration file is now allowed: related to `/var/lib/cosmian_vm`
+- `cosmian_vm_agent` can be started on non-tee host without panicking
 
 ### New 
 

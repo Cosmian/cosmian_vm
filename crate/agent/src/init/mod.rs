@@ -1,52 +1,50 @@
-use crate::{conf::CosmianVmAgent, error::Error, init::certificate::generate_self_signed_cert};
+use std::{fs::File, path::Path};
 
-use self::{luks::generate_encrypted_fs, tpm::generate_tpm_keys};
-use gethostname::gethostname;
+use self::{
+    certificate::generate_self_signed_cert, luks::generate_encrypted_fs, tpm::generate_tpm_keys,
+};
+use crate::{conf::CosmianVmAgent, error::Error, VAR_PATH};
+use const_format::formatcp;
 
 mod certificate;
 mod luks;
 mod tpm;
 
-const TLS_DAYS_BEFORE_EXPIRATION: u64 = 365 * 10;
+/// A file we store to remember the agent has already been configured once
+const AGENT_INITIALIZED_CACHE_PATH: &str = formatcp!("{VAR_PATH}/cache.init");
 
+/// Test if the agent has already been configured once
+fn is_initialized() -> bool {
+    Path::new(AGENT_INITIALIZED_CACHE_PATH).exists()
+}
+
+/// Store the fact that the agent has been configured once
+fn initialized() -> Result<(), Error> {
+    File::create(AGENT_INITIALIZED_CACHE_PATH)?;
+    Ok(())
+}
+
+/// Initialize the agent if it has never be done before:
+/// 1. Create a default luks container
+/// 2. Create a default SSL certificate
+/// 3. Create TPM enforcement keys
 pub fn initialize_agent(conf: &CosmianVmAgent) -> Result<(), Error> {
-    // Generate the encrypted fs
-    generate_encrypted_fs(&conf.agent.data_storage)?;
+    // If already done once, just ignore this function
+    if is_initialized() {
+        return Ok(());
+    }
 
-    // Generate the certificate if not present
-    let (ssl_private_key, ssl_certificate) = (conf.ssl_private_key(), conf.ssl_certificate());
+    // Generate the default encrypted fs
+    generate_encrypted_fs()?;
 
-    match (ssl_private_key.exists(), ssl_certificate.exists()) {
-        (false, false) => {
-            tracing::info!("Generating default certificates...");
-            let hostname = gethostname();
-            let hostname = hostname.to_string_lossy();
-            let subject = format!("CN={hostname},O=Cosmian Tech,C=FR,L=Paris,ST=Ile-de-France");
-            let (sk, cert) = generate_self_signed_cert(
-                &subject,
-                &[&conf.agent.host],
-                TLS_DAYS_BEFORE_EXPIRATION,
-            )?;
+    // Generate the default self signed certificate
+    generate_self_signed_cert(
+        &conf.agent.ssl_private_key(),
+        &conf.agent.ssl_certificate(),
+        &conf.agent.host,
+    )?;
 
-            std::fs::write(&ssl_certificate, cert)?;
-            std::fs::write(&ssl_private_key, sk)?;
-
-            tracing::info!("The certificate has been generated for CN='{hostname}' (days before expiration: {TLS_DAYS_BEFORE_EXPIRATION}) at: {ssl_certificate:?}");
-        }
-        (true, true) => tracing::info!("The certificate has been read from {ssl_certificate:?}"),
-        (false, true) => {
-            return Err(Error::Certificate(
-                "The private key file doesn't exist whereas the certificate exists".to_owned(),
-            ));
-        }
-        (true, false) => {
-            return Err(Error::Certificate(
-                "The certificate file doesn't exist whereas the private key exists".to_owned(),
-            ));
-        }
-    };
-
-    // Generate TPM keys if not already done
+    // Generate TPM keys if tpm is enabled in the config file
     if let Some(tpm_device) = &conf.agent.tpm_device {
         generate_tpm_keys(tpm_device)?;
     } else {
@@ -56,5 +54,6 @@ pub fn initialize_agent(conf: &CosmianVmAgent) -> Result<(), Error> {
         );
     }
 
-    Ok(())
+    // Assure we don't pass in that function anymore
+    initialized()
 }
