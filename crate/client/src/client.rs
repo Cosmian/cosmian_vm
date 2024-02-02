@@ -9,7 +9,7 @@ use tpm_quote::PcrHashMethod;
 use crate::{
     certificate_verifier::{LeafCertificateVerifier, NoVerifier},
     error::Error,
-    ser_de::{base64_serde, base64_serde_opt},
+    ser_de::base64_serde,
     snapshot::CosmianVmSnapshot,
 };
 
@@ -92,25 +92,19 @@ impl CosmianVmClient {
     }
 
     /// Initialize the deployed app
-    pub async fn init_app(
-        &self,
-        content: &[u8],
-        key: Option<&[u8]>,
-    ) -> Result<Option<Vec<u8>>, Error> {
+    pub async fn init_app(&self, content: &[u8]) -> Result<Option<Vec<u8>>, Error> {
         self.post(
             "/app/init",
             Some(&AppConf {
                 content: content.to_vec(),
-                key: key.map(<[u8]>::to_vec),
             }),
         )
         .await
     }
 
     /// Restart the deployed app
-    pub async fn restart_app(&self, key: &[u8]) -> Result<(), Error> {
-        self.post("/app/restart", Some(&RestartParam { key: key.to_vec() }))
-            .await
+    pub async fn restart_app(&self) -> Result<(), Error> {
+        self.post("/app/restart", None::<&()>).await
     }
 
     /// Instantiate a new cosmian VM client
@@ -222,21 +216,6 @@ pub struct AppConf {
     /// we can't guess better than bytes.
     #[serde(with = "base64_serde")]
     pub content: Vec<u8>,
-
-    /// Key/password used to encrypt the app configuration.
-    ///
-    /// If `None` is provided, a new random key
-    /// is generated when calling `/init` endpoint.
-    #[serde(with = "base64_serde_opt")]
-    pub key: Option<Vec<u8>>,
-}
-
-/// Configuration to restart a deployed app (ie: after a reboot)
-#[derive(Serialize, Deserialize)]
-pub struct RestartParam {
-    /// Key/password used to decrypt the app configuration.
-    #[serde(with = "base64_serde")]
-    pub key: Vec<u8>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

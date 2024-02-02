@@ -16,14 +16,6 @@ pub struct InitArgs {
     /// Path of the app configuration to upload
     #[arg(short, long)]
     configuration: PathBuf,
-
-    /// Optional key to encrypt the uploaded configuration on the VM.
-    ///
-    /// The key must be provided hex encoded.
-    ///
-    /// If no key is provided, a random one will be generated
-    #[arg(short, long)]
-    key: Option<String>,
 }
 
 impl InitArgs {
@@ -31,13 +23,8 @@ impl InitArgs {
         println!("Processing the init of the deployed app...");
 
         let cfg_content = std::fs::read(&self.configuration)?;
-        let key = if let Some(key) = &self.key {
-            Some(hex::decode(key)?)
-        } else {
-            None
-        };
 
-        if let Some(key) = client.init_app(&cfg_content, key.as_deref()).await? {
+        if let Some(key) = client.init_app(&cfg_content).await? {
             println!("Save the key: `{}`", hex::encode(key));
         }
 
@@ -49,19 +36,13 @@ impl InitArgs {
 
 /// Restart the deployed application
 #[derive(Args, Debug)]
-pub struct RestartArgs {
-    /// Optional key/password used to decrypt the app configuration
-    ///
-    /// The key must be provided hex encoded.
-    #[arg(short, long)]
-    key: String,
-}
+pub struct RestartArgs {}
 
 impl RestartArgs {
     pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
         println!("Processing the restart of the deployed app...");
 
-        client.restart_app(&hex::decode(&self.key)?).await?;
+        client.restart_app().await?;
 
         println!("The app has been restarted");
 

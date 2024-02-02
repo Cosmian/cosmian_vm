@@ -67,7 +67,7 @@ fn _check_user_agent(user_agent: &str, minimum_version: Version) -> Result<(), E
 pub fn minimum_version() -> Version {
     Version {
         epoch: 0,
-        release: vec![0, 4],
+        release: vec![1, 0],
         pre: None,
         post: None,
         dev: None,

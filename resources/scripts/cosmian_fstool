@@ -1,0 +1,157 @@
+#!/usr/bin/bash
+
+set -e 
+
+usage() {
+    echo "Usage: $0 --size <> [--location <>] [--name <>] [--password <>] [--mountpoint  <>] "
+    echo ""
+    echo "Generate a luks container to store sensitive data on Cosmian VM"
+    echo ""
+    echo "Example: $0 --size 500MB"
+    echo "Example: echo mypassword | $0 --size 500MB --password -"
+    echo "Example: $0 --size 500MB --password mypassword"
+    echo ""
+    echo "Required arguments:"
+    echo -e "\t--size         The size of the container (example: 500MB or 10GB)"
+    echo ""
+    echo "Optional arguments:"
+    echo -e "\t--location     The file path to store the container (default: $CONTAINER_PATH)"
+    echo -e "\t--name         The name of the mapped container (default: $CONTAINER_MAPPING_NAME)"
+    echo -e "\t--password     The password to encrypt/decrypt the luks"
+    echo -e "\t               If the argument is not passed, a prompt will ask for it"
+    echo -e "\t               If the value is '-', the stdin is read."
+    echo -e "\t--mountpoint   The location of the mounted decrypted container (default: $CONTAINER_MOUNT_PATH)"
+    exit 1
+}
+
+set_default_variables() {
+    # Mandatory args (initialized empty)
+    CONTAINER_SIZE=""
+    PASSWORD=""
+
+    # Optional args
+    DEFAULT_ROOT="/var/lib/cosmian_vm"
+    CONTAINER_PATH="$DEFAULT_ROOT/container"
+    CONTAINER_MAPPING_NAME="cosmian_vm_container"
+    CONTAINER_MAPPING_PATH="/dev/mapper/$CONTAINER_MAPPING_NAME"
+    CONTAINER_MOUNT_PATH="$DEFAULT_ROOT/persistant"
+}
+
+parse_args() {
+    # Parse args
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --size)
+            CONTAINER_SIZE="$2"
+            shift # past argument
+            shift # past value
+            ;;
+
+            --location)
+            CONTAINER_PATH="$2"
+            shift # past argument
+            shift # past value
+            ;;
+
+            --name)
+            CONTAINER_MAPPING_NAME="$2"
+            CONTAINER_MAPPING_PATH="/dev/mapper/$CONTAINER_MAPPING_NAME"
+            shift # past argument
+            shift # past value
+            ;;
+
+            --password)
+            PASSWORD="$2"
+            shift # past argument
+            shift # past value
+            ;;
+
+            --mountpoint)
+            CONTAINER_MOUNT_PATH="$2"
+            shift # past argument
+            shift # past value
+            ;;
+
+            -*)
+            usage
+            ;;
+        esac
+    done
+
+    if [ -z "$CONTAINER_SIZE" ] || [ -z "$CONTAINER_MAPPING_NAME" ] || [ -z "$CONTAINER_MOUNT_PATH" ] || [ -z "$CONTAINER_PATH" ]; then
+        usage
+    fi
+
+    if [ "$PASSWORD" = "-"  ]; then 
+        PASSWORD=$(cat /dev/stdin)
+    fi
+
+    while [ -z "$PASSWORD" ]; do
+        read -s -r -p "Enter a luks password: " PASSWORD
+        echo ""
+    done
+}
+
+set_default_variables
+parse_args "$@"
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit
+fi
+
+mkdir -p "$(dirname "$CONTAINER_PATH")"
+mkdir -p "$(dirname "$CONTAINER_MOUNT_PATH")"
+
+if [ -e "$CONTAINER_PATH" ]; then
+    echo "A container already exists in $CONTAINER_PATH"
+    exit 1
+fi
+
+# Make sure to close/umount existing container
+if [ -e "$CONTAINER_MAPPING_PATH" ]; then
+    echo "Closing previous mounted container..."
+    sync || true
+    umount "$CONTAINER_MAPPING_PATH" || true
+    cryptsetup close "$CONTAINER_MAPPING_NAME" || true
+fi
+
+# Allocate the container
+echo "Creating a $CONTAINER_SIZE container..."
+fallocate -l "$CONTAINER_SIZE" "$CONTAINER_PATH"
+
+# Encrypt the container (a password is required to run this command)
+echo "Encrypting the container (with password=$PASSWORD)..."
+echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" -d -
+
+# Open the container and map it (a password is required to run this command)
+echo "Opening the container at $CONTAINER_MAPPING_PATH..."
+echo -n "$PASSWORD" | cryptsetup luksOpen -d - "$CONTAINER_PATH" "$CONTAINER_MAPPING_NAME"
+
+# Format it
+echo "Formatting the container in Ext4..."
+mkfs -t ext4 "$CONTAINER_MAPPING_PATH"
+
+# Mount it 
+echo "Mouting the container at $CONTAINER_MOUNT_PATH..."
+mkdir -p "$CONTAINER_MOUNT_PATH"
+mount "$CONTAINER_MAPPING_PATH" "$CONTAINER_MOUNT_PATH"
+
+# Determine the block device
+BLOCK_DEVICE=$(losetup -ln --raw -O NAME,BACK-FILE | grep "$CONTAINER_PATH" | cut -f1 -d" ")
+
+if [ -z "$BLOCK_DEVICE" ]; then
+    echo "Can't find the bloc device attached to $CONTAINER_PATH"
+    exit 1
+fi
+
+# Enroll the TPM to decrypt the luks without password (a password is required to run this command)
+echo "Enrolling the TPM for this container..."
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 "$BLOCK_DEVICE"
+
+# Auto decrypt & auto mount the luks when rebooting (if not already done)
+echo "Enabling auto mounting when rebooting..."
+grep -qF -- "$CONTAINER_MAPPING_NAME $CONTAINER_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_NAME $CONTAINER_PATH none tpm2-device=auto" >> /etc/crypttab 
+grep -qF -- "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH ext4 defaults 0 0" >> /etc/fstab
+
+echo "Process completed with success!"

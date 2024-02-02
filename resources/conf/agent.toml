@@ -1,12 +1,33 @@
 [agent]
+# Cosmian VM data storage
+# It contains:
+# - `data/`: a mounted luks container (for persistent data)
+# - `tmp/`: a mounted encrypted tmpfs (for volatile data)
+# - `container`: the luks container
+# Cosmian VM agent will create `data` and `container` at its first start 
+data_storage = "/var/lib/cosmian_vm/"
+# The `cosmian_vm_agent` listens on that host 
 host = "127.0.0.1"
+# The `cosmian_vm_agent` listens on that port 
 port = 5355
-ssl_certificate = "/etc/cosmian_vm/cert.pem"
-ssl_private_key = "/etc/cosmian_vm/key.pem"
+# The location of the SSL certificate used to communicate with the `cosmian_vm_agent`
+# It is recommended to put that directory inside the directory defined in the `data_storage` field
+# If the path is relative, the location path will be joined with the `data_storage` value
+ssl_certificate = "data/cert.pem"
+# The location of the SSL private key used to communicate with the `cosmian_vm_agent`
+# It is recommended to put that directory inside the directory defined by the `data_storage` field
+# If the path is relative, the location path will be joined with the `data_storage` value
+ssl_private_key = "data/key.pem"
+# The TPM device path
 tpm_device = "/dev/tpmrm0"
 
 [app]
+# The service type monitoring the user application
+# Possible values: supervisor|systemd|standalone
 service_type = "supervisor"
+# The name of the service monitoring the used application
 service_app_name = "cosmian_helloworld"
-decrypted_folder = "/mnt/cosmian_vm/data"
-encrypted_secret_app_conf = "/etc/cosmian_vm/app_secrets.json"
+# The location of the user application data
+# It is recommended to put that directory inside the directory defined by the `data_storage` field
+# If the path is relative, the location path will be joined with the `data_storage` value
+app_storage = "data/app"

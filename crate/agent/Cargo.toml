@@ -1,6 +1,6 @@
 [package]
 name = "cosmian_vm_agent"
-version = "0.4.0"
+version = "1.0.0"
 edition = "2021"
 license-file = "../../LICENSE.md"
 
@@ -9,7 +9,6 @@ actix-cors = "0.6"
 actix-http = "3"
 actix-web = { version = "4", features = ["rustls"] }
 actix-web-lab = "0.20"
-aes-gcm = { workspace = true }
 anyhow = { workspace = true }
 cosmian_vm_client = { path = "../client" }
 der = { workspace = true }
@@ -22,6 +21,7 @@ ima = { path = "../ima" }
 num_cpus = "1.0"
 p256 = { workspace = true }
 pep440 = "0.2"
+rand = { workspace = true }
 rand_chacha = { workspace = true }
 # Important: align the rustls version with actix rustls dependency
 rustls = { version = "0.20", features = ["dangerous_configuration"] }
