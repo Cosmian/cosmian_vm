@@ -47,14 +47,6 @@
     group: root
     mode: 0400
 
-- name: Create a mountable directory
-  file:
-    path: /mnt/cosmian_vm/data
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
 - name: Create cosmian_vm directory in /var/lib
   ansible.builtin.file:
     path: /var/lib/cosmian_vm
@@ -62,7 +54,7 @@
     owner: root
     group: root
     mode: 0755
-    
+
 - name: Mount a tmpfs volume
   ansible.posix.mount:
     src: tmpfs

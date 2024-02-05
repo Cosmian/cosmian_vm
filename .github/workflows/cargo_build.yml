@@ -55,7 +55,7 @@ jobs:
             target/release/cosmian_vm_agent
             target/release/cosmian_vm
             target/release/cosmian_certtool
-            target/release/cosmian_fstool
+            resources/scripts/cosmian_fstool
           retention-days: 1
           if-no-files-found: error
 
