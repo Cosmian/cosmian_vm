@@ -1,13 +1,13 @@
-#!/bin/sh
+#!/usr/bin/bash
 
 set -ex
 
-killall cosmian_vm_agent | true
+killall cosmian_vm_agent || true
 
 CUR_DIR=$(pwd)
 TMP_DIR="$(mktemp -d)"
 RAND_PORT=$((5000 + RANDOM % 1000))
-RAND_NAME=$(echo $(date +%s%N) | sha256sum | head -c 20)
+RAND_NAME=$(echo date +%s%N | sha256sum | head -c 20)
 
 # Prerequisites: folder cosmian_vm should contain:
 # - cosmian_vm_agent
@@ -43,14 +43,14 @@ sudo COSMIAN_VM_FSTOOL="$CUR_DIR/resources/scripts/cosmian_fstool" COSMIAN_VM_AG
 
 ###
 # Run a fake malware!
-echo -e "#!/usr/bin/bash\necho malware" >$RAND_NAME.sh
-chmod +x $RAND_NAME.sh
-./$RAND_NAME.sh
+echo -e "#!/usr/bin/bash\necho malware" >"$RAND_NAME.sh"
+chmod +x "$RAND_NAME.sh"
+./"$RAND_NAME.sh"
 
 set +e
 ./cosmian_vm/cosmian_vm --url https://localhost:$RAND_PORT/ --allow-insecure-tls verify --snapshot ./cosmian_vm.snapshot
-if [ $? -eq 0 ];
-then
+ret=$?
+if [ $ret -eq 0 ]; then
   echo "MUST fail since new executable file has been run"
   exit 1
 fi
