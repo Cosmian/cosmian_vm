@@ -11,7 +11,7 @@ jobs:
       matrix:
         include:
           - runner: [self-hosted, sev]
-          - runner: [self-hosted, tdx]
+          # - runner: [self-hosted, tdx] # not fully ready on GCP+TDX
 
     steps:
       - name: Checkout
