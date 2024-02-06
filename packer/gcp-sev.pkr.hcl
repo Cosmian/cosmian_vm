@@ -126,12 +126,12 @@ build {
   }
 
   provisioner "file" {
-    source      = "./cosmian_vm_agent"
+    source      = "./target/release/cosmian_vm_agent"
     destination = "/tmp/"
   }
 
   provisioner "file" {
-    source      = "./cosmian_certtool"
+    source      = "./target/release/cosmian_certtool"
     destination = "/tmp/"
   }
 
@@ -161,12 +161,12 @@ build {
   }
 
   provisioner "file" {
-    source      = "./cosmian_vm_agent"
+    source      = "./target/release/cosmian_vm_agent"
     destination = "/tmp/"
   }
 
   provisioner "file" {
-    source      = "./cosmian_certtool"
+    source      = "./target/release/cosmian_certtool"
     destination = "/tmp/"
   }
 

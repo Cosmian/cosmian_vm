@@ -30,21 +30,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: LS
-        run: |
-          pwd
-          ls *
-
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           name: cosmian_vm
           path: packer/
-
-      - name: LS2
-        run: |
-            pwd
-            ls *
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -73,8 +63,6 @@ jobs:
       - name: Build AWS images - main
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
-          pwd
-          ls *
           packer build -var "prefix=alpha" aws-sev.pkr.hcl
 
       - name: Build GCP images - main
