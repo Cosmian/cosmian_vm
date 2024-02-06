@@ -34,13 +34,11 @@ jobs:
           restore-keys: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: dtolnay/rust-toolchain@stable
-        if: steps.cargo_cache.outputs.cache-hit != 'true'
         with:
           toolchain: stable
           components: rustfmt, clippy
 
       - name: Build Cosmian VM binaries
-        if: steps.cargo_cache.outputs.cache-hit != 'true'
         uses: actions-rs/cargo@v1
         with:
           command: build
