@@ -34,7 +34,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: cosmian_vm
-          path: ./
+          path: packer/
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -96,7 +96,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: cosmian_vm
-          path: ./
+          path: packer/
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main

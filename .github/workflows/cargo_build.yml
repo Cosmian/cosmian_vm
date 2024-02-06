@@ -69,11 +69,9 @@ jobs:
       - name: Push to package.cosmian.com
         run: |
           set -x
-          DESTINATION_DIR=/mnt/package/cosmian_vm/last_build/$VERSION
+          DESTINATION_DIR=/mnt/package/cosmian_vm/last_build/
           ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
           scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool resources/scripts/cosmian_fstool cosmian@package.cosmian.com:$DESTINATION_DIR/
-        env:
-          VERSION: ${{ github.head_ref }}
 
       - name: Push to package.cosmian.com - tags
         if: startsWith(github.ref, 'refs/tags/')
