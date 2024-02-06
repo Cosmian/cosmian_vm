@@ -27,14 +27,29 @@ jobs:
         working-directory: ./packer
 
     steps:
+      - name: Run `packer init`
+        run: |
+          pwd
+          ls *
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Run `packer init`
+        run: |
+          pwd
+          ls *
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           name: cosmian_vm
           path: packer/
+
+      - name: Run `packer init`
+        run: |
+            pwd
+            ls *
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
