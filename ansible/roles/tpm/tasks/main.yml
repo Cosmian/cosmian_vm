@@ -5,6 +5,15 @@
   debug:
     var: ansible_distribution
 
+- name: Copy cosmian_fstool script
+  ansible.builtin.copy:
+    src: /tmp/cosmian_fstool
+    dest: /usr/sbin/
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0500
+
 - name: TPM packages installation on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
@@ -27,7 +36,9 @@
 
   - name: Install packages
     ansible.builtin.dnf:
-      name: tpm2-tools
+      name: 
+        - tpm2-tools 
+        - cryptsetup
       state: present
       update_cache: yes
 

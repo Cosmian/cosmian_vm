@@ -100,6 +100,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "../resources/scripts/cosmian_fstool"
+    destination = "/tmp/cosmian_fstool"
+  }
+
+  provisioner "file" {
     source      = "./cosmian_vm_agent"
     destination = "/tmp/"
   }
