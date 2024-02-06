@@ -47,7 +47,6 @@ jobs:
           args: --release
 
       - name: Upload artifacts
-        if: steps.cargo_cache.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v3
         with:
           name: cosmian_vm
@@ -60,7 +59,7 @@ jobs:
           if-no-files-found: error
 
       - name: Release on tags, attach asset on release
-        if: startsWith(github.ref, 'refs/tags/') && steps.cargo_cache.outputs.cache-hit != 'true'
+        if: startsWith(github.ref, 'refs/tags/') 
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -70,7 +69,6 @@ jobs:
             resources/scripts/cosmian_fstool
 
       - name: Push to package.cosmian.com
-        if: steps.cargo_cache.outputs.cache-hit != 'true'
         run: |
           set -x
           DESTINATION_DIR=/mnt/package/cosmian_vm/last_build/$VERSION
@@ -80,7 +78,7 @@ jobs:
           VERSION: ${{ github.head_ref }}
 
       - name: Push to package.cosmian.com - tags
-        if: startsWith(github.ref, 'refs/tags/') && steps.cargo_cache.outputs.cache-hit != 'true'
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           set -x
           DESTINATION_DIR=/mnt/package/cosmian_vm/$VERSION
