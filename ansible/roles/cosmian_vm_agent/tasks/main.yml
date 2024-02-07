@@ -92,12 +92,6 @@
         group: root
         mode: 0644
 
-    # - name: Check if Supervisor is started
-    #   systemd:
-    #     name: supervisor
-    #     state: started
-    #   changed_when: false
-
 - name: Supervisor install on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
@@ -126,13 +120,6 @@
         owner: root
         group: root
         mode: 0644
-
-    # - name: Check if Supervisor is started
-    #   systemd:
-    #     name: supervisord
-    #     enabled: true
-    #     state: started
-    #   changed_when: false
 
 - name: Supervisor install on Amazon Linux
   when: ansible_distribution == 'Amazon'
@@ -182,20 +169,3 @@
         owner: root
         group: root
         mode: 0500
-
-    # - name: Service daemon reload
-    #   ansible.builtin.systemd_service:
-    #     daemon_reload: true
-
-    # - name: Check if Supervisor is started
-    #   ansible.builtin.systemd_service:
-    #     name: supervisord
-    #     enabled: true
-    #     state: started
-    #   changed_when: false
-
-# - name: Reread Supervisor conf file
-#   command: supervisorctl reread
-
-# - name: Update Supervisor process
-#   command: supervisorctl update
