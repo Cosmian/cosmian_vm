@@ -84,13 +84,13 @@
         state: latest
         update_cache: yes
 
-    - name: Adding a program
-      template:
-        src: cosmian_vm_agent.conf.j2
-        dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
-        owner: root
-        group: root
-        mode: 0644
+    # - name: Adding a program
+    #   template:
+    #     src: cosmian_vm_agent.conf.j2
+    #     dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
+    #     owner: root
+    #     group: root
+    #     mode: 0644
 
     - name: Check if Supervisor is started
       systemd:
@@ -119,13 +119,13 @@
         state: latest
         update_cache: yes
 
-    - name: Adding a program
-      template:
-        src: cosmian_vm_agent.conf.j2
-        dest: /etc/supervisord.d/cosmian_vm_agent.ini
-        owner: root
-        group: root
-        mode: 0644
+    # - name: Adding a program
+    #   template:
+    #     src: cosmian_vm_agent.conf.j2
+    #     dest: /etc/supervisord.d/cosmian_vm_agent.ini
+    #     owner: root
+    #     group: root
+    #     mode: 0644
 
     - name: Check if Supervisor is started
       systemd:
@@ -159,13 +159,13 @@
         group: root
         mode: 0644
 
-    - name: Create supervisor.conf file
-      template:
-        src: supervisord.conf.j2
-        dest: /etc/supervisord.conf
-        owner: root
-        group: root
-        mode: 0644
+    # - name: Create supervisor.conf file
+    #   template:
+    #     src: supervisord.conf.j2
+    #     dest: /etc/supervisord.conf
+    #     owner: root
+    #     group: root
+    #     mode: 0644
 
     - name: Create supervisor log folder
       ansible.builtin.file:
@@ -194,8 +194,8 @@
         state: started
       changed_when: false
 
-- name: Reread Supervisor conf file
-  command: supervisorctl reread
+# - name: Reread Supervisor conf file
+#   command: supervisorctl reread
 
-- name: Update Supervisor process
-  command: supervisorctl update
+# - name: Update Supervisor process
+#   command: supervisorctl update
