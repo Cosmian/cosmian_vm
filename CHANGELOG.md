@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 2023-02-07
+## [1.0.1] - 2024-02-07
+
+### Fix
+
+- Do not start supervisor when building the image but only when instantiate the built image. Otherwise it creates a luks inside it which can be decrypted when instantiate the VM on GCP. 
+- 
+## [1.0.0] - 2024-02-06
 
 ### Update
 
@@ -16,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - `cosmian_fstool` is released
 - Create a LUKS container when starting the `cosmian_vm_agent` for the first time
 
-## [0.4.0] - 2023-01-23
+## [0.4.0] - 2024-01-23
 
 ### Update
 
@@ -35,7 +41,7 @@ All notable changes to this project will be documented in this file.
 
 - Docker sgx
 
-## [0.3.0] - 2023-01-19
+## [0.3.0] - 2024-01-19
 
 ### New
 
