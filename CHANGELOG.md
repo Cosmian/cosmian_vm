@@ -6,8 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
-- Do not start supervisor when building the image but only when instantiate the built image. Otherwise it creates a luks inside it which can be decrypted when instantiate the VM on GCP. 
-- 
+- Do not start supervisor when building the image but only when instantiate the built image. Otherwise it creates a luks inside it which can't be decrypted when instantiating the VM on GCP. 
+
 ## [1.0.0] - 2024-02-06
 
 ### Update
