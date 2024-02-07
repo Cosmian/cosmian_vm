@@ -159,13 +159,13 @@
         group: root
         mode: 0644
 
-    # - name: Create supervisor.conf file
-    #   template:
-    #     src: supervisord.conf.j2
-    #     dest: /etc/supervisord.conf
-    #     owner: root
-    #     group: root
-    #     mode: 0644
+    - name: Create supervisor.conf file
+      template:
+        src: supervisord.conf.j2
+        dest: /etc/supervisord.conf
+        owner: root
+        group: root
+        mode: 0644
 
     - name: Create supervisor log folder
       ansible.builtin.file:
