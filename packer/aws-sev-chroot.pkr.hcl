@@ -173,7 +173,7 @@ source "amazon-chroot" "amazon-linux" {
 }
 
 build {
-  sources = ["sources.amazon-ebssurrogate.redhat"]
+  sources = ["sources.amazon-chroot.redhat"]
 
   provisioner "file" {
     source      = "../resources/conf/ima-policy"
@@ -208,7 +208,7 @@ build {
 }
 
 build {
-  sources = ["sources.amazon-ebssurrogate.amazon-linux"]
+  sources = ["sources.amazon-chroot.amazon-linux"]
 
   provisioner "file" {
     source      = "../resources/conf/ima-policy"
