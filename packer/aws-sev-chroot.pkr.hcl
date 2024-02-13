@@ -117,59 +117,25 @@ variable "imds_support" {
 source "amazon-chroot" "redhat" {
   source_ami             = var.redhat_source_ami
   region                 = var.region
-  ssh_username           = var.redhat_ssh_username
   ami_name               = local.redhat_ami_name
-  instance_type          = var.instance_type
-  ssh_timeout            = var.ssh_timeout
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
 
-  launch_block_device_mappings {
-    volume_type = var.volume_type
-    device_name = var.redhat_launch_block_device_mappings_device_name
-    volume_size = var.redhat_volume_size
-    delete_on_termination = var.delete_on_termination
-  }
-
-  ami_root_device {
-    source_device_name = var.redhat_source_device_name
-    device_name = var.redhat_ami_root_device_name
-    volume_size = var.redhat_volume_size
-    volume_type = var.volume_type
-    delete_on_termination = var.delete_on_termination
-  }
 }
 
 source "amazon-chroot" "amazon-linux" {
   source_ami             = var.amazon_linux_source_ami
   region                 = var.region
-  ssh_username           = var.amazon_linux_ssh_username
   ami_name               = local.amazon_linux_ami_name
-  instance_type          = var.instance_type
-  ssh_timeout            = var.ssh_timeout
   ami_virtualization_type = var.ami_virtualization_type
   ena_support            = var.ena_support
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
 
-  launch_block_device_mappings {
-    volume_type = var.volume_type
-    device_name = var.amazon_linux_launch_block_device_mappings_device_name
-    volume_size = var.amazon_linux_volume_size
-    delete_on_termination = var.delete_on_termination
-  }
-
-  ami_root_device {
-    source_device_name = var.amazon_linux_source_device_name
-    device_name = var.amazon_linux_ami_root_device_name
-    volume_size = var.amazon_linux_volume_size
-    volume_type = var.volume_type
-    delete_on_termination = var.delete_on_termination
-  }
 }
 
 build {
