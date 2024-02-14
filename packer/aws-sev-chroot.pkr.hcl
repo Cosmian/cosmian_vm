@@ -123,9 +123,7 @@ source "amazon-chroot" "redhat" {
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
-  assume_role {
-            role_arn     = "arn:aws:iam::788923109858:user/packer"
-        }
+  instance_id            = "i-02f6db6b3f6939272"
 }
 
 source "amazon-chroot" "amazon-linux" {
@@ -137,9 +135,7 @@ source "amazon-chroot" "amazon-linux" {
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
-  assume_role {
-            role_arn     = "arn:aws:iam::788923109858:user/packer"
-        }
+  instance_id            = "i-01665d8b5a1a431f0"
 }
 
 build {
