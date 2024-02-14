@@ -115,7 +115,7 @@ variable "imds_support" {
 }
 
 source "amazon-chroot" "redhat" {
-  source_ami             = var.redhat_source_ami
+  source_ami             = "i-02f6db6b3f6939272"
   region                 = var.region
   ami_name               = local.redhat_ami_name
   ami_virtualization_type = var.ami_virtualization_type
@@ -123,11 +123,10 @@ source "amazon-chroot" "redhat" {
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
-  instance_id            = "i-02f6db6b3f6939272"
 }
 
 source "amazon-chroot" "amazon-linux" {
-  source_ami             = var.amazon_linux_source_ami
+  source_ami             = "i-01665d8b5a1a431f0"
   region                 = var.region
   ami_name               = local.amazon_linux_ami_name
   ami_virtualization_type = var.ami_virtualization_type
@@ -135,7 +134,6 @@ source "amazon-chroot" "amazon-linux" {
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
-  instance_id            = "i-01665d8b5a1a431f0"
 }
 
 build {
