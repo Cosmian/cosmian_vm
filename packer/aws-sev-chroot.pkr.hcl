@@ -7,11 +7,11 @@ locals {
 
 variable "amazon_linux_source_ami" {
   type    = string
-  default = "ami-0766b4b472db7e3b9"
+  default = "ami-0674a4ea2a778ca44"
 }
 variable "redhat_source_ami" {
   type    = string
-  default = "ami-08e592fbb0f535224"
+  default = "ami-09647bebbca452fe2"
 }
 
 variable "region" {
