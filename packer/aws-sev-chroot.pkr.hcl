@@ -7,11 +7,11 @@ locals {
 
 variable "amazon_linux_source_ami" {
   type    = string
-  default = "ami-0674a4ea2a778ca44"
+  default = "ami-0766b4b472db7e3b9"
 }
 variable "redhat_source_ami" {
   type    = string
-  default = "ami-09647bebbca452fe2"
+  default = "ami-08e592fbb0f535224"
 }
 
 variable "region" {
@@ -123,7 +123,9 @@ source "amazon-chroot" "redhat" {
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
-
+  assume_role {
+            role_arn     = "arn:aws:iam::788923109858:user/packer"
+        }
 }
 
 source "amazon-chroot" "amazon-linux" {
@@ -135,7 +137,9 @@ source "amazon-chroot" "amazon-linux" {
   tpm_support            = var.tpm_support
   boot_mode              = var.boot_mode
   imds_support           = var.imds_support
-
+  assume_role {
+            role_arn     = "arn:aws:iam::788923109858:user/packer"
+        }
 }
 
 build {
