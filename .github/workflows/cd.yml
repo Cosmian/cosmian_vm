@@ -9,7 +9,9 @@ on:
       - closed
   # Do not run on push except on tags
   push:
-    branches-ignore:
+    # branches-ignore:
+    #   - "**"
+    branches:
       - "**"
     tags:
       - "**"
