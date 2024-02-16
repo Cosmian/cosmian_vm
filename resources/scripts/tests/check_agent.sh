@@ -2,11 +2,11 @@
 
 set -ex
 
-killall cosmian_vm_agent || true
+sudo killall cosmian_vm_agent || true
 
 CUR_DIR=$(pwd)
 TMP_DIR="$(mktemp -d)"
-RAND_PORT=$((5000 + RANDOM % 1000))
+RAND_PORT=$((5100 + RANDOM % 1000))
 RAND_NAME=$(echo date +%s%N | sha256sum | head -c 20)
 
 # Prerequisites: folder cosmian_vm should contain:
