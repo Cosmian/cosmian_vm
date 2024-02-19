@@ -36,6 +36,9 @@ sed -i "s,5355,$RAND_PORT," agent.toml
 sudo chmod u+x "$CUR_DIR/resources/scripts/cosmian_fstool"
 sudo COSMIAN_VM_FSTOOL="$CUR_DIR/resources/scripts/cosmian_fstool" COSMIAN_VM_AGENT_CONF="$TMP_DIR/agent.toml" ./cosmian_vm/cosmian_vm_agent &
 
+# wait for the server to be started
+sleep 3
+
 ###
 # Run Cosmian VM cli
 ./cosmian_vm/cosmian_vm --url https://localhost:$RAND_PORT/ --allow-insecure-tls snapshot
