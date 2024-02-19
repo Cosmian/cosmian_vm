@@ -37,7 +37,12 @@ sudo chmod u+x "$CUR_DIR/resources/scripts/cosmian_fstool"
 sudo COSMIAN_VM_FSTOOL="$CUR_DIR/resources/scripts/cosmian_fstool" COSMIAN_VM_AGENT_CONF="$TMP_DIR/agent.toml" ./cosmian_vm/cosmian_vm_agent &
 
 # wait for the server to be started
-sleep 3
+echo "Waiting for agent"
+until $(curl --insecure --output /dev/null --silent --fail https://localhost:$RAND_PORT/ima/ascii); do
+    printf '.'
+    sleep 3
+done
+echo "Agent is ready"
 
 ###
 # Run Cosmian VM cli
