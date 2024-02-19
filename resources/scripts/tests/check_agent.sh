@@ -46,7 +46,11 @@ sleep 3
 
 ###
 # Run a fake malware!
-echo -e "#!/usr/bin/bash\necho malware" >"$RAND_NAME.sh"
+cat >>"$RAND_NAME.sh" <<EOF
+#!/usr/bin/bash
+echo malware
+EOF
+
 chmod +x "$RAND_NAME.sh"
 ./"$RAND_NAME.sh"
 
