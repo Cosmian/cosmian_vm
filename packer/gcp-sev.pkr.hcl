@@ -7,7 +7,7 @@ locals {
 
 variable "project_id" {
   type    = string
-  default = "cosmian-dev"
+  default = "amd-sev-snp"
 }
 
 variable "ubuntu_source_image" {
