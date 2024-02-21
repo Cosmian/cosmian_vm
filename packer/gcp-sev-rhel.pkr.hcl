@@ -1,33 +1,12 @@
 variable "prefix" {}
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-sev-ubuntu-{{timestamp}}"
-  redhat_ami_name = "${var.prefix}-cosmian-vm-sev-redhat-{{timestamp}}"
+  redhat_ami_name = "${var.prefix}-cosmian-vm-sev-rhel"
 }
 
 variable "project_id" {
   type    = string
   default = "amd-sev-snp"
-}
-
-variable "ubuntu_source_image" {
-  type    = string
-  default = "ubuntu-2204-jammy-v20231030"
-}
-
-variable "ubuntu_source_image_family" {
-  type    = string
-  default = "ubuntu-2204-lts"
-}
-
-variable "redhat_source_image" {
-  type    = string
-  default = "rhel-9-v20231115"
-}
-
-variable "redhat_source_image_family" {
-  type    = string
-  default = "rhel-9"
 }
 
 variable "zone" {
@@ -75,20 +54,14 @@ variable "wait_to_add_ssh_keys" {
   default = "20s"
 }
 
-source "googlecompute" "ubuntu" {
-  project_id             = var.project_id
-  source_image           = var.ubuntu_source_image
-  source_image_family    = var.ubuntu_source_image_family
-  zone                   = var.zone
-  ssh_username           = var.ssh_username
-  ssh_timeout            = var.ssh_timeout
-  image_name             = local.ubuntu_ami_name
-  image_guest_os_features = var.image_guest_os_features
-  network                = var.network
-  subnetwork             = var.subnetwork
-  tags                   = var.tags
-  use_os_login           = var.use_os_login
-  wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
+variable "redhat_source_image" {
+  type    = string
+  default = "rhel-9-v20231115"
+}
+
+variable "redhat_source_image_family" {
+  type    = string
+  default = "rhel-9"
 }
 
 source "googlecompute" "redhat" {
@@ -105,41 +78,6 @@ source "googlecompute" "redhat" {
   tags                   = var.tags
   use_os_login           = var.use_os_login
   wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
-}
-
-build {
-  sources = ["sources.googlecompute.ubuntu"]
-
-  provisioner "file" {
-    source      = "../resources/conf/ima-policy"
-    destination = "/tmp/ima-policy"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/agent.toml"
-    destination = "/tmp/agent.toml"
-  }
-
-  provisioner "file" {
-    source      = "../resources/scripts/cosmian_fstool"
-    destination = "/tmp/cosmian_fstool"
-  }
-
-  provisioner "file" {
-    source      = "./target/release/cosmian_vm_agent"
-    destination = "/tmp/"
-  }
-
-  provisioner "file" {
-    source      = "./target/release/cosmian_certtool"
-    destination = "/tmp/"
-  }
-
-  provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_playbook.yml"
-    local_port    = 22
-    use_proxy     = false
-  }
 }
 
 build {
@@ -161,12 +99,12 @@ build {
   }
 
   provisioner "file" {
-    source      = "./target/release/cosmian_vm_agent"
+    source      = "./../target/release/cosmian_vm_agent"
     destination = "/tmp/"
   }
 
   provisioner "file" {
-    source      = "./target/release/cosmian_certtool"
+    source      = "./../target/release/cosmian_certtool"
     destination = "/tmp/"
   }
 
