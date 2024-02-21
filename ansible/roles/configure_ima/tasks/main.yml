@@ -28,6 +28,15 @@
       #!/usr/bin/bash
       f=/etc/default/grub
 
+      ## Template policy
+      if grep -q ima_policy= $f ; then
+        # Template policy already set
+        sed -i 's/ima_policy=[^ "]\+/ima_policy=tcb/' $f
+      else
+        # Template policy not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
+      fi
+
       ## Hash method
       if grep -q ima_hash= $f ; then
         # Hash method already set

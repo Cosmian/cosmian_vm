@@ -2,11 +2,11 @@
 
 set -ex
 
-killall cosmian_vm_agent || true
+sudo killall cosmian_vm_agent || true
 
 CUR_DIR=$(pwd)
 TMP_DIR="$(mktemp -d)"
-RAND_PORT=$((5000 + RANDOM % 1000))
+RAND_PORT=$((5100 + RANDOM % 1000))
 RAND_NAME=$(echo date +%s%N | sha256sum | head -c 20)
 
 # Prerequisites: folder cosmian_vm should contain:
@@ -36,6 +36,14 @@ sed -i "s,5355,$RAND_PORT," agent.toml
 sudo chmod u+x "$CUR_DIR/resources/scripts/cosmian_fstool"
 sudo COSMIAN_VM_FSTOOL="$CUR_DIR/resources/scripts/cosmian_fstool" COSMIAN_VM_AGENT_CONF="$TMP_DIR/agent.toml" ./cosmian_vm/cosmian_vm_agent &
 
+# wait for the server to be started
+echo "Waiting for agent"
+until $(curl --insecure --output /dev/null --silent --fail https://localhost:$RAND_PORT/ima/ascii); do
+    printf '.'
+    sleep 3
+done
+echo "Agent is ready"
+
 ###
 # Run Cosmian VM cli
 ./cosmian_vm/cosmian_vm --url https://localhost:$RAND_PORT/ --allow-insecure-tls snapshot
@@ -43,7 +51,11 @@ sudo COSMIAN_VM_FSTOOL="$CUR_DIR/resources/scripts/cosmian_fstool" COSMIAN_VM_AG
 
 ###
 # Run a fake malware!
-echo -e "#!/usr/bin/bash\necho malware" >"$RAND_NAME.sh"
+cat >>"$RAND_NAME.sh" <<EOF
+#!/usr/bin/bash
+echo malware
+EOF
+
 chmod +x "$RAND_NAME.sh"
 ./"$RAND_NAME.sh"
 
