@@ -21,6 +21,7 @@ source "azure-arm" "ubuntu" {
   image_offer                 = local.image_offer
   image_sku                   = local.image_sku
   vm_size                     = local.vm_size
+  use_azure_cli_auth          = false
 }
 
 build {
