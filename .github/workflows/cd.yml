@@ -9,7 +9,9 @@ on:
       - closed
   # Do not run on push except on tags
   push:
-    branches-ignore:
+    # branches-ignore:
+    #   - "**"
+    branches:
       - "**"
     tags:
       - "**"
@@ -47,6 +49,7 @@ jobs:
           packer plugins install github.com/hashicorp/amazon
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
+          packer plugins install github.com/hashicorp/azure
 
       - name: Authenticate to AWS project
         uses: aws-actions/configure-aws-credentials@v1
@@ -60,6 +63,13 @@ jobs:
         with:
           credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}            
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Build AWS images - main
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
@@ -70,6 +80,11 @@ jobs:
         run: |
           packer build -var "prefix=alpha" gcp-sev.pkr.hcl
 
+      - name: Build Azure images - main
+        if: ${{ !startsWith(github.ref, 'refs/tags') }}
+        run: |
+          packer build -var "prefix=alpha" azyre-sev.pkr.hcl
+
       - name: Build AWS images - release
         if: startsWith(github.ref, 'refs/tags')
         run: |
@@ -79,6 +94,11 @@ jobs:
         if: startsWith(github.ref, 'refs/tags')
         run: |
           packer build -var "prefix=release-${GITHUB_REF_NAME//./-}" gcp-sev.pkr.hcl  
+
+      - name: Build GCP images - release
+        if: startsWith(github.ref, 'refs/tags')
+        run: |
+          packer build -var "prefix=release-${GITHUB_REF_NAME//./-}" azure-sev.pkr.hcl
 
   deploy-tdx-cosmian-vm-image:
     needs: build-cosmian-vm
