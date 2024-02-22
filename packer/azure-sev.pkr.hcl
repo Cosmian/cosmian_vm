@@ -1,6 +1,14 @@
 variable "prefix" {}
+variable "client_id" {}
+variable "tenant_id" {}
+variable "subscription_id" {}
+variable "client_secret" {}
 
 locals {
+  client_id = "${var.client_id}"
+  client_secret = "${var.client_secret}"
+  subscription_id = "${var.subscription_id}"
+  tenant_id = "${var.tenant_id}"
   ubuntu_managed_image_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
   ubuntu_managed_image_resource_group_name = "packer"
   ubuntu_build_resource_group_name = "packer"
@@ -13,6 +21,10 @@ locals {
 }
 
 source "azure-arm" "ubuntu" {
+  client_id                 = local.client_id
+  tenant_id                 = local.tenant_id
+  subscription_id           = local.subscription_id
+  client_secret             = local.client_secret
   build_resource_group_name = local.ubuntu_build_resource_group_name
   managed_image_resource_group_name = local.ubuntu_managed_image_resource_group_name
   managed_image_name          = local.ubuntu_managed_image_name
