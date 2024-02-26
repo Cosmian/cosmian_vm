@@ -6,7 +6,7 @@ locals {
 
 variable "project_id" {
   type    = string
-  default = "amd-sev-snp"
+  default = "cosmian-dev"
 }
 
 variable "zone" {
@@ -41,7 +41,7 @@ variable "subnetwork" {
 
 variable "tags" {
   type    = list(string)
-  default = ["ssh-full"]
+  default = ["ssh"]
 }
 
 variable "use_os_login" {
