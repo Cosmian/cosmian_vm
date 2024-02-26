@@ -7,6 +7,10 @@ on:
         required: true
         type: string
 
+env:
+  GCP_DEV_PROJECT: cosmian-dev
+  GCP_PUBLIC_PROJECT: cosmian-public
+
 jobs:
   build-image:
     name: Packer build
@@ -54,7 +58,7 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
 
       - name: Packer build image
         id: packer-build
@@ -77,13 +81,13 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           version: latest
-          install_components: alpha
+          install_components: beta
 
       - name: Launch GCP instance
         id: run-gcp-instance
@@ -91,19 +95,19 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
-          gcloud alpha compute instances create $CI_INSTANCE --machine-type n2d-standard-2 \
+          gcloud beta compute instances create $CI_INSTANCE --machine-type n2d-standard-2 \
                                                             --zone europe-west4-a \
                                                             --min-cpu-platform="AMD Milan" \
                                                             --confidential-compute-type=SEV_SNP \
-                                                            --on-host-maintenance=TERMINATE \
+                                                            --maintenance-policy=TERMINATE \
                                                             --image="$IMAGE_NAME" \
-                                                            --image-project=amd-sev-snp \
-                                                            --project amd-sev-snp \
-                                                            --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
+                                                            --image-project=$GCP_DEV_PROJECT \
+                                                            --project $GCP_DEV_PROJECT \
+                                                            --tags ssh,backend,http,https,cosmian-vm-agent \
                                                             --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
                                                             --max-run-duration=10m \
                                                             --instance-termination-action=DELETE
-          IP_ADDR=$(gcloud alpha compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
+          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download binaries
@@ -131,11 +135,11 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           set +e
-          OUTPUT=$(gcloud alpha compute instances describe $CI_INSTANCE --format='get(status)' --zone=europe-west4-a)
+          OUTPUT=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(status)' --zone=europe-west4-a)
           EXIT_CODE="$?"
           if [ "$EXIT_CODE" -eq 0 ]; then
-            gcloud alpha compute instances stop $CI_INSTANCE --zone europe-west4-a \
-                                                             --project amd-sev-snp
-            gcloud alpha compute instances delete $CI_INSTANCE --zone europe-west4-a \
-                                                               --project amd-sev-snp
+            gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a \
+                                                             --project $GCP_DEV_PROJECT
+            gcloud beta compute instances delete $CI_INSTANCE --zone europe-west4-a \
+                                                               --project $GCP_DEV_PROJECT
           fi

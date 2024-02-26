@@ -9,7 +9,6 @@ on:
 name: CI
 
 jobs:
-
   check:
     name: Rust Check
     runs-on: ubuntu-22.04
