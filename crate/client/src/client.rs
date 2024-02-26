@@ -330,10 +330,10 @@ mod tests {
         let server_cert = get_server_certificate("self-signed.badssl.com", 443).unwrap();
 
         let b64_server_cert = r"
-        MIIDeTCCAmGgAwIBAgIJAMrlEvmXqB1TMA0GCSqGSIb3DQEBCwUAMGIxCzAJBgNV
+        MIIDeTCCAmGgAwIBAgIJAM2W4dyViZyyMA0GCSqGSIb3DQEBCwUAMGIxCzAJBgNV
         BAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNp
         c2NvMQ8wDQYDVQQKDAZCYWRTU0wxFTATBgNVBAMMDCouYmFkc3NsLmNvbTAeFw0y
-        MzExMjkyMjM0MDRaFw0yNTExMjgyMjM0MDRaMGIxCzAJBgNVBAYTAlVTMRMwEQYD
+        NDAyMjEyMTI4MzJaFw0yNjAyMjAyMTI4MzJaMGIxCzAJBgNVBAYTAlVTMRMwEQYD
         VQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQ8wDQYDVQQK
         DAZCYWRTU0wxFTATBgNVBAMMDCouYmFkc3NsLmNvbTCCASIwDQYJKoZIhvcNAQEB
         BQADggEPADCCAQoCggEBAMIE7PiM7gTCs9hQ1XBYzJMY61yoaEmwIrX5lZ6xKyx2
@@ -343,12 +343,12 @@ mod tests {
         ww9HdFxBIuGa+RuT5q0iBikusbpJHAwnnqP7i/dAcgCskgjZjFeEU4EFy+b+a1SY
         QCeFxxC7c3DvaRhBB0VVfPlkPz0sw6l865MaTIbRyoUCAwEAAaMyMDAwCQYDVR0T
         BAIwADAjBgNVHREEHDAaggwqLmJhZHNzbC5jb22CCmJhZHNzbC5jb20wDQYJKoZI
-        hvcNAQELBQADggEBAJYrbHPC6Yor7oi3aimJAPnnTh9Z7sQyaGfZ4I1ZIayWGIF7
-        +9dq/VtCYxEeq7bZELvqcK6LMtQQ7xGoJ5yCgJWjO/SbLaSy1AEa5m9im3Gg2k4w
-        h1AE8Z3CQUEdazVTsLKxdCp+eN62jQAzTY8xQ6yKDaWmTUhvSgErJyBv/H+vTQ+9
-        L5ghqMrDUZTkxgwlXs3OyJi/S/Rfv9OGiEua/T+h3yHEzOL53d+IiagOUCjUg7mP
-        5g4MP8zks3VcxERVjtzOahBH7fvhsMuJ/i+lSiNMMVaOr/U9Y1Y9kq96YIPax6Re
-        Jok9KYiYJsWbiimaCxWFT/HbLvD+qri7lD2Gm8A=
+        hvcNAQELBQADggEBAIdCbAQbPbm1u1ZggwBpr0JwJMfdH7dD8gXSfuXlRLt0xek0
+        Y0mJDkM45ry/8AH2G06oRraPlb95A97gA03wLKC639G9uVUwFb2WuFhDmYNgo+NX
+        SiLsZ92ifLw+p8NKBSO7ltk+mpb2FKo4aAYqYTSgaC+GRwQAtH1KKU9j8xThkBLM
+        5HJutQkpb4wWiVVyhgPD5e5HY8B97N4yKWw1H+w5m7WedaOxEOog78az/VY0pvUU
+        AnwJnfRIspinQjrIRXc2O92lpTX63FAQFrkiTf0JP6slLLXEMlRdmQJ4o5tpFjWV
+        GQpeK4UHMmdSwjbWI2HI4WXf4MHfa6hD934mg+I=
         "
         .replace(['\n', ' '], "");
         let expected_server_cert = general_purpose::STANDARD.decode(b64_server_cert).unwrap();

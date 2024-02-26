@@ -6,18 +6,12 @@ on:
     tags-ignore:
       - "**"
 
-name: Rust compilation, check and test
+name: CI
 
 jobs:
-  build-cosmian-vm:
-    uses: ./.github/workflows/cargo_build.yml
-
-  test-cosmian-vm:
-    needs: build-cosmian-vm
-    uses: ./.github/workflows/agent.yml
 
   check:
-    name: Check
+    name: Rust Check
     runs-on: ubuntu-22.04
 
     steps:
@@ -25,10 +19,12 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
 
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
-        id: cargo_cache
+      - name: Cargo cache
+        uses: actions/cache@v4
+        id: cargo-cache
         continue-on-error: false
         with:
           path: |
@@ -36,18 +32,17 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-lint-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-lint-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - uses: dtolnay/rust-toolchain@stable
-        if: steps.cargo_cache.outputs.cache-hit != 'true'
+      - name: Install Rust toolchain and components
+        uses: dtolnay/rust-toolchain@stable
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         with:
           toolchain: stable
           components: rustfmt, clippy
 
       - name: Cargo install cargo-machete
-        if: steps.cargo_cache.outputs.cache-hit != 'true'
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         uses: actions-rs/cargo@v1
         with:
           command: install
@@ -63,7 +58,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-
+  
       - name: Clippy
         uses: actions-rs/cargo@v1
         with:
@@ -75,19 +70,20 @@ jobs:
         with:
           command: machete
 
-      - name: Cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-
-  cargo-audit:
-    name: Security Audit
-    runs-on: ubuntu-latest
+  test:
+    name: Rust Test
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
 
-      - uses: actions/cache@v3
-        id: cargo_cache
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cargo cache
+        uses: actions/cache@v4
+        id: cargo-cache
         continue-on-error: false
         with:
           path: |
@@ -95,13 +91,110 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-audit-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-audit-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - uses: dtolnay/rust-toolchain@stable
-        if: steps.cargo_cache.outputs.cache-hit != 'true'
+      - name: Install Rust toolchain and components
+        uses: dtolnay/rust-toolchain@stable
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
 
-      - uses: rustsec/audit-check@v1
+      - name: Cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  build:
+    name: Rust Build
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cargo cache
+        uses: actions/cache@v4
+        id: cargo-cache
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install Rust toolchain and components
+        uses: dtolnay/rust-toolchain@stable
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cosmian_vm
+          path: |
+            target/release/cosmian_vm_agent
+            target/release/cosmian_vm
+            target/release/cosmian_certtool
+            resources/scripts/cosmian_fstool
+          retention-days: 1
+          if-no-files-found: error
+
+  audit:
+    name: Rust Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cargo cache
+        uses: actions/cache@v4
+        id: cargo-cache
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
+
+      - name: Cargo audit
+        uses: rustsec/audit-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-test-gcp-image:
+    strategy:
+      matrix:
+        distrib: [ubuntu, rhel]
+    name: GCP image (${{ matrix.distrib }})
+    needs: [check, build, test, audit]
+    secrets: inherit
+    uses: ./.github/workflows/gcp_image.yml
+    with:
+      distrib: ${{ matrix.distrib }}
+
+  release:
+    name: Release
+    needs: [build-test-gcp-image]
+    secrets: inherit
+    uses: ./.github/workflows/release.yml

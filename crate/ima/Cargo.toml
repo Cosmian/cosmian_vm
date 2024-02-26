@@ -5,6 +5,11 @@ edition = "2021"
 license-file = "../../LICENSE.md"
 description = "IMA parser"
 
+[lib]
+# doc test linking as a separate binary is extremely slow
+# and is not needed for internal lib
+doctest = false
+
 [dependencies]
 bincode = "1.3"
 hex = { workspace = true }
