@@ -2,9 +2,9 @@ on:
   # Run on push except on tags
   push:
     branches:
-      - "**"
-    tags-ignore:
-      - "**"
+      - "*"
+    tags:
+      - "*"
 
 name: CI
 
@@ -31,11 +31,11 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-check-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: rust-check-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain and components
-        uses: dtolnay/rust-toolchain@stable
         if: steps.cargo-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt, clippy
@@ -90,11 +90,11 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-test-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: rust-test-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain and components
-        uses: dtolnay/rust-toolchain@stable
         if: steps.cargo-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt, clippy
@@ -126,11 +126,11 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-build-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: rust-build-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain and components
-        uses: dtolnay/rust-toolchain@stable
         if: steps.cargo-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt, clippy
@@ -170,11 +170,11 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-audit-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: rust-audit-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
         if: steps.cargo-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Cargo audit
         uses: rustsec/audit-check@v1

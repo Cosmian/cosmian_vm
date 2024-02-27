@@ -143,3 +143,31 @@ jobs:
             gcloud beta compute instances delete $CI_INSTANCE --zone europe-west4-a \
                                                                --project $GCP_DEV_PROJECT
           fi
+
+  release-image:
+    name: Release image
+    runs-on: ubuntu-22.04
+    needs: [build-image, test-image]
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: GCP auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+
+      - name: Copy image to public project
+        if: startsWith(github.ref, 'refs/tags')
+        env:
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+        run: |
+          TAG=${{  github.ref_name }}
+          VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          NEW_IMAGE_NAME=cosmian-vm-$VERSION-sev-${{ inputs.distrib }}
+          gcloud beta compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
+          gcloud beta compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
