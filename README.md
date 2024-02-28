@@ -65,7 +65,7 @@ The Cosmian VM contains four major executables:
 
 - `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
 - `cosmian_certtool` is designed to generate a certificate signed by *Let's Encrypt* or an RATLS certificate
-- `cosmian_fstool` is designed to generate a luks container and enroll the TPM to be automatically started on reboot
+- `cosmian_fstool` is designed to generate a LUKS container and enroll the TPM to be automatically started on reboot
 - `cosmian_vm` is a CLI designed to be used on your own host. It queries the `cosmian_vm_agent` in order to get the collaterals used to verify the trustworthiness of the Cosmian VM
 
 You can compile and test these both binaries as follow:
@@ -157,7 +157,7 @@ You can change the default location of the configuration file by setting the env
 When `cosmian_vm_agent` starts for the first time, it initializes several components:
 
 1. It generates a self-signed certificate and set the `CommonName` of the certificate to the value of the machine hostname.
-2. It generates a luks container (`/var/lig/cosmian_vm/container`) and mounted it at `/var/lig/cosmian_vm/data`. Note that,
+2. It generates a LUKS container (`/var/lig/cosmian_vm/container`) and mounted it at `/var/lig/cosmian_vm/data`. Note that,
 `/var/lib/cosmian_vm/tmp` is a tmpfs. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
 3. It generates the TPM endorsement keys
 
@@ -169,7 +169,7 @@ The certificate can be changed at will:
 - Create a trusted certificate using the method of your choice (*Let's encrypt* for instance) or use `cosmian_certtool`
 - Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
 
-The luks container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container.
+The LUKS container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container.
 
 You can skip all these first startup steps by setting `COSMIAN_VM_PREINIT=0` when starting `cosmian_vm_agent`.
 
@@ -180,7 +180,7 @@ Now, instantiate a VM based on the built image. The `cosmian_vm_agent` automatic
 You can start/restart/stop the Cosmian VM Agent as follow:
 
 ```sh
-# If the surpervisor configuration file has been edited, reload it first
+# If the supervisor configuration file has been edited, reload it first
 supervisorctl reload cosmian_vm_agent
 supervisorctl start cosmian_vm_agent
 # Or
@@ -227,7 +227,7 @@ $ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.sn
 
 ## Provide secrets
 
-Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisionning is made by someone who doesn't have the rights to connect to the VM through SSH for instance.
+Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisioning is made by someone who doesn't have the rights to connect to the VM through SSH for instance.
 
 Prior to send the secrets, you should have configured the `app` section in the `agent.toml` as follow:
 
@@ -255,7 +255,7 @@ Now, you can provide the app configuration file from your localhost to the Cosmi
 cosmian_vm --url https://cosmianvm.cosmian.dev app init --conf app.json
 ```
 
-The configuration file can be anything the application expects. Here, a json file. It will be send to the `cosmian_vm_agent` and stored in the luks container in `/var/lib/cosmian_vm/data/app/app.conf`.
+The configuration file can be anything the application expects. Here, a json file. It will be send to the `cosmian_vm_agent` and stored in the LUKS container in `/var/lib/cosmian_vm/data/app/app.conf`.
 
 If you call again `init` the previous configuration file is overwritten.
 
