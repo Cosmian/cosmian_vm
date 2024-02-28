@@ -65,7 +65,7 @@ variable "ubuntu_source_image_family" {
 }
 
 variable "image_licenses" {
-  type    = string
+  type    = list(string)
   default = ["projects/cosmian-public/global/licenses/cloud-marketplace-84a2e990cf18dca8-df1ebeb69c0ba664"]
 }
 
