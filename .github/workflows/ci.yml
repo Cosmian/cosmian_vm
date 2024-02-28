@@ -42,7 +42,6 @@ jobs:
           components: rustfmt, clippy
 
       - name: Cargo install cargo-machete
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
         uses: actions-rs/cargo@v1
         with:
           command: install
