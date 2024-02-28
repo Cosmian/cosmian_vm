@@ -36,8 +36,8 @@
 
   - name: Install packages
     ansible.builtin.dnf:
-      name: 
-        - tpm2-tools 
+      name:
+        - tpm2-tools
         - cryptsetup
       state: present
       update_cache: yes

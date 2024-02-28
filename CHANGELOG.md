@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fix
 
-- Do not start supervisor when building the image but only when instantiate the built image. Otherwise it creates a luks inside it which can't be decrypted when instantiating the VM on GCP. 
+- Do not start supervisor when building the image but only when instantiate the built image. Otherwise it creates a luks inside it which can't be decrypted when instantiating the VM on GCP.
 
 ## [1.0.0] - 2024-02-06
 
@@ -17,7 +17,7 @@ All notable changes to this project will be documented in this file.
 - Relative path in the configuration file is now allowed: related to `/var/lib/cosmian_vm`
 - `cosmian_vm_agent` can be started on non-tee host without panicking
 
-### New 
+### New
 
 - `cosmian_fstool` is released
 - Create a LUKS container when starting the `cosmian_vm_agent` for the first time

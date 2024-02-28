@@ -12,8 +12,8 @@ jobs:
     name: Packer build
     runs-on: ubuntu-22.04
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
     outputs:
       timestamp: ${{ steps.env.outputs.TIMESTAMP }}
       image_name: ${{ steps.env.outputs.IMAGE_NAME }}
@@ -68,8 +68,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
