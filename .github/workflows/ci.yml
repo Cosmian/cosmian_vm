@@ -32,7 +32,7 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-check-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain and components
         uses: dtolnay/rust-toolchain@stable
@@ -42,6 +42,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Cargo install cargo-machete
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         uses: actions-rs/cargo@v1
         with:
           command: install
@@ -90,7 +91,7 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-test-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain and components
         uses: dtolnay/rust-toolchain@stable
@@ -126,7 +127,7 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-build-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain and components
         uses: dtolnay/rust-toolchain@stable
@@ -170,7 +171,7 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-audit-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
