@@ -122,12 +122,25 @@ jobs:
       - name: Test Cosmian VM Agent on GCP instance
         env:
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
-          echo "Waiting for Cosmian VM agent"
-          until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do printf '.'; sleep 3; done
-          echo "\nCosmian VM is ready"
+          sudo apt-get install -y jq moreutils
+          echo "Waiting for Cosmian VM agent..."
+          until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done
+          echo "[ OK ] Cosmian VM ready"
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls snapshot
-          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot ./cosmian_vm.snapshot
+          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+          echo "Rebooting instance..."
+          gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
+          gcloud beta compute instances start $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
+          until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done
+          echo "[ OK ] Cosmian VM ready after reboot"
+          RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
+          NEW_RESET_COUNT=$(expr $RESET_COUNT + 1)
+          jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot > new_cosmian_vm.snapshot
+          jq '.tpm_policy.reset_count |= tonumber' new_cosmian_vm.snapshot | sponge new_cosmian_vm.snapshot
+          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot new_cosmian_vm.snapshot
+          echo "[ OK ] Integrity after reboot"
 
       - name: Stop and delete GCP instance
         if: success() || failure()
