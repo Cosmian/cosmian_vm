@@ -1,0 +1,11 @@
+---
+# tasks file for ansible/roles/instance_configs
+
+- name: Copy instance_configs.cfg
+  ansible.builtin.copy:
+    src: /tmp/instance_configs.cfg
+    dest: /etc/default
+    remote_src: true
+    owner: root
+    group: root
+    mode: '644'

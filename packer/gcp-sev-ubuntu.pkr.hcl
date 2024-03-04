@@ -90,6 +90,11 @@ build {
   sources = ["sources.googlecompute.ubuntu"]
 
   provisioner "file" {
+    source      = "../resources/conf/instance_configs.cfg"
+    destination = "/tmp/instance_configs.cfg"
+  }
+
+  provisioner "file" {
     source      = "../resources/conf/ima-policy"
     destination = "/tmp/ima-policy"
   }

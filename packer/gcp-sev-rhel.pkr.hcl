@@ -90,6 +90,11 @@ build {
   sources = ["sources.googlecompute.redhat"]
 
   provisioner "file" {
+    source      = "../resources/conf/instance_configs.cfg"
+    destination = "/tmp/instance_configs.cfg"
+  }
+
+  provisioner "file" {
     source      = "../resources/conf/ima-policy-selinux"
     destination = "/tmp/ima-policy"
   }
