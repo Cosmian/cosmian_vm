@@ -107,8 +107,6 @@ jobs:
                                                             --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
                                                             --max-run-duration=10m \
                                                             --instance-termination-action=DELETE
-          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
-          echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -121,10 +119,10 @@ jobs:
 
       - name: Test Cosmian VM Agent on GCP instance
         env:
-          IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           sudo apt-get install -y jq moreutils
+          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
           echo "Waiting for Cosmian VM agent..."
           until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done
           echo "[ OK ] Cosmian VM ready"
@@ -133,6 +131,7 @@ jobs:
           echo "Rebooting instance..."
           gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
           gcloud beta compute instances start $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
+          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
           until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done
           echo "[ OK ] Cosmian VM ready after reboot"
           RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
@@ -152,9 +151,9 @@ jobs:
           EXIT_CODE="$?"
           if [ "$EXIT_CODE" -eq 0 ]; then
             gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a \
-                                                             --project $GCP_DEV_PROJECT
+                                                            --project $GCP_DEV_PROJECT
             gcloud beta compute instances delete $CI_INSTANCE --zone europe-west4-a \
-                                                               --project $GCP_DEV_PROJECT
+                                                              --project $GCP_DEV_PROJECT
           fi
 
   release-image:
