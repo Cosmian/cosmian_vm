@@ -1,4 +1,7 @@
-variable "prefix" {}
+variable "prefix" {
+  type    = string
+  default = "alpha"
+}
 
 locals {
   redhat_ami_name = "${var.prefix}-cosmian-vm-sev-rhel"

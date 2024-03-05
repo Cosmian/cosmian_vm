@@ -181,19 +181,46 @@ jobs:
   #       with:
   #         token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-test-gcp-image:
+  build-test-gcp-sev-image:
     strategy:
       matrix:
         distrib: [ubuntu, rhel]
-    name: GCP image (${{ matrix.distrib }})
-    needs: [check, build, test] #, audit]
+    name: (${{ matrix.distrib }}) -> GCP SEV image
+    needs: [check, build, test]
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
     with:
+      techno: sev
       distrib: ${{ matrix.distrib }}
+      machine-type: n2d-standard-2
+      zone: europe-west4-a
+      confidential-compute-type: SEV_SNP
+      min-cpu-platform: AMD Milan
+      project: cosmian-dev
+      mode: beta
+      maintenance: maintenance-policy=TERMINATE
+
+  build-test-gcp-tdx-image:
+    strategy:
+      matrix:
+        distrib: [ubuntu]
+    name: (${{ matrix.distrib }}) -> GCP TDX image
+    needs: [check, build, test]
+    secrets: inherit
+    uses: ./.github/workflows/gcp_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      machine-type: c3-standard-4
+      zone: us-central1-a
+      confidential-compute-type: TDX
+      min-cpu-platform: AUTOMATIC
+      project: cosmian-dev
+      mode: alpha
+      maintenance: on-host-maintenance=TERMINATE
 
   release:
     name: Release
-    needs: [build-test-gcp-image]
+    needs: [build-test-gcp-sev-image, build-test-gcp-tdx-image]
     secrets: inherit
     uses: ./.github/workflows/release.yml

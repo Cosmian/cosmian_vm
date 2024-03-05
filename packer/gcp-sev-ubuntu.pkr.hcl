@@ -1,4 +1,7 @@
-variable "prefix" {}
+variable "prefix" {
+  type    = string
+  default = "alpha"
+}
 
 variable "project_id" {
   type    = string

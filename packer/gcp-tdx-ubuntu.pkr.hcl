@@ -4,15 +4,18 @@ To do so, run the command below :
 gcloud alpha compute --project=intel-enclaves images create ubuntu-2204-tdx-v20231011 --family=ubuntu-2204-lts  --source-image=ubuntu-2204-tdx-v20231011  --source-image-project=tdx-guest-image
 */
 
-variable "prefix" {}
+variable "prefix" {
+  type    = string
+  default = "alpha"
+}
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-tdx-ubuntu-{{timestamp}}"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-tdx-ubuntu"
 }
 
 variable "project_id" {
   type    = string
-  default = "intel-enclaves"
+  default = "cosmian-dev"
 }
 
 variable "ubuntu_source_image" {
@@ -96,6 +99,11 @@ build {
   sources = ["sources.googlecompute.ubuntu"]
 
   provisioner "file" {
+    source      = "../resources/conf/instance_configs.cfg"
+    destination = "/tmp/instance_configs.cfg"
+  }
+
+  provisioner "file" {
     source      = "../resources/conf/ima-policy"
     destination = "/tmp/ima-policy"
   }
@@ -111,12 +119,12 @@ build {
   }
 
   provisioner "file" {
-    source      = "./target/release/cosmian_vm_agent"
+    source      = "../target/release/cosmian_vm_agent"
     destination = "/tmp/"
   }
 
   provisioner "file" {
-    source      = "./target/release/cosmian_certtool"
+    source      = "../target/release/cosmian_certtool"
     destination = "/tmp/"
   }
 
