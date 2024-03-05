@@ -24,9 +24,7 @@ impl InitArgs {
 
         let cfg_content = std::fs::read(&self.configuration)?;
 
-        if let Some(key) = client.init_app(&cfg_content).await? {
-            println!("Save the key: `{}`", hex::encode(key));
-        }
+        client.init_app(&cfg_content).await?;
 
         println!("The app has been configurated");
 
