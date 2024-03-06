@@ -22,11 +22,12 @@ impl InitArgs {
     pub async fn run(&self, client: &CosmianVmClient) -> Result<()> {
         println!("Processing the init of the deployed app...");
 
-        let cfg_content = std::fs::read(&self.configuration)?;
+        let cfg_content = std::fs::read(&self.configuration)
+            .map_err(|e| anyhow::anyhow!("Cannot find conf file {:?}: {e}", self.configuration))?;
 
         client.init_app(&cfg_content).await?;
 
-        println!("The app has been configurated");
+        println!("The app has been configured and started");
 
         Ok(())
     }
