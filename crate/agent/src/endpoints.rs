@@ -121,7 +121,7 @@ pub async fn get_tpm_quote(
     }))
 }
 
-/// Initialize the application configuration
+/// Write the app configuration and starts the app
 #[post("/app/init")]
 pub async fn init_app(
     data: Json<AppConf>,

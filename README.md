@@ -125,9 +125,9 @@ This is a abstract of the updated file tree:
 └── var
     ├── lib
     │   └── cosmian_vm
-    │       ├── container
+    │       ├── container   <--- LUKS container
     │       ├── tmp
-    │       └── data
+    │       └── data        <--- LUKS container mounted
     │           ├── cert.pem
     │           └── cert.key
     └── log
@@ -147,7 +147,7 @@ host = "127.0.0.1"
 port = 5355
 ssl_certificate = "data/cert.pem"
 ssl_private_key = "data/key.pem"
-tpm_device = "/dev/tpmrm0
+tpm_device = "/dev/tpmrm0"
 ```
 
 You can change the default location of the configuration file by setting the environment variable: `COSMIAN_VM_AGENT_CONF`.
@@ -157,8 +157,8 @@ You can change the default location of the configuration file by setting the env
 When `cosmian_vm_agent` starts for the first time, it initializes several components:
 
 1. It generates a self-signed certificate and set the `CommonName` of the certificate to the value of the machine hostname.
-2. It generates a LUKS container (`/var/lig/cosmian_vm/container`) and mounted it at `/var/lig/cosmian_vm/data`. Note that,
-`/var/lib/cosmian_vm/tmp` is a tmpfs. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
+2. It generates a LUKS container (`/var/lib/cosmian_vm/container`) and mounted it at `/var/lib/cosmian_vm/data`. Note that,
+`/var/lib/cosmian_vm/tmp` is a `tmpfs`. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
 3. It generates the TPM endorsement keys
 
 It is recommended to configure 1. and 2. on your own for production systems.
@@ -245,7 +245,7 @@ service_name = "cosmian_helloworld"
 app_storage = "data/app"
 ```
 
-In that example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service) is the name of the application (as a `supervisor` service).
+In this example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service) is the name of the application (as a `supervisor` service).
 
 The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommended to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
 
@@ -255,7 +255,9 @@ Now, you can provide the app configuration file from your localhost to the Cosmi
 cosmian_vm --url https://cosmianvm.cosmian.dev app init --conf app.json
 ```
 
-The configuration file can be anything the application expects. Here, a json file. It will be send to the `cosmian_vm_agent` and stored in the LUKS container in `/var/lib/cosmian_vm/data/app/app.conf`.
+The configuration file can be anything the application expects. Here, a JSON file. It will be send to the `cosmian_vm_agent` and stored in the LUKS container in `/var/lib/cosmian_vm/data/app/app.conf`.
+
+Note: `data/app/` subpath is provided as `app_storage` variable by `agent.toml` configuration.
 
 If you call again `init` the previous configuration file is overwritten.
 
@@ -263,4 +265,4 @@ The `restart` subcommand can restart the application identified in `service_name
 
 ## How to use Cosmian VM on SGX
 
-See [`how to use cosmian VM on SGX`](resources/sgx/README.md)
+See [`how to use Cosmian VM on SGX`](resources/sgx/README.md)
