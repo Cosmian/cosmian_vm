@@ -67,8 +67,8 @@
 - name: Check if line exits in file with regex
   ansible.builtin.shell:
     cmd: "grep -q '^GRUB_CMDLINE_LINUX=\"ima_policy=tcb ima_hash=sha256 ima_template=ima-ng\"$' /etc/default/grub.d/50-cloudimg-settings.cfg"
-    register: grep_result
-    ignore_errors: yes
+  register: grep_result
+  ignore_errors: true
 
 - name: Add missing line
   ansible.builtin.blockinfile:
