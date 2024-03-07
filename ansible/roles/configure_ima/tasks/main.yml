@@ -5,6 +5,11 @@
   debug:
     var: ansible_distribution
 
+- name: Check grub file path
+  stat:
+    path: /etc/default/grub
+  register: file_check
+
 - name: Create ima folder
   file:
     path: /etc/ima
@@ -57,6 +62,29 @@
     dest: /tmp/grub.sh
     mode: "0700" # Make the script executable
     remote_src: yes
+  when: file_check.stat.exists
+
+- name: Check if line exits in file with regex
+  ansible.builtin.shell:
+    cmd: "grep -q '^GRUB_CMDLINE_LINUX=\"ima_policy=tcb ima_hash=sha256 ima_template=ima-ng\"$' /etc/default/grub.d/50-cloudimg-settings.cfg"
+    register: grep_result
+    ignore_errors: yes
+
+- name: Add missing line
+  ansible.builtin.blockinfile:
+    path: /etc/default/grub.d/50-cloudimg-settings.cfg
+    block: |
+      GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng"
+  when:
+    - grep_result.rc != 0
+    - not file_check.stat.exists
+
+- name: Install packages for Azure
+  apt:
+    name: grub2-common
+    state: latest
+    update_cache: yes
+  when: not file_check.stat.exists
 
 - name: Update the grub configuration
   command: "/tmp/grub.sh"
