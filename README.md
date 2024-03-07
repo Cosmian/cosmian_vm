@@ -262,7 +262,3 @@ Note: `data/app/` subpath is provided as `app_storage` variable by `agent.toml` 
 If you call again `init` the previous configuration file is overwritten.
 
 The `restart` subcommand can restart the application identified in `service_name` field.
-
-## How to use Cosmian VM on SGX
-
-See [`how to use Cosmian VM on SGX`](resources/sgx/README.md)

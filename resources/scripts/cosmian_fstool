@@ -134,7 +134,7 @@ fi
 
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
 echo "Enrolling the TPM for this container..."
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 "$BLOCK_DEVICE"
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=/dev/tpmrm0 --tpm2-pcrs=7 "$BLOCK_DEVICE"
 
 # Remove previous entry from the fstab and crypttab (create a .bak file to ease the rollback)
 echo "Removing previous obsolete auto mounting rules..."
@@ -143,7 +143,7 @@ sed -i.bak "/$CONTAINER_MAPPING_NAME/d" /etc/fstab
 
 # Auto decrypt & auto mount the luks when rebooting (if not already done)
 echo "Enabling auto mounting when rebooting..."
-grep -qF -- "$CONTAINER_MAPPING_NAME $CONTAINER_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_NAME $CONTAINER_PATH none tpm2-device=auto" >> /etc/crypttab 
+grep -qF -- "$CONTAINER_MAPPING_NAME $CONTAINER_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_NAME $CONTAINER_PATH none tpm2-device=/dev/tpmrm0" >> /etc/crypttab
 grep -qF -- "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH ext4 defaults 0 0" >> /etc/fstab
 
 echo "Process completed with success!"

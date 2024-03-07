@@ -84,3 +84,6 @@
     - name: Selinux - allow https
       ansible.builtin.command:
         cmd: setsebool -P httpd_can_network_connect 1
+
+- name: mount tmpfs as /temp
+  mount: name=/temp src='tmpfs' fstype=tmpfs opts='size=1G' state=present

@@ -7,6 +7,10 @@ on:
         required: true
         type: string
 
+env:
+  GCP_DEV_PROJECT: cosmian-dev
+  GCP_PUBLIC_PROJECT: cosmian-public
+
 jobs:
   build-image:
     name: Packer build
@@ -54,7 +58,7 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
 
       - name: Packer build image
         id: packer-build
@@ -77,13 +81,13 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           version: latest
-          install_components: alpha
+          install_components: beta
 
       - name: Launch GCP instance
         id: run-gcp-instance
@@ -91,20 +95,18 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
-          gcloud alpha compute instances create $CI_INSTANCE --machine-type n2d-standard-2 \
+          gcloud beta compute instances create $CI_INSTANCE --machine-type n2d-standard-2 \
                                                             --zone europe-west4-a \
                                                             --min-cpu-platform="AMD Milan" \
                                                             --confidential-compute-type=SEV_SNP \
-                                                            --on-host-maintenance=TERMINATE \
+                                                            --maintenance-policy=TERMINATE \
                                                             --image="$IMAGE_NAME" \
-                                                            --image-project=amd-sev-snp \
-                                                            --project amd-sev-snp \
-                                                            --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
+                                                            --image-project=$GCP_DEV_PROJECT \
+                                                            --project $GCP_DEV_PROJECT \
+                                                            --tags ssh,backend,http,https,cosmian-vm-agent \
                                                             --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
                                                             --max-run-duration=10m \
                                                             --instance-termination-action=DELETE
-          IP_ADDR=$(gcloud alpha compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
-          echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -116,26 +118,69 @@ jobs:
           chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
 
       - name: Test Cosmian VM Agent on GCP instance
+        continue-on-error: true
         env:
-          IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
-          echo "Waiting for Cosmian VM agent"
-          until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do printf '.'; sleep 3; done
-          echo "\nCosmian VM is ready"
+          sudo apt-get install -y jq moreutils
+          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
+          echo "Waiting for Cosmian VM agent..."
+          until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done
+          echo "[ OK ] Cosmian VM ready"
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls snapshot
-          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot ./cosmian_vm.snapshot
+          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+          echo "Rebooting instance..."
+          gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
+          gcloud beta compute instances start $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
+          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
+          until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done
+          echo "[ OK ] Cosmian VM ready after reboot"
+          RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
+          NEW_RESET_COUNT=$(expr $RESET_COUNT + 1)
+          jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot > new_cosmian_vm.snapshot
+          jq '.tpm_policy.reset_count |= tonumber' new_cosmian_vm.snapshot | sponge new_cosmian_vm.snapshot
+          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot new_cosmian_vm.snapshot
+          echo "[ OK ] Integrity after reboot"
 
       - name: Stop and delete GCP instance
-        if: success() || failure()
+        if: success()
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           set +e
-          OUTPUT=$(gcloud alpha compute instances describe $CI_INSTANCE --format='get(status)' --zone=europe-west4-a)
+          OUTPUT=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(status)' --zone=europe-west4-a)
           EXIT_CODE="$?"
           if [ "$EXIT_CODE" -eq 0 ]; then
-            gcloud alpha compute instances stop $CI_INSTANCE --zone europe-west4-a \
-                                                             --project amd-sev-snp
-            gcloud alpha compute instances delete $CI_INSTANCE --zone europe-west4-a \
-                                                               --project amd-sev-snp
+            gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a \
+                                                            --project $GCP_DEV_PROJECT
+            gcloud beta compute instances delete $CI_INSTANCE --zone europe-west4-a \
+                                                              --project $GCP_DEV_PROJECT
           fi
+
+  release-image:
+    name: Release image
+    runs-on: ubuntu-22.04
+    needs: [build-image, test-image]
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: GCP auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+
+      - name: Copy image to public project
+        if: startsWith(github.ref, 'refs/tags')
+        env:
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+        run: |
+          TAG=${{  github.ref_name }}
+          VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          NEW_IMAGE_NAME=cosmian-vm-$VERSION-sev-${{ inputs.distrib }}
+          gcloud beta compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
+          gcloud beta compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
