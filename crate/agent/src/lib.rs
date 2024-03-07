@@ -95,8 +95,14 @@ pub fn config(
 
 /// Create a TLS config builder
 pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerConfig, Error> {
-    let mut cert_reader = std::io::BufReader::new(File::open(certificate)?);
-    let mut sk_reader = std::io::BufReader::new(File::open(private_key)?);
+    let mut cert_reader = std::io::BufReader::new(File::open(certificate).map_err(|e| {
+        Error::Certificate(format!("Unable to read cert file {certificate:?}: {e}"))
+    })?);
+    let mut sk_reader = std::io::BufReader::new(File::open(private_key).map_err(|e| {
+        Error::Certificate(format!(
+            "Unable to read private key of cert file {private_key:?}: {e}"
+        ))
+    })?);
 
     let certificate = rustls_pemfile::certs(&mut cert_reader)?
         .into_iter()
@@ -115,4 +121,34 @@ pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerCo
                     .clone(),
             ),
         )?)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{env, path::Path};
+
+    use crate::get_tls_config;
+
+    #[test]
+    fn test_cert_key_path_error() {
+        let invalid_cert = Path::new("/some/invalid/path/cert.pem");
+        let invalid_private_key = Path::new("/some/invalid/path/key.pem");
+
+        // both invalid
+        let e = get_tls_config(invalid_cert, invalid_private_key).unwrap_err();
+        assert_eq!(e.to_string(), "Unable to read cert file \"/some/invalid/path/cert.pem\": No such file or directory (os error 2)");
+
+        let tmp_dir = env::temp_dir();
+        std::fs::File::create(tmp_dir.join("cert.pem")).unwrap();
+
+        // only key invalid
+        let e = get_tls_config(&tmp_dir.join("cert.pem"), invalid_private_key).unwrap_err();
+        assert_eq!(e.to_string(), "Unable to read private key of cert file \"/some/invalid/path/key.pem\": No such file or directory (os error 2)");
+
+        std::fs::File::create(tmp_dir.join("key.pem")).unwrap();
+
+        // all good (but files are invalid, hence `TLS private key not found!` within the key file)
+        let e = get_tls_config(&tmp_dir.join("cert.pem"), &tmp_dir.join("key.pem")).unwrap_err();
+        assert_eq!(e.to_string(), "TLS private key not found!");
+    }
 }
