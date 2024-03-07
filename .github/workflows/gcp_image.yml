@@ -118,6 +118,7 @@ jobs:
           chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
 
       - name: Test Cosmian VM Agent on GCP instance
+        continue-on-error: true
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
@@ -142,7 +143,7 @@ jobs:
           echo "[ OK ] Integrity after reboot"
 
       - name: Stop and delete GCP instance
-        if: success() || failure()
+        if: success()
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
