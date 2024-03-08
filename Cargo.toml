@@ -36,10 +36,10 @@ sha2 = "0.10"
 p256 = { version = "0.13", features = ["arithmetic", "pkcs8"] }
 rand = "0.8"
 rand_chacha = "0.3"
-ratls = { git = "https://github.com/Cosmian/tee-tools", tag = "1.2.0" }
+ratls = { git = "https://github.com/Cosmian/tee-tools", tag = "1.3.1" }
 spki = "0.7"
-tee_attestation = { git = "https://github.com/Cosmian/tee-tools", tag = "1.2.0" }
-tpm_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.2.0" }
+tee_attestation = { git = "https://github.com/Cosmian/tee-tools", tag = "1.3.1" }
+tpm_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.3.1" }
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.96"

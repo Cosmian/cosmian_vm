@@ -135,7 +135,7 @@ async fn process_snapshot_orders(
 /// Snapshot the Cosmian VM
 async fn do_snapshot(tpm_device: Option<PathBuf>) -> Result<CosmianVmSnapshot, Error> {
     // Get the measurements of the tee (the report data does not matter)
-    let tee_quote = tee_get_quote(&[])?;
+    let tee_quote = tee_get_quote(None)?;
     let tee_policy = TeePolicy::try_from(tee_quote.as_ref())?;
 
     let (filehashes, tpm_policy) = match tpm_device {

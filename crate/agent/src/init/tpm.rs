@@ -4,12 +4,17 @@ use crate::utils::call;
 use std::path::Path;
 use std::process::Command;
 
+use tpm_quote::key::{TPM_AK_NVINDEX, TPM_EK_NVINDEX};
+
 /// Generate the TPM keys during the first startup of the agent
 /// - Ignore generation if already done previously
 /// - Raise an error if no TPM detected
 ///
 /// Note: this function should be replace in a near feature (waiting for a patch in the tpm lib)
 pub(crate) fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
+    let tpm_ek_nvindex = &TPM_EK_NVINDEX.to_string();
+    let tpm_ak_nvindex = &TPM_AK_NVINDEX.to_string();
+
     if !tpm_device_path.exists() {
         return Err(Error::Configuration(format!(
             "TPM device path unknown: {tpm_device_path:?} "
@@ -18,7 +23,7 @@ pub(crate) fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
 
     // Verify the keys has not been already generated
     match Command::new("tpm2_readpublic")
-        .args(["-c", "0x81000000"])
+        .args(["-c", tpm_ek_nvindex])
         .output()
     {
         Ok(output) => {
@@ -57,6 +62,7 @@ pub(crate) fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
             "--hierarchy=o",
             "--object-context=/tmp/ek.ctx",
             "--output=/tmp/ek.handle",
+            tpm_ek_nvindex,
         ],
         false,
     )?;
@@ -82,6 +88,7 @@ pub(crate) fn generate_tpm_keys(tpm_device_path: &Path) -> Result<(), Error> {
             "--hierarchy=o",
             "--object-context=/tmp/ak.ctx",
             "--output=/tmp/ak.handle",
+            tpm_ak_nvindex,
         ],
         false,
     )?;
