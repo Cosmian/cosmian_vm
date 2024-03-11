@@ -152,8 +152,6 @@ jobs:
           OUTPUT=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(status)' --zone=europe-west4-a)
           EXIT_CODE="$?"
           if [ "$EXIT_CODE" -eq 0 ]; then
-            gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a \
-                                                            --project $GCP_DEV_PROJECT
             gcloud beta compute instances delete $CI_INSTANCE --zone europe-west4-a \
                                                               --project $GCP_DEV_PROJECT
           fi
