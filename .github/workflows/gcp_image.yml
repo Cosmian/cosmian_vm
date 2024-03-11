@@ -131,6 +131,7 @@ jobs:
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
           echo "Rebooting instance..."
           gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
+          sleep 10
           gcloud beta compute instances start $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
           IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
           until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done
