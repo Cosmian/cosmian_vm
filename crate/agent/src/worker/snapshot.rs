@@ -12,7 +12,10 @@ use tokio::sync::Mutex;
 use tokio_util::sync::CancellationToken;
 use tpm_quote::{get_quote as tpm_get_quote, policy::TpmPolicy};
 
-use crate::{error::Error, utils::create_tpm_context, DEFAULT_TPM_HASH_METHOD};
+use crate::{
+    cloud_detection::which_cloud_provider, error::Error, utils::create_tpm_context,
+    DEFAULT_TPM_HASH_METHOD,
+};
 
 use ima::ima::{read_ima_binary, Ima, ImaHashMethod};
 
@@ -137,6 +140,7 @@ async fn do_snapshot(tpm_device: Option<PathBuf>) -> Result<CosmianVmSnapshot, E
     // Get the measurements of the tee (the report data does not matter)
     let tee_quote = tee_get_quote(None)?;
     let tee_policy = TeePolicy::try_from(tee_quote.as_ref())?;
+    let cloud_type = which_cloud_provider().await;
 
     let (filehashes, tpm_policy) = match tpm_device {
         None => (None, None),
@@ -172,6 +176,7 @@ async fn do_snapshot(tpm_device: Option<PathBuf>) -> Result<CosmianVmSnapshot, E
     };
 
     Ok(CosmianVmSnapshot {
+        cloud_type,
         tee_policy,
         tpm_policy,
         filehashes,

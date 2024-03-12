@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::Args;
 use cosmian_vm_client::{
     client::{get_server_certificate_from_url, CosmianVmClient},
+    cloud_provider::CloudProvider,
     snapshot::CosmianVmSnapshot,
 };
 use rand::RngCore;
@@ -31,8 +32,15 @@ impl VerifyArgs {
 
         println!("Fetching the collaterals...");
 
-        let mut nonce = [0u8; 32];
-        rand::thread_rng().fill_bytes(&mut nonce);
+        let mut nonce: [u8; 32] = [0u8; 32];
+
+        if let Some(cloud_type) = snapshot.cloud_type {
+            if cloud_type != CloudProvider::Azure {
+                // Random nonce for all cloud provider except Microsoft Azure
+                // because REPORT_DATA can't be set in quote
+                rand::thread_rng().fill_bytes(&mut nonce);
+            }
+        }
 
         let quote = client.tee_quote(&nonce).await?;
 
@@ -87,10 +95,17 @@ impl VerifyArgs {
         };
 
         let mut policy = snapshot.tee_policy;
-        policy.set_report_data(&forge_report_data_with_nonce(
-            &nonce,
-            &client.certificate.0,
-        )?)?;
+
+        if let Some(cloud_type) = snapshot.cloud_type {
+            // REPORT_DATA can't be set on Microsoft Azure
+            if cloud_type != CloudProvider::Azure {
+                policy.set_report_data(&forge_report_data_with_nonce(
+                    &nonce,
+                    &client.certificate.0,
+                )?)?;
+            }
+        }
+
         spawn_blocking(move || tee_verify_quote(&quote, Some(&policy))).await??;
 
         println!("[ OK ] Verifying TEE attestation");
