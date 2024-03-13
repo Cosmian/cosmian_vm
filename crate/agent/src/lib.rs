@@ -19,6 +19,8 @@ use worker::snapshot::Snapshot;
 
 /// Related to the applications running inside the Cosmian VM
 pub mod app;
+/// Try to detect cloud provider
+pub mod cloud_detection;
 pub mod conf;
 pub mod endpoints;
 pub mod error;

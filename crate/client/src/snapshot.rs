@@ -7,6 +7,8 @@ use std::fmt;
 use tee_attestation::TeePolicy;
 use tpm_quote::policy::TpmPolicy;
 
+use crate::cloud_provider::CloudProvider;
+
 /// Serializes a `HashSet<(String, Vec<u8>)>` to a json string.
 pub fn serialize_hex<S>(
     buffer: &HashSet<(String, Vec<u8>)>,
@@ -65,6 +67,7 @@ pub struct SnapshotFiles(
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct CosmianVmSnapshot {
+    pub cloud_type: Option<CloudProvider>,
     pub tee_policy: TeePolicy,
     pub tpm_policy: Option<TpmPolicy>,
     pub filehashes: Option<SnapshotFiles>,

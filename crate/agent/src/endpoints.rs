@@ -78,7 +78,7 @@ pub async fn get_tee_quote(
         })?,
         &certificate,
     )?;
-    let quote = tee_get_quote(&report_data)?;
+    let quote = tee_get_quote(Some(&report_data))?;
     Ok(Json(quote))
 }
 
