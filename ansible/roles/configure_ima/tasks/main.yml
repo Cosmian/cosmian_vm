@@ -88,11 +88,13 @@
 
 - name: Update the grub configuration
   command: "/tmp/grub.sh"
+  when: file_check.stat.exists
 
 - name: Remove the update grub configuration script
   file:
     path: "/tmp/grub.sh"
     state: absent
+  when: file_check.stat.exists
 
 # Update grub
 - name: Update grub on Ubuntu
