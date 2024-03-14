@@ -6,33 +6,43 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 
-- Save LUKS password inside itself (#72)
+- Save LUKS password inside itself and write it even if the file does not exist
 - Update rhel license
 
 ### Features
 
+- Add Azure SEV quote (bump tee-tools dependency to 1.3.1)
 - Add more context when cert and key files are not found (#70)
 - Cloud provider detection to avoid verifying REPORT_DATA
 - Adapt ansible script for ubuntu image on azure
 
 ### Miscellaneous Tasks
 
-- Add business license
-- Check agent on SEV/TDX runners (#49)
-- Release image on GCP public project (#67)
+- Add business license for RHEL/Ubuntu Cosmian VM images
 - Disable cargo-audit: du to mbox 0.6.0 yanked
 
 ## [1.1.0-rc.1] - 2024-03-14
 
+### Bug Fixes
+
+- Fix: try to use tmpfs for startup scripts
+- Fix: remove PCR-8 to decrypt LUKS container
+- Fix: hardcode tpm2 device with systemd-cryptenroll for RHEL 9
+
 ### Ci
 
 - New workflow for GH Actions
-- Self-signed.badssl.com certificate in tests
-- Don't start supervisord but enable service
+  - Testing reboot of Cosmian VM instance (temporary continue-on-error when testing image)
+  - Add instance_configs.cfg file for GCP guest-agent
+  - Retrieve IP addr with gcloud CLI
+  - Change GCP project and use gcloud beta
+  - Auto-release image on GCP public project (#67)
+  - Don't start and autostart supervisord but enable service
+- Remove auto GH release on tag in order to add release candidates tags
 
 ### Miscellaneous Tasks
 
-- Add business license
+- Bump version of all crates to 1.1.0
 - Check agent on SEV/TDX runners (#49)
 
 ## [1.0.1] - 2024-02-07
