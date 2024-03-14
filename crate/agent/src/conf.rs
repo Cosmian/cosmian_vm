@@ -62,16 +62,19 @@ fn _relative_to_data_storage(data_storage: &Path, path: &Path) -> PathBuf {
 }
 
 impl Agent {
+    #[must_use]
     pub fn ssl_certificate(&self) -> PathBuf {
         _relative_to_data_storage(Path::new(VAR_PATH), &self.ssl_certificate)
     }
 
+    #[must_use]
     pub fn ssl_private_key(&self) -> PathBuf {
         _relative_to_data_storage(Path::new(VAR_PATH), &self.ssl_private_key)
     }
 }
 
 impl App {
+    #[must_use]
     pub fn app_storage(&self) -> PathBuf {
         _relative_to_data_storage(Path::new(VAR_PATH), &self.app_storage)
     }

@@ -1,7 +1,7 @@
 [agent]
-# The `cosmian_vm_agent` listens to that host 
+# The `cosmian_vm_agent` listens to that host
 host = "127.0.0.1"
-# The `cosmian_vm_agent` listens to that port 
+# The `cosmian_vm_agent` listens to that port
 port = 5355
 # The location of the SSL certificate used to communicate with the `cosmian_vm_agent`
 # It is recommended to put that file inside an encrypted filesystem

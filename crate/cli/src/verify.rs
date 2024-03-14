@@ -18,7 +18,7 @@ pub struct VerifyArgs {
     #[arg(short, long)]
     snapshot: PathBuf,
 
-    /// Application urls (domain_name:port) to verify against Cosmian VM TLS certificate
+    /// Application urls (`domain_name:port`) to verify against Cosmian VM TLS certificate
     #[arg(short, long)]
     application: Option<Vec<String>>,
 }
