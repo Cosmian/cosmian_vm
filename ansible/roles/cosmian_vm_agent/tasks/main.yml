@@ -184,12 +184,8 @@
         group: root
         mode: 0500
 
-    - name: Service daemon reload
-      ansible.builtin.systemd_service:
-        daemon_reload: true
-
     - name: Check if Supervisor is started
-      ansible.builtin.systemd_service:
+      systemd:
         name: supervisord
         enabled: true
         state: stopped
