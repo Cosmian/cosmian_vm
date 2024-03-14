@@ -3,7 +3,7 @@ use crate::{error::Error, utils::call, BIN_PATH, VAR_PATH};
 use const_format::formatcp;
 use rand::{distributions::Alphanumeric, Rng};
 
-use std::{fs::File, io::Write, path::Path};
+use std::path::Path;
 
 const FSTOOL_PATH: &str = formatcp!("{BIN_PATH}/cosmian_fstool");
 const FSTOOL_DEFAULT_SIZE: &str = "500MB";
@@ -45,12 +45,7 @@ pub(crate) fn generate_encrypted_fs() -> Result<(), Error> {
 
     // write LUKS password into the LUKS container, so one admin could save it later on
     let password_filepath = Path::new(FSTOOL_DEFAULT_CONTAINER_MOUNTPOINT).join("luks_password");
-    let mut f = File::open(&password_filepath).map_err(|e| {
-        Error::Unexpected(format!(
-            "unable to save LUKS password in {password_filepath:?}: {e}"
-        ))
-    })?;
-    f.write_all(password.as_bytes())?;
+    std::fs::write(password_filepath, password.as_bytes())?;
 
     Ok(())
 }
