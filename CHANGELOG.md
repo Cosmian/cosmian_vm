@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2024-03-14
+
+### Fix
+
+- Write LUKS password correctly even if the file does not exist
+
 ## [1.0.1] - 2024-02-07
 
 ### Fix
