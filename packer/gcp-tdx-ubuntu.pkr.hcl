@@ -45,7 +45,7 @@ variable "ssh_timeout" {
 
 variable "image_guest_os_features" {
   type    = list(string)
-  default = ["UEFI_COMPATIBLE","VIRTIO_SCSI_MULTIQUEUE","GVNIC","TDX_CAPABLE"]
+  default = ["UEFI_COMPATIBLE", "VIRTIO_SCSI_MULTIQUEUE", "GVNIC", "TDX_CAPABLE"]
 }
 
 variable "network" {
@@ -74,54 +74,23 @@ variable "wait_to_add_ssh_keys" {
 }
 
 source "googlecompute" "ubuntu" {
-  project_id             = var.project_id
-  source_image           = var.ubuntu_source_image
-  source_image_family    = var.ubuntu_source_image_family
-  zone                   = var.zone
-  ssh_username           = var.ssh_username
-  ssh_timeout            = var.ssh_timeout
-  image_name             = local.ubuntu_ami_name
+  project_id              = var.project_id
+  source_image            = var.ubuntu_source_image
+  source_image_family     = var.ubuntu_source_image_family
+  zone                    = var.zone
+  ssh_username            = var.ssh_username
+  ssh_timeout             = var.ssh_timeout
+  image_name              = local.ubuntu_ami_name
   image_guest_os_features = var.image_guest_os_features
-  network                = var.network
-  subnetwork             = var.subnetwork
-  tags                   = var.tags
-  use_os_login           = var.use_os_login
-  wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
+  network                 = var.network
+  subnetwork              = var.subnetwork
+  tags                    = var.tags
+  use_os_login            = var.use_os_login
+  wait_to_add_ssh_keys    = var.wait_to_add_ssh_keys
 }
 
 build {
   sources = ["sources.googlecompute.ubuntu"]
-
-  provisioner "file" {
-    source      = "../resources/conf/instance_configs.cfg"
-    destination = "/tmp/instance_configs.cfg"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/ima-policy"
-    destination = "/tmp/ima-policy"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/agent.toml"
-    destination = "/tmp/agent.toml"
-  }
-
-  provisioner "file" {
-    source      = "../resources/scripts/cosmian_fstool"
-    destination = "/tmp/cosmian_fstool"
-  }
-
-  provisioner "file" {
-    source      = "../target/release/cosmian_vm_agent"
-    destination = "/tmp/"
-  }
-
-  provisioner "file" {
-    source      = "../target/release/cosmian_certtool"
-    destination = "/tmp/"
-  }
-
   provisioner "ansible" {
     playbook_file = "../ansible/cosmian_vm_tdx_playbook.yml"
     local_port    = 22
