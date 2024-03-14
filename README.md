@@ -27,7 +27,6 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
 - [Start a Cosmian VM on SEV/TDX](#start-a-cosmian-vm-on-sevtdx)
 - [Usage](#usage)
 - [Provide secrets](#provide-secrets)
-- [How to use Cosmian VM on SGX](#how-to-use-cosmian-vm-on-sgx)
 
 <!-- tocstop -->
 

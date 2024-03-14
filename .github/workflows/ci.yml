@@ -2,9 +2,9 @@ on:
   # Run on push except on tags
   push:
     branches:
-      - "*"
+      - "**"
     tags:
-      - "*"
+      - "**"
 
 name: CI
 

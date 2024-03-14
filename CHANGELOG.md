@@ -4,9 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.0-rc.2] - 2024-03-14
 
-### Fix
+### Bug Fixes
 
-- Write LUKS password correctly even if the file does not exist
+- Save LUKS password inside itself (#72)
+- Update rhel license
+
+### Features
+
+- Add more context when cert and key files are not found (#70)
+- Cloud provider detection to avoid verifying REPORT_DATA
+- Adapt ansible script for ubuntu image on azure
+
+### Miscellaneous Tasks
+
+- Add business license
+- Check agent on SEV/TDX runners (#49)
+- Release image on GCP public project (#67)
+- Disable cargo-audit: du to mbox 0.6.0 yanked
+
+## [1.1.0-rc.1] - 2024-03-14
+
+### Ci
+
+- New workflow for GH Actions
+- Self-signed.badssl.com certificate in tests
+- Don't start supervisord but enable service
+
+### Miscellaneous Tasks
+
+- Add business license
+- Check agent on SEV/TDX runners (#49)
 
 ## [1.0.1] - 2024-02-07
 

@@ -34,7 +34,7 @@ pub(crate) fn generate_encrypted_fs() -> Result<(), Error> {
             "--size",
             FSTOOL_DEFAULT_SIZE,
             "--location",
-            &FSTOOL_DEFAULT_CONTAINER_FILE,
+            FSTOOL_DEFAULT_CONTAINER_FILE,
             "--password",
             &password,
         ],

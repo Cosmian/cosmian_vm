@@ -18,8 +18,7 @@ async fn main() -> Result<()> {
         option_env!("CARGO_PKG_VERSION").unwrap_or("unknown"),
         tee_attestation::guess_tee()
             .ok()
-            .map(|tee| tee.to_string())
-            .unwrap_or("unknown".to_string())
+            .map_or("unknown".to_string(), |tee| tee.to_string())
     );
 
     // Read the configuration of the Cosmian VM Agent
