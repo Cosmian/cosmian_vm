@@ -45,7 +45,11 @@ pub(crate) fn generate_encrypted_fs() -> Result<(), Error> {
 
     // write LUKS password into the LUKS container, so one admin could save it later on
     let password_filepath = Path::new(FSTOOL_DEFAULT_CONTAINER_MOUNTPOINT).join("luks_password");
-    std::fs::write(password_filepath, password.as_bytes())?;
+    std::fs::write(&password_filepath, password.as_bytes()).map_err(|e| {
+        Error::Unexpected(format!(
+            "unable to save LUKS password in {password_filepath:?}: {e}"
+        ))
+    })?;
 
     Ok(())
 }
