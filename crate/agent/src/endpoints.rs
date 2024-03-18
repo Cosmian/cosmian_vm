@@ -21,6 +21,7 @@ use tee_attestation::{forge_report_data_with_nonce, get_quote as tee_get_quote};
 use tpm_quote::{error::Error as TpmError, get_quote as tpm_get_quote};
 
 use tss_esapi::Context;
+
 /// Get the IMA hashes list (ASCII format)
 ///
 /// Note: require root privileges
@@ -136,11 +137,18 @@ pub async fn init_app(
         ));
     };
 
+    let app_storage = app_conf_agent.app_storage();
+    std::fs::create_dir(&app_storage).map_err(|e| {
+        tracing::error!("cannot create app storage folder {app_storage:?}");
+        Error::IO(e)
+    })?;
+
     // Write app conf
-    std::fs::write(
-        app_conf_agent.app_storage().join(APP_CONF_FILENAME),
-        app_conf_param.content,
-    )?;
+    let app_conf_filepath = app_storage.join(APP_CONF_FILENAME);
+    std::fs::write(&app_conf_filepath, app_conf_param.content).map_err(|e| {
+        tracing::error!("cannot write app conf file {app_conf_filepath:?}");
+        Error::IO(e)
+    })?;
 
     // Start app service
     app_conf_agent
