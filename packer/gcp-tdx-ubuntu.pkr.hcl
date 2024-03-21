@@ -10,7 +10,7 @@ variable "prefix" {
 }
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-tdx-ubuntu"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-tdx"
 }
 
 variable "project_id" {

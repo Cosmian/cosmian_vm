@@ -54,7 +54,7 @@ variable "wait_to_add_ssh_keys" {
 }
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-sev-ubuntu"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-sev"
 }
 
 variable "ubuntu_source_image" {

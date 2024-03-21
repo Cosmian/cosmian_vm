@@ -55,8 +55,8 @@ jobs:
         run: |
           TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
           echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
-          echo "IMAGE_NAME=alpha-$TIMESTAMP-cosmian-vm-${{ inputs.techno }}-${{ inputs.distrib }}" >> "$GITHUB_OUTPUT"
-          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_NAME=temp-$TIMESTAMP-cosmian-vm-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -90,7 +90,7 @@ jobs:
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
         run: |
-          cd packer/ && packer build -var "prefix=alpha-$TIMESTAMP" gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          cd packer/ && packer build -var "prefix=temp-$TIMESTAMP" gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
   test-image:
     name: Test image
@@ -132,8 +132,6 @@ jobs:
                                                                               --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
                                                                               --max-run-duration=10m \
                                                                               --instance-termination-action=DELETE
-          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
-          echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -157,6 +155,7 @@ jobs:
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
           echo "Rebooting instance..."
           gcloud ${{ inputs.mode }} compute instances stop $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
+          gcloud ${{ inputs.mode }} compute instances set-scheduling $CI_INSTANCE --zone ${{ inputs.zone }} --max-run-duration=10m --instance-termination-action=DELETE
           sleep 10
           gcloud ${{ inputs.mode }} compute instances start $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
           IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})

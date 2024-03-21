@@ -4,7 +4,7 @@ variable "prefix" {
 }
 
 locals {
-  redhat_ami_name = "${var.prefix}-cosmian-vm-sev-rhel"
+  redhat_ami_name = "${var.prefix}-cosmian-vm-rhel-sev"
 }
 
 variable "project_id" {
