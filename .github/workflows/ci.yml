@@ -183,6 +183,7 @@ jobs:
 
   build-test-gcp-sev-image:
     strategy:
+      fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
     name: (${{ matrix.distrib }}) -> GCP SEV image
@@ -202,6 +203,7 @@ jobs:
 
   build-test-gcp-tdx-image:
     strategy:
+      fail-fast: true
       matrix:
         distrib: [ubuntu]
     name: (${{ matrix.distrib }}) -> GCP TDX image
