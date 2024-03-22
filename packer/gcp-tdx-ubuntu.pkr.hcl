@@ -20,7 +20,7 @@ variable "project_id" {
 
 variable "ubuntu_source_image" {
   type    = string
-  default = "ubuntu-2204-tdx-v20231011"
+  default = "ubuntu-2204-tdx-v20240220"
 }
 
 variable "ubuntu_source_image_family" {

@@ -59,7 +59,7 @@ locals {
 
 variable "ubuntu_source_image" {
   type    = string
-  default = "ubuntu-2204-jammy-v20231030"
+  default = "ubuntu-2204-jammy-v20240319"
 }
 
 variable "ubuntu_source_image_family" {

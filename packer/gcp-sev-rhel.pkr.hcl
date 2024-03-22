@@ -59,7 +59,7 @@ variable "wait_to_add_ssh_keys" {
 
 variable "redhat_source_image" {
   type    = string
-  default = "rhel-9-v20231115"
+  default = "rhel-9-v20240312"
 }
 
 variable "redhat_source_image_family" {
