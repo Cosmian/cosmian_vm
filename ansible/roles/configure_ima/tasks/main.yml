@@ -108,6 +108,21 @@
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
   block:
+
+    - name: Check grub2-mkconfig exist
+      command: "which grub2-mkconfig"
+      register: grub2_mkconfig_check
+      ignore_errors: true
+
+    - name: Install missing packages
+      dnf:
+        name: 
+          - grub2-efi 
+          - grub2-efi-modules 
+          - shim
+        state: present
+      when: grub2_mkconfig_check.rc != 0
+
     - name: Update grub
       ansible.builtin.command:
         cmd: grub2-mkconfig -o /etc/grub2.cfg
