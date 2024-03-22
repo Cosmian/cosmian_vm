@@ -67,11 +67,6 @@ variable "redhat_source_image_family" {
   default = "rhel-9"
 }
 
-variable "image_licenses" {
-  type    = list(string)
-  default = ["projects/cosmian-public/global/licenses/cloud-marketplace-ab9ba75ed9b59877-df1ebeb69c0ba664"]
-}
-
 source "googlecompute" "redhat" {
   project_id             = var.project_id
   source_image           = var.redhat_source_image
@@ -86,7 +81,6 @@ source "googlecompute" "redhat" {
   tags                   = var.tags
   use_os_login           = var.use_os_login
   wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
-  image_licenses         = var.image_licenses
 }
 
 build {

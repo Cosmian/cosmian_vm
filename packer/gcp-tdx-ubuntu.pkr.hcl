@@ -73,11 +73,6 @@ variable "wait_to_add_ssh_keys" {
   default = "20s"
 }
 
-variable "image_licenses" {
-  type    = list(string)
-  default = ["projects/cosmian-public/global/licenses/cloud-marketplace-84a2e990cf18dca8-df1ebeb69c0ba664"]
-}
-
 source "googlecompute" "ubuntu" {
   project_id             = var.project_id
   source_image           = var.ubuntu_source_image
@@ -92,7 +87,6 @@ source "googlecompute" "ubuntu" {
   tags                   = var.tags
   use_os_login           = var.use_os_login
   wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
-  image_licenses         = var.image_licenses
 }
 
 build {
