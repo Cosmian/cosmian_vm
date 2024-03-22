@@ -11,6 +11,7 @@ locals {
   tenant_id = "${var.tenant_id}"
   ubuntu_managed_image_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
   ubuntu_managed_image_resource_group_name = "packer_tdx"
+  ubuntu_build_resource_group_name = "packer_tdx"
   os_type = "Linux"
   image_publisher = "Canonical"
   image_offer = "0001-com-ubuntu-confidential-vm-jammy"
@@ -24,6 +25,7 @@ source "azure-arm" "ubuntu" {
   subscription_id           = local.subscription_id
   client_secret             = local.client_secret
   managed_image_resource_group_name = local.ubuntu_managed_image_resource_group_name
+  build_resource_group_name   = local.ubuntu_build_resource_group_name
   managed_image_name          = local.ubuntu_managed_image_name
   os_type                     = local.os_type
   image_publisher             = local.image_publisher
