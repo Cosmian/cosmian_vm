@@ -35,7 +35,7 @@ source "azure-arm" "ubuntu" {
   secure_boot_enabled         = local.secure_boot_enabled
   vtpm_enabled                = local.vtpm_enabled
   managed_image_resource_group_name = local.ubuntu_managed_image_resource_group_name
-  managed_image_name =              = local.ubuntu_managed_image_name
+  managed_image_name                = local.ubuntu_managed_image_name
 }
 
 build {
