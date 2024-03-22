@@ -36,6 +36,14 @@ source "azure-arm" "ubuntu" {
   vm_size                     = local.vm_size
   secure_boot_enabled         = local.secure_boot_enabled
   vtpm_enabled                = local.vtpm_enabled
+  shared_image_gallery_destination {
+    subscription = local.subscription_id
+    resource_group = "packer_tdx"
+    gallery_name = "cosmian"
+    image_name = "cosmian-vm-ubuntu"
+    image_version = "0.0.1"
+    storage_account_type = "Standard_LRS"
+  }
 }
 
 build {
