@@ -17,6 +17,8 @@ locals {
   image_offer = "0001-com-ubuntu-confidential-vm-jammy"
   image_sku = "22_04-lts-cvm"
   vm_size = "Standard_DC2ads_v5"
+  vtpm_enabled = true
+  secure_boot_enabled = true
 }
 
 source "azure-arm" "ubuntu" {
@@ -32,6 +34,8 @@ source "azure-arm" "ubuntu" {
   image_offer                 = local.image_offer
   image_sku                   = local.image_sku
   vm_size                     = local.vm_size
+  secure_boot_enabled         = local.secure_boot_enabled
+  vtpm_enabled                = local.vtpm_enabled
 }
 
 build {
