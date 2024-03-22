@@ -17,6 +17,7 @@ locals {
   image_offer = "0001-com-ubuntu-confidential-vm-jammy"
   image_sku = "22_04-lts-cvm"
   vm_size = "Standard_DC2ads_v5"
+  location = "West Europe"
 }
 
 source "azure-arm" "ubuntu" {
@@ -25,13 +26,13 @@ source "azure-arm" "ubuntu" {
   subscription_id           = local.subscription_id
   client_secret             = local.client_secret
   build_resource_group_name = local.ubuntu_build_resource_group_name
-  managed_image_resource_group_name = local.ubuntu_managed_image_resource_group_name
   managed_image_name          = local.ubuntu_managed_image_name
   os_type                     = local.os_type
   image_publisher             = local.image_publisher
   image_offer                 = local.image_offer
   image_sku                   = local.image_sku
   vm_size                     = local.vm_size
+  location                    = local.location
 }
 
 build {
