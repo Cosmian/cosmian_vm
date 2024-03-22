@@ -209,5 +209,9 @@ jobs:
           TAG=${{  github.ref_name }}
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           NEW_IMAGE_NAME=cosmian-vm-$VERSION-sev-${{ inputs.distrib }}
-          gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
-          gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then LICENCE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"; else LICENCE=${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}: fi
+          gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
+                                                                                                     --source-image-project=$GCP_DEV_PROJECT
+          gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
+                                                                                                        --source-image-project=$GCP_DEV_PROJECT \
+                                                                                                        --licence=$LICENCE
