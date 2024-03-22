@@ -14,10 +14,9 @@ locals {
   ubuntu_build_resource_group_name = "packer"
   os_type = "Linux"
   image_publisher = "Canonical"
-  image_offer = "0001-com-ubuntu-server-jammy"
-  image_sku = "22_04-lts-gen2"
-  location = "East US"
-  vm_size = "Standard_B1s"
+  image_offer = "0001-com-ubuntu-confidential-vm-jammy"
+  image_sku = "22_04-lts-cvm"
+  vm_size = "Standard_DC2ads_v5"
 }
 
 source "azure-arm" "ubuntu" {
