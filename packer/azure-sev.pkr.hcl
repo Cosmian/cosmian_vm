@@ -25,7 +25,7 @@ source "azure-arm" "ubuntu" {
   tenant_id                 = local.tenant_id
   subscription_id           = local.subscription_id
   client_secret             = local.client_secret
-  build_resource_group_name = local.ubuntu_build_resource_group_name
+  ubuntu_managed_image_resource_group_name = local.ubuntu_build_resource_group_name
   managed_image_name          = local.ubuntu_managed_image_name
   os_type                     = local.os_type
   image_publisher             = local.image_publisher
