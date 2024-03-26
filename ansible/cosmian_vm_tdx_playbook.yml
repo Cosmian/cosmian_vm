@@ -1,5 +1,5 @@
 ---
-- name: "Setup Cosmian VM"
+- name: "Setup Cosmian VM for TDX"
   hosts: all
   become: true
   roles:

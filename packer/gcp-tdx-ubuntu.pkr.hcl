@@ -123,7 +123,7 @@ build {
   }
 
   provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_playbook.yml"
+    playbook_file = "../ansible/cosmian_vm_tdx_playbook.yml"
     local_port    = 22
     use_proxy     = false
   }

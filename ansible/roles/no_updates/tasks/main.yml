@@ -5,13 +5,6 @@
   debug:
     var: ansible_distribution
 
-- name: Update and upgrade apt packages
-  when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.apt:
-    update_cache: true
-    upgrade: 'yes'
-  tags: ubuntu
-
 - name: Disable automatic updates on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
