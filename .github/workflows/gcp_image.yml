@@ -177,12 +177,12 @@ jobs:
           gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project ${{ inputs.project }}
           set -e
 
-      - name: Delete GCP CI image
-        if: startsWith(github.ref, 'refs/tags') != true
-        env:
-          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
-        run: |
-          gcloud ${{ inputs.mode }} compute images delete --quiet $IMAGE_NAME
+      # - name: Delete GCP CI image
+      #   if: startsWith(github.ref, 'refs/tags') != true
+      #   env:
+      #     IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+      #   run: |
+      #     gcloud ${{ inputs.mode }} compute images delete --quiet $IMAGE_NAME
 
   release-image:
     name: Release image
