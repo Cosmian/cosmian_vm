@@ -1,3 +1,4 @@
+---
 name: Build and test image for GCP SEV and TDX
 
 on:
@@ -83,7 +84,7 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Packer build image
         id: packer-build
@@ -106,7 +107,7 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -121,17 +122,17 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE --machine-type ${{ inputs.machine-type }} \
-                                                                              --zone ${{ inputs.zone }} \
-                                                                              --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
-                                                                              --confidential-compute-type=${{ inputs.confidential-compute-type }} \
-                                                                              --${{ inputs.maintenance }} \
-                                                                              --image="$IMAGE_NAME" \
-                                                                              --image-project=${{ inputs.project }} \
-                                                                              --project ${{ inputs.project }} \
-                                                                              --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
-                                                                              --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
-                                                                              --max-run-duration=10m \
-                                                                              --instance-termination-action=DELETE
+                                                                          --zone ${{ inputs.zone }} \
+                                                                          --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
+                                                                          --confidential-compute-type=${{ inputs.confidential-compute-type }} \
+                                                                          --${{ inputs.maintenance }} \
+                                                                          --image="$IMAGE_NAME" \
+                                                                          --image-project=${{ inputs.project }} \
+                                                                          --project ${{ inputs.project }} \
+                                                                          --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
+                                                                          --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
+                                                                          --max-run-duration=10m \
+                                                                          --instance-termination-action=DELETE
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -177,20 +178,20 @@ jobs:
           gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project ${{ inputs.project }}
           set -e
 
-      # - name: Delete GCP CI image
-      #   if: startsWith(github.ref, 'refs/tags') != true
-      #   env:
-      #     IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
-      #   run: |
-      #     gcloud ${{ inputs.mode }} compute images delete --quiet $IMAGE_NAME
+      - name: Delete GCP CI image
+        if: startsWith(github.ref, 'refs/tags') != true
+        env:
+          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+        run: |
+          gcloud ${{ inputs.mode }} compute images delete --quiet $IMAGE_NAME
 
   release-image:
     name: Release image
     runs-on: ubuntu-22.04
     needs: [build-image, test-image]
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -198,7 +199,7 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Copy image to public project
         if: startsWith(github.ref, 'refs/tags')
@@ -209,9 +210,9 @@ jobs:
           TAG=${{  github.ref_name }}
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           NEW_IMAGE_NAME=cosmian-vm-$VERSION-sev-${{ inputs.distrib }}
-          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then LICENCE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"; else LICENCE=${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}: fi
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"; else LICENSE=${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}: fi
           gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
                                                                                                      --source-image-project=$GCP_DEV_PROJECT
           gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
                                                                                                         --source-image-project=$GCP_DEV_PROJECT \
-                                                                                                        --licence=$LICENCE
+                                                                                                        --licenses=$LICENSE

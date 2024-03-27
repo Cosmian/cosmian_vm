@@ -1,0 +1,60 @@
+---
+on:
+  workflow_dispatch:
+    inputs:
+      cpu:
+        description: AMD-SEV-SNP or Intel-TDX
+        required: true
+        default: sev
+        type: choice
+        options:
+          - sev
+          - tdx
+      distrib:
+        description: Linux distribution
+        required: true
+        default: ubuntu
+        type: choice
+        options:
+          - ubuntu
+          - rhel
+
+name: Build ${{ inputs.cpu }} on ${{ inputs.distrib }}
+
+jobs:
+  build-cosmian-vm-binaries:
+    uses: ./.github/workflows/build.yml
+
+  build-test-gcp-sev-image:
+    if: contains(inputs.cpu, 'sev')
+    name: (${{ inputs.distrib }}) -> GCP SEV image
+    needs: build-cosmian-vm-binaries
+    secrets: inherit
+    uses: ./.github/workflows/gcp_image.yml
+    with:
+      techno: sev
+      distrib: ${{ inputs.distrib }}
+      machine-type: n2d-standard-2
+      zone: europe-west4-a
+      confidential-compute-type: SEV_SNP
+      min-cpu-platform: AMD Milan
+      project: cosmian-dev
+      mode: beta
+      maintenance: maintenance-policy=TERMINATE
+
+  build-test-gcp-tdx-image:
+    if: contains(inputs.cpu, 'tdx')
+    name: (${{ inputs.distrib }}) -> GCP TDX image
+    needs: build-cosmian-vm-binaries
+    secrets: inherit
+    uses: ./.github/workflows/gcp_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ inputs.distrib }}
+      machine-type: c3-standard-4
+      zone: us-central1-a
+      confidential-compute-type: TDX
+      min-cpu-platform: AUTOMATIC
+      project: cosmian-dev
+      mode: alpha
+      maintenance: on-host-maintenance=TERMINATE

@@ -29,16 +29,7 @@ repos:
     rev: v0.39.0
     hooks:
       - id: markdownlint-fix
-        args:
-          [
-            --disable=MD004,
-            --disable=MD013,
-            --disable=MD024,
-            --disable=MD029,
-            --disable=MD033,
-            --disable=MD041,
-            --disable=MD046,
-          ]
+        args: [--disable=MD004, --disable=MD013, --disable=MD024, --disable=MD029, --disable=MD033, --disable=MD041, --disable=MD046]
         exclude: documentation/docs
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
@@ -49,25 +40,32 @@ repos:
       - id: markdown-toc
 
   - repo: https://github.com/tcort/markdown-link-check
-    rev: v3.11.2
+    rev: v3.12.1
     hooks:
       - id: markdown-link-check
         args: [-q]
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.2
+    hooks:
+      - id: yamlfmt
+        args: [--mapping, '2', --sequence, '4', --offset, '2']
+        exclude: .github/workflows/main_release.yml
 
   - repo: https://github.com/crate-ci/typos
     rev: v1.19.0
     hooks:
       - id: typos
 
-  - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.5
-    hooks:
-      - id: forbid-crlf
-      - id: remove-crlf
-      - id: forbid-tabs
-        exclude: ^.git/
-      - id: remove-tabs
-        exclude: ^.git/
+  # - repo: https://github.com/Lucas-C/pre-commit-hooks
+  #   rev: v1.5.5
+  #   hooks:
+  #     - id: forbid-crlf
+  #     - id: remove-crlf
+  #     - id: forbid-tabs
+  #       exclude: ^.git/
+  #     - id: remove-tabs
+  #       exclude: ^.git/
 
   - repo: https://github.com/sirosen/texthooks
     rev: 0.6.4
@@ -115,7 +113,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 24.2.0
+    rev: 24.3.0
     hooks:
       - id: black
         # avoid clash with `double-quote-string-fixer`
@@ -154,6 +152,5 @@ repos:
     rev: v0.0.2
     hooks:
       - id: packer_validate
-        files: packer/*
       - id: packer_fmt
-        args: ["-write=true"]
+        args: [-write=true]
