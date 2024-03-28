@@ -19,7 +19,7 @@ on:
           - ubuntu
           - rhel
 
-name: Build ${{ inputs.cpu }} on ${{ inputs.distrib }}
+name: Standalone GCP build
 
 jobs:
   build-cosmian-vm-binaries:
