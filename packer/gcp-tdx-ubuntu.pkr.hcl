@@ -4,15 +4,18 @@ To do so, run the command below :
 gcloud alpha compute --project=intel-enclaves images create ubuntu-2204-tdx-v20231011 --family=ubuntu-2204-lts  --source-image=ubuntu-2204-tdx-v20231011  --source-image-project=tdx-guest-image
 */
 
-variable "prefix" {}
+variable "prefix" {
+  type    = string
+  default = "alpha"
+}
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-tdx-ubuntu-{{timestamp}}"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-tdx"
 }
 
 variable "project_id" {
   type    = string
-  default = "intel-enclaves"
+  default = "cosmian-dev"
 }
 
 variable "ubuntu_source_image" {
@@ -70,11 +73,6 @@ variable "wait_to_add_ssh_keys" {
   default = "20s"
 }
 
-variable "image_licenses" {
-  type    = list(string)
-  default = ["projects/cosmian-public/global/licenses/cloud-marketplace-84a2e990cf18dca8-df1ebeb69c0ba664"]
-}
-
 source "googlecompute" "ubuntu" {
   project_id             = var.project_id
   source_image           = var.ubuntu_source_image
@@ -89,11 +87,15 @@ source "googlecompute" "ubuntu" {
   tags                   = var.tags
   use_os_login           = var.use_os_login
   wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
-  image_licenses         = var.image_licenses
 }
 
 build {
   sources = ["sources.googlecompute.ubuntu"]
+
+  provisioner "file" {
+    source      = "../resources/conf/instance_configs.cfg"
+    destination = "/tmp/instance_configs.cfg"
+  }
 
   provisioner "file" {
     source      = "../resources/conf/ima-policy"
@@ -111,17 +113,17 @@ build {
   }
 
   provisioner "file" {
-    source      = "./target/release/cosmian_vm_agent"
+    source      = "../target/release/cosmian_vm_agent"
     destination = "/tmp/"
   }
 
   provisioner "file" {
-    source      = "./target/release/cosmian_certtool"
+    source      = "../target/release/cosmian_certtool"
     destination = "/tmp/"
   }
 
   provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_playbook.yml"
+    playbook_file = "../ansible/cosmian_vm_tdx_playbook.yml"
     local_port    = 22
     use_proxy     = false
   }

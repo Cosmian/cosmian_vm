@@ -1,4 +1,7 @@
-variable "prefix" {}
+variable "prefix" {
+  type    = string
+  default = "alpha"
+}
 
 variable "project_id" {
   type    = string
@@ -51,22 +54,17 @@ variable "wait_to_add_ssh_keys" {
 }
 
 locals {
-  ubuntu_ami_name = "${var.prefix}-cosmian-vm-sev-ubuntu"
+  ubuntu_ami_name = "${var.prefix}-cosmian-vm-ubuntu-sev"
 }
 
 variable "ubuntu_source_image" {
   type    = string
-  default = "ubuntu-2204-jammy-v20231030"
+  default = "ubuntu-2204-jammy-v20240319"
 }
 
 variable "ubuntu_source_image_family" {
   type    = string
   default = "ubuntu-2204-lts"
-}
-
-variable "image_licenses" {
-  type    = list(string)
-  default = ["projects/cosmian-public/global/licenses/cloud-marketplace-84a2e990cf18dca8-df1ebeb69c0ba664"]
 }
 
 source "googlecompute" "ubuntu" {
@@ -83,7 +81,6 @@ source "googlecompute" "ubuntu" {
   tags                   = var.tags
   use_os_login           = var.use_os_login
   wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
-  image_licenses         = var.image_licenses
 }
 
 build {
@@ -120,7 +117,7 @@ build {
   }
 
   provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_playbook.yml"
+    playbook_file = "../ansible/cosmian_vm_sev_playbook.yml"
     local_port    = 22
     use_proxy     = false
   }

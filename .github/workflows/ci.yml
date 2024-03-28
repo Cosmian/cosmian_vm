@@ -1,199 +1,40 @@
+---
 on:
   # Run on push except on tags
   push:
     branches:
-      - "**"
+      - '**'
     tags:
-      - "**"
+      - '**'
 
 name: CI
 
 jobs:
-  check:
-    name: Rust Check
-    runs-on: ubuntu-22.04
+  build-cosmian-vm-binaries:
+    uses: ./.github/workflows/build.yml
 
-    steps:
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cargo cache
-        uses: actions/cache@v4
-        id: cargo-cache
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: rust-check-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Install Rust toolchain and components
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          components: rustfmt, clippy
-
-      - name: Cargo install cargo-machete
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cargo-machete
-
-      - name: Cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-
-      - name: Cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-      - name: Clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
-
-      - name: Machete (deps checker)
-        uses: actions-rs/cargo@v1
-        with:
-          command: machete
-
-  test:
-    name: Rust Test
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cargo cache
-        uses: actions/cache@v4
-        id: cargo-cache
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: rust-test-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Install Rust toolchain and components
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          components: rustfmt, clippy
-
-      - name: Cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-
-  build:
-    name: Rust Build
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cargo cache
-        uses: actions/cache@v4
-        id: cargo-cache
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: rust-build-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Install Rust toolchain and components
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          components: rustfmt, clippy
-
-      - name: Cargo build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: cosmian_vm
-          path: |
-            target/release/cosmian_vm_agent
-            target/release/cosmian_vm
-            target/release/cosmian_certtool
-            resources/scripts/cosmian_fstool
-          retention-days: 1
-          if-no-files-found: error
-
-  # audit:
-  #   name: Rust Audit
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Cargo cache
-  #       uses: actions/cache@v4
-  #       id: cargo-cache
-  #       continue-on-error: false
-  #       with:
-  #         path: |
-  #           ~/.cargo/bin/
-  #           ~/.cargo/registry/index/
-  #           ~/.cargo/registry/cache/
-  #           ~/.cargo/git/db/
-  #         key: rust-audit-${{ hashFiles('**/Cargo.lock') }}
-
-  #     - name: Install Rust toolchain
-  #       if: steps.cargo-cache.outputs.cache-hit != 'true'
-  #       uses: dtolnay/rust-toolchain@stable
-
-  #     - name: Cargo audit
-  #       uses: rustsec/audit-check@v1
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-
-  build-test-gcp-image:
+  build-test-gcp-sev-image:
     strategy:
+      fail-fast: false
       matrix:
-        distrib: [ubuntu, rhel]
-    name: GCP image (${{ matrix.distrib }})
-    needs: [check, build, test] #, audit]
+        distrib: [ubuntu]
+    name: (${{ matrix.distrib }}) -> GCP SEV image
+    needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
     with:
+      techno: sev
       distrib: ${{ matrix.distrib }}
+      machine-type: n2d-standard-2
+      zone: europe-west4-a
+      confidential-compute-type: SEV_SNP
+      min-cpu-platform: AMD Milan
+      project: cosmian-dev
+      mode: beta
+      maintenance: maintenance-policy=TERMINATE
 
   release:
     name: Release
-    needs: [build-test-gcp-image]
+    needs: [build-test-gcp-sev-image]
     secrets: inherit
     uses: ./.github/workflows/release.yml

@@ -1,9 +1,34 @@
-name: Build and test image for GCP
+---
+name: Build and test image for GCP SEV and TDX
 
 on:
   workflow_call:
     inputs:
       distrib:
+        required: true
+        type: string
+      machine-type:
+        required: true
+        type: string
+      zone:
+        required: true
+        type: string
+      confidential-compute-type:
+        required: true
+        type: string
+      techno:
+        required: true
+        type: string
+      min-cpu-platform:
+        required: true
+        type: string
+      project:
+        required: true
+        type: string
+      mode:
+        required: true
+        type: string
+      maintenance:
         required: true
         type: string
 
@@ -16,8 +41,8 @@ jobs:
     name: Packer build
     runs-on: ubuntu-22.04
     permissions:
-      contents: "read"
-      id-token: "write"
+      contents: read
+      id-token: write
     outputs:
       timestamp: ${{ steps.env.outputs.TIMESTAMP }}
       image_name: ${{ steps.env.outputs.IMAGE_NAME }}
@@ -31,8 +56,8 @@ jobs:
         run: |
           TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
           echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
-          echo "IMAGE_NAME=alpha-$TIMESTAMP-cosmian-vm-sev-${{ inputs.distrib }}" >> "$GITHUB_OUTPUT"
-          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_NAME=temp-$TIMESTAMP-cosmian-vm-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -53,27 +78,28 @@ jobs:
           packer plugins install github.com/hashicorp/ansible
 
       - name: Init packer
-        run: cd packer/ && packer init gcp-sev-${{ inputs.distrib }}.pkr.hcl
+        run: |
+          cd packer/ && packer init gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
       - name: GCP auth
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Packer build image
         id: packer-build
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
         run: |
-          cd packer/ && packer build -var "prefix=alpha-$TIMESTAMP" gcp-sev-${{ inputs.distrib }}.pkr.hcl
+          cd packer/ && packer build -var "prefix=temp-$TIMESTAMP" gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
   test-image:
     name: Test image
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:
-      contents: "read"
-      id-token: "write"
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -81,13 +107,13 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           version: latest
-          install_components: beta
+          install_components: ${{ inputs.mode }}
 
       - name: Launch GCP instance
         id: run-gcp-instance
@@ -95,18 +121,18 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
-          gcloud beta compute instances create $CI_INSTANCE --machine-type n2d-standard-2 \
-                                                            --zone europe-west4-a \
-                                                            --min-cpu-platform="AMD Milan" \
-                                                            --confidential-compute-type=SEV_SNP \
-                                                            --maintenance-policy=TERMINATE \
-                                                            --image="$IMAGE_NAME" \
-                                                            --image-project=$GCP_DEV_PROJECT \
-                                                            --project $GCP_DEV_PROJECT \
-                                                            --tags ssh,backend,http,https,cosmian-vm-agent \
-                                                            --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
-                                                            --max-run-duration=10m \
-                                                            --instance-termination-action=DELETE
+          gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE --machine-type ${{ inputs.machine-type }} \
+                                                                          --zone ${{ inputs.zone }} \
+                                                                          --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
+                                                                          --confidential-compute-type=${{ inputs.confidential-compute-type }} \
+                                                                          --${{ inputs.maintenance }} \
+                                                                          --image="$IMAGE_NAME" \
+                                                                          --image-project=${{ inputs.project }} \
+                                                                          --project ${{ inputs.project }} \
+                                                                          --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
+                                                                          --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
+                                                                          --max-run-duration=10m \
+                                                                          --instance-termination-action=DELETE
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -118,23 +144,23 @@ jobs:
           chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
 
       - name: Test Cosmian VM Agent on GCP instance
-        continue-on-error: true
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           sudo apt-get install -y jq moreutils
-          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
-          echo "Waiting for Cosmian VM agent..."
-          timeout 4m bash -c 'until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done'
+          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
+          echo "Waiting for Cosmian VM agent (${IP_ADDR}:5355)..."
+          timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
           echo "[ OK ] Cosmian VM ready"
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls snapshot
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
           echo "Rebooting instance..."
-          gcloud beta compute instances stop $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
+          gcloud ${{ inputs.mode }} compute instances stop $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
+          gcloud ${{ inputs.mode }} compute instances set-scheduling $CI_INSTANCE --zone ${{ inputs.zone }} --max-run-duration=10m --instance-termination-action=DELETE
           sleep 10
-          gcloud beta compute instances start $CI_INSTANCE --zone europe-west4-a --project $GCP_DEV_PROJECT
-          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
-          timeout 4m bash -c 'until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done'
+          gcloud ${{ inputs.mode }} compute instances start $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
+          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
+          timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
           echo "[ OK ] Cosmian VM ready after reboot"
           RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
           NEW_RESET_COUNT=$(expr $RESET_COUNT + 1)
@@ -149,20 +175,23 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           set +e
-          OUTPUT=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(status)' --zone=europe-west4-a)
-          EXIT_CODE="$?"
-          if [ "$EXIT_CODE" -eq 0 ]; then
-            gcloud beta compute instances delete $CI_INSTANCE --zone europe-west4-a \
-                                                              --project $GCP_DEV_PROJECT
-          fi
+          gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project ${{ inputs.project }}
+          set -e
+
+      - name: Delete GCP CI image
+        if: startsWith(github.ref, 'refs/tags') != true
+        env:
+          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+        run: |
+          gcloud ${{ inputs.mode }} compute images delete --quiet $IMAGE_NAME
 
   release-image:
     name: Release image
     runs-on: ubuntu-22.04
     needs: [build-image, test-image]
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -170,7 +199,7 @@ jobs:
       - name: GCP auth
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}"
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Copy image to public project
         if: startsWith(github.ref, 'refs/tags')
@@ -181,5 +210,9 @@ jobs:
           TAG=${{  github.ref_name }}
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           NEW_IMAGE_NAME=cosmian-vm-$VERSION-sev-${{ inputs.distrib }}
-          gcloud beta compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
-          gcloud beta compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME --source-image-project=$GCP_DEV_PROJECT
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"; else LICENSE=${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}: fi
+          gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
+                                                                                                     --source-image-project=$GCP_DEV_PROJECT
+          gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
+                                                                                                        --source-image-project=$GCP_DEV_PROJECT \
+                                                                                                        --licenses=$LICENSE

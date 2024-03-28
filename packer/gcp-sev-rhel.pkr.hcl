@@ -1,7 +1,10 @@
-variable "prefix" {}
+variable "prefix" {
+  type    = string
+  default = "alpha"
+}
 
 locals {
-  redhat_ami_name = "${var.prefix}-cosmian-vm-sev-rhel"
+  redhat_ami_name = "${var.prefix}-cosmian-vm-rhel-sev"
 }
 
 variable "project_id" {
@@ -56,17 +59,12 @@ variable "wait_to_add_ssh_keys" {
 
 variable "redhat_source_image" {
   type    = string
-  default = "rhel-9-v20231115"
+  default = "rhel-9-v20240312"
 }
 
 variable "redhat_source_image_family" {
   type    = string
   default = "rhel-9"
-}
-
-variable "image_licenses" {
-  type    = list(string)
-  default = ["projects/cosmian-public/global/licenses/cloud-marketplace-ab9ba75ed9b59877-df1ebeb69c0ba664"]
 }
 
 source "googlecompute" "redhat" {
@@ -83,7 +81,6 @@ source "googlecompute" "redhat" {
   tags                   = var.tags
   use_os_login           = var.use_os_login
   wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
-  image_licenses         = var.image_licenses
 }
 
 build {
@@ -120,7 +117,7 @@ build {
   }
 
   provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_playbook.yml"
+    playbook_file = "../ansible/cosmian_vm_sev_playbook.yml"
     local_port    = 22
     use_proxy     = false
   }
