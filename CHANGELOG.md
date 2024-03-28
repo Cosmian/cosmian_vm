@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0-rc.3] - 2024-03-28
+
+### Bug Fixes
+
+- Support for RHEL 9 on AMD SEV-SNP and Ubuntu 22.04 on Intel TDX is temporarly suspended because of some issues with `systemd-cryptenroll` when the instance reboot
+- Create application storage folder if it does not exist
+- Removed PCR-7 from systemd-cryptenroll for now because of failure at reboot (see https://github.com/systemd/systemd/issues/24906)
+- `/var/tmp` is now a `tmpfs` filesystem to allow `dracut` temp files
+
+### Features
+
+- Base images for GCP have been updated: `ubuntu-2204-jammy-v20240319` and `rhel-9-v20240312`
+
 ## [1.1.0-rc.2] - 2024-03-14
 
 ### Bug Fixes
