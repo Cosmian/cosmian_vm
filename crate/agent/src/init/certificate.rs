@@ -9,7 +9,6 @@ use rand_chacha::{
 
 use spki::{EncodePublicKey, SubjectPublicKeyInfoOwned};
 use std::{
-    convert::TryFrom,
     net::{IpAddr, Ipv4Addr},
     path::Path,
     str::FromStr,

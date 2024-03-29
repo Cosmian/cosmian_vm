@@ -6,9 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 
-- Support for RHEL 9 on AMD SEV-SNP and Ubuntu 22.04 on Intel TDX is temporarly suspended because of some issues with `systemd-cryptenroll` when the instance reboot
+- Support for RHEL 9 on AMD SEV-SNP and Ubuntu 22.04 on Intel TDX is temporarily suspended because of some issues with `systemd-cryptenroll` when the instance reboot
 - Create application storage folder if it does not exist
-- Removed PCR-7 from systemd-cryptenroll for now because of failure at reboot (see https://github.com/systemd/systemd/issues/24906)
+- Removed PCR-7 from systemd-cryptenroll for now because of failure at reboot (see <https://github.com/systemd/systemd/issues/24906>)
 - `/var/tmp` is now a `tmpfs` filesystem to allow `dracut` temp files
 
 ### Features

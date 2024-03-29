@@ -1,7 +1,6 @@
 use anyhow::{anyhow, Result};
 use clap::Args;
 use curve25519_dalek::{constants::X25519_BASEPOINT, scalar::Scalar};
-use std::convert::TryInto;
 use std::fs;
 use std::path::PathBuf;
 use tee_attestation::get_key;
