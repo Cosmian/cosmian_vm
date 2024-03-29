@@ -979,59 +979,53 @@ mod tests {
 
         let entries: HashSet<_> = ret.entries.iter().collect();
 
-        assert!(&entries
-            .get(
-                &ImaEntry::new(
-                    10,
-                    hex::decode("e01a2b6dfdc98466531ec38dda66e641ded2525a").unwrap(),
-                    ImaTemplate::ImaNg,
-                    ImaHashMethod::Sha1,
-                    hex::decode("545cac360cece7aa86f73c4dc6e518a2a25ffe1c").unwrap(),
-                    "/usr/lib/systemd/system-generators/systemd-debug-generator".to_string(),
-                    None,
-                    None
-                )
-                .unwrap()
+        assert!(&!entries.contains(
+            &ImaEntry::new(
+                10,
+                hex::decode("e01a2b6dfdc98466531ec38dda66e641ded2525a").unwrap(),
+                ImaTemplate::ImaNg,
+                ImaHashMethod::Sha1,
+                hex::decode("545cac360cece7aa86f73c4dc6e518a2a25ffe1c").unwrap(),
+                "/usr/lib/systemd/system-generators/systemd-debug-generator".to_string(),
+                None,
+                None
             )
-            .is_none()); // present in the snapshot and in ima
-        assert!(&entries
-            .get(
-                &ImaEntry::new(
-                    10,
-                    [
-                        27, 57, 158, 185, 6, 218, 99, 164, 90, 172, 217, 96, 154, 254, 6, 69, 128,
-                        23, 236, 175
-                    ]
-                    .to_vec(),
-                    ImaTemplate::ImaNg,
-                    ImaHashMethod::Sha1,
-                    hex::decode("ad65f41a5efd4ad27bd5d1d74ad5f60917677611").unwrap(),
-                    "/usr/libexec/netplan/generate".to_string(),
-                    None,
-                    None
-                )
-                .unwrap()
+            .unwrap()
+        )); // present in the snapshot and in ima
+        assert!(&entries.contains(
+            &ImaEntry::new(
+                10,
+                [
+                    27, 57, 158, 185, 6, 218, 99, 164, 90, 172, 217, 96, 154, 254, 6, 69, 128, 23,
+                    236, 175
+                ]
+                .to_vec(),
+                ImaTemplate::ImaNg,
+                ImaHashMethod::Sha1,
+                hex::decode("ad65f41a5efd4ad27bd5d1d74ad5f60917677611").unwrap(),
+                "/usr/libexec/netplan/generate".to_string(),
+                None,
+                None
             )
-            .is_some()); // not present in the snapshot but present in ima
-        assert!(&entries
-            .get(
-                &ImaEntry::new(
-                    10,
-                    [
-                        215, 207, 23, 146, 41, 2, 129, 4, 150, 89, 180, 105, 253, 171, 147, 29, 9,
-                        13, 207, 34
-                    ]
-                    .to_vec(),
-                    ImaTemplate::ImaNg,
-                    ImaHashMethod::Sha1,
-                    hex::decode("5659fe4d0ce59b251d644eb52ca72280b4f17602").unwrap(),
-                    "/usr/bin/aa-exec".to_string(),
-                    None,
-                    None
-                )
-                .unwrap()
+            .unwrap()
+        )); // not present in the snapshot but present in ima
+        assert!(&entries.contains(
+            &ImaEntry::new(
+                10,
+                [
+                    215, 207, 23, 146, 41, 2, 129, 4, 150, 89, 180, 105, 253, 171, 147, 29, 9, 13,
+                    207, 34
+                ]
+                .to_vec(),
+                ImaTemplate::ImaNg,
+                ImaHashMethod::Sha1,
+                hex::decode("5659fe4d0ce59b251d644eb52ca72280b4f17602").unwrap(),
+                "/usr/bin/aa-exec".to_string(),
+                None,
+                None
             )
-            .is_some()); // present in the snapshot but not with that hash value
+            .unwrap()
+        )); // present in the snapshot but not with that hash value
     }
 
     #[test]
