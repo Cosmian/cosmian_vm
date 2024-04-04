@@ -121,18 +121,19 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
-          gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE --machine-type ${{ inputs.machine-type }} \
-                                                                          --zone ${{ inputs.zone }} \
-                                                                          --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
-                                                                          --confidential-compute-type=${{ inputs.confidential-compute-type }} \
-                                                                          --${{ inputs.maintenance }} \
-                                                                          --image="$IMAGE_NAME" \
-                                                                          --image-project=${{ inputs.project }} \
-                                                                          --project ${{ inputs.project }} \
-                                                                          --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
-                                                                          --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
-                                                                          --max-run-duration=10m \
-                                                                          --instance-termination-action=DELETE
+          gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE \
+            --machine-type ${{ inputs.machine-type }} \
+            --zone ${{ inputs.zone }} \
+            --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
+            --confidential-compute-type=${{ inputs.confidential-compute-type }} \
+            --${{ inputs.maintenance }} \
+            --image="$IMAGE_NAME" \
+            --image-project=${{ inputs.project }} \
+            --project ${{ inputs.project }} \
+            --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
+            --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
+            --max-run-duration=10m \
+            --instance-termination-action=DELETE
 
       - name: Download binaries
         uses: actions/download-artifact@v4
@@ -215,8 +216,11 @@ jobs:
           else
             LICENSE=${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}
           fi
-          gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
-                                                                                                     --source-image-project=$GCP_DEV_PROJECT
-          gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME --source-image=$IMAGE_NAME \
-                                                                                                        --source-image-project=$GCP_DEV_PROJECT \
-                                                                                                        --licenses=$LICENSE
+          gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME \
+            --source-image=$IMAGE_NAME \
+            --source-image-project=$GCP_DEV_PROJECT
+
+          gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME \
+            --source-image=$IMAGE_NAME \
+            --source-image-project=$GCP_DEV_PROJECT \
+            --licenses=$LICENSE
