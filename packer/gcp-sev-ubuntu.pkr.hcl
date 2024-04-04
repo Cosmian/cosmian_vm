@@ -87,7 +87,7 @@ build {
   sources = ["sources.googlecompute.ubuntu"]
 
   provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_sev_playbook.yml"
+    playbook_file = "../ansible/packer_sev_playbook.yml"
     local_port    = 22
     use_proxy     = false
   }
