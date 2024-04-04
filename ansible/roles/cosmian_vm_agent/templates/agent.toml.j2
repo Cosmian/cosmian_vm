@@ -13,14 +13,3 @@ ssl_certificate = "data/cert.pem"
 ssl_private_key = "data/key.pem"
 # The TPM device path
 tpm_device = "/dev/tpmrm0"
-
-[app]
-# The service type monitoring the user application
-# Possible values: supervisor|systemd|standalone
-service_type = "supervisor"
-# The name of the service monitoring the used application
-service_name = "cosmian_helloworld"
-# The location of the user application data
-# It is recommended to put that directory inside an encrypted filesystem
-# If the path is relative, the location path will be joined with '/var/lib/cosmian_vm/'
-app_storage = "data/app"

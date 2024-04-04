@@ -5,6 +5,18 @@
   debug:
     var: ansible_distribution
 
+- name: Stop Cosmian VM Agent
+  community.general.supervisorctl:
+    name: cosmian_vm_agent
+    state: stopped
+
+- name: Clean Cosmian VM existing folders
+  file:
+    path:
+      - /var/lib/cosmian_vm
+      - /var/log/cosmian_vm
+    state: absent
+
 - name: Download Cosmian VM agent
   get_url:
     url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_vm_agent
