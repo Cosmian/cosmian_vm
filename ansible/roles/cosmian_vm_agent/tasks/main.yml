@@ -9,12 +9,14 @@
   community.general.supervisorctl:
     name: cosmian_vm_agent
     state: stopped
+  ignore_errors: true
 
 - name: Clean Cosmian VM existing folders
   file:
     path:
       - /var/lib/cosmian_vm
       - /var/log/cosmian_vm
+      - /etc/cosmian_vm
     state: absent
 
 - name: Download Cosmian VM agent
@@ -200,3 +202,13 @@
         enabled: true
         state: stopped
       changed_when: false
+
+# - name: Copy cosmian vm agent
+#   ansible.builtin.copy:
+#     src: /home/manu/Cosmian/github/cosmian_vm/target/release/cosmian_vm_agent
+#     dest: /usr/sbin/cosmian_vm_agent
+#     remote_src: false
+#     owner: root
+#     group: root
+#     mode: 0500
+#   tags: cosmian_vm_agent
