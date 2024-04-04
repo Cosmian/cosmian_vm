@@ -69,6 +69,7 @@
     cmd: "grep -q '^GRUB_CMDLINE_LINUX=\"ima_policy=tcb ima_hash=sha256 ima_template=ima-ng\"$' /etc/default/grub.d/50-cloudimg-settings.cfg"
   register: grep_result
   ignore_errors: true
+  changed_when: false
 
 - name: Add missing line
   ansible.builtin.blockinfile:
@@ -88,11 +89,13 @@
 
 - name: Update the grub configuration
   command: "/tmp/grub.sh"
+  when: file_check.stat.exists
 
 - name: Remove the update grub configuration script
   file:
     path: "/tmp/grub.sh"
     state: absent
+  when: file_check.stat.exists
 
 # Update grub
 - name: Update grub on Ubuntu
@@ -105,6 +108,21 @@
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
   block:
+
+    - name: Check grub2-mkconfig exist
+      command: "which grub2-mkconfig"
+      register: grub2_mkconfig_check
+      ignore_errors: true
+
+    - name: Install missing packages
+      dnf:
+        name: 
+          - grub2-efi 
+          - grub2-efi-modules 
+          - shim
+        state: present
+      when: grub2_mkconfig_check.rc != 0
+
     - name: Update grub
       ansible.builtin.command:
         cmd: grub2-mkconfig -o /etc/grub2.cfg

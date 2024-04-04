@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-set -e 
+set -e
 
 usage() {
     echo "Usage: $0 --size <> [--location <>] [--password <>]"
@@ -69,7 +69,7 @@ parse_args() {
         usage
     fi
 
-    if [ "$PASSWORD" = "-"  ]; then 
+    if [ "$PASSWORD" = "-" ]; then
         PASSWORD=$(cat /dev/stdin)
     fi
 
@@ -119,7 +119,7 @@ echo -n "$PASSWORD" | cryptsetup luksOpen -d - "$CONTAINER_PATH" "$CONTAINER_MAP
 echo "Formatting the container in Ext4..."
 mkfs -t ext4 "$CONTAINER_MAPPING_PATH"
 
-# Mount it 
+# Mount it
 echo "Mouting the container at $CONTAINER_MOUNT_PATH..."
 mkdir -p "$CONTAINER_MOUNT_PATH"
 mount "$CONTAINER_MAPPING_PATH" "$CONTAINER_MOUNT_PATH"
@@ -138,12 +138,12 @@ PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=/dev/tpmrm0 "$BLOCK_DEVICE"
 
 # Remove previous entry from the fstab and crypttab (create a .bak file to ease the rollback)
 echo "Removing previous obsolete auto mounting rules..."
-sed -i.bak "/$CONTAINER_MAPPING_NAME/d" /etc/crypttab 
+sed -i.bak "/$CONTAINER_MAPPING_NAME/d" /etc/crypttab
 sed -i.bak "/$CONTAINER_MAPPING_NAME/d" /etc/fstab
 
 # Auto decrypt & auto mount the luks when rebooting (if not already done)
 echo "Enabling auto mounting when rebooting..."
-grep -qF -- "$CONTAINER_MAPPING_NAME $CONTAINER_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_NAME $CONTAINER_PATH none tpm2-device=/dev/tpmrm0" >> /etc/crypttab
+grep -qF -- "$CONTAINER_MAPPING_NAME $CONTAINER_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_NAME $CONTAINER_PATH none tpm2-device=auto" >> /etc/crypttab
 grep -qF -- "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH ext4 defaults 0 0" >> /etc/fstab
 
 echo "Process completed with success!"
