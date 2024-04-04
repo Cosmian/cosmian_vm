@@ -1,152 +1,151 @@
 ---
 # tasks file for ansible/roles/configure_ima
 
-  - name: Check OS distribution
-    debug:
-      var: ansible_distribution
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
 
-  - name: Check grub file path
-    stat:
-      path: /etc/default/grub
-    register: file_check
+- name: Check grub file path
+  stat:
+    path: /etc/default/grub
+  register: file_check
 
-  - name: Create ima folder
-    file:
-      path: /etc/ima
-      state: directory
-      owner: root
-      group: root
-      mode: 0500
+- name: Create ima folder
+  file:
+    path: /etc/ima
+    state: directory
+    owner: root
+    group: root
+    mode: 0500
 
-  - name: Copy ima policy
-    template:
-      src: ima-policy.j2
-      dest: /etc/ima/ima-policy
-      owner: root
-      group: root
-      mode: 0400
+- name: Copy ima policy
+  template:
+    src: ima-policy.j2
+    dest: /etc/ima/ima-policy
+    owner: root
+    group: root
+    mode: 0400
 
-  - name: Override ima policy for RedHat
-    when: ansible_distribution == 'RedHat'
-    template:
-      src: ima-policy-selinux.j2
-      dest: /etc/ima/ima-policy
-      owner: root
-      group: root
-      mode: 0400
+- name: Override ima policy for RedHat
+  when: ansible_distribution == 'RedHat'
+  template:
+    src: ima-policy-selinux.j2
+    dest: /etc/ima/ima-policy
+    owner: root
+    group: root
+    mode: 0400
 
-  - name: Copy the bash script to the remote host (in order to update the grub conf)
-    copy:
-      content: |
-        #!/usr/bin/bash
-        f=/etc/default/grub
+- name: Copy the bash script to the remote host (in order to update the grub conf)
+  copy:
+    content: |
+      #!/usr/bin/bash
+      f=/etc/default/grub
 
-        ## Template policy
-        if grep -q ima_policy= $f ; then
-          # Template policy already set
-          sed -i 's/ima_policy=[^ "]\+/ima_policy=tcb/' $f
-        else
-          # Template policy not set
-          sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
-        fi
+      ## Template policy
+      if grep -q ima_policy= $f ; then
+        # Template policy already set
+        sed -i 's/ima_policy=[^ "]\+/ima_policy=tcb/' $f
+      else
+        # Template policy not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
+      fi
 
-        ## Hash method
-        if grep -q ima_hash= $f ; then
-          # Hash method already set
-          sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
-        else
-          # Hash method not set
-          sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
-        fi
+      ## Hash method
+      if grep -q ima_hash= $f ; then
+        # Hash method already set
+        sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
+      else
+        # Hash method not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
+      fi
 
-        ## Template format
-        if grep -q ima_template= $f ; then
-          # Template format already set
-          sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
-        else
-          # Template format not set
-          sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
-        fi
-      dest: /tmp/grub.sh
-      mode: 0700 # Make the script executable
-      remote_src: yes
-    when: file_check.stat.exists
+      ## Template format
+      if grep -q ima_template= $f ; then
+        # Template format already set
+        sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
+      else
+        # Template format not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
+      fi
+    dest: /tmp/grub.sh
+    mode: 0700 # Make the script executable
+    remote_src: yes
+  when: file_check.stat.exists
 
-  - name: Check if line exits in file with regex
-    ansible.builtin.shell:
-      cmd: grep -q '^GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng"$' /etc/default/grub.d/50-cloudimg-settings.cfg
-    register: grep_result
-    ignore_errors: true
-    changed_when: false
+- name: Check if line exits in file with regex
+  ansible.builtin.shell:
+    cmd: grep -q '^GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng"$' /etc/default/grub.d/50-cloudimg-settings.cfg
+  register: grep_result
+  ignore_errors: true
+  changed_when: false
 
-  - name: Add missing line
-    ansible.builtin.blockinfile:
-      path: /etc/default/grub.d/50-cloudimg-settings.cfg
-      block: |
-        GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng"
-    when:
-      - grep_result.rc != 0
-      - not file_check.stat.exists
+- name: Add missing line
+  ansible.builtin.blockinfile:
+    path: /etc/default/grub.d/50-cloudimg-settings.cfg
+    block: |
+      GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng"
+  when:
+    - grep_result.rc != 0
+    - not file_check.stat.exists
 
-  - name: Install packages for Azure
-    apt:
-      name: grub2-common
-      state: latest
-      update_cache: yes
-    when: not file_check.stat.exists
+- name: Install packages for Azure
+  apt:
+    name: grub2-common
+    state: latest
+    update_cache: yes
+  when: not file_check.stat.exists
 
-  - name: Update the grub configuration
-    command: /tmp/grub.sh
-    when: file_check.stat.exists
+- name: Update the grub configuration
+  command: /tmp/grub.sh
+  when: file_check.stat.exists
 
-  - name: Remove the update grub configuration script
-    file:
-      path: /tmp/grub.sh
-      state: absent
-    when: file_check.stat.exists
+- name: Remove the update grub configuration script
+  file:
+    path: /tmp/grub.sh
+    state: absent
+  when: file_check.stat.exists
 
 # Update grub
-  - name: Update grub on Ubuntu
-    when: ansible_distribution == 'Ubuntu'
-    block:
-      - name: Update grub
-        ansible.builtin.command:
-          cmd: update-grub
+- name: Update grub on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+    - name: Update grub
+      ansible.builtin.command:
+        cmd: update-grub
 
-  - name: Update grub on RedHat
-    when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
-    block:
+- name: Update grub on RedHat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
+  block:
+    - name: Check grub2-mkconfig exist
+      command: which grub2-mkconfig
+      register: grub2_mkconfig_check
+      ignore_errors: true
 
-      - name: Check grub2-mkconfig exist
-        command: which grub2-mkconfig
-        register: grub2_mkconfig_check
-        ignore_errors: true
+    - name: Install missing packages
+      dnf:
+        name:
+          - grub2-efi
+          - grub2-efi-modules
+          - shim
+        state: present
+      when: grub2_mkconfig_check.rc != 0
 
-      - name: Install missing packages
-        dnf:
-          name:
-            - grub2-efi
-            - grub2-efi-modules
-            - shim
-          state: present
-        when: grub2_mkconfig_check.rc != 0
+    - name: Update grub
+      ansible.builtin.command:
+        cmd: grub2-mkconfig -o /etc/grub2.cfg
 
-      - name: Update grub
-        ansible.builtin.command:
-          cmd: grub2-mkconfig -o /etc/grub2.cfg
+    - name: Selinux - allow https
+      ansible.builtin.command:
+        cmd: setsebool -P httpd_can_network_connect 1
 
-      - name: Selinux - allow https
-        ansible.builtin.command:
-          cmd: setsebool -P httpd_can_network_connect 1
+    - name: Dracut
+      ansible.builtin.command:
+        cmd: dracut --force
 
-      - name: Dracut
-        ansible.builtin.command:
-          cmd: dracut --force
-
-  - name: Mount a tmpfs volume
-    ansible.posix.mount:
-      src: tmpfs
-      path: /var/tmp
-      opts: size=1G
-      state: present
-      fstype: tmpfs
+- name: Mount a tmpfs volume
+  ansible.posix.mount:
+    src: tmpfs
+    path: /var/tmp
+    opts: size=1G
+    state: present
+    fstype: tmpfs

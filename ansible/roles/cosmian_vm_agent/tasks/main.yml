@@ -1,190 +1,190 @@
 ---
 # tasks file for ansible/roles/cosmian_vm_agent
 
-  - name: Check OS distribution
-    debug:
-      var: ansible_distribution
+- name: Check OS distribution
+  debug:
+    var: ansible_distribution
 
-  - name: Download Cosmian VM agent
-    get_url:
-      url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_vm_agent
-      dest: /usr/sbin/
-      mode: 0500
-      group: root
-      owner: root
+- name: Download Cosmian VM agent
+  get_url:
+    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_vm_agent
+    dest: /usr/sbin/
+    mode: 0500
+    group: root
+    owner: root
 
-  - name: Download Cosmian VM cert tool
-    get_url:
-      url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_certtool
-      dest: /usr/sbin/
-      mode: 0500
-      group: root
-      owner: root
+- name: Download Cosmian VM cert tool
+  get_url:
+    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_certtool
+    dest: /usr/sbin/
+    mode: 0500
+    group: root
+    owner: root
 
-  - name: Download Cosmian VM filesystem tool
-    get_url:
-      url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_fstool
-      dest: /usr/sbin/
-      mode: 0500
-      group: root
-      owner: root
+- name: Download Cosmian VM filesystem tool
+  get_url:
+    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_fstool
+    dest: /usr/sbin/
+    mode: 0500
+    group: root
+    owner: root
 
-  - name: Create cosmian_vm directory in /etc
-    file:
-      path: /etc/cosmian_vm
-      state: directory
-      owner: root
-      group: root
-      mode: 0500
+- name: Create cosmian_vm directory in /etc
+  file:
+    path: /etc/cosmian_vm
+    state: directory
+    owner: root
+    group: root
+    mode: 0500
 
-  - name: Copy agent.toml
-    template:
-      src: agent.toml.j2
-      dest: /etc/cosmian_vm/agent.toml
-      owner: root
-      group: root
-      mode: 0400
+- name: Copy agent.toml
+  template:
+    src: agent.toml.j2
+    dest: /etc/cosmian_vm/agent.toml
+    owner: root
+    group: root
+    mode: 0400
 
-  - name: Create cosmian_vm directory in /var/lib
-    ansible.builtin.file:
-      path: /var/lib/cosmian_vm
-      state: directory
-      owner: root
-      group: root
-      mode: 0755
+- name: Create cosmian_vm directory in /var/lib
+  ansible.builtin.file:
+    path: /var/lib/cosmian_vm
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
-  - name: Mount a tmpfs volume
-    ansible.posix.mount:
-      src: tmpfs
-      path: /var/lib/cosmian_vm/tmp
-      opts: size=512m
-      state: mounted
-      fstype: tmpfs
+- name: Mount a tmpfs volume
+  ansible.posix.mount:
+    src: tmpfs
+    path: /var/lib/cosmian_vm/tmp
+    opts: size=512m
+    state: mounted
+    fstype: tmpfs
 
-  - name: Create cosmian agent log directory
-    ansible.builtin.file:
-      path: /var/log/cosmian_vm
-      state: directory
-      owner: root
-      group: root
-      mode: 0755
+- name: Create cosmian agent log directory
+  ansible.builtin.file:
+    path: /var/log/cosmian_vm
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
-  - name: Supervisor install on Ubuntu
-    when: ansible_distribution == 'Ubuntu'
-    block:
-      - name: Update all packages to their latest version
-        apt:
-          update_cache: yes
+- name: Supervisor install on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+    - name: Update all packages to their latest version
+      apt:
+        update_cache: yes
 
-      - name: Install Supervisor
-        apt:
-          name: supervisor
-          state: latest
-          update_cache: yes
+    - name: Install Supervisor
+      apt:
+        name: supervisor
+        state: latest
+        update_cache: yes
 
-      - name: Add Cosmian VM supervisor configuration
-        template:
-          src: cosmian_vm_agent.conf.j2
-          dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
-          owner: root
-          group: root
-          mode: 0644
+    - name: Add Cosmian VM supervisor configuration
+      template:
+        src: cosmian_vm_agent.conf.j2
+        dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
+        owner: root
+        group: root
+        mode: 0644
 
-      - name: Check if Supervisor is enabled but stopped
-        systemd:
-          name: supervisor
-          enabled: true
-          state: stopped
-        changed_when: false
+    - name: Check if Supervisor is enabled but stopped
+      systemd:
+        name: supervisor
+        enabled: true
+        state: stopped
+      changed_when: false
 
-  - name: Supervisor install on RedHat
-    when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
-    block:
-      - name: Update all packages to their latest version
-        dnf:
-          update_cache: yes
+- name: Supervisor install on RedHat
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  block:
+    - name: Update all packages to their latest version
+      dnf:
+        update_cache: yes
 
-      - name: Install epel-release
-        ansible.builtin.dnf:
-          name:
-            - https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
-          state: present
-          update_cache: yes
-          disable_gpg_check: true
+    - name: Install epel-release
+      ansible.builtin.dnf:
+        name:
+          - https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+        state: present
+        update_cache: yes
+        disable_gpg_check: true
 
-      - name: Install supervisor
-        ansible.builtin.dnf:
-          name: supervisor
-          state: latest
-          update_cache: yes
+    - name: Install supervisor
+      ansible.builtin.dnf:
+        name: supervisor
+        state: latest
+        update_cache: yes
 
-      - name: Add Cosmian VM supervisor configuration
-        template:
-          src: cosmian_vm_agent.conf.j2
-          dest: /etc/supervisord.d/cosmian_vm_agent.ini
-          owner: root
-          group: root
-          mode: 0644
+    - name: Add Cosmian VM supervisor configuration
+      template:
+        src: cosmian_vm_agent.conf.j2
+        dest: /etc/supervisord.d/cosmian_vm_agent.ini
+        owner: root
+        group: root
+        mode: 0644
 
-      - name: Check if Supervisor is enabled but stopped
-        systemd:
-          name: supervisord
-          enabled: true
-          state: stopped
-        changed_when: false
+    - name: Check if Supervisor is enabled but stopped
+      systemd:
+        name: supervisord
+        enabled: true
+        state: stopped
+      changed_when: false
 
-  - name: Supervisor install on Amazon Linux
-    when: ansible_distribution == 'Amazon'
-    block:
-      - name: Update all packages to their latest version
-        dnf:
-          update_cache: yes
+- name: Supervisor install on Amazon Linux
+  when: ansible_distribution == 'Amazon'
+  block:
+    - name: Update all packages to their latest version
+      dnf:
+        update_cache: yes
 
-      - name: Install pip
-        ansible.builtin.dnf:
-          name: pip
-          state: present
-          update_cache: yes
+    - name: Install pip
+      ansible.builtin.dnf:
+        name: pip
+        state: present
+        update_cache: yes
 
-      - name: Install supervisor python package
-        ansible.builtin.pip:
-          name: supervisor
+    - name: Install supervisor python package
+      ansible.builtin.pip:
+        name: supervisor
 
-      - name: Create supervisord.service file
-        template:
-          src: supervisord.service.j2
-          dest: /lib/systemd/system/supervisord.service
-          owner: root
-          group: root
-          mode: 0644
+    - name: Create supervisord.service file
+      template:
+        src: supervisord.service.j2
+        dest: /lib/systemd/system/supervisord.service
+        owner: root
+        group: root
+        mode: 0644
 
-      - name: Create supervisor.conf file
-        template:
-          src: supervisord.conf.j2
-          dest: /etc/supervisord.conf
-          owner: root
-          group: root
-          mode: 0644
+    - name: Create supervisor.conf file
+      template:
+        src: supervisord.conf.j2
+        dest: /etc/supervisord.conf
+        owner: root
+        group: root
+        mode: 0644
 
-      - name: Create supervisor log folder
-        ansible.builtin.file:
-          path: /var/log/supervisor/
-          state: directory
-          owner: root
-          group: root
-          mode: 0755
+    - name: Create supervisor log folder
+      ansible.builtin.file:
+        path: /var/log/supervisor/
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
 
-      - name: Change permission on supervisord binary
-        file:
-          path: /usr/local/bin/supervisord
-          state: file
-          owner: root
-          group: root
-          mode: 0500
+    - name: Change permission on supervisord binary
+      file:
+        path: /usr/local/bin/supervisord
+        state: file
+        owner: root
+        group: root
+        mode: 0500
 
-      - name: Check if Supervisor is enabled but stopped
-        systemd:
-          name: supervisord
-          enabled: true
-          state: stopped
-        changed_when: false
+    - name: Check if Supervisor is enabled but stopped
+      systemd:
+        name: supervisord
+        enabled: true
+        state: stopped
+      changed_when: false
