@@ -153,6 +153,9 @@ jobs:
     name: package.cosmian.com
     runs-on: [self-hosted, no-tee]
     steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v4
+
       - name: Push latest build to package.cosmian.com
         run: |
           set -x
