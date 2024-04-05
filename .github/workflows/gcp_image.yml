@@ -184,6 +184,7 @@ jobs:
     uses: Cosmian/kms/.github/workflows/ansible.yml@ansible/kms
     with:
       host: 0.0.0.0
+      kms-branch: ansible/kms
       # host: ${{ needs.test-image.outputs.ip-address }}
 
   cleanup:
