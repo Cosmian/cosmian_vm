@@ -149,6 +149,7 @@ jobs:
           if-no-files-found: error
 
   push:
+    needs: build
     name: package.cosmian.com
     runs-on: [self-hosted, no-tee]
     steps:
