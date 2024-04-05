@@ -16,17 +16,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cargo cache
-        uses: actions/cache@v4
+      - name: Cache dependencies
         id: cargo-cache
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: rust-check-${{ hashFiles('**/Cargo.lock') }}
+        uses: Swatinem/rust-cache@v2
 
       - name: Install Rust toolchain and components
         if: steps.cargo-cache.outputs.cache-hit != 'true'
@@ -75,17 +67,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cargo cache
-        uses: actions/cache@v4
+      - name: Cache dependencies
         id: cargo-cache
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: rust-test-${{ hashFiles('**/Cargo.lock') }}
+        uses: Swatinem/rust-cache@v2
 
       - name: Install Rust toolchain and components
         if: steps.cargo-cache.outputs.cache-hit != 'true'
@@ -111,17 +95,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cargo cache
-        uses: actions/cache@v4
+      - name: Cache dependencies
         id: cargo-cache
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: rust-build-${{ hashFiles('**/Cargo.lock') }}
+        uses: Swatinem/rust-cache@v2
 
       - name: Install Rust toolchain and components
         if: steps.cargo-cache.outputs.cache-hit != 'true'
