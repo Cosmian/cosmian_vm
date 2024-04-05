@@ -148,6 +148,13 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
+      - name: Push latest build to package.cosmian.com
+        run: |
+          set -x
+          DESTINATION_DIR=/mnt/package/cosmian_vm/last_build/
+          ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
+          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool resources/scripts/cosmian_fstool resources/scripts/cosmian_fstool cosmian@package.cosmian.com:$DESTINATION_DIR/
+
   # audit:
   #   name: Rust Audit
   #   runs-on: ubuntu-latest

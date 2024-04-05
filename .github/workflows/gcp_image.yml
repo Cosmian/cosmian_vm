@@ -145,6 +145,7 @@ jobs:
           chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
 
       - name: Test Cosmian VM Agent on GCP instance
+        id: test_cosmian_vm
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
@@ -155,6 +156,7 @@ jobs:
           echo "[ OK ] Cosmian VM ready"
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls snapshot
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+
           echo "Rebooting instance..."
           gcloud ${{ inputs.mode }} compute instances stop $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
           gcloud ${{ inputs.mode }} compute instances set-scheduling $CI_INSTANCE --zone ${{ inputs.zone }} --max-run-duration=10m --instance-termination-action=DELETE
@@ -162,6 +164,7 @@ jobs:
           gcloud ${{ inputs.mode }} compute instances start $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
           IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
           timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
+
           echo "[ OK ] Cosmian VM ready after reboot"
           RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
           NEW_RESET_COUNT=$(expr $RESET_COUNT + 1)
@@ -169,6 +172,13 @@ jobs:
           jq '.tpm_policy.reset_count |= tonumber' new_cosmian_vm.snapshot | sponge new_cosmian_vm.snapshot
           ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot new_cosmian_vm.snapshot
           echo "[ OK ] Integrity after reboot"
+
+          echo "IP_ADDR=$IP_ADDR" >> "$GITHUB_OUTPUT"
+
+      - name: Install KM to test app init
+        uses: Cosmian/kms/.github/workflows/ansible.yml@ansible/kms
+        with:
+          host: ${{ steps.test_cosmian_vm.outputs.IP_ADDR }}
 
       - name: Stop and delete GCP instance
         if: success()

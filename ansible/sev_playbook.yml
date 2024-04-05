@@ -5,6 +5,7 @@
   roles:
     - configure_ima
     - tpm
+    - clean_previous_installation
     - cosmian_vm_agent
     - no_updates
     - instance_configs

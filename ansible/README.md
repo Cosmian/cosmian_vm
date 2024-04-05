@@ -18,7 +18,7 @@ export USERNAME=cosmian
 export HOST=35.204.83.49
 # Be sure to install deps: `pip install -r python_modules.txt` on your localhost
 cd ansible
-ansible-playbook cosmian_vm_playbook.yml -i ${HOST}, -u $USERNAME
+ansible-playbook cosmian_vm_playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.1.0-rc3
 ```
 
 The machine has been configured

@@ -5,23 +5,13 @@
   debug:
     var: ansible_distribution
 
-- name: Stop Cosmian VM Agent
-  community.general.supervisorctl:
-    name: cosmian_vm_agent
-    state: stopped
-  ignore_errors: true
-
-- name: Clean Cosmian VM existing folders
-  file:
-    path:
-      - /var/lib/cosmian_vm
-      - /var/log/cosmian_vm
-      - /etc/cosmian_vm
-    state: absent
+- name: Check Cosmian VM version
+  debug:
+    var: cosmian_vm_version
 
 - name: Download Cosmian VM agent
   get_url:
-    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_vm_agent
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm_agent
     dest: /usr/sbin/
     mode: 0500
     group: root
@@ -29,7 +19,7 @@
 
 - name: Download Cosmian VM cert tool
   get_url:
-    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_certtool
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_certtool
     dest: /usr/sbin/
     mode: 0500
     group: root
@@ -37,7 +27,7 @@
 
 - name: Download Cosmian VM filesystem tool
   get_url:
-    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_fstool
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_fstool
     dest: /usr/sbin/
     mode: 0500
     group: root
@@ -202,13 +192,3 @@
         enabled: true
         state: stopped
       changed_when: false
-
-# - name: Copy cosmian vm agent
-#   ansible.builtin.copy:
-#     src: /home/manu/Cosmian/github/cosmian_vm/target/release/cosmian_vm_agent
-#     dest: /usr/sbin/cosmian_vm_agent
-#     remote_src: false
-#     owner: root
-#     group: root
-#     mode: 0500
-#   tags: cosmian_vm_agent
