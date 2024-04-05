@@ -2,41 +2,41 @@
 # tasks file for ansible/roles/configure_ima
 
 - name: Check OS distribution
-  debug:
+  ansible.builtin.debug:
     var: ansible_distribution
 
 - name: Check grub file path
-  stat:
+  ansible.builtin.stat:
     path: /etc/default/grub
   register: file_check
 
 - name: Create ima folder
-  file:
+  ansible.builtin.file:
     path: /etc/ima
     state: directory
     owner: root
     group: root
-    mode: 0500
+    mode: "0500"
 
 - name: Copy ima policy
-  template:
+  ansible.builtin.template:
     src: ima-policy.j2
     dest: /etc/ima/ima-policy
     owner: root
     group: root
-    mode: 0400
+    mode: "0400"
 
 - name: Override ima policy for RedHat
   when: ansible_distribution == 'RedHat'
-  template:
+  ansible.builtin.template:
     src: ima-policy-selinux.j2
     dest: /etc/ima/ima-policy
     owner: root
     group: root
-    mode: 0400
+    mode: "0400"
 
 - name: Copy the bash script to the remote host (in order to update the grub conf)
-  copy:
+  ansible.builtin.copy:
     content: |
       #!/usr/bin/bash
       f=/etc/default/grub
@@ -68,8 +68,8 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
       fi
     dest: /tmp/grub.sh
-    mode: 0700 # Make the script executable
-    remote_src: yes
+    mode: "0700"  # Make the script executable
+    remote_src: true
   when: file_check.stat.exists
 
 - name: Insert/update missing line if default grub does not exist
@@ -82,18 +82,18 @@
   tags: cloudimg
 
 - name: Install packages for Azure
-  apt:
+  ansible.builtin.apt:
     name: grub2-common
-    state: latest
-    update_cache: yes
+    state: present
+    update_cache: true
   when: not file_check.stat.exists
 
 - name: Update the grub configuration
-  command: /tmp/grub.sh
+  ansible.builtin.command: /tmp/grub.sh
   when: file_check.stat.exists
 
 - name: Remove the update grub configuration script
-  file:
+  ansible.builtin.file:
     path: /tmp/grub.sh
     state: absent
   when: file_check.stat.exists
@@ -103,18 +103,17 @@
   when: ansible_distribution == 'Ubuntu'
   block:
     - name: Update grub
-      ansible.builtin.command:
-        cmd: update-grub
+      ansible.builtin.command: update-grub
 
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
   block:
     - name: Check grub2-mkconfig exist
-      command: which grub2-mkconfig
+      ansible.builtin.command: which grub2-mkconfig
       register: grub2_mkconfig_check
 
     - name: Install missing packages
-      dnf:
+      ansible.builtin.dnf:
         name:
           - grub2-efi
           - grub2-efi-modules
@@ -123,16 +122,13 @@
       when: grub2_mkconfig_check.rc != 0
 
     - name: Update grub
-      ansible.builtin.command:
-        cmd: grub2-mkconfig -o /etc/grub2.cfg
+      ansible.builtin.command: grub2-mkconfig -o /etc/grub2.cfg
 
     - name: Selinux - allow https
-      ansible.builtin.command:
-        cmd: setsebool -P httpd_can_network_connect 1
+      ansible.builtin.command: setsebool -P httpd_can_network_connect 1
 
     - name: Dracut
-      ansible.builtin.command:
-        cmd: dracut --force
+      ansible.builtin.command: dracut --force
 
 - name: Mount a tmpfs volume
   ansible.posix.mount:

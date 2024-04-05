@@ -2,28 +2,29 @@
 # tasks file for ansible/roles/kms
 
 - name: Check OS distribution
-  debug:
+  ansible.builtin.debug:
     var: ansible_distribution
 
 - name: Check Cosmian KMS version
-  debug:
+  ansible.builtin.debug:
     var: cosmian_kms_version
 
-- name: Get supervisor Status
+- name: Get Supervisor status
   ansible.builtin.systemd:
     name: supervisor
   register: supervisor_status
 
-- debug:
+- name: Display Supervisor status
+  ansible.builtin.debug:
     var: supervisor_status.status.ActiveState
 
 - name: Check if /etc/supervisor/conf.d/cosmian_vm_agent.conf exists
-  stat:
+  ansible.builtin.stat:
     path: /etc/supervisor/conf.d/cosmian_vm_agent.conf
   register: vm_supervisor_conf_check
 
 - name: Check if /etc/supervisor/conf.d/cosmian_kms.conf exists
-  stat:
+  ansible.builtin.stat:
     path: /etc/supervisor/conf.d/cosmian_kms.conf
   register: kms_supervisor_conf_check
 
@@ -35,7 +36,7 @@
     - vm_supervisor_conf_check.stat.exists
     - supervisor_status.status.ActiveState=='active'
 
-- name: Stop Cosmian VM Agent if it exists
+- name: Stop Cosmian KMS if it exists
   community.general.supervisorctl:
     name: cosmian_kms
     state: stopped
@@ -44,7 +45,7 @@
     - supervisor_status.status.ActiveState=='active'
 
 - name: Clean KMS existing folders
-  file:
+  ansible.builtin.file:
     path:
       - /var/lib/cosmian_vm/data/app
     state: absent
@@ -58,18 +59,18 @@
     state: present
 
 - name: Create a Directory /usr/local/sbin
-  file:
+  ansible.builtin.file:
     path: /usr/local/sbin
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
 
 - name: Download KMS
-  get_url:
+  ansible.builtin.get_url:
     url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu_22_04.zip
     dest: /tmp
-    mode: 0755
+    mode: "0755"
     group: root
     owner: root
 
@@ -86,38 +87,38 @@
     remote_src: true
     owner: root
     group: root
-    mode: 0500
+    mode: "0500"
 
 - name: Remove temporary files
-  file:
+  ansible.builtin.file:
     path:
       - /tmp/ubuntu_22_04
       - /tmp/ubuntu_22_04.zip
     state: absent
 
 - name: Add KMS supervisor configuration
-  template:
+  ansible.builtin.template:
     src: supervisor_kms.conf.j2
     dest: /etc/supervisor/conf.d/cosmian_kms.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Override Cosmian VM configuration
-  template:
+  ansible.builtin.template:
     src: agent.toml.j2
     dest: /etc/cosmian_vm/agent.toml
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Add Nginx configuration
-  template:
+  ansible.builtin.template:
     src: nginx.j2
     dest: /etc/nginx/sites-enabled/default
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Make sure Supervisor is running
   ansible.builtin.systemd_service:
@@ -134,6 +135,9 @@
   ansible.builtin.file:
     path: /var/lib/cosmian_vm/data/app
     state: directory
+    owner: root
+    group: root
+    mode: "0500"
 
 - name: Run Redis
   ansible.builtin.systemd_service:
@@ -141,7 +145,7 @@
     name: redis
 
 - name: Check if port 5355 is listening
-  wait_for:
+  ansible.builtin.wait_for:
     port: 5355
     delay: 5
     timeout: 30
@@ -149,27 +153,28 @@
   tags: launch
 
 - name: Download Cosmian VM CLI
-  get_url:
+  ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_vm
     dest: /usr/sbin/
-    mode: 0500
+    mode: "0500"
     group: root
     owner: root
 
 - name: Copy KMS configuration
-  template:
+  ansible.builtin.template:
     src: kms.toml.j2
     dest: /tmp/kms.toml
+    mode: "0500"
     owner: root
     group: root
 
 - name: Cosmian VM App initialization
-  shell: |
+  ansible.builtin.shell: |
     cosmian_vm --url https://localhost:5355 --allow-insecure-tls app init -c /tmp/kms.toml
   tags: app_init
 
 - name: Check if port 5355 is listening
-  wait_for:
+  ansible.builtin.wait_for:
     port: 5355
     delay: 5
     timeout: 30
@@ -188,7 +193,7 @@
     name: nginx
 
 - name: Check if port 8080 is listening
-  wait_for:
+  ansible.builtin.wait_for:
     port: 8080
     delay: 5
     timeout: 30
@@ -196,7 +201,7 @@
   tags: listening
 
 - name: Check if port 443 is listening
-  wait_for:
+  ansible.builtin.wait_for:
     port: 443
     delay: 5
     timeout: 30
@@ -211,5 +216,5 @@
 - name: Check KMS returns its version on HTTPS
   ansible.builtin.uri:
     url: https://localhost/version
-    validate_certs: no
+    validate_certs: false
   tags: listening

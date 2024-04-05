@@ -1,16 +1,17 @@
 ---
 # tasks file for cleanup
 
-- name: Get supervisor Status
+- name: Get Supervisor status
   ansible.builtin.systemd:
     name: supervisor
   register: supervisor_status
 
-- debug:
+- name: Display Supervisor status
+  ansible.builtin.debug:
     var: supervisor_status.status.ActiveState
 
 - name: Check if /etc/supervisor/conf.d/cosmian_vm_agent.conf exists
-  stat:
+  ansible.builtin.stat:
     path: /etc/supervisor/conf.d/cosmian_vm_agent.conf
   register: cosmian_supervisor_conf_check
 
@@ -23,7 +24,7 @@
     - supervisor_status.status.ActiveState=='active'
 
 - name: Check if /dev/mapper/cosmian_vm_container exists
-  stat:
+  ansible.builtin.stat:
     path: /dev/mapper/cosmian_vm_container
   register: volume_check
 
@@ -34,7 +35,7 @@
   when: volume_check.stat.exists
 
 - name: Check if /var/lib/cosmian_vm/data exists
-  stat:
+  ansible.builtin.stat:
     path: /var/lib/cosmian_vm/data
   register: data_volume_check
 
@@ -45,7 +46,7 @@
   when: data_volume_check.stat.exists
 
 - name: Check if /var/lib/cosmian_vm/tmp exists
-  stat:
+  ansible.builtin.stat:
     path: /var/lib/cosmian_vm/tmp
   register: tmpfs_volume_check
 

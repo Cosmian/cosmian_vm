@@ -2,52 +2,52 @@
 # tasks file for ansible/roles/cosmian_vm_agent
 
 - name: Check OS distribution
-  debug:
+  ansible.builtin.debug:
     var: ansible_distribution
 
 - name: Check Cosmian VM version
-  debug:
+  ansible.builtin.debug:
     var: cosmian_vm_version
 
 - name: Download Cosmian VM agent
-  get_url:
+  ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm_agent
     dest: /usr/sbin/
-    mode: 0500
+    mode: "0500"
     group: root
     owner: root
 
 - name: Download Cosmian VM cert tool
-  get_url:
+  ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_certtool
     dest: /usr/sbin/
-    mode: 0500
+    mode: "0500"
     group: root
     owner: root
 
 - name: Download Cosmian VM filesystem tool
-  get_url:
+  ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_fstool
     dest: /usr/sbin/
-    mode: 0500
+    mode: "0500"
     group: root
     owner: root
 
 - name: Create cosmian_vm directory in /etc
-  file:
+  ansible.builtin.file:
     path: /etc/cosmian_vm
     state: directory
     owner: root
     group: root
-    mode: 0500
+    mode: "0500"
 
 - name: Copy agent.toml
-  template:
+  ansible.builtin.template:
     src: agent.toml.j2
     dest: /etc/cosmian_vm/agent.toml
     owner: root
     group: root
-    mode: 0400
+    mode: "0400"
 
 - name: Create cosmian_vm directory in /var/lib
   ansible.builtin.file:
@@ -55,7 +55,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Mount a tmpfs volume
   ansible.posix.mount:
@@ -71,31 +71,31 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Supervisor install on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
     - name: Update all packages to their latest version
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
 
     - name: Install Supervisor
-      apt:
+      ansible.builtin.apt:
         name: supervisor
-        state: latest
-        update_cache: yes
+        state: present
+        update_cache: true
 
     - name: Add Cosmian VM supervisor configuration
-      template:
+      ansible.builtin.template:
         src: cosmian_vm_agent.conf.j2
         dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
 
     - name: Check if Supervisor is enabled but stopped
-      systemd:
+      ansible.builtin.systemd:
         name: supervisor
         enabled: true
         state: stopped
@@ -105,33 +105,33 @@
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
     - name: Update all packages to their latest version
-      dnf:
-        update_cache: yes
+      ansible.builtin.dnf:
+        update_cache: true
 
     - name: Install epel-release
       ansible.builtin.dnf:
         name:
           - https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
         state: present
-        update_cache: yes
+        update_cache: true
         disable_gpg_check: true
 
     - name: Install supervisor
       ansible.builtin.dnf:
         name: supervisor
-        state: latest
-        update_cache: yes
+        state: present
+        update_cache: true
 
     - name: Add Cosmian VM supervisor configuration
-      template:
+      ansible.builtin.template:
         src: cosmian_vm_agent.conf.j2
         dest: /etc/supervisord.d/cosmian_vm_agent.ini
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
 
     - name: Check if Supervisor is enabled but stopped
-      systemd:
+      ansible.builtin.systemd:
         name: supervisord
         enabled: true
         state: stopped
@@ -141,34 +141,34 @@
   when: ansible_distribution == 'Amazon'
   block:
     - name: Update all packages to their latest version
-      dnf:
-        update_cache: yes
+      ansible.builtin.dnf:
+        update_cache: true
 
     - name: Install pip
       ansible.builtin.dnf:
         name: pip
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Install supervisor python package
       ansible.builtin.pip:
         name: supervisor
 
     - name: Create supervisord.service file
-      template:
+      ansible.builtin.template:
         src: supervisord.service.j2
         dest: /lib/systemd/system/supervisord.service
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
 
     - name: Create supervisor.conf file
-      template:
+      ansible.builtin.template:
         src: supervisord.conf.j2
         dest: /etc/supervisord.conf
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
 
     - name: Create supervisor log folder
       ansible.builtin.file:
@@ -176,18 +176,18 @@
         state: directory
         owner: root
         group: root
-        mode: 0755
+        mode: "0755"
 
     - name: Change permission on supervisord binary
-      file:
+      ansible.builtin.file:
         path: /usr/local/bin/supervisord
         state: file
         owner: root
         group: root
-        mode: 0500
+        mode: "0500"
 
     - name: Check if Supervisor is enabled but stopped
-      systemd:
+      ansible.builtin.systemd:
         name: supervisord
         enabled: true
         state: stopped

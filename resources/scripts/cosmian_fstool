@@ -128,13 +128,13 @@ mount "$CONTAINER_MAPPING_PATH" "$CONTAINER_MOUNT_PATH"
 BLOCK_DEVICE=$(losetup -ln --raw -O NAME,BACK-FILE | grep "$CONTAINER_PATH" | cut -f1 -d" ")
 
 if [ -z "$BLOCK_DEVICE" ]; then
-    echo "Can't find the bloc device attached to $CONTAINER_PATH"
+    echo "Can't find the block device attached to $CONTAINER_PATH"
     exit 1
 fi
 
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
 echo "Enrolling the TPM for this container..."
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=/dev/tpmrm0 "$BLOCK_DEVICE"
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=/dev/tpmrm0 --tpm2-pcrs=7,11 "$BLOCK_DEVICE"
 
 # Remove previous entry from the fstab and crypttab (create a .bak file to ease the rollback)
 echo "Removing previous obsolete auto mounting rules..."

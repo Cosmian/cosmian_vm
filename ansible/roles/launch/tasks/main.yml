@@ -14,7 +14,7 @@
   tags: launch
 
 - name: Check if port 5355 is listening
-  wait_for:
+  ansible.builtin.wait_for:
     port: 5355
     delay: 5
     timeout: 30

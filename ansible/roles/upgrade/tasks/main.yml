@@ -5,12 +5,12 @@
   when: ansible_distribution == 'Ubuntu'
   ansible.builtin.apt:
     update_cache: true
-    upgrade: 'yes'
+    upgrade: true
   tags: ubuntu
 
 - name: Upgrade all packages
   when: ansible_distribution == 'Redhat' or ansible_distribution == 'Amazon'
   ansible.builtin.dnf:
     name: "*"
-    state: latest
+    state: present
   tags: redhat

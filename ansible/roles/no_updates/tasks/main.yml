@@ -2,16 +2,17 @@
 # tasks file for no_updates
 
 - name: Check OS distribution
-  debug:
+  ansible.builtin.debug:
     var: ansible_distribution
 
 - name: Disable automatic updates on Ubuntu
   when: ansible_distribution == 'Ubuntu'
+  tags: ubuntu
   block:
     - name: Disable auto upgrade services
-      systemd:
+      ansible.builtin.systemd:
         name: "{{ item }}"
-        enabled: no
+        enabled: false
         state: stopped
       with_items:
         - unattended-upgrades
@@ -23,62 +24,61 @@
         - snapd.socket
 
     - name: Update APT configuration to disable automatic updates
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/apt/apt.conf.d/10periodic
         regexp: 'APT::Periodic::Update-Package-Lists "1";'
         line: 'APT::Periodic::Update-Package-Lists "0";'
-        backup: yes
+        backup: true
 
     - name: Update APT cache
       ansible.builtin.apt:
-        autoclean: yes
-        update_cache: yes
-  tags: ubuntu
+        autoclean: true
+        update_cache: true
 
 - name: Disable automatic updates on Red Hat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
+  tags: redhat
   block:
     - name: Populate service facts
-      service_facts:
+      ansible.builtin.service_facts:
 
     - name: Disable dnf-automatic service
-      systemd:
+      ansible.builtin.systemd:
         name: dnf-automatic.timer
-        enabled: no
+        enabled: false
         state: stopped
       when: "'dnf-automatic' in services"
 
     - name: Disable automatic updates in dnf.conf
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/dnf/dnf.conf
         line: "check_update=0"
-        backup: yes
+        backup: true
 
     - name: Check if automatic.conf exists
-      stat:
+      ansible.builtin.stat:
         path: /etc/dnf/automatic.conf
       register: __dnf_automatic_conf
 
     - name: Update automatic.conf to disable automatic updates download
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/dnf/automatic.conf
         regexp: "download_updates = yes"
         line: "download_updates = no"
-        backup: yes
+        backup: true
       when: __dnf_automatic_conf.stat.exists
 
     - name: Update automatic.conf to disable automatic updates apply
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/dnf/automatic.conf
         regexp: "apply_updates = yes"
         line: "apply_updates = no"
-        backup: yes
+        backup: true
       when: __dnf_automatic_conf.stat.exists
 
     - name: Clean Yum metadata
-      command: dnf clean all
+      ansible.builtin.command: dnf clean all
 
     - name: Update DNF cache
-      dnf:
-        update_cache: yes
-  tags: redhat
+      ansible.builtin.dnf:
+        update_cache: true
