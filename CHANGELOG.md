@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0-rc.4] - 2024-04-05
+
+### Bug Fixes
+
+- Deployment on Azure via ansible ([#78](https://github.com/Cosmian/cosmian_vm/pull/78))
+- App init trouble + add KMS playbook ([#83](https://github.com/Cosmian/cosmian_vm/pull/83))
+
 ## [1.1.0-rc.3] - 2024-03-28
 
 ### Bug Fixes
