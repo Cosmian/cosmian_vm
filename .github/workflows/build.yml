@@ -148,6 +148,10 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
+  push:
+    name: package.cosmian.com
+    runs-on: [self-hosted, no-tee]
+    steps:
       - name: Push latest build to package.cosmian.com
         run: |
           set -x
