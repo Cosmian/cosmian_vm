@@ -59,15 +59,6 @@ jobs:
           echo "IMAGE_NAME=temp-$TIMESTAMP-cosmian-vm-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
           echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
-      - name: Download binaries
-        uses: actions/download-artifact@v4
-        with:
-          name: cosmian_vm
-
-      - name: Change permissions of binaries
-        run: |
-          chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
-
       - name: Setup packer
         uses: hashicorp/setup-packer@main
 
