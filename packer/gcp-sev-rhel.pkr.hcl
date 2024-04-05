@@ -68,56 +68,26 @@ variable "redhat_source_image_family" {
 }
 
 source "googlecompute" "redhat" {
-  project_id             = var.project_id
-  source_image           = var.redhat_source_image
-  source_image_family    = var.redhat_source_image_family
-  zone                   = var.zone
-  ssh_username           = var.ssh_username
-  ssh_timeout            = var.ssh_timeout
-  image_name             = local.redhat_ami_name
+  project_id              = var.project_id
+  source_image            = var.redhat_source_image
+  source_image_family     = var.redhat_source_image_family
+  zone                    = var.zone
+  ssh_username            = var.ssh_username
+  ssh_timeout             = var.ssh_timeout
+  image_name              = local.redhat_ami_name
   image_guest_os_features = var.image_guest_os_features
-  network                = var.network
-  subnetwork             = var.subnetwork
-  tags                   = var.tags
-  use_os_login           = var.use_os_login
-  wait_to_add_ssh_keys   = var.wait_to_add_ssh_keys
+  network                 = var.network
+  subnetwork              = var.subnetwork
+  tags                    = var.tags
+  use_os_login            = var.use_os_login
+  wait_to_add_ssh_keys    = var.wait_to_add_ssh_keys
 }
 
 build {
   sources = ["sources.googlecompute.redhat"]
 
-  provisioner "file" {
-    source      = "../resources/conf/instance_configs.cfg"
-    destination = "/tmp/instance_configs.cfg"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/ima-policy-selinux"
-    destination = "/tmp/ima-policy"
-  }
-
-  provisioner "file" {
-    source      = "../resources/conf/agent.toml"
-    destination = "/tmp/agent.toml"
-  }
-
-  provisioner "file" {
-    source      = "../resources/scripts/cosmian_fstool"
-    destination = "/tmp/cosmian_fstool"
-  }
-
-  provisioner "file" {
-    source      = "./../target/release/cosmian_vm_agent"
-    destination = "/tmp/"
-  }
-
-  provisioner "file" {
-    source      = "./../target/release/cosmian_certtool"
-    destination = "/tmp/"
-  }
-
   provisioner "ansible" {
-    playbook_file = "../ansible/cosmian_vm_sev_playbook.yml"
+    playbook_file = "../ansible/packer_sev_playbook.yml"
     local_port    = 22
     use_proxy     = false
   }

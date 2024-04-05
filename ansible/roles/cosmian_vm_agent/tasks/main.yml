@@ -5,30 +5,33 @@
   debug:
     var: ansible_distribution
 
-- name: Copy cosmian_vm_agent
-  ansible.builtin.copy:
-    src: /tmp/cosmian_vm_agent
-    dest: /usr/sbin/
-    remote_src: true
-    owner: root
-    group: root
-    mode: 0500
+- name: Check Cosmian VM version
+  debug:
+    var: cosmian_vm_version
 
-- name: Copy cosmian_certtool
-  ansible.builtin.copy:
-    src: /tmp/cosmian_certtool
+- name: Download Cosmian VM agent
+  get_url:
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm_agent
     dest: /usr/sbin/
-    remote_src: true
-    owner: root
-    group: root
     mode: 0500
+    group: root
+    owner: root
 
-- name: Change file ownership, group and permissions
-  ansible.builtin.file:
-    path: /usr/sbin/cosmian_vm_agent
-    owner: root
-    group: root
+- name: Download Cosmian VM cert tool
+  get_url:
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_certtool
+    dest: /usr/sbin/
     mode: 0500
+    group: root
+    owner: root
+
+- name: Download Cosmian VM filesystem tool
+  get_url:
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_fstool
+    dest: /usr/sbin/
+    mode: 0500
+    group: root
+    owner: root
 
 - name: Create cosmian_vm directory in /etc
   file:
@@ -39,10 +42,9 @@
     mode: 0500
 
 - name: Copy agent.toml
-  ansible.builtin.copy:
-    src: /tmp/agent.toml
+  template:
+    src: agent.toml.j2
     dest: /etc/cosmian_vm/agent.toml
-    remote_src: true
     owner: root
     group: root
     mode: 0400
@@ -59,7 +61,7 @@
   ansible.posix.mount:
     src: tmpfs
     path: /var/lib/cosmian_vm/tmp
-    opts: "size=512m"
+    opts: size=512m
     state: mounted
     fstype: tmpfs
 
@@ -84,7 +86,7 @@
         state: latest
         update_cache: yes
 
-    - name: Adding a program
+    - name: Add Cosmian VM supervisor configuration
       template:
         src: cosmian_vm_agent.conf.j2
         dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
@@ -92,7 +94,7 @@
         group: root
         mode: 0644
 
-    - name: Check if Supervisor is started
+    - name: Check if Supervisor is enabled but stopped
       systemd:
         name: supervisor
         enabled: true
@@ -109,7 +111,7 @@
     - name: Install epel-release
       ansible.builtin.dnf:
         name:
-          - "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+          - https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
         state: present
         update_cache: yes
         disable_gpg_check: true
@@ -120,7 +122,7 @@
         state: latest
         update_cache: yes
 
-    - name: Adding a program
+    - name: Add Cosmian VM supervisor configuration
       template:
         src: cosmian_vm_agent.conf.j2
         dest: /etc/supervisord.d/cosmian_vm_agent.ini
@@ -128,7 +130,7 @@
         group: root
         mode: 0644
 
-    - name: Check if Supervisor is started
+    - name: Check if Supervisor is enabled but stopped
       systemd:
         name: supervisord
         enabled: true
@@ -184,7 +186,7 @@
         group: root
         mode: 0500
 
-    - name: Check if Supervisor is started
+    - name: Check if Supervisor is enabled but stopped
       systemd:
         name: supervisord
         enabled: true

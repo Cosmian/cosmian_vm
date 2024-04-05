@@ -1,0 +1,22 @@
+---
+# tasks file for launch
+
+- name: Make sure a Supervisor service is running
+  ansible.builtin.systemd_service:
+    state: started
+    name: supervisor
+  tags: launch
+
+- name: Start Cosmian VM Agent
+  community.general.supervisorctl:
+    name: cosmian_vm_agent
+    state: started
+  tags: launch
+
+- name: Check if port 5355 is listening
+  wait_for:
+    port: 5355
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 5355 to respond
+  tags: launch

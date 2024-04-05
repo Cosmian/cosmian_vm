@@ -1,5 +1,5 @@
 ---
-- name: "Setup Cosmian VM for TDX"
+- name: Setup Cosmian VM
   hosts: all
   become: true
   roles:
@@ -8,3 +8,4 @@
     - cosmian_vm_agent
     - no_updates
     - instance_configs
+    - upgrade

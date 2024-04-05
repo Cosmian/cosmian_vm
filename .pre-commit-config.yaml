@@ -10,7 +10,7 @@
 exclude: crate/agent/data|resources|crate/client/src/client.rs
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.1.0
+    rev: v3.2.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -46,29 +46,32 @@ repos:
         args: [-q]
 
   - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
-    rev: 0.2.2
+    rev: 0.2.3
     hooks:
       - id: yamlfmt
         args: [--mapping, '2', --sequence, '4', --offset, '2']
-        exclude: .github/workflows/main_release.yml
+        exclude: ansible
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [--format, parsable, --strict]
+
+  - repo: https://github.com/ansible/ansible-lint.git
+    rev: v24.2.1
+    hooks:
+      - id: ansible-lint
+        additional_dependencies:
+          - ansible
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.19.0
+    rev: v1.20.3
     hooks:
       - id: typos
 
-  # - repo: https://github.com/Lucas-C/pre-commit-hooks
-  #   rev: v1.5.5
-  #   hooks:
-  #     - id: forbid-crlf
-  #     - id: remove-crlf
-  #     - id: forbid-tabs
-  #       exclude: ^.git/
-  #     - id: remove-tabs
-  #       exclude: ^.git/
-
   - repo: https://github.com/sirosen/texthooks
-    rev: 0.6.4
+    rev: 0.6.6
     hooks:
       - id: fix-smartquotes
       - id: fix-ligatures

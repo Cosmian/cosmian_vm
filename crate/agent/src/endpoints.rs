@@ -138,10 +138,12 @@ pub async fn init_app(
     };
 
     let app_storage = app_conf_agent.app_storage();
-    std::fs::create_dir(&app_storage).map_err(|e| {
-        tracing::error!("cannot create app storage folder {app_storage:?}");
-        Error::IO(e)
-    })?;
+    if !std::path::Path::new(&app_storage).exists() {
+        std::fs::create_dir_all(&app_storage).map_err(|e| {
+            tracing::error!("cannot create app storage folder {app_storage:?}");
+            Error::IO(e)
+        })?;
+    }
 
     // Write app conf
     let app_conf_filepath = app_storage.join(APP_CONF_FILENAME);
