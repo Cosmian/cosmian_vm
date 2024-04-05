@@ -175,11 +175,22 @@ jobs:
 
           echo "IP_ADDR=$IP_ADDR" >> "$GITHUB_OUTPUT"
 
-      - name: Install KM to test app init
-        uses: Cosmian/kms/.github/workflows/ansible.yml@ansible/kms
-        with:
-          host: ${{ steps.test_cosmian_vm.outputs.IP_ADDR }}
+    outputs:
+      ip-address: ${{ steps.test_cosmian_vm.outputs.IP_ADDR }}
 
+  test-app-init:
+    needs: test-image
+    name: Install KM to test app init
+    uses: Cosmian/kms/.github/workflows/ansible.yml@ansible/kms
+    with:
+      host: ${{ needs.test-image.outputs.ip-address }}
+
+  cleanup:
+    needs:
+      - build-image
+      - test-app-init
+    runs-on: ubuntu-22.04
+    steps:
       - name: Stop and delete GCP instance
         if: success()
         env:
