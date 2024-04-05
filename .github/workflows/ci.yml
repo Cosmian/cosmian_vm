@@ -10,8 +10,8 @@ on:
 name: CI
 
 jobs:
-  # build-cosmian-vm-binaries:
-  #   uses: ./.github/workflows/build.yml
+  build-cosmian-vm-binaries:
+    uses: ./.github/workflows/build.yml
 
   build-test-gcp-sev-image:
     strategy:
@@ -19,7 +19,7 @@ jobs:
       matrix:
         distrib: [ubuntu]
     name: (${{ matrix.distrib }}) -> GCP SEV image
-    # needs: build-cosmian-vm-binaries
+    needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
     with:
