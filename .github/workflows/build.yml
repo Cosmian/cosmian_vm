@@ -155,6 +155,8 @@ jobs:
     steps:
       - name: Download binaries
         uses: actions/download-artifact@v4
+        with:
+          name: cosmian_vm
 
       - name: Push latest build to package.cosmian.com
         run: |
