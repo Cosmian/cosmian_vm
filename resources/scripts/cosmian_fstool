@@ -134,7 +134,7 @@ fi
 
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
 echo "Enrolling the TPM for this container..."
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=/dev/tpmrm0 --tpm2-pcrs=7,11 "$BLOCK_DEVICE"
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=/dev/tpmrm0 --tpm2-pcrs=11 "$BLOCK_DEVICE"
 
 # Remove previous entry from the fstab and crypttab (create a .bak file to ease the rollback)
 echo "Removing previous obsolete auto mounting rules..."
