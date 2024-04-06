@@ -56,7 +56,7 @@ repos:
     rev: v1.35.1
     hooks:
       - id: yamllint
-        args: [--format, parsable, --strict, -d, '{extends: relaxed, rules: {line-length: {max: 150}}}']
+        args: [--format, parsable, --strict, -d, '{rules: {line-length: {max: 150}}}']
         exclude: .github|.pre-commit-config.yaml
 
   - repo: https://github.com/ansible/ansible-lint.git

@@ -88,7 +88,7 @@
 
     - name: Add Cosmian VM supervisor configuration
       ansible.builtin.template:
-        src: cosmian_vm_agent.conf.j2
+        src: supervisor_cosmian_vm_agent.conf.j2
         dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
         owner: root
         group: root
@@ -124,7 +124,7 @@
 
     - name: Add Cosmian VM supervisor configuration
       ansible.builtin.template:
-        src: cosmian_vm_agent.conf.j2
+        src: supervisor_cosmian_vm_agent.conf.j2
         dest: /etc/supervisord.d/cosmian_vm_agent.ini
         owner: root
         group: root
