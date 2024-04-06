@@ -20,3 +20,12 @@
     timeout: 30
     msg: Timeout waiting for 5355 to respond
   tags: launch
+
+- name: Read LUKS password
+  ansible.builtin.slurp:
+    src: /var/lib/cosmian_vm/data/luks_password
+  register: luks_password
+
+- name: Display LUKS password
+  ansible.builtin.debug:
+    var: luks_password

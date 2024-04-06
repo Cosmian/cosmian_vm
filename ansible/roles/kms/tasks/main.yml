@@ -58,6 +58,18 @@
       - redis
     state: present
 
+- name: Run Redis
+  ansible.builtin.systemd_service:
+    state: started
+    name: redis
+
+- name: Check if port 6379 is listening
+  ansible.builtin.wait_for:
+    port: 6379
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 6379 to respond
+
 - name: Create a Directory /usr/local/sbin
   ansible.builtin.file:
     path: /usr/local/sbin
@@ -131,18 +143,13 @@
     state: started
   tags: launch
 
-- name: Creates directory
+- name: Creates app directory
   ansible.builtin.file:
     path: /var/lib/cosmian_vm/data/app
     state: directory
     owner: root
     group: root
-    mode: "0500"
-
-- name: Run Redis
-  ansible.builtin.systemd_service:
-    state: started
-    name: redis
+    mode: "0644"
 
 - name: Check if port 5355 is listening
   ansible.builtin.wait_for:
