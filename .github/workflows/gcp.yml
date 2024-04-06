@@ -18,6 +18,14 @@ on:
         options:
           - ubuntu
           - rhel
+      product:
+        description: Cosmian VM or KMS
+        required: true
+        default: cosmian-vm
+        type: choice
+        options:
+          - cosmian-vm
+          - kms
 
 name: Standalone GCP build
 
@@ -41,6 +49,7 @@ jobs:
       project: cosmian-dev
       mode: beta
       maintenance: maintenance-policy=TERMINATE
+      product: ${{ inputs.product }}
 
   build-test-gcp-tdx-image:
     if: contains(inputs.cpu, 'tdx')
@@ -58,3 +67,4 @@ jobs:
       project: cosmian-dev
       mode: alpha
       maintenance: on-host-maintenance=TERMINATE
+      product: ${{ inputs.product }}

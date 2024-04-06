@@ -5,10 +5,9 @@ set -exu
 MODE=$1
 CI_INSTANCE=$2
 ZONE=$3
+IP_ADDR=$4
 
 sudo apt-get install -y jq moreutils
-
-IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")
 
 echo "Waiting for Cosmian VM agent (${IP_ADDR}:5355)..."
 timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"

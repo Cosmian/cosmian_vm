@@ -32,6 +32,7 @@ jobs:
       project: cosmian-dev
       mode: beta
       maintenance: maintenance-policy=TERMINATE
+      product: cosmian-vm
 
   release:
     name: Release

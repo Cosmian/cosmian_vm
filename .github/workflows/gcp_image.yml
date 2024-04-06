@@ -31,6 +31,9 @@ on:
       maintenance:
         required: true
         type: string
+      product:
+        required: true
+        type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
@@ -43,6 +46,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: ./packer
     outputs:
       timestamp: ${{ steps.env.outputs.TIMESTAMP }}
       image_name: ${{ steps.env.outputs.IMAGE_NAME }}
@@ -56,21 +62,20 @@ jobs:
         run: |
           TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
           echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
-          echo "IMAGE_NAME=temp-$TIMESTAMP-cosmian-vm-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
-          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_NAME=temp-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
       - name: Setup packer
         uses: hashicorp/setup-packer@main
 
       - name: Install packer plugins
         run: |
-          cd packer/
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
 
       - name: Init packer
         run: |
-          cd packer/ && packer init gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          packer init ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
       - name: GCP auth
         uses: google-github-actions/auth@v2
@@ -82,7 +87,7 @@ jobs:
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
         run: |
-          cd packer/ && packer build -var "prefix=temp-$TIMESTAMP" gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          packer build -var "prefix=temp-$TIMESTAMP" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
   test-image:
     name: Test image
@@ -96,7 +101,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: GCP auth
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
@@ -125,6 +130,8 @@ jobs:
             --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
             --max-run-duration=10m \
             --instance-termination-action=DELETE
+          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
+          echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download Cosmian VM CLI
         run: |
@@ -132,13 +139,15 @@ jobs:
 
       - name: Change permissions of binaries
         run: |
-          chmod +x target/release/cosmian_vm
+          chmod +x ./cosmian_vm
 
       - name: Test Cosmian VM Agent on GCP instance
         id: test_cosmian_vm
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-        run: bash resources/scripts/tests/gcp_image.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}"
+          IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
+        run: |
+          bash resources/scripts/tests/gcp_image.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
 
       - name: Stop and delete GCP instance
         if: success()

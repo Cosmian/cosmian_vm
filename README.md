@@ -86,7 +86,7 @@ cd packer
 # Create a service account on GCP and download the JSON file
 # https://console.cloud.google.com/iam-admin/serviceaccounts?cloudshell=false&project=MY_PROJECT
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/my-project-d42061429e6a.json"
-packer build gcp-sev.pkr.hcl
+packer build cosmian-vm-gcp-sev.pkr.hcl
 ```
 
 The images are also automatically built by the CI when pushing on main or when releasing a tag.
