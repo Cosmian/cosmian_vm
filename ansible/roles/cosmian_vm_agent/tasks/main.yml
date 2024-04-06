@@ -192,3 +192,27 @@
         enabled: true
         state: stopped
       changed_when: false
+
+- name: Add Mount LUKS script
+  ansible.builtin.template:
+    src: mount_luks.sh.j2
+    dest: /root/mount_luks.sh
+    owner: root
+    group: root
+    mode: "0500"
+
+- name: Add Mount LUKS systemd service
+  ansible.builtin.template:
+    src: mount_luks.service.j2
+    dest: /etc/systemd/system/mount_luks.service
+    owner: root
+    group: root
+    mode: "0500"
+
+- name: Check if Mount LUKS is enabled but stopped
+  ansible.builtin.systemd:
+    name: mount_luks
+    enabled: true
+    state: stopped
+    daemon_reload: true
+  changed_when: false

@@ -1,0 +1,11 @@
+[Unit]
+Description=open and mount the encrypted /var/lib/cosmian_vm/container to /var/lib/cosmian_vm/data
+Requires=multi-user.target
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /root/mount_luks.sh
+
+[Install]
+WantedBy=default.target
