@@ -155,7 +155,7 @@ jobs:
           sleep 10
           gcloud ${{ inputs.mode }} compute instances start $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
           IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
-          timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
+          timeout 20m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
 
           echo "[ OK ] Cosmian VM ready after reboot"
           RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
