@@ -18,8 +18,8 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu]
-        product: [cosmian-vm, kms]
-    name: (${{ matrix.distrib }}) -> GCP SEV image
+        product: [cosmian-vm]
+    name: ${{ matrix.distrib }} - GCP SEV image - ${{ matrix.product }}
     needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
