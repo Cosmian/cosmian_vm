@@ -9,47 +9,6 @@
   ansible.builtin.debug:
     var: cosmian_kms_version
 
-- name: Get Supervisor status
-  ansible.builtin.systemd:
-    name: supervisor
-  register: supervisor_status
-
-- name: Display Supervisor status
-  ansible.builtin.debug:
-    var: supervisor_status.status.ActiveState
-
-- name: Check if /etc/supervisor/conf.d/cosmian_vm_agent.conf exists
-  ansible.builtin.stat:
-    path: /etc/supervisor/conf.d/cosmian_vm_agent.conf
-  register: vm_supervisor_conf_check
-
-- name: Check if /etc/supervisor/conf.d/cosmian_kms.conf exists
-  ansible.builtin.stat:
-    path: /etc/supervisor/conf.d/cosmian_kms.conf
-  register: kms_supervisor_conf_check
-
-- name: Stop Cosmian VM Agent if it exists
-  community.general.supervisorctl:
-    name: cosmian_vm_agent
-    state: stopped
-  when:
-    - vm_supervisor_conf_check.stat.exists
-    - supervisor_status.status.ActiveState=='active'
-
-- name: Stop Cosmian KMS if it exists
-  community.general.supervisorctl:
-    name: cosmian_kms
-    state: stopped
-  when:
-    - kms_supervisor_conf_check.stat.exists
-    - supervisor_status.status.ActiveState=='active'
-
-- name: Clean KMS existing folders
-  ansible.builtin.file:
-    path:
-      - /var/lib/cosmian_vm/data/app
-    state: absent
-
 - name: Install prerequisites packages
   ansible.builtin.package:
     name:
@@ -70,7 +29,7 @@
     timeout: 30
     msg: Timeout waiting for 6379 to respond
 
-- name: Create a Directory /usr/local/sbin
+- name: Create the directory /usr/local/sbin
   ansible.builtin.file:
     path: /usr/local/sbin
     state: directory
@@ -143,14 +102,6 @@
     state: started
   tags: launch
 
-- name: Creates app directory
-  ansible.builtin.file:
-    path: /var/lib/cosmian_vm/data/app
-    state: directory
-    owner: root
-    group: root
-    mode: "0644"
-
 - name: Check if port 5355 is listening
   ansible.builtin.wait_for:
     port: 5355
@@ -159,9 +110,17 @@
     msg: Timeout waiting for 5355 to respond
   tags: launch
 
+- name: Creates app directory
+  ansible.builtin.file:
+    path: /var/lib/cosmian_vm/data/app
+    state: directory
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
-    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_vm
+    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.4/cosmian_vm
     dest: /usr/sbin/
     mode: "0500"
     group: root
@@ -176,17 +135,37 @@
     group: root
 
 - name: Cosmian VM App initialization
-  ansible.builtin.shell: |
-    cosmian_vm --url https://localhost:5355 --allow-insecure-tls app init -c /tmp/kms.toml
+  ansible.builtin.command:
+    cmd: |
+      cosmian_vm --url https://localhost:5355 --allow-insecure-tls app init -c /tmp/kms.toml
+  register: cosmian_vm_output
+  ignore_errors: true
   tags: app_init
 
-- name: Check if port 5355 is listening
-  ansible.builtin.wait_for:
-    port: 5355
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for 5355 to respond
-  tags: launch
+- name: Display agent logs variable
+  ansible.builtin.debug:
+    var: cosmian_vm_output
+  tags: app_init
+
+- name: Read Cosmian VM agent logs
+  ansible.builtin.slurp:
+    src: /var/log/cosmian_vm/agent.out.log
+  register: agent_logs
+  tags: app_init
+
+- name: Display Agent logs
+  ansible.builtin.debug:
+    var: "{{ agent_logs['content'] | b64decode }}"
+  tags: app_init
+
+- name: Fail if Cosmian app init has failed previously
+  ansible.builtin.fail:
+    msg: Cosmian app init failed with return code {{ cosmian_vm_output }}
+  when:
+    - cosmian_vm_output is defined
+    - cosmian_vm_output.rc is defined
+    - cosmian_vm_output.rc != 0
+  tags: app_init
 
 - name: Start KMS
   community.general.supervisorctl:

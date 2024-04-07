@@ -87,7 +87,7 @@ jobs:
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
         run: |
-          packer build -var "prefix=temp-$TIMESTAMP" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          packer build -debug -var "prefix=temp-$TIMESTAMP" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
   test-image:
     name: Test image
@@ -117,6 +117,7 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
+          set -ex
           gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE \
             --machine-type ${{ inputs.machine-type }} \
             --zone ${{ inputs.zone }} \

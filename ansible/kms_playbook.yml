@@ -5,10 +5,11 @@
   roles:
     - configure_ima
     - tpm
-    - clean_previous_installation
+    - cleanup_cosmian_vm_agent
     - cosmian_vm_agent
     - no_updates
     - instance_configs
     - upgrade
-    - launch
+    # - launch
+    - cleanup_kms
     - kms

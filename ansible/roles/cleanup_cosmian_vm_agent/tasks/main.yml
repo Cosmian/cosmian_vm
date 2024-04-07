@@ -23,6 +23,14 @@
     - cosmian_supervisor_conf_check.stat.exists
     - supervisor_status.status.ActiveState=='active'
 
+- name: Remove Cosmian VM Agent if it exists
+  community.general.supervisorctl:
+    name: cosmian_vm_agent
+    state: absent
+  when:
+    - cosmian_supervisor_conf_check.stat.exists
+    - supervisor_status.status.ActiveState=='active'
+
 - name: Check if /dev/mapper/cosmian_vm_container exists
   ansible.builtin.stat:
     path: /dev/mapper/cosmian_vm_container
@@ -63,3 +71,5 @@
       rm -rf /var/lib/cosmian_vm
       rm -rf /var/log/cosmian_vm
       rm -rf /etc/cosmian_vm
+      rm -f /etc/supervisord.d/cosmian_vm_agent.ini
+      rm -f /etc/supervisor/conf.d/cosmian_vm_agent.conf

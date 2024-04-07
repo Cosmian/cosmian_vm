@@ -21,6 +21,12 @@
     msg: Timeout waiting for 5355 to respond
   tags: launch
 
+- name: Check Cosmian VM Agent is OK
+  ansible.builtin.uri:
+    url: https://localhost:5355/ima/ascii
+    validate_certs: false
+  tags: listening
+
 - name: Read LUKS password
   ansible.builtin.slurp:
     src: /var/lib/cosmian_vm/data/luks_password
@@ -28,4 +34,4 @@
 
 - name: Display LUKS password
   ansible.builtin.debug:
-    var: luks_password
+    var: "{{ luks_password['content'] | b64decode }}"

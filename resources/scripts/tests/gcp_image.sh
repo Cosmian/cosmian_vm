@@ -16,10 +16,6 @@ echo "[ OK ] Cosmian VM ready"
 ./cosmian_vm --url "https://${IP_ADDR}:5355" --allow-insecure-tls snapshot
 ./cosmian_vm --url "https://${IP_ADDR}:5355" --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
 
-echo "LUKS password: "
-cat /var/lib/cosmian_vm/data/luks_password
-echo
-
 echo "Rebooting instance..."
 gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "${ZONE}" --project "$GCP_DEV_PROJECT"
 
