@@ -1,0 +1,12 @@
+---
+- name: Setup Cosmian VM + KMS
+  hosts: all
+  become: true
+  roles:
+    - configure_ima
+    - tpm
+    - cosmian_vm_agent
+    - no_updates
+    - instance_configs
+    - upgrade
+    - kms
