@@ -128,7 +128,7 @@ jobs:
             --image-project=${{ inputs.project }} \
             --project ${{ inputs.project }} \
             --tags ssh-full,backend-rust-full,http-server,https-server,${{ inputs.product }}-agent \
-            --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
+            --metadata-from-file=startup-script=resources/scripts/${{ inputs.product }}-gcp-start-script.sh \
             --max-run-duration=10m \
             --instance-termination-action=DELETE
           IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
@@ -148,7 +148,7 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
         run: |
-          bash resources/scripts/tests/gcp_image.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
+          bash resources/scripts/tests/${{ inputs.product }}-gcp_image.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
 
       - name: Stop and delete GCP instance
         if: success()
