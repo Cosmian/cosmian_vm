@@ -10,6 +10,6 @@
     - no_updates
     - instance_configs
     - upgrade
-    # - launch
     - cleanup_kms
     - kms
+    - start_kms
