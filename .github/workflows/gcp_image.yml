@@ -130,7 +130,7 @@ jobs:
             --${{ inputs.maintenance }} \
             --metadata-from-file=startup-script=resources/scripts/${{ inputs.product }}-gcp-start-script.sh \
             --max-run-duration=10h \
-            --instance-termination-action=DELETE
+            --instance-termination-action=STOP
           IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
