@@ -128,10 +128,10 @@ jobs:
             --project ${{ inputs.project }} \
             --tags ssh-full,backend,backend-rust-full,http-server,https-server,cosmian-vm-agent,${{ inputs.product }} \
             --${{ inputs.maintenance }} \
-            --metadata-from-file=startup-script=resources/scripts/${{ inputs.product }}-gcp-start-script.sh \
+            --metadata-from-file=startup-script=.github/scripts/gcp-${{ inputs.product }}-startup-script.sh \
             --max-run-duration=10h \
             --instance-termination-action=STOP
-          IP_ADDR=$(gcloud beta compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
+          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download Cosmian VM CLI
@@ -150,7 +150,7 @@ jobs:
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
         run: |
           set -ex
-          bash resources/scripts/tests/${{ inputs.product }}-gcp_image.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
+          bash .github/scripts/gcp-${{ inputs.product }}-tests.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
 
       - name: Stop and delete GCP instance
         if: success()

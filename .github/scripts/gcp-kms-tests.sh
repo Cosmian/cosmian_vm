@@ -8,7 +8,9 @@ ZONE=$3
 IP_ADDR=$4
 GCP_DEV_PROJECT=cosmian-dev
 
-bash resources/scripts/tests/cosmian-vm-gcp_image.sh "$MODE" "$CI_INSTANCE" "$ZONE" "$IP_ADDR"
+bash .github/scripts/gcp-cosmian-vm-tests.sh "$MODE" "$CI_INSTANCE" "$ZONE" "$IP_ADDR"
+
+IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")
 
 echo "Cosmian VM app init"
 ./cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls app init -c ansible/roles/start_kms/templates/kms.toml.j2
@@ -27,9 +29,9 @@ echo ""
 echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
 
 echo "Rebooting instance..."
-gcloud beta compute instances stop "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
-gcloud beta compute instances start "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
-IP_ADDR=$(gcloud beta compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="$ZONE")
+gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
+gcloud "${MODE}" compute instances start "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
+IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")
 timeout 4m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
 
 echo "[ OK ] Cosmian VM ready after reboot"
