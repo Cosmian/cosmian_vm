@@ -8,6 +8,4 @@ until [ -f /var/lib/cosmian_vm/data/cert.pem ]; do sleep 1; done
 # create directory to write incoming app configuration
 mkdir -p /var/lib/cosmian_vm/data/app
 
-supervisorctl start cosmian_kms
-
 systemctl start nginx

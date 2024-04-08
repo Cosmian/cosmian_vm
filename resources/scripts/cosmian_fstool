@@ -133,6 +133,7 @@ if [ -z "$BLOCK_DEVICE" ]; then
 fi
 
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
+# Details on PCRs: https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
 echo "Enrolling the TPM for this container..."
 PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=/dev/tpmrm0 --tpm2-pcrs=7+11 "$BLOCK_DEVICE"
 

@@ -127,7 +127,7 @@ jobs:
             --image="$IMAGE_NAME" \
             --image-project=${{ inputs.project }} \
             --project ${{ inputs.project }} \
-            --tags ssh-full,backend-rust-full,http-server,https-server,${{ inputs.product }}-agent \
+            --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
             --metadata-from-file=startup-script=resources/scripts/${{ inputs.product }}-gcp-start-script.sh
             # --metadata-from-file=startup-script=resources/scripts/${{ inputs.product }}-gcp-start-script.sh \
             # --max-run-duration=10m \
