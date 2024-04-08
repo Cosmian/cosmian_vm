@@ -2,7 +2,7 @@
 # tasks file for cleanup
 
 - name: Get Supervisor status
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: supervisor
   register: supervisor_status
 

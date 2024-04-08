@@ -10,7 +10,7 @@
     var: cosmian_kms_version
 
 - name: Get Supervisor status
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: supervisor
   register: supervisor_status
 

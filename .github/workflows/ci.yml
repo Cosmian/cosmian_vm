@@ -17,8 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu]
-        product: [cosmian-vm, kms]
+        distrib: [ubuntu, rhel]
+        product: [cosmian-vm]
     name: ${{ matrix.product }} - ${{ matrix.distrib }} - GCP SEV image
     needs: build-cosmian-vm-binaries
     secrets: inherit

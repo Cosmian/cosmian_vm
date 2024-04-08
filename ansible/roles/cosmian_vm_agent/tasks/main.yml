@@ -95,7 +95,7 @@
         mode: "0644"
 
     - name: Check if Supervisor is enabled but stopped
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: supervisor
         enabled: true
         state: stopped
@@ -131,7 +131,7 @@
         mode: "0644"
 
     - name: Check if Supervisor is enabled but stopped
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: supervisord
         enabled: true
         state: stopped
@@ -187,7 +187,7 @@
         mode: "0500"
 
     - name: Check if Supervisor is enabled but stopped
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: supervisord
         enabled: true
         state: stopped
@@ -210,7 +210,7 @@
     mode: "0500"
 
 - name: Check if Mount LUKS is enabled but stopped
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: mount_luks
     enabled: true
     state: stopped
