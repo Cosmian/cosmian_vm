@@ -8,9 +8,9 @@ ZONE=$3
 IP_ADDR=$4
 GCP_DEV_PROJECT=cosmian-dev
 
-# echo "Checking Cosmian KMS HTTP connection..."
-# curl "http://${IP_ADDR}:8080/version"
-# echo ""
+echo "Checking Cosmian KMS HTTP connection..."
+curl "http://${IP_ADDR}:8080/version"
+echo ""
 echo "[ OK ] Cosmian KMS HTTP connection"
 echo "Checking Cosmian KMS HTTPS connection..."
 curl --insecure "https://${IP_ADDR}/version"
