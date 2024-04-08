@@ -10,6 +10,9 @@ GCP_DEV_PROJECT=cosmian-dev
 
 bash resources/scripts/tests/cosmian-vm-gcp_image.sh "$MODE" "$CI_INSTANCE" "$ZONE" "$IP_ADDR"
 
+echo "Cosmian VM app init"
+./cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls app init -c ansible/roles/start_kms/templates/kms.toml.j2
+
 echo "Checking Cosmian KMS HTTP connection..."
 curl "http://${IP_ADDR}:8080/version"
 echo ""
