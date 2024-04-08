@@ -141,6 +141,7 @@ jobs:
 
       - name: Change permissions of binaries
         run: |
+          set -e
           chmod +x ./cosmian_vm
 
       - name: Test Cosmian VM Agent on GCP instance
@@ -149,6 +150,7 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
         run: |
+          set -ex
           bash resources/scripts/tests/${{ inputs.product }}-gcp_image.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
 
       - name: Stop and delete GCP instance
