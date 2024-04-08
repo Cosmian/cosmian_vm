@@ -56,9 +56,19 @@
     state: absent
 
 - name: Add KMS supervisor configuration
+  when: ansible_distribution == 'Ubuntu'
   ansible.builtin.template:
     src: supervisor_kms.conf.j2
     dest: /etc/supervisor/conf.d/cosmian_kms.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Add KMS supervisor configuration
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.template:
+    src: supervisor_kms.conf.j2
+    dest: /etc/supervisord.d/cosmian_kms.ini
     owner: root
     group: root
     mode: "0644"

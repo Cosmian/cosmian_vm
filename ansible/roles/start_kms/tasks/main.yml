@@ -110,6 +110,22 @@
     - cosmian_vm_output.rc != 0
   tags: app_init
 
+- name: Override KMS supervisor configuration with autostart to true
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.lineinfile:
+    path: /etc/supervisor/conf.d/cosmian_kms.conf
+    regexp: autostart=false
+    line: autostart=true
+    backup: true
+
+- name: Override KMS supervisor configuration with autostart to true
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.lineinfile:
+    path: /etc/supervisord.d/cosmian_kms.ini
+    regexp: autostart=false
+    line: autostart=true
+    backup: true
+
 - name: Start KMS
   community.general.supervisorctl:
     name: cosmian_kms
