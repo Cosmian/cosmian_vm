@@ -88,3 +88,15 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: Enable systemd Nginx service
+  ansible.builtin.systemd_service:
+    name: nginx
+    enabled: true
+    state: stopped
+
+- name: Enable systemd Redis service
+  ansible.builtin.systemd_service:
+    name: redis
+    enabled: true
+    state: stopped
