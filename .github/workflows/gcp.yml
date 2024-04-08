@@ -35,7 +35,7 @@ jobs:
 
   build-test-gcp-sev-image:
     if: contains(inputs.cpu, 'sev')
-    name: ${{ inputs.distrib }} - GCP SEV image - ${{ inputs.product }}
+    name: ${{ inputs.product }} - ${{ inputs.distrib }} - GCP SEV image
     needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
@@ -53,7 +53,7 @@ jobs:
 
   build-test-gcp-tdx-image:
     if: contains(inputs.cpu, 'tdx')
-    name: ${{ inputs.distrib }} - GCP TDX image - ${{ inputs.product }}
+    name: ${{ inputs.product }} - ${{ inputs.distrib }} - GCP TDX image
     needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml

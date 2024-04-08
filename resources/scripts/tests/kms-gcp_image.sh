@@ -22,9 +22,9 @@ echo ""
 echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
 
 echo "Rebooting instance..."
-gcloud beta compute instances stop "$CI_INSTANCE" --zone europe-west4-a --project "$GCP_DEV_PROJECT"
-gcloud beta compute instances start "$CI_INSTANCE" --zone europe-west4-a --project "$GCP_DEV_PROJECT"
-IP_ADDR=$(gcloud beta compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=europe-west4-a)
+gcloud beta compute instances stop "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
+gcloud beta compute instances start "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
+IP_ADDR=$(gcloud beta compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="$ZONE")
 timeout 4m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
 
 echo "[ OK ] Cosmian VM ready after reboot"
