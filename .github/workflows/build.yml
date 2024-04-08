@@ -29,32 +29,19 @@ jobs:
 
       - name: Cargo install cargo-machete
         if: steps.cargo-cache.outputs.cache-hit != 'true'
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cargo-machete
+        run: cargo install cargo-machete
 
       - name: Cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: cargo fmt --all -- --check
 
       - name: Cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
+        run: cargo check
 
       - name: Clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+        run: cargo clippy -- -D warnings
 
       - name: Machete (deps checker)
-        uses: actions-rs/cargo@v1
-        with:
-          command: machete
+        run: cargo machete
 
   test:
     name: Rust Test
@@ -79,9 +66,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+        run: cargo test
 
   build:
     name: Rust Build
@@ -107,10 +92,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Cargo build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
+        run: cargo build --release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
