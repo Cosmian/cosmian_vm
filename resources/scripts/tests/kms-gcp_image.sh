@@ -8,8 +8,6 @@ ZONE=$3
 IP_ADDR=$4
 GCP_DEV_PROJECT=cosmian-dev
 
-bash resources/scripts/tests/cosmian-vm-gcp_image.sh "$MODE" "$CI_INSTANCE" "$ZONE" "$IP_ADDR"
-
 echo "Checking Cosmian KMS HTTP connection..."
 curl "http://${IP_ADDR}:8080/version"
 echo ""
