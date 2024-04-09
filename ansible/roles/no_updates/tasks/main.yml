@@ -10,7 +10,7 @@
   tags: ubuntu
   block:
     - name: Disable auto upgrade services
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: "{{ item }}"
         enabled: false
         state: stopped
@@ -43,7 +43,7 @@
       ansible.builtin.service_facts:
 
     - name: Disable dnf-automatic service
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: dnf-automatic.timer
         enabled: false
         state: stopped

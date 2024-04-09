@@ -70,7 +70,7 @@ variable "use_os_login" {
 
 variable "wait_to_add_ssh_keys" {
   type    = string
-  default = "20s"
+  default = "5m"
 }
 
 source "googlecompute" "ubuntu" {
