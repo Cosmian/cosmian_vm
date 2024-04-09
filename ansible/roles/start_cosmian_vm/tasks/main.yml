@@ -51,3 +51,6 @@
 - name: Display LUKS password
   ansible.builtin.debug:
     var: "{{ luks_password['content'] | b64decode }}"
+
+- name: Reboot since all checks pass
+  ansible.builtin.reboot:

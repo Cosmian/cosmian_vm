@@ -3,7 +3,7 @@
   hosts: all
   become: true
   roles:
-    - prerequisites
+    - check_cpu
     - configure_ima
     - tpm
     - cleanup_cosmian_vm_agent

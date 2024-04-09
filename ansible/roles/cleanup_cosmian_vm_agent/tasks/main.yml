@@ -53,6 +53,12 @@
     state: absent
   when: data_volume_check.stat.exists
 
+- name: Umount manually LUKS data volume to be sure
+  ansible.builtin.command:
+    cmd: |
+      umount /var/lib/cosmian_vm/data
+  when: data_volume_check.stat.exists
+
 - name: Check if /var/lib/cosmian_vm/tmp exists
   ansible.builtin.stat:
     path: /var/lib/cosmian_vm/tmp
@@ -63,6 +69,13 @@
     path: /var/lib/cosmian_vm/tmp
     state: absent
   when: tmpfs_volume_check.stat.exists
+
+- name: Wait until the process is finished and pid was destroyed
+  ansible.builtin.wait_for:
+    path: |
+      /var/lib/cosmian_vm/data
+      /var/lib/cosmian_vm/tmp
+    state: absent
 
 # using native-ansible `file` task does not fail on error
 - name: Clean Cosmian VM existing folders

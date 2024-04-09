@@ -3,15 +3,15 @@
   hosts: all
   become: true
   roles:
-    - prerequisites
+    - check_cpu
     - configure_ima
     - tpm
+    - cleanup_kms
     - cleanup_cosmian_vm_agent
     - cosmian_vm_agent
     - no_updates
     - instance_configs
     - upgrade
-    - cleanup_kms
     - kms
     - start_kms
     - check_cosmian_vm

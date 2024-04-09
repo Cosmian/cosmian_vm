@@ -1,0 +1,47 @@
+---
+# tasks file for cpu-prerequisites
+
+- name: Ansible distribution
+  ansible.builtin.debug:
+    var: ansible_distribution
+
+# - name: Print all available facts
+#   ansible.builtin.debug:
+#     var: ansible_facts
+
+- name: Check Confidential VM compatibility
+  when: ansible_facts['bios_vendor'] == 'Microsoft Corporation'
+  ansible.builtin.uri:
+    url: http://169.254.169.254/metadata/instance?api-version=2021-02-01
+    headers:
+      Metadata: true
+    method: GET
+    return_content: true
+    status_code: 200
+  register: instance_metadata
+
+- name: Check Confidential VM compatibility
+  when: ansible_facts['bios_vendor'] == 'Google'
+  ansible.builtin.uri:
+    url: http://169.254.169.254/computeMetadata/v1/project/
+    headers:
+      Metadata-Flavor: "Google"
+    method: GET
+    return_content: true
+    status_code: 200
+  register: instance_metadata
+
+- name: Check Confidential VM compatibility
+  when: ansible_distribution == 'Amazon'
+  ansible.builtin.uri:
+    url: http://169.254.169.254/latest/meta-data/
+    headers:
+      Metadata: true
+    method: GET
+    return_content: true
+    status_code: 200
+  register: instance_metadata
+
+- name: Check Instance metadata
+  ansible.builtin.debug:
+    var: instance_metadata
