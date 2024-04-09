@@ -3,6 +3,7 @@
   hosts: all
   become: true
   roles:
+    - prerequisites
     - configure_ima
     - tpm
     - cleanup_cosmian_vm_agent
@@ -11,3 +12,4 @@
     - instance_configs
     - upgrade
     - start_cosmian_vm
+    - check_cosmian_vm
