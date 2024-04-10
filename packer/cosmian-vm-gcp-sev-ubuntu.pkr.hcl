@@ -55,7 +55,7 @@ variable "use_os_login" {
 
 variable "wait_to_add_ssh_keys" {
   type    = string
-  default = "10m"
+  default = "30s"
 }
 
 locals {
