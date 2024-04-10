@@ -1,0 +1,32 @@
+---
+# tasks file for ansible/roles/clevis
+
+- name: Check OS distribution
+  ansible.builtin.debug:
+    var: ansible_distribution
+
+- name: Clevis install on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+    - name: Install Clevis and deps
+      ansible.builtin.apt:
+        name:
+          - clevis
+          - clevis-luks
+          - clevis-tpm2
+          - clevis-dracut
+        state: present
+        update_cache: true
+
+- name: Clevis install on RedHat
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Install Clevis and deps
+      ansible.builtin.dnf:
+        name:
+          - clevis
+          - clevis-luks
+          - clevis-dracut
+        state: present
+        update_cache: true
+        disable_gpg_check: true

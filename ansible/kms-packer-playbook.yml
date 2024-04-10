@@ -3,6 +3,7 @@
   hosts: all
   become: true
   roles:
+    - clevis
     - configure_ima
     - tpm
     - cosmian_vm_agent
