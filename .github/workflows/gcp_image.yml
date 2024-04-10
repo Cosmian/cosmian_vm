@@ -38,6 +38,7 @@ on:
 env:
   GCP_DEV_PROJECT: cosmian-dev
   GCP_PUBLIC_PROJECT: cosmian-public
+  KMS_VERSION: 4.15.0
 
 jobs:
   build-image:
@@ -83,11 +84,28 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Packer build image
-        id: packer-build
+        if: startsWith(github.ref, 'refs/tags/') != true
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
         run: |
-          packer build -debug -var "prefix=temp-$TIMESTAMP" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=last_build/${BRANCH}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          else
+            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=last_build/${BRANCH}" -var "cosmian_kms_version=${KMS_VERSION}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          fi
+
+      - name: Packer build image
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=${VERSION}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          else
+            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=${VERSION}" -var "cosmian_kms_version=${KMS_VERSION}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          fi
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
@@ -135,8 +153,17 @@ jobs:
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download Cosmian VM CLI
+        if: startsWith(github.ref, 'refs/tags/') != true
         run: |
-          wget https://package.cosmian.com/cosmian_vm/last_build/cosmian_vm
+          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          wget https://package.cosmian.com/cosmian_vm/last_build/$BRANCH/cosmian_vm
+
+      - name: Download Cosmian VM CLI
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          wget https://package.cosmian.com/cosmian_vm/$VERSION/cosmian_vm
 
       - name: Change permissions of binaries
         run: |
@@ -189,23 +216,30 @@ jobs:
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+          TAG: ${{ github.ref_name }}
         run: |
-          TAG=${{  github.ref_name }}
+          set -ex
+
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
-          NEW_IMAGE_NAME=${{ inputs.product }}-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
+          KMS_VERSION=$(echo $KMS_VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
+
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
             else
               LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             fi
           else
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}"
             else
               LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             fi
           fi
+
           gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME \
             --source-image=$IMAGE_NAME \
             --source-image-project=$GCP_DEV_PROJECT

@@ -18,16 +18,6 @@ jobs:
         with:
           name: cosmian_vm
 
-      - name: Push version tag to package.cosmian.com
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          VERSION: ${{ github.ref_name }}
-        run: |
-          set -x
-          DESTINATION_DIR=/mnt/package/cosmian_vm/$VERSION
-          ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
-          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool resources/scripts/cosmian_fstool cosmian@package.cosmian.com:$DESTINATION_DIR/
-
   cleanup:
     if: startsWith(github.ref, 'refs/tags/')
     uses: Cosmian/reusable_workflows/.github/workflows/cleanup_cache.yml@main

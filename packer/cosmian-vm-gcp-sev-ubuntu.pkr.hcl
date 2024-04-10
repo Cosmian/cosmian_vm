@@ -3,6 +3,11 @@ variable "prefix" {
   default = "alpha"
 }
 
+variable "cosmian_vm_version" {
+  type    = string
+  default = "X.Y.Z"
+}
+
 variable "project_id" {
   type    = string
   default = "cosmian-dev"
@@ -50,7 +55,7 @@ variable "use_os_login" {
 
 variable "wait_to_add_ssh_keys" {
   type    = string
-  default = "5m"
+  default = "10m"
 }
 
 locals {
@@ -87,8 +92,9 @@ build {
   sources = ["sources.googlecompute.ubuntu"]
 
   provisioner "ansible" {
-    playbook_file = "../ansible/packer_sev_playbook.yml"
-    local_port    = 22
-    use_proxy     = false
+    playbook_file   = "../ansible/packer_sev_playbook.yml"
+    local_port      = 22
+    use_proxy       = false
+    extra_arguments = ["-e", "cosmian_vm_version=${var.cosmian_vm_version}"]
   }
 }

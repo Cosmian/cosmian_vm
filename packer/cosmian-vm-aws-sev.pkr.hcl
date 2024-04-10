@@ -1,5 +1,10 @@
 variable "prefix" {}
 
+variable "cosmian_vm_version" {
+  type    = string
+  default = "X.Y.Z"
+}
+
 locals {
   amazon_linux_ami_name = "${var.prefix}-cosmian-vm-amazon-linux-{{timestamp}}"
   redhat_ami_name       = "${var.prefix}-cosmian-vm-redhat-{{timestamp}}"
@@ -186,8 +191,9 @@ build {
   sources = ["sources.amazon-ebssurrogate.amazon-linux"]
 
   provisioner "ansible" {
-    playbook_file = "../ansible/packer_sev_playbook.yml"
-    local_port    = 22
-    use_proxy     = false
+    playbook_file   = "../ansible/packer_sev_playbook.yml"
+    local_port      = 22
+    use_proxy       = false
+    extra_arguments = ["-e", "cosmian_vm_version=${var.cosmian_vm_version}"]
   }
 }
