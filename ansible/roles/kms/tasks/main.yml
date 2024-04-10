@@ -82,9 +82,19 @@
     mode: "0644"
 
 - name: Add Nginx configuration
+  when: ansible_distribution == 'Ubuntu'
   ansible.builtin.template:
     src: nginx.j2
     dest: /etc/nginx/sites-enabled/default
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Add Nginx configuration
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.template:
+    src: nginx.j2
+    dest: /etc/nginx/conf.d/default.conf
     owner: root
     group: root
     mode: "0644"

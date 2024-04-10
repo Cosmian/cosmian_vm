@@ -1,18 +1,3 @@
-variable "prefix" {
-  type    = string
-  default = "alpha"
-}
-
-variable "cosmian_vm_version" {
-  type    = string
-  default = "X.Y.Z"
-}
-
-variable "cosmian_kms_version" {
-  type    = string
-  default = "X.Y.Z"
-}
-
 variable "project_id" {
   type    = string
   default = "cosmian-dev"
@@ -30,7 +15,7 @@ variable "ssh_username" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "10m"
+  default = "20m"
 }
 
 variable "image_guest_os_features" {
@@ -63,28 +48,14 @@ variable "wait_to_add_ssh_keys" {
   default = "30s"
 }
 
-locals {
-  ubuntu_ami_name = "${var.prefix}-kms-ubuntu-sev"
-}
-
-variable "ubuntu_source_image" {
-  type    = string
-  default = "ubuntu-2204-jammy-v20240319"
-}
-
-variable "ubuntu_source_image_family" {
-  type    = string
-  default = "ubuntu-2204-lts"
-}
-
-source "googlecompute" "ubuntu" {
+source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
   project_id              = var.project_id
-  source_image            = var.ubuntu_source_image
-  source_image_family     = var.ubuntu_source_image_family
+  source_image            = "TEMPLATE_SOURCE_IMAGE"
+  source_image_family     = "TEMPLATE_SOURCE_FAMILY"
   zone                    = var.zone
   ssh_username            = var.ssh_username
   ssh_timeout             = var.ssh_timeout
-  image_name              = local.ubuntu_ami_name
+  image_name              = "TEMPLATE_IMAGE_NAME"
   image_guest_os_features = var.image_guest_os_features
   network                 = var.network
   subnetwork              = var.subnetwork
@@ -94,12 +65,12 @@ source "googlecompute" "ubuntu" {
 }
 
 build {
-  sources = ["sources.googlecompute.ubuntu"]
+  sources = ["sources.googlecompute.TEMPLATE_GOOGLE_COMPUTE"]
 
   provisioner "ansible" {
-    playbook_file   = "../ansible/kms_packer_sev_playbook.yml"
+    playbook_file   = "../ansible/TEMPLATE_PRODUCT-packer-playbook.yml"
     local_port      = 22
     use_proxy       = false
-    extra_arguments = ["-e", "cosmian_vm_version=${var.cosmian_vm_version}", "-e", "cosmian_kms_version=${var.cosmian_kms_version}"]
+    extra_arguments = ["-e", "cosmian_vm_version=TEMPLATE_COSMIAN_VM_VERSION", "-e", "cosmian_kms_version=TEMPLATE_COSMIAN_KMS_VERSION"]
   }
 }

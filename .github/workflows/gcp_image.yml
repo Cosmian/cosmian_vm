@@ -74,10 +74,6 @@ jobs:
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
 
-      - name: Init packer
-        run: |
-          packer init ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
-
       - name: GCP auth
         uses: google-github-actions/auth@v2
         with:
@@ -87,25 +83,22 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') != true
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
+          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
         run: |
-          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=last_build/${BRANCH}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
-          else
-            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=last_build/${BRANCH}" -var "cosmian_kms_version=${KMS_VERSION}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
-          fi
+          set -ex
+          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          bash ../.github/scripts/packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
 
       - name: Packer build image
         if: startsWith(github.ref, 'refs/tags/')
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
+          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           VERSION: ${{ github.ref_name }}
         run: |
-          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=${VERSION}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
-          else
-            packer build -debug -var "prefix=temp-$TIMESTAMP" -var "cosmian_vm_version=${VERSION}" -var "cosmian_kms_version=${KMS_VERSION}" ${{ inputs.product }}-gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
-          fi
+          set -ex
+          COSMIAN_VM_VERSION="$VERSION"
+          bash ../.github/scripts/packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}

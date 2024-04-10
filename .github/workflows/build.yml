@@ -32,15 +32,19 @@ jobs:
         run: cargo install cargo-machete
 
       - name: Cargo fmt
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo fmt --all -- --check
 
       - name: Cargo check
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo check
 
       - name: Clippy
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo clippy -- -D warnings
 
       - name: Machete (deps checker)
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo machete
 
   test:
@@ -66,6 +70,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Cargo test
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo test
 
   build:
@@ -103,7 +108,7 @@ jobs:
             target/release/cosmian_vm
             target/release/cosmian_certtool
             resources/scripts/cosmian_fstool
-          retention-days: 1
+          retention-days: 10
           if-no-files-found: error
 
   push:
