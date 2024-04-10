@@ -10,8 +10,7 @@ locals {
   subscription_id = "${var.subscription_id}"
   tenant_id = "${var.tenant_id}"
   ubuntu_managed_image_name = "${var.prefix}-cosmian-vm-ubuntu-{{timestamp}}"
-  ubuntu_managed_image_resource_group_name = "packer_tdx"
-  ubuntu_build_resource_group_name = "packer_tdx"
+  ubuntu_build_resource_group_name = "packer-snp"
   os_type = "Linux"
   image_publisher = "Canonical"
   image_offer = "0001-com-ubuntu-confidential-vm-jammy"
@@ -36,8 +35,17 @@ source "azure-arm" "ubuntu" {
   secure_boot_enabled         = local.secure_boot_enabled
   vtpm_enabled                = local.vtpm_enabled
   security_type               = local.security_type
-  managed_image_resource_group_name = local.ubuntu_managed_image_resource_group_name
-  managed_image_name                = local.ubuntu_managed_image_name
+  shared_image_gallery_destination {
+    subscription = "e04f52be-d51f-43fe-95f8-d63a8fc91464"
+    resource_group = "packer-snp"
+    gallery_name = "cosmian_packer"
+    image_name = "cosmian_vm_ubuntu"
+    image_version = "1.0.0"
+    storage_account_type = "Standard_LRS"
+    target_region {
+      name = "westeurope"
+    }
+  }
 }
 
 build {
