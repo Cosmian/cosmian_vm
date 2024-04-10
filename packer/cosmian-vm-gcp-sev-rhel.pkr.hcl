@@ -3,6 +3,11 @@ variable "prefix" {
   default = "alpha"
 }
 
+variable "cosmian_vm_version" {
+  type    = string
+  default = "X.Y.Z"
+}
+
 locals {
   redhat_ami_name = "${var.prefix}-cosmian-vm-rhel-sev"
 }
@@ -87,8 +92,9 @@ build {
   sources = ["sources.googlecompute.redhat"]
 
   provisioner "ansible" {
-    playbook_file = "../ansible/packer_sev_playbook.yml"
-    local_port    = 22
-    use_proxy     = false
+    playbook_file   = "../ansible/packer_sev_playbook.yml"
+    local_port      = 22
+    use_proxy       = false
+    extra_arguments = ["-e", "cosmian_vm_version=${var.cosmian_vm_version}"]
   }
 }
