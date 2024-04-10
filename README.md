@@ -54,7 +54,6 @@ Cosmian verification process is performed by the sys admin, requesting on the ru
 
 Cosmian VM supports these kinds of TEE:
 
-- Intel SGX on OVH - Ubuntu 20.04 & 22.04
 - Intel TDX on GCP - Ubuntu 22.04
 - AMD SEV on GCP - Ubuntu 22.04 | RHEL 9 and AWS - AmazonLinux
 
