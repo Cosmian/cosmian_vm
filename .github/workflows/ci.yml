@@ -11,3 +11,4 @@ jobs:
   build-cosmian-vm-binaries:
     name: Build binaries
     uses: ./.github/workflows/build.yml
+
