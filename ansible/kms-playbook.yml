@@ -1,18 +1,19 @@
 ---
-- name: Setup Cosmian VM + KMS
+- name: Clean previous install of Cosmian VM Agent
   hosts: all
   become: true
   roles:
     - check_cpu
-    - clevis
-    - configure_ima
-    - tpm
     - cleanup_kms
     - cleanup_cosmian_vm_agent
-    - cosmian_vm_agent
-    - no_updates
-    - instance_configs
-    - upgrade
-    - kms
-    - start_kms
+
+- name: Install KMS
+  ansible.builtin.import_playbook: kms-packer-playbook.yml
+
+- name: Start and check KMS
+  hosts: all
+  become: true
+  roles:
+    - start_cosmian_vm
     - check_cosmian_vm
+    - start_kms

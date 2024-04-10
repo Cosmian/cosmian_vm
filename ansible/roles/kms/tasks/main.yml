@@ -81,11 +81,19 @@
     group: root
     mode: "0644"
 
+- name: Create the directory /var/www/html if it does not exist
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: Add Nginx configuration
   when: ansible_distribution == 'Ubuntu'
   ansible.builtin.template:
-    src: nginx.j2
-    dest: /etc/nginx/sites-enabled/default
+    src: nginx_ubuntu.j2
+    dest: /etc/nginx/nginx.conf
     owner: root
     group: root
     mode: "0644"
@@ -93,8 +101,8 @@
 - name: Add Nginx configuration
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   ansible.builtin.template:
-    src: nginx.j2
-    dest: /etc/nginx/conf.d/default.conf
+    src: nginx_rhel.j2
+    dest: /etc/nginx/nginx.conf
     owner: root
     group: root
     mode: "0644"

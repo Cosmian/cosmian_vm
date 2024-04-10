@@ -31,14 +31,6 @@
     - kms_supervisor_conf_check.stat.exists
     - supervisor_status.status.ActiveState=='active'
 
-- name: Remove Cosmian KMS if it exists
-  community.general.supervisorctl:
-    name: cosmian_kms
-    state: absent
-  when:
-    - kms_supervisor_conf_check.stat.exists
-    - supervisor_status.status.ActiveState=='active'
-
 - name: Clean KMS existing folders
   ansible.builtin.command:
     cmd: |

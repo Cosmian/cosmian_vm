@@ -107,7 +107,6 @@ jobs:
             target/release/cosmian_vm_agent
             target/release/cosmian_vm
             target/release/cosmian_certtool
-            resources/scripts/cosmian_fstool
           retention-days: 10
           if-no-files-found: error
 
@@ -127,7 +126,7 @@ jobs:
           export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           DESTINATION_DIR=/mnt/package/cosmian_vm/last_build/${BRANCH}
           ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
-          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool resources/scripts/cosmian_fstool cosmian@package.cosmian.com:$DESTINATION_DIR/
+          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool cosmian@package.cosmian.com:$DESTINATION_DIR/
 
       - name: Push version tag to package.cosmian.com
         if: startsWith(github.ref, 'refs/tags/')
@@ -137,7 +136,7 @@ jobs:
           set -x
           DESTINATION_DIR=/mnt/package/cosmian_vm/$VERSION
           ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
-          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool resources/scripts/cosmian_fstool cosmian@package.cosmian.com:$DESTINATION_DIR/
+          scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool cosmian@package.cosmian.com:$DESTINATION_DIR/
 
   # audit:
   #   name: Rust Audit

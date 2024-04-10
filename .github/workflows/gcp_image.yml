@@ -138,6 +138,7 @@ jobs:
             --tags ssh-full,backend,backend-rust-full,http-server,https-server,cosmian-vm-agent,${{ inputs.product }} \
             --maintenance-policy=TERMINATE \
             --metadata-from-file=startup-script=.github/scripts/gcp-${{ inputs.product }}-startup-script.sh \
+            --shielded-secure-boot \
             --max-run-duration=20m \
             --instance-termination-action=DELETE
           IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
