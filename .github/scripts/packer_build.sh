@@ -31,4 +31,4 @@ sed -i "s#TEMPLATE_COSMIAN_KMS_VERSION#${KMS_VERSION}#g" "$PACKER_FILE"
 cat "$PACKER_FILE"
 
 packer init "$PACKER_FILE"
-packer build -debug "$PACKER_FILE"
+packer build "$PACKER_FILE"

@@ -2,9 +2,17 @@
 # tasks file for launch
 
 - name: Make sure a Supervisor service is running
+  when: ansible_distribution == 'Ubuntu'
   ansible.builtin.systemd_service:
-    state: started
     name: supervisor
+    state: started
+  tags: launch
+
+- name: Make sure a Supervisor service is running
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.systemd_service:
+    name: supervisord
+    state: started
   tags: launch
 
 - name: Override Cosmian VM supervisor configuration with autostart to true
@@ -29,13 +37,20 @@
     state: started
   tags: launch
 
+- name: Wait certificate is generated /var/lib/cosmian_vm/data/cert.pem
+  ansible.builtin.wait_for:
+    path: /var/lib/cosmian_vm/data/cert.pem
+    state: present
+
 - name: Check if port 5355 is listening
   ansible.builtin.wait_for:
     port: 5355
     delay: 5
     timeout: 30
     msg: Timeout waiting for 5355 to respond
-  tags: launch
+  tags:
+    - listening
+    - listening_cosmian_vm
 
 - name: Check Cosmian VM Agent is OK
   ansible.builtin.uri:
@@ -54,3 +69,5 @@
 
 - name: Reboot since all checks pass
   ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600

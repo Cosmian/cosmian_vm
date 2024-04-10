@@ -8,7 +8,7 @@
 - name: TPM packages installation on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
-    - name: Update all packages to their latest version
+    - name: Update packages cache
       ansible.builtin.apt:
         update_cache: true
 
@@ -21,7 +21,7 @@
 - name: TPM packages installation on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
-    - name: Update all packages to their latest version
+    - name: Update packages cache
       ansible.builtin.dnf:
         update_cache: true
 

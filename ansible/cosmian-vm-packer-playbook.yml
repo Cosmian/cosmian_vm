@@ -3,6 +3,7 @@
   hosts: all
   become: true
   roles:
+    - check_cpu
     - clevis
     - configure_ima
     - tpm

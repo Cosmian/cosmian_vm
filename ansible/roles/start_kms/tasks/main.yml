@@ -5,84 +5,6 @@
   ansible.builtin.debug:
     var: inventory_hostname
 
-- name: Make sure a Supervisor service is running
-  ansible.builtin.systemd_service:
-    state: started
-    name: supervisor
-  tags: launch
-
-- name: Run Redis
-  ansible.builtin.systemd_service:
-    state: started
-    name: redis
-
-- name: Check if port 6379 is listening
-  ansible.builtin.wait_for:
-    port: 6379
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for 6379 to respond
-
-- name: Start Cosmian VM agent
-  community.general.supervisorctl:
-    name: cosmian_vm_agent
-    state: started
-  tags: launch
-
-- name: Override Cosmian VM supervisor configuration with autostart to true
-  when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.lineinfile:
-    path: /etc/supervisor/conf.d/cosmian_vm_agent.conf
-    regexp: autostart=false
-    line: autostart=true
-    backup: true
-
-- name: Override Cosmian VM supervisor configuration with autostart to true
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
-  ansible.builtin.lineinfile:
-    path: /etc/supervisord.d/cosmian_vm_agent.ini
-    regexp: autostart=false
-    line: autostart=true
-    backup: true
-
-- name: Check if port 5355 is listening
-  ansible.builtin.wait_for:
-    port: 5355
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for 5355 to respond
-  tags: launch
-
-- name: Check Cosmian VM Agent is OK
-  ansible.builtin.uri:
-    url: https://{{ inventory_hostname }}:5355/ima/ascii
-    validate_certs: false
-  delegate_to: localhost
-
-  tags: listening
-
-- name: Read LUKS password
-  ansible.builtin.slurp:
-    src: /var/lib/cosmian_vm/data/luks_password
-  register: luks_password
-
-- name: Display LUKS password
-  ansible.builtin.debug:
-    var: "{{ luks_password['content'] | b64decode }}"
-
-- name: Run Nginx
-  ansible.builtin.systemd_service:
-    state: restarted
-    name: nginx
-
-- name: Creates app directory
-  ansible.builtin.file:
-    path: /var/lib/cosmian_vm/data/app
-    state: directory
-    owner: root
-    group: root
-    mode: "0644"
-
 - name: Check Cosmian VM Agent version
   ansible.builtin.debug:
     var: cosmian_vm_version
@@ -145,11 +67,21 @@
 
 - name: Override KMS supervisor configuration with autostart to true
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
-  ansible.builtin.lineinfile:
-    path: /etc/supervisord.d/cosmian_kms.ini
-    regexp: autostart=false
-    line: autostart=true
-    backup: true
+  tags: certificate_nginx_permissions
+  block:
+    - name: Override KMS supervisor configuration with autostart to true
+      ansible.builtin.lineinfile:
+        path: /etc/supervisord.d/cosmian_kms.ini
+        regexp: autostart=false
+        line: autostart=true
+        backup: true
+
+    - name: Restorecon on cert and key
+      ansible.builtin.command:
+        cmd: |
+          /usr/sbin/restorecon /var/lib/cosmian_vm/data/cert.pem
+          /usr/sbin/restorecon /var/lib/cosmian_vm/data/key.pem
+      tags: restorecon
 
 - name: Start KMS
   community.general.supervisorctl:
@@ -161,6 +93,7 @@
   ansible.builtin.systemd_service:
     state: restarted
     name: nginx
+  tags: restart_nginx
 
 - name: Check if port 8080 is listening
   ansible.builtin.wait_for:
@@ -197,3 +130,5 @@
 
 - name: Reboot since all checks pass
   ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600
