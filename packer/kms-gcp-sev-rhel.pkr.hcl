@@ -64,7 +64,7 @@ variable "use_os_login" {
 
 variable "wait_to_add_ssh_keys" {
   type    = string
-  default = "5m"
+  default = "10m"
 }
 
 variable "redhat_source_image" {

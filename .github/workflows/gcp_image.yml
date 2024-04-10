@@ -197,7 +197,7 @@ jobs:
 
   release-image:
     name: Release image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    # if: startsWith(github.ref, 'refs/tags')
+    if: startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-22.04
     needs: [build-image, test-image]
     permissions:
@@ -240,11 +240,11 @@ jobs:
             fi
           fi
 
-          # gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME \
-          #   --source-image=$IMAGE_NAME \
-          #   --source-image-project=$GCP_DEV_PROJECT
+          gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME \
+            --source-image=$IMAGE_NAME \
+            --source-image-project=$GCP_DEV_PROJECT
 
-          # gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME \
-          #   --source-image=$IMAGE_NAME \
-          #   --source-image-project=$GCP_DEV_PROJECT \
-          #   --licenses=$LICENSE
+          gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME \
+            --source-image=$IMAGE_NAME \
+            --source-image-project=$GCP_DEV_PROJECT \
+            --licenses=$LICENSE
