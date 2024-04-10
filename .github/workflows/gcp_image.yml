@@ -134,6 +134,7 @@ jobs:
             --zone ${{ inputs.zone }} \
             --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
             --confidential-compute-type=${{ inputs.confidential-compute-type }} \
+            --shielded-secure-boot \
             --image="$IMAGE_NAME" \
             --image-project=${{ inputs.project }} \
             --project ${{ inputs.project }} \
