@@ -59,7 +59,7 @@ jobs:
 
       - name: Init packer
         run: |
-          cd packer/ && packer init gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          cd packer/ && packer init auzure-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
       - name: Azure auth and build image
         id: packer-build
@@ -68,7 +68,7 @@ jobs:
         run: |
           cd packer/ && \
           packer build -var "prefix=alpha" \
-          -var "prefix=temp-$TIMESTAMP"
+          -var "prefix=temp-$TIMESTAMP" \
           -var "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
           -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
           -var "tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
