@@ -28,9 +28,6 @@ on:
       mode:
         required: true
         type: string
-      maintenance:
-        required: true
-        type: string
       product:
         required: true
         type: string
@@ -139,7 +136,7 @@ jobs:
             --image-project=${{ inputs.project }} \
             --project ${{ inputs.project }} \
             --tags ssh-full,backend,backend-rust-full,http-server,https-server,cosmian-vm-agent,${{ inputs.product }} \
-            --${{ inputs.maintenance }} \
+            --maintenance-policy=TERMINATE \
             --metadata-from-file=startup-script=.github/scripts/gcp-${{ inputs.product }}-startup-script.sh \
             --max-run-duration=10m \
             --instance-termination-action=DELETE
