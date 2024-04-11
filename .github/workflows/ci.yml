@@ -11,15 +11,16 @@ name: CI
 
 jobs:
   build-cosmian-vm-binaries:
+    name: Build binaries
     uses: ./.github/workflows/build.yml
 
   build-test-gcp-sev-image:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu]
+        distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms]
-    name: ${{ matrix.product }} - ${{ matrix.distrib }} - GCP SEV image
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
@@ -32,7 +33,6 @@ jobs:
       min-cpu-platform: AMD Milan
       project: cosmian-dev
       mode: beta
-      maintenance: maintenance-policy=TERMINATE
       product: ${{ matrix.product }}
 
   release:
