@@ -144,7 +144,7 @@ sed -i.bak "/$CONTAINER_MAPPING_NAME/d" /etc/fstab
 
 # # Auto decrypt & auto mount the luks when rebooting (if not already done)
 echo "Enabling auto mounting when rebooting..."
-grep -qF -- "$CONTAINER_MAPPING_NAME $CONTAINER_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_NAME $CONTAINER_PATH - tpm2-device=auto" >>/etc/crypttab
+grep -qF -- "$CONTAINER_MAPPING_NAME $CONTAINER_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_NAME $CONTAINER_PATH - tpm2-device=auto,headless=true" >>/etc/crypttab
 grep -qF -- "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH" /etc/crypttab || echo "$CONTAINER_MAPPING_PATH $CONTAINER_MOUNT_PATH ext4 defaults 0 0" >>/etc/fstab
 
 dracut -fv --regenerate-all
