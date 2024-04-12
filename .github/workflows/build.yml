@@ -104,6 +104,7 @@ jobs:
         with:
           name: cosmian_vm
           path: |
+            CHANGELOG.md
             target/release/cosmian_vm_agent
             target/release/cosmian_vm
             target/release/cosmian_certtool
