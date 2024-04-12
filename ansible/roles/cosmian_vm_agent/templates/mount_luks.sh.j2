@@ -7,5 +7,3 @@ set -ex
 
 # mount the partition
 mount /dev/mapper/cosmian_vm_container /var/lib/cosmian_vm/data
-
-until [ -d /var/lib/cosmian_vm/data ]; do sleep 1; done

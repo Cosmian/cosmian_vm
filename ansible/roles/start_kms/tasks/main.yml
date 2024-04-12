@@ -127,8 +127,3 @@
     validate_certs: false
   delegate_to: localhost
   tags: listening
-
-- name: Reboot since all checks pass
-  ansible.builtin.reboot:
-    connect_timeout: 3600
-    reboot_timeout: 3600
