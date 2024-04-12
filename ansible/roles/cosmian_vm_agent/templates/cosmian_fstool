@@ -135,8 +135,8 @@ fi
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
 # Details on PCRs: https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
 echo "Enrolling the TPM for this container..."
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7 --wipe-slot=tpm2 "$BLOCK_DEVICE"
-echo -n "$PASSWORD" | clevis luks bind -d "$CONTAINER_PATH" -k - tpm2 '{"pcr_bank":"sha256", "pcr_ids":"7"}'
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
+echo -n "$PASSWORD" | clevis luks bind -d "$CONTAINER_PATH" -k - tpm2 '{"pcr_bank":"sha256"}'
 
 dracut -fv --regenerate-all
 
