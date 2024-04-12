@@ -1,0 +1,99 @@
+---
+# tasks file for launch
+
+- name: Check Cosmian VM Agent version
+  ansible.builtin.debug:
+    var: cosmian_vm_version
+
+- name: Check SSH remote host IP
+  ansible.builtin.debug:
+    var: inventory_hostname
+
+- name: Check if port 5355 is listening
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 5355
+    delay: 5
+    timeout: 60
+    msg: Timeout waiting for 5355 to respond
+
+- name: Check if port 5355 is listening on {{ inventory_hostname }}
+  ansible.builtin.uri:
+    url: https://{{ inventory_hostname }}:5355/ima/ascii
+    validate_certs: false
+  delegate_to: localhost
+
+- name: Download Cosmian VM CLI
+  ansible.builtin.get_url:
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
+    dest: /tmp/
+    mode: "u+x"
+  delegate_to: localhost
+
+- name: Cosmian VM snapshot
+  ansible.builtin.command:
+    cmd: |
+      /tmp/cosmian_vm --url https://{{ inventory_hostname }}:5355 --allow-insecure-tls snapshot
+  register: cosmian_vm_output
+  delegate_to: localhost
+  ignore_errors: true
+  tags: snapshot
+
+- name: Display agent logs variable
+  ansible.builtin.debug:
+    var: cosmian_vm_output
+  tags: snapshot
+
+- name: Read Cosmian VM agent logs
+  ansible.builtin.slurp:
+    src: /var/log/cosmian_vm/agent.out.log
+  register: agent_logs
+  tags: snapshot
+
+- name: Display Agent logs
+  ansible.builtin.debug:
+    var: "{{ agent_logs['content'] | b64decode }}"
+  tags: snapshot
+
+- name: Fail if Cosmian snapshot has failed previously
+  ansible.builtin.fail:
+    msg: Cosmian snapshot failed with return code {{ cosmian_vm_output }}
+  when:
+    - cosmian_vm_output is defined
+    - cosmian_vm_output.rc is defined
+    - cosmian_vm_output.rc != 0
+  tags: snapshot
+
+- name: Verify Cosmian VM snapshot
+  ansible.builtin.command:
+    cmd: |
+      /tmp/cosmian_vm --url https://{{ inventory_hostname }}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+  register: verify_cosmian_vm_output
+  delegate_to: localhost
+  ignore_errors: true
+  tags: verify
+
+- name: Display agent logs variable
+  ansible.builtin.debug:
+    var: verify_cosmian_vm_output
+  tags: verify
+
+- name: Read Cosmian VM agent logs
+  ansible.builtin.slurp:
+    src: /var/log/cosmian_vm/agent.out.log
+  register: agent_logs
+  tags: verify
+
+- name: Display Agent logs
+  ansible.builtin.debug:
+    var: "{{ agent_logs['content'] | b64decode }}"
+  tags: verify
+
+- name: Fail if Cosmian snapshot verification has failed previously
+  ansible.builtin.fail:
+    msg: Cosmian snapshot verification failed with return code {{ verify_cosmian_vm_output }}
+  when:
+    - verify_cosmian_vm_output is defined
+    - verify_cosmian_vm_output.rc is defined
+    - verify_cosmian_vm_output.rc != 0
+  tags: verify

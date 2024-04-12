@@ -28,21 +28,25 @@ on:
       mode:
         required: true
         type: string
-      maintenance:
+      product:
         required: true
         type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
   GCP_PUBLIC_PROJECT: cosmian-public
+  KMS_VERSION: 4.15.0
 
 jobs:
   build-image:
-    name: Packer build
+    name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: ./packer
     outputs:
       timestamp: ${{ steps.env.outputs.TIMESTAMP }}
       image_name: ${{ steps.env.outputs.IMAGE_NAME }}
@@ -56,30 +60,16 @@ jobs:
         run: |
           TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
           echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
-          echo "IMAGE_NAME=temp-$TIMESTAMP-cosmian-vm-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
-          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
-
-      - name: Download binaries
-        uses: actions/download-artifact@v4
-        with:
-          name: cosmian_vm
-
-      - name: Change permissions of binaries
-        run: |
-          chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
+          echo "IMAGE_NAME=temp-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+          echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
       - name: Setup packer
         uses: hashicorp/setup-packer@main
 
       - name: Install packer plugins
         run: |
-          cd packer/
           packer plugins install github.com/hashicorp/googlecompute
           packer plugins install github.com/hashicorp/ansible
-
-      - name: Init packer
-        run: |
-          cd packer/ && packer init gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
       - name: GCP auth
         uses: google-github-actions/auth@v2
@@ -87,14 +77,28 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Packer build image
-        id: packer-build
+        if: startsWith(github.ref, 'refs/tags/') != true
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
+          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
         run: |
-          cd packer/ && packer build -var "prefix=temp-$TIMESTAMP" gcp-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          set -ex
+          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          bash ../.github/scripts/packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
+
+      - name: Packer build image
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
+          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -ex
+          COSMIAN_VM_VERSION="$VERSION"
+          bash ../.github/scripts/packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
 
   test-image:
-    name: Test image
+    name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:
@@ -105,7 +109,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: GCP auth
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
@@ -121,61 +125,51 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
+          set -ex
           gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE \
             --machine-type ${{ inputs.machine-type }} \
             --zone ${{ inputs.zone }} \
             --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
             --confidential-compute-type=${{ inputs.confidential-compute-type }} \
-            --${{ inputs.maintenance }} \
+            --shielded-secure-boot \
             --image="$IMAGE_NAME" \
             --image-project=${{ inputs.project }} \
             --project ${{ inputs.project }} \
-            --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
-            --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
-            --max-run-duration=10m \
+            --tags ssh-full,backend,backend-rust-full,http-server,https-server,cosmian-vm-agent,${{ inputs.product }} \
+            --maintenance-policy=TERMINATE \
+            --metadata-from-file=startup-script=.github/scripts/gcp-${{ inputs.product }}-startup-script.sh \
+            --shielded-secure-boot \
+            --max-run-duration=20m \
             --instance-termination-action=DELETE
+          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
+          echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
-      - name: Download binaries
-        uses: actions/download-artifact@v4
-        with:
-          name: cosmian_vm
+      - name: Download Cosmian VM CLI
+        if: startsWith(github.ref, 'refs/tags/') != true
+        run: |
+          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          wget https://package.cosmian.com/cosmian_vm/last_build/$BRANCH/cosmian_vm
+
+      - name: Download Cosmian VM CLI
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          wget https://package.cosmian.com/cosmian_vm/$VERSION/cosmian_vm
 
       - name: Change permissions of binaries
         run: |
-          chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
+          set -e
+          chmod +x ./cosmian_vm
 
       - name: Test Cosmian VM Agent on GCP instance
         id: test_cosmian_vm
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
         run: |
-          sudo apt-get install -y jq moreutils
-          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
-          echo "Waiting for Cosmian VM agent (${IP_ADDR}:5355)..."
-          timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
-
-          echo "[ OK ] Cosmian VM ready"
-          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls snapshot
-          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
-
-          echo "Rebooting instance..."
-          gcloud ${{ inputs.mode }} compute instances stop $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
-          gcloud ${{ inputs.mode }} compute instances set-scheduling $CI_INSTANCE --zone ${{ inputs.zone }} --max-run-duration=10m --instance-termination-action=DELETE
-          sleep 10
-          gcloud ${{ inputs.mode }} compute instances start $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
-          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
-          timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
-
-          echo "[ OK ] Cosmian VM ready after reboot"
-          RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
-          NEW_RESET_COUNT=$(expr $RESET_COUNT + 1)
-          jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot > new_cosmian_vm.snapshot
-          jq '.tpm_policy.reset_count |= tonumber' new_cosmian_vm.snapshot | sponge new_cosmian_vm.snapshot
-
-          ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot new_cosmian_vm.snapshot
-          echo "[ OK ] Integrity after reboot"
-
-          echo "IP_ADDR=$IP_ADDR" >> "$GITHUB_OUTPUT"
+          set -ex
+          bash .github/scripts/gcp-${{ inputs.product }}-tests.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
 
       - name: Stop and delete GCP instance
         if: success()
@@ -194,7 +188,8 @@ jobs:
           gcloud ${{ inputs.mode }} compute images delete --quiet $IMAGE_NAME
 
   release-image:
-    name: Release image
+    name: Release image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-22.04
     needs: [build-image, test-image]
     permissions:
@@ -210,19 +205,33 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Copy image to public project
-        if: startsWith(github.ref, 'refs/tags')
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+          TAG: ${{ github.ref_name }}
         run: |
-          TAG=${{  github.ref_name }}
+          set -ex
+
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
-          NEW_IMAGE_NAME=cosmian-vm-$VERSION-sev-${{ inputs.distrib }}
+          KMS_VERSION=$(echo $KMS_VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
+
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
+            if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+              LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
+            else
+              LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+            fi
           else
-            LICENSE=${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}
+            if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+              LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}"
+            else
+              LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+            fi
           fi
+
           gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME \
             --source-image=$IMAGE_NAME \
             --source-image-project=$GCP_DEV_PROJECT

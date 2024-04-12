@@ -1,0 +1,38 @@
+---
+# tasks file for ansible/roles/kms
+
+- name: Check OS distribution
+  ansible.builtin.debug:
+    var: ansible_distribution
+
+- name: Check Cosmian KMS version
+  ansible.builtin.debug:
+    var: cosmian_kms_version
+
+- name: Get Supervisor status
+  ansible.builtin.systemd_service:
+    name: supervisor
+  register: supervisor_status
+
+- name: Display Supervisor status
+  ansible.builtin.debug:
+    var: supervisor_status.status.ActiveState
+
+- name: Check if /etc/supervisor/conf.d/cosmian_kms.conf exists
+  ansible.builtin.stat:
+    path: /etc/supervisor/conf.d/cosmian_kms.conf
+  register: kms_supervisor_conf_check
+
+- name: Stop Cosmian KMS if it exists
+  community.general.supervisorctl:
+    name: cosmian_kms
+    state: stopped
+  when:
+    - kms_supervisor_conf_check.stat.exists
+    - supervisor_status.status.ActiveState=='active'
+
+- name: Clean KMS existing folders
+  ansible.builtin.command:
+    cmd: |
+      rm -rf /var/lib/cosmian_vm/data/app
+      rm -f /etc/supervisor/conf.d/cosmian_kms.conf

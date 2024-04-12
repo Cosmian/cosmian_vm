@@ -1,0 +1,73 @@
+---
+# tasks file for launch
+
+- name: Make sure a Supervisor service is running
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.systemd_service:
+    name: supervisor
+    state: started
+  tags: launch
+
+- name: Make sure a Supervisor service is running
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.systemd_service:
+    name: supervisord
+    state: started
+  tags: launch
+
+- name: Override Cosmian VM supervisor configuration with autostart to true
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.lineinfile:
+    path: /etc/supervisor/conf.d/cosmian_vm_agent.conf
+    regexp: autostart=false
+    line: autostart=true
+    backup: true
+
+- name: Override Cosmian VM supervisor configuration with autostart to true
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.lineinfile:
+    path: /etc/supervisord.d/cosmian_vm_agent.ini
+    regexp: autostart=false
+    line: autostart=true
+    backup: true
+
+- name: Start Cosmian VM Agent
+  community.general.supervisorctl:
+    name: cosmian_vm_agent
+    state: started
+  tags: launch
+
+- name: Wait certificate is generated /var/lib/cosmian_vm/data/cert.pem
+  ansible.builtin.wait_for:
+    path: /var/lib/cosmian_vm/data/cert.pem
+    state: present
+
+- name: Check if port 5355 is listening
+  ansible.builtin.wait_for:
+    port: 5355
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 5355 to respond
+  tags:
+    - listening
+    - listening_cosmian_vm
+
+- name: Check Cosmian VM Agent is OK
+  ansible.builtin.uri:
+    url: https://localhost:5355/ima/ascii
+    validate_certs: false
+  tags: listening
+
+- name: Read LUKS password
+  ansible.builtin.slurp:
+    src: /var/lib/cosmian_vm/data/luks_password
+  register: luks_password
+
+- name: Display LUKS password
+  ansible.builtin.debug:
+    var: "{{ luks_password['content'] | b64decode }}"
+
+- name: Reboot since all checks pass
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600

@@ -56,7 +56,8 @@ repos:
     rev: v1.35.1
     hooks:
       - id: yamllint
-        args: [--format, parsable, --strict]
+        args: [--format, parsable, --strict, -d, '{rules: {line-length: {max: 150}}}']
+        exclude: .github|.pre-commit-config.yaml
 
   - repo: https://github.com/ansible/ansible-lint.git
     rev: v24.2.1
@@ -64,6 +65,7 @@ repos:
       - id: ansible-lint
         additional_dependencies:
           - ansible
+        exclude: .github
 
   - repo: https://github.com/crate-ci/typos
     rev: v1.20.3
@@ -150,10 +152,3 @@ repos:
       - id: clippy-autofix-others
       - id: clippy-all-targets-all-features
       - id: cargo-format # in last due to clippy fixes
-
-  - repo: https://github.com/cisagov/pre-commit-packer
-    rev: v0.0.2
-    hooks:
-      - id: packer_validate
-      - id: packer_fmt
-        args: [-write=true]

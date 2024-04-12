@@ -5,7 +5,8 @@
   when: ansible_distribution == 'Ubuntu'
   ansible.builtin.apt:
     update_cache: true
-    upgrade: 'yes'
+    only_upgrade: true
+    upgrade: safe
   tags: ubuntu
 
 - name: Upgrade all packages
@@ -13,4 +14,5 @@
   ansible.builtin.dnf:
     name: "*"
     state: latest
+    update_only: true
   tags: redhat

@@ -1,0 +1,129 @@
+---
+# tasks file for KMS startup
+
+- name: Check SSH remote host IP
+  ansible.builtin.debug:
+    var: inventory_hostname
+
+- name: Check Cosmian VM Agent version
+  ansible.builtin.debug:
+    var: cosmian_vm_version
+
+- name: Download Cosmian VM CLI
+  ansible.builtin.get_url:
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
+    dest: /tmp/
+    mode: "u+x"
+  delegate_to: localhost
+
+- name: Copy KMS configuration
+  ansible.builtin.template:
+    src: kms.toml.j2
+    dest: /tmp/kms.toml
+    mode: "0644"
+  delegate_to: localhost
+
+- name: Cosmian VM App initialization
+  ansible.builtin.command:
+    cmd: |
+      /tmp/cosmian_vm --url https://{{ inventory_hostname }}:5355 --allow-insecure-tls app init -c /tmp/kms.toml
+  register: cosmian_vm_output
+  ignore_errors: true
+  delegate_to: localhost
+  tags: app_init
+
+- name: Display agent logs variable
+  ansible.builtin.debug:
+    var: cosmian_vm_output
+  tags: app_init
+
+- name: Read Cosmian VM agent logs
+  ansible.builtin.slurp:
+    src: /var/log/cosmian_vm/agent.out.log
+  register: agent_logs
+  tags: app_init
+
+- name: Display Agent logs
+  ansible.builtin.debug:
+    var: "{{ agent_logs['content'] | b64decode }}"
+  tags: app_init
+
+- name: Fail if Cosmian app init has failed previously
+  ansible.builtin.fail:
+    msg: Cosmian app init failed with return code {{ cosmian_vm_output }}
+  when:
+    - cosmian_vm_output is defined
+    - cosmian_vm_output.rc is defined
+    - cosmian_vm_output.rc != 0
+  tags: app_init
+
+- name: Override KMS supervisor configuration with autostart to true
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.lineinfile:
+    path: /etc/supervisor/conf.d/cosmian_kms.conf
+    regexp: autostart=false
+    line: autostart=true
+    backup: true
+
+- name: Override KMS supervisor configuration with autostart to true
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  tags: certificate_nginx_permissions
+  block:
+    - name: Override KMS supervisor configuration with autostart to true
+      ansible.builtin.lineinfile:
+        path: /etc/supervisord.d/cosmian_kms.ini
+        regexp: autostart=false
+        line: autostart=true
+        backup: true
+
+    - name: Restorecon on cert and key
+      ansible.builtin.command:
+        cmd: |
+          /usr/sbin/restorecon /var/lib/cosmian_vm/data/cert.pem
+          /usr/sbin/restorecon /var/lib/cosmian_vm/data/key.pem
+      tags: restorecon
+
+- name: Start KMS
+  community.general.supervisorctl:
+    name: cosmian_kms
+    state: started
+  tags: launch
+
+- name: Run Nginx
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: nginx
+  tags: restart_nginx
+
+- name: Check if port 8080 is listening
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 8080
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 8080 to respond
+  delegate_to: localhost
+  tags: listening
+
+- name: Check if port 443 is listening
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 443
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 443 to respond
+  delegate_to: localhost
+  tags: listening
+
+- name: Check KMS returns its version
+  ansible.builtin.uri:
+    url: http://{{ inventory_hostname }}:8080/version
+  delegate_to: localhost
+  tags: listening
+
+- name: Check KMS returns its version on HTTPS
+  ansible.builtin.uri:
+    url: https://{{ inventory_hostname }}/version
+    validate_certs: false
+  delegate_to: localhost
+  tags: listening

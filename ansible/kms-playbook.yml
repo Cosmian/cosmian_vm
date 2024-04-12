@@ -1,0 +1,28 @@
+---
+- name: Clean previous install of Cosmian VM Agent
+  hosts: all
+  become: true
+  roles:
+    - check_cpu
+    - cleanup_kms
+    - cleanup_cosmian_vm_agent
+
+- name: Install KMS
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.import_playbook: kms-packer-playbook.yml
+  vars:
+    nginx_user: www-data
+
+- name: Install KMS
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.import_playbook: kms-packer-playbook.yml
+  vars:
+    nginx_user: nginx
+
+- name: Start and check KMS
+  hosts: all
+  become: true
+  roles:
+    - start_cosmian_vm
+    - check_cosmian_vm
+    - start_kms

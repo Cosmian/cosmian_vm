@@ -2,28 +2,28 @@
 # tasks file for ansible/roles/tpm
 
 - name: Check OS distribution
-  debug:
+  ansible.builtin.debug:
     var: ansible_distribution
 
 - name: TPM packages installation on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
-    - name: Update all packages to their latest version
-      apt:
-        update_cache: yes
+    - name: Update packages cache
+      ansible.builtin.apt:
+        update_cache: true
 
     - name: Install packages
-      apt:
+      ansible.builtin.apt:
         name: tpm2-tools
-        state: latest
-        update_cache: yes
+        state: present
+        update_cache: true
 
 - name: TPM packages installation on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   block:
-    - name: Update all packages to their latest version
-      dnf:
-        update_cache: yes
+    - name: Update packages cache
+      ansible.builtin.dnf:
+        update_cache: true
 
     - name: Install packages
       ansible.builtin.dnf:
@@ -31,28 +31,30 @@
           - tpm2-tools
           - cryptsetup
         state: present
-        update_cache: yes
+        update_cache: true
 
 - name: TPM packages installation on Amazon-linux
   when: ansible_distribution == 'Amazon'
   block:
     - name: Update all packages to their latest version
-      dnf:
-        update_cache: yes
+      ansible.builtin.dnf:
+        update_cache: true
 
-    - name: download and unzip tpm2-tools
-      unarchive:
+    - name: Download and unzip tpm2-tools
+      ansible.builtin.unarchive:
         src: https://package.cosmian.com/tpm2-tools/tpm2-tools-amazonlinux-20240116.zip
         dest: /tmp/
-        remote_src: yes
+        remote_src: true
 
-    - name: install tpm2-tools
-      shell: ./install.sh
+    - name: Install tpm2-tools
+      ansible.builtin.command:
+        cmd:
+          ./install.sh
       args:
         chdir: /tmp/tpm2-tools
 
-    - name: clean tpm2-tools
-      file:
+    - name: Clean tpm2-tools
+      ansible.builtin.file:
         path: /tmp/tpm2-tools/
         state: absent
 
@@ -60,4 +62,4 @@
       ansible.builtin.dnf:
         name: tpm2-tss
         state: present
-        update_cache: yes
+        update_cache: true

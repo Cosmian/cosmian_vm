@@ -18,6 +18,14 @@ on:
         options:
           - ubuntu
           - rhel
+      product:
+        description: Cosmian VM or KMS
+        required: true
+        default: cosmian-vm
+        type: choice
+        options:
+          - cosmian-vm
+          - kms
 
 name: Standalone GCP build
 
@@ -27,7 +35,7 @@ jobs:
 
   build-test-gcp-sev-image:
     if: contains(inputs.cpu, 'sev')
-    name: (${{ inputs.distrib }}) -> GCP SEV image
+    name: ${{ inputs.product }} - ${{ inputs.distrib }} - GCP SEV image
     needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
@@ -41,10 +49,11 @@ jobs:
       project: cosmian-dev
       mode: beta
       maintenance: maintenance-policy=TERMINATE
+      product: ${{ inputs.product }}
 
   build-test-gcp-tdx-image:
     if: contains(inputs.cpu, 'tdx')
-    name: (${{ inputs.distrib }}) -> GCP TDX image
+    name: ${{ inputs.product }} - ${{ inputs.distrib }} - GCP TDX image
     needs: build-cosmian-vm-binaries
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
@@ -58,3 +67,4 @@ jobs:
       project: cosmian-dev
       mode: alpha
       maintenance: on-host-maintenance=TERMINATE
+      product: ${{ inputs.product }}

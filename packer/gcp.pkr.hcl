@@ -1,12 +1,3 @@
-variable "prefix" {
-  type    = string
-  default = "alpha"
-}
-
-locals {
-  redhat_ami_name = "${var.prefix}-cosmian-vm-rhel-sev"
-}
-
 variable "project_id" {
   type    = string
   default = "cosmian-dev"
@@ -24,7 +15,7 @@ variable "ssh_username" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "10m"
+  default = "20m"
 }
 
 variable "image_guest_os_features" {
@@ -54,27 +45,17 @@ variable "use_os_login" {
 
 variable "wait_to_add_ssh_keys" {
   type    = string
-  default = "20s"
+  default = "30s"
 }
 
-variable "redhat_source_image" {
-  type    = string
-  default = "rhel-9-v20240312"
-}
-
-variable "redhat_source_image_family" {
-  type    = string
-  default = "rhel-9"
-}
-
-source "googlecompute" "redhat" {
+source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
   project_id              = var.project_id
-  source_image            = var.redhat_source_image
-  source_image_family     = var.redhat_source_image_family
+  source_image            = "TEMPLATE_SOURCE_IMAGE"
+  source_image_family     = "TEMPLATE_SOURCE_FAMILY"
   zone                    = var.zone
   ssh_username            = var.ssh_username
   ssh_timeout             = var.ssh_timeout
-  image_name              = local.redhat_ami_name
+  image_name              = "TEMPLATE_IMAGE_NAME"
   image_guest_os_features = var.image_guest_os_features
   network                 = var.network
   subnetwork              = var.subnetwork
@@ -84,11 +65,12 @@ source "googlecompute" "redhat" {
 }
 
 build {
-  sources = ["sources.googlecompute.redhat"]
+  sources = ["sources.googlecompute.TEMPLATE_GOOGLE_COMPUTE"]
 
   provisioner "ansible" {
-    playbook_file = "../ansible/packer_sev_playbook.yml"
-    local_port    = 22
-    use_proxy     = false
+    playbook_file   = "../ansible/TEMPLATE_PRODUCT-packer-playbook.yml"
+    local_port      = 22
+    use_proxy       = false
+    extra_arguments = ["-e", "cosmian_vm_version=TEMPLATE_COSMIAN_VM_VERSION", "-e", "cosmian_kms_version=TEMPLATE_COSMIAN_KMS_VERSION"]
   }
 }

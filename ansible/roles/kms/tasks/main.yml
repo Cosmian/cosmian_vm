@@ -2,52 +2,12 @@
 # tasks file for ansible/roles/kms
 
 - name: Check OS distribution
-  debug:
+  ansible.builtin.debug:
     var: ansible_distribution
 
 - name: Check Cosmian KMS version
-  debug:
+  ansible.builtin.debug:
     var: cosmian_kms_version
-
-- name: Get supervisor Status
-  ansible.builtin.systemd:
-    name: supervisor
-  register: supervisor_status
-
-- debug:
-    var: supervisor_status.status.ActiveState
-
-- name: Check if /etc/supervisor/conf.d/cosmian_vm_agent.conf exists
-  stat:
-    path: /etc/supervisor/conf.d/cosmian_vm_agent.conf
-  register: vm_supervisor_conf_check
-
-- name: Check if /etc/supervisor/conf.d/cosmian_kms.conf exists
-  stat:
-    path: /etc/supervisor/conf.d/cosmian_kms.conf
-  register: kms_supervisor_conf_check
-
-- name: Stop Cosmian VM Agent if it exists
-  community.general.supervisorctl:
-    name: cosmian_vm_agent
-    state: stopped
-  when:
-    - vm_supervisor_conf_check.stat.exists
-    - supervisor_status.status.ActiveState=='active'
-
-- name: Stop Cosmian VM Agent if it exists
-  community.general.supervisorctl:
-    name: cosmian_kms
-    state: stopped
-  when:
-    - kms_supervisor_conf_check.stat.exists
-    - supervisor_status.status.ActiveState=='active'
-
-- name: Clean KMS existing folders
-  file:
-    path:
-      - /var/lib/cosmian_vm/data/app
-    state: absent
 
 - name: Install prerequisites packages
   ansible.builtin.package:
@@ -57,19 +17,19 @@
       - redis
     state: present
 
-- name: Create a Directory /usr/local/sbin
-  file:
+- name: Create the directory /usr/local/sbin
+  ansible.builtin.file:
     path: /usr/local/sbin
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
 
 - name: Download KMS
-  get_url:
+  ansible.builtin.get_url:
     url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu_22_04.zip
     dest: /tmp
-    mode: 0755
+    mode: "0755"
     group: root
     owner: root
 
@@ -86,130 +46,86 @@
     remote_src: true
     owner: root
     group: root
-    mode: 0500
+    mode: "0500"
 
 - name: Remove temporary files
-  file:
+  ansible.builtin.file:
     path:
       - /tmp/ubuntu_22_04
       - /tmp/ubuntu_22_04.zip
     state: absent
 
 - name: Add KMS supervisor configuration
-  template:
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.template:
     src: supervisor_kms.conf.j2
     dest: /etc/supervisor/conf.d/cosmian_kms.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
+
+- name: Add KMS supervisor configuration
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.template:
+    src: supervisor_kms.conf.j2
+    dest: /etc/supervisord.d/cosmian_kms.ini
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Override Cosmian VM configuration
-  template:
+  ansible.builtin.template:
     src: agent.toml.j2
     dest: /etc/cosmian_vm/agent.toml
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
+
+- name: Create the directory /var/www/html if it does not exist
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Add Nginx configuration
-  template:
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.template:
     src: nginx.j2
-    dest: /etc/nginx/sites-enabled/default
+    dest: /etc/nginx/nginx.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
-- name: Make sure Supervisor is running
-  ansible.builtin.systemd_service:
-    state: started
-    name: supervisor
-
-- name: Start Cosmian VM Agent
-  community.general.supervisorctl:
-    name: cosmian_vm_agent
-    state: started
-  tags: launch
-
-- name: Creates directory
-  ansible.builtin.file:
-    path: /var/lib/cosmian_vm/data/app
-    state: directory
-
-- name: Run Redis
-  ansible.builtin.systemd_service:
-    state: started
-    name: redis
-
-- name: Check if port 5355 is listening
-  wait_for:
-    port: 5355
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for 5355 to respond
-  tags: launch
-
-- name: Download Cosmian VM CLI
-  get_url:
-    url: https://package.cosmian.com/cosmian_vm/1.1.0-rc.3/cosmian_vm
-    dest: /usr/sbin/
-    mode: 0500
-    group: root
-    owner: root
-
-- name: Copy KMS configuration
-  template:
-    src: kms.toml.j2
-    dest: /tmp/kms.toml
+- name: Add Nginx configuration
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.template:
+    src: nginx.j2
+    dest: /etc/nginx/nginx.conf
     owner: root
     group: root
+    mode: "0644"
 
-- name: Cosmian VM App initialization
-  shell: |
-    cosmian_vm --url https://localhost:5355 --allow-insecure-tls app init -c /tmp/kms.toml
-  tags: app_init
+- name: Make systemd Nginx restarting on failure
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.blockinfile:
+    path: /etc/systemd/system/multi-user.target.wants/nginx.service
+    block: |
+      [Service]
+      Restart=on-failure
+      RestartSec=10s
+  tags: systemd_nginx
 
-- name: Check if port 5355 is listening
-  wait_for:
-    port: 5355
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for 5355 to respond
-  tags: launch
-
-- name: Start KMS
-  community.general.supervisorctl:
-    name: cosmian_kms
-    state: started
-  tags: launch
-
-- name: Run Nginx
+- name: Enable systemd Nginx service
   ansible.builtin.systemd_service:
-    state: restarted
     name: nginx
+    enabled: true
+    state: stopped
+    daemon_reload: true
 
-- name: Check if port 8080 is listening
-  wait_for:
-    port: 8080
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for 8080 to respond
-  tags: listening
-
-- name: Check if port 443 is listening
-  wait_for:
-    port: 443
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for 443 to respond
-  tags: listening
-
-- name: Check KMS returns its version
-  ansible.builtin.uri:
-    url: http://localhost:8080/version
-  tags: listening
-
-- name: Check KMS returns its version on HTTPS
-  ansible.builtin.uri:
-    url: https://localhost/version
-    validate_certs: no
-  tags: listening
+- name: Enable systemd Redis service
+  ansible.builtin.systemd_service:
+    name: redis
+    enabled: true
+    state: stopped
