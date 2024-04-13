@@ -15,7 +15,7 @@ variable "ssh_username" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "20m"
+  default = "30m"
 }
 
 variable "image_guest_os_features" {
@@ -71,7 +71,6 @@ build {
     playbook_file   = "../ansible/TEMPLATE_PRODUCT-packer-playbook.yml"
     local_port      = 22
     use_proxy       = false
-    max_retries     = 3
     extra_arguments = ["-e", "cosmian_vm_version=TEMPLATE_COSMIAN_VM_VERSION", "-e", "cosmian_kms_version=TEMPLATE_COSMIAN_KMS_VERSION"]
   }
 }

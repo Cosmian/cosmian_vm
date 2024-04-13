@@ -26,6 +26,11 @@ on:
         options:
           - cosmian-vm
           - kms
+      kms-version:
+        description: Cosmian KMS version (None or X.Y.Z)
+        required: true
+        default: X.Y.Z
+        type: string
 
 name: Standalone GCP build
 
@@ -49,6 +54,7 @@ jobs:
       project: cosmian-dev
       mode: beta
       product: ${{ inputs.product }}
+      kms-version: ${{ inputs.kms-version }}
 
   build-test-gcp-tdx-image:
     if: contains(inputs.cpu, 'tdx')
@@ -66,3 +72,4 @@ jobs:
       project: cosmian-dev
       mode: alpha
       product: ${{ inputs.product }}
+      kms-version: ${{ inputs.kms-version }}

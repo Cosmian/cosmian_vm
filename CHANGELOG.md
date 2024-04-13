@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.0] - 2024-04-12
 
+### Features
+
+- Deploy Cosmian VM and Cosmian KMS on `ubuntu-2204-jammy-v20240319` and `rhel-9-v20240312`
+
 ### Ci
 
 - Push VM/KMS images on GCP on tags
