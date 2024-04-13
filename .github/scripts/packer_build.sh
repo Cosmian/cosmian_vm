@@ -32,7 +32,5 @@ cat "$PACKER_FILE"
 
 packer init "$PACKER_FILE"
 
-set +e
-
 # Since packer build fails randomly because of external resources use, retry packer buid until it succeeds
 timeout 30m bash -c "until packer build $PACKER_FILE; do sleep 30; done"
