@@ -48,7 +48,6 @@ jobs:
       min-cpu-platform: AMD Milan
       project: cosmian-dev
       mode: beta
-      maintenance: maintenance-policy=TERMINATE
       product: ${{ inputs.product }}
 
   build-test-gcp-tdx-image:
@@ -66,5 +65,4 @@ jobs:
       min-cpu-platform: AUTOMATIC
       project: cosmian-dev
       mode: alpha
-      maintenance: on-host-maintenance=TERMINATE
       product: ${{ inputs.product }}
