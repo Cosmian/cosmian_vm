@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - '**'
-    tags:
-      - '**'
 
 name: CI
 
@@ -34,6 +32,7 @@ jobs:
       project: cosmian-dev
       mode: beta
       product: ${{ matrix.product }}
+      kms-version: 4.15.0
 
   release:
     name: Release
