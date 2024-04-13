@@ -15,7 +15,7 @@ variable "ssh_username" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "30m"
+  default = "5m"
 }
 
 variable "image_guest_os_features" {
