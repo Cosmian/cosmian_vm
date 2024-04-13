@@ -94,10 +94,10 @@ jobs:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           VERSION: ${{ github.ref_name }}
-          KMS_VERSION: ${{ inputs.kms-version }}
         run: |
           set -ex
           COSMIAN_VM_VERSION="$VERSION"
+          KMS_VERSION="${{ inputs.kms-version }}"
           bash ../.github/scripts/packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
 
   test-image:
