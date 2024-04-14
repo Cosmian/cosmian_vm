@@ -101,7 +101,7 @@
   ansible.builtin.systemd_service:
     name: nginx
     enabled: true
-    state: stopped
+    state: started
     daemon_reload: true
 
 - name: Make systemd Nginx restarting on failure
@@ -112,14 +112,6 @@
       Restart=on-failure
       RestartSec=10s
   tags: systemd_nginx
-
-- name: Disable systemd Nginx service
-  ansible.builtin.systemd_service:
-    name: nginx
-    enabled: false
-    state: stopped
-    daemon_reload: true
-
 
 - name: Enable systemd Redis service
   ansible.builtin.systemd_service:
