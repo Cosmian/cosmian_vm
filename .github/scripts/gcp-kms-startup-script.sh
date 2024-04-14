@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -x
 
 supervisorctl start cosmian_vm_agent
 
