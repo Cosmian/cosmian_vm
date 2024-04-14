@@ -22,6 +22,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
+            CHANGELOG.md
             target/release/cosmian_vm_agent
             target/release/cosmian_vm
             target/release/cosmian_certtool

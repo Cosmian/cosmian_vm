@@ -1,5 +1,5 @@
 #!/bin/bash
 
-set -ex
+# set -ex
 
-supervisorctl start cosmian_vm_agent
+# supervisorctl start cosmian_vm_agent
