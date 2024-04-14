@@ -97,6 +97,13 @@
     group: root
     mode: "0644"
 
+- name: Enable systemd Nginx service
+  ansible.builtin.systemd_service:
+    name: nginx
+    enabled: true
+    state: stopped
+    daemon_reload: true
+
 - name: Make systemd Nginx restarting on failure
   ansible.builtin.blockinfile:
     path: /etc/systemd/system/multi-user.target.wants/nginx.service
@@ -112,6 +119,7 @@
     enabled: false
     state: stopped
     daemon_reload: true
+
 
 - name: Enable systemd Redis service
   ansible.builtin.systemd_service:
