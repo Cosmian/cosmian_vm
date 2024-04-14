@@ -8,8 +8,8 @@ supervisorctl start cosmian_vm_agent
 until [ -f /var/lib/cosmian_vm/data/cert.pem ]; do sleep 1; done
 
 # RHEL fix permissions for fresh generated certificate/key
-if command -v restorecon &>/dev/null; then
-  restorecon /var/lib/cosmian_vm/data/*.pem
+if [ -f /usr/sbin/restorecon ]; then
+  /usr/sbin/restorecon /var/lib/cosmian_vm/data/*.pem
 fi
 
 systemctl start nginx

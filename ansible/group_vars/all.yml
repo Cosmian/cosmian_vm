@@ -1,2 +1,5 @@
 ---
+cosmian_vm_version: 1.1.0
+cosmian_kms_version: 4.15.0
+
 nginx_user: root

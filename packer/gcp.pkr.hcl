@@ -45,7 +45,7 @@ variable "use_os_login" {
 
 variable "wait_to_add_ssh_keys" {
   type    = string
-  default = "30s"
+  default = "60s"
 }
 
 source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
