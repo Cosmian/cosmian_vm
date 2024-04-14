@@ -98,7 +98,6 @@
     mode: "0644"
 
 - name: Make systemd Nginx restarting on failure
-  when: ansible_distribution == 'Ubuntu'
   ansible.builtin.blockinfile:
     path: /etc/systemd/system/multi-user.target.wants/nginx.service
     block: |
