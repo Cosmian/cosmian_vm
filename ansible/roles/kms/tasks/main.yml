@@ -101,7 +101,7 @@
   ansible.builtin.systemd_service:
     name: nginx
     enabled: true
-    state: started
+    state: stopped
     daemon_reload: true
 
 - name: Make systemd Nginx restarting on failure
