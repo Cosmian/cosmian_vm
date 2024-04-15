@@ -4,13 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.0] - 2024-04-12
 
-### Ci
+### Features
 
-- Push VM/KMS images on GCP on tags
+- For GCP (SEV) ([#94](https://github.com/Cosmian/cosmian_vm/pull/94)):
+  - Deploy Cosmian VM/KMS images based on `ubuntu-2204-jammy-v20240319` and `rhel-9-v20240312`. Images deployment on tags only.
+  - Remove use of startup scripts:
+    - cosmian_vm_agent is auto-restarting on failures
+    - for KMS, nginx is auto-restarting on failures
+- For Azure (SEV):
+  - Add Ansible Cosmian VM/KMS installation
 
 ### Bug Fixes
 
-- Fix reboot problem on RHEL and add KMS installation via Ansible ([#84](https://github.com/Cosmian/cosmian_vm/pull/84))
+- Fix reboot problem on RHEL ([#84](https://github.com/Cosmian/cosmian_vm/pull/84))
 
 ## [1.1.0-rc.4] - 2024-04-05
 

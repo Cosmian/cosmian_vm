@@ -89,33 +89,18 @@
     group: root
     mode: "0644"
 
-- name: Add Nginx configuration
-  when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.template:
-    src: nginx.j2
-    dest: /etc/nginx/nginx.conf
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Add Nginx configuration
+- name: Selinux - add nginx to permissive allow httpd
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.command: semanage permissive -a httpd_t
+  tags: selinux
+
+- name: Add Nginx configuration
   ansible.builtin.template:
     src: nginx.j2
     dest: /etc/nginx/nginx.conf
     owner: root
     group: root
     mode: "0644"
-
-- name: Make systemd Nginx restarting on failure
-  when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.blockinfile:
-    path: /etc/systemd/system/multi-user.target.wants/nginx.service
-    block: |
-      [Service]
-      Restart=on-failure
-      RestartSec=10s
-  tags: systemd_nginx
 
 - name: Enable systemd Nginx service
   ansible.builtin.systemd_service:
@@ -124,8 +109,18 @@
     state: stopped
     daemon_reload: true
 
+- name: Make systemd Nginx restarting on failure
+  ansible.builtin.blockinfile:
+    path: /etc/systemd/system/multi-user.target.wants/nginx.service
+    block: |
+      [Service]
+      Restart=on-failure
+      RestartSec=10s
+  tags: systemd_nginx
+
 - name: Enable systemd Redis service
   ansible.builtin.systemd_service:
     name: redis
     enabled: true
     state: stopped
+    daemon_reload: true

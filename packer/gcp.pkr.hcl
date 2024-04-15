@@ -15,7 +15,7 @@ variable "ssh_username" {
 
 variable "ssh_timeout" {
   type    = string
-  default = "20m"
+  default = "5m"
 }
 
 variable "image_guest_os_features" {
@@ -45,7 +45,7 @@ variable "use_os_login" {
 
 variable "wait_to_add_ssh_keys" {
   type    = string
-  default = "30s"
+  default = "60s"
 }
 
 source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {

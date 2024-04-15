@@ -31,11 +31,13 @@ on:
       product:
         required: true
         type: string
+      kms-version:
+        required: true
+        type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
   GCP_PUBLIC_PROJECT: cosmian-public
-  KMS_VERSION: 4.15.0
 
 jobs:
   build-image:
@@ -81,6 +83,7 @@ jobs:
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+          KMS_VERSION: ${{ inputs.kms-version }}
         run: |
           set -ex
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
@@ -92,6 +95,7 @@ jobs:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           VERSION: ${{ github.ref_name }}
+          KMS_VERSION: ${{ inputs.kms-version }}
         run: |
           set -ex
           COSMIAN_VM_VERSION="$VERSION"
@@ -137,7 +141,6 @@ jobs:
             --project ${{ inputs.project }} \
             --tags ssh-full,backend,backend-rust-full,http-server,https-server,cosmian-vm-agent,${{ inputs.product }} \
             --maintenance-policy=TERMINATE \
-            --metadata-from-file=startup-script=.github/scripts/gcp-${{ inputs.product }}-startup-script.sh \
             --shielded-secure-boot \
             --max-run-duration=20m \
             --instance-termination-action=DELETE
@@ -209,11 +212,12 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           TAG: ${{ github.ref_name }}
+          KMS: ${{ inputs.kms-version }}
         run: |
           set -ex
 
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
-          KMS_VERSION=$(echo $KMS_VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          KMS_VERSION=$(echo $KMS | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then

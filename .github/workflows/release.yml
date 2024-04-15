@@ -18,7 +18,15 @@ jobs:
         with:
           name: cosmian_vm
 
+      - name: Release on tags, attach asset on release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            CHANGELOG.md
+            target/release/cosmian_vm_agent
+            target/release/cosmian_vm
+            target/release/cosmian_certtool
+
   cleanup:
-    if: startsWith(github.ref, 'refs/tags/')
     uses: Cosmian/reusable_workflows/.github/workflows/cleanup_cache.yml@main
     secrets: inherit

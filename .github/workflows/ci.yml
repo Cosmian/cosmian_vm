@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - '**'
-    tags:
-      - '**'
 
 name: CI
 
@@ -13,30 +11,3 @@ jobs:
   build-cosmian-vm-binaries:
     name: Build binaries
     uses: ./.github/workflows/build.yml
-
-  build-test-gcp-sev-image:
-    strategy:
-      fail-fast: false
-      matrix:
-        distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
-    needs: build-cosmian-vm-binaries
-    secrets: inherit
-    uses: ./.github/workflows/gcp_image.yml
-    with:
-      techno: sev
-      distrib: ${{ matrix.distrib }}
-      machine-type: n2d-standard-2
-      zone: europe-west4-a
-      confidential-compute-type: SEV_SNP
-      min-cpu-platform: AMD Milan
-      project: cosmian-dev
-      mode: beta
-      product: ${{ matrix.product }}
-
-  release:
-    name: Release
-    needs: [build-test-gcp-sev-image]
-    secrets: inherit
-    uses: ./.github/workflows/release.yml

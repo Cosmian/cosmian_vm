@@ -58,24 +58,9 @@
   tags: app_init
 
 - name: Override KMS supervisor configuration with autostart to true
-  when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.lineinfile:
-    path: /etc/supervisor/conf.d/cosmian_kms.conf
-    regexp: autostart=false
-    line: autostart=true
-    backup: true
-
-- name: Override KMS supervisor configuration with autostart to true
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
   tags: certificate_nginx_permissions
   block:
-    - name: Override KMS supervisor configuration with autostart to true
-      ansible.builtin.lineinfile:
-        path: /etc/supervisord.d/cosmian_kms.ini
-        regexp: autostart=false
-        line: autostart=true
-        backup: true
-
     - name: Restorecon on cert and key
       ansible.builtin.command:
         cmd: |

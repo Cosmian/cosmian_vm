@@ -31,4 +31,6 @@ sed -i "s#TEMPLATE_COSMIAN_KMS_VERSION#${KMS_VERSION}#g" "$PACKER_FILE"
 cat "$PACKER_FILE"
 
 packer init "$PACKER_FILE"
-packer build "$PACKER_FILE"
+
+# Since packer build fails randomly because of external resources use, retry packer buid until it succeeds
+timeout 30m bash -c "until packer build $PACKER_FILE; do sleep 30; done"

@@ -26,6 +26,11 @@ on:
         options:
           - cosmian-vm
           - kms
+      kms-version:
+        description: Cosmian KMS version (None or X.Y.Z)
+        required: true
+        default: X.Y.Z
+        type: string
 
 name: Standalone GCP build
 
@@ -48,8 +53,8 @@ jobs:
       min-cpu-platform: AMD Milan
       project: cosmian-dev
       mode: beta
-      maintenance: maintenance-policy=TERMINATE
       product: ${{ inputs.product }}
+      kms-version: ${{ inputs.kms-version }}
 
   build-test-gcp-tdx-image:
     if: contains(inputs.cpu, 'tdx')
@@ -66,5 +71,5 @@ jobs:
       min-cpu-platform: AUTOMATIC
       project: cosmian-dev
       mode: alpha
-      maintenance: on-host-maintenance=TERMINATE
       product: ${{ inputs.product }}
+      kms-version: ${{ inputs.kms-version }}

@@ -126,6 +126,7 @@
 
     - name: Selinux - allow https
       ansible.builtin.command: setsebool -P httpd_can_network_connect 1
+      tags: selinux
 
     - name: Dracut
       ansible.builtin.command: dracut --force

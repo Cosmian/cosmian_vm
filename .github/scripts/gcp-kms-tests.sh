@@ -19,21 +19,15 @@ echo "Checking Cosmian KMS HTTP connection..."
 curl "http://${IP_ADDR}:8080/version"
 echo ""
 
-# Bypass HTTPS connection on RHEL for now
-# to make it work, we must apply correct permissions on:
-# /usr/sbin/restorecon /var/lib/cosmian_vm/data/cert.pem
-# /usr/sbin/restorecon /var/lib/cosmian_vm/data/key.pem
-# if [ ! -f /etc/redhat-release ]; then
-#   echo "[ OK ] Cosmian KMS HTTP connection"
-#   echo "Checking Cosmian KMS HTTPS connection..."
-#   curl --insecure "https://${IP_ADDR}/version"
-#   echo ""
-#   echo "[ OK ] Cosmian KMS HTTPS connection"
-#   echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
-#   curl --insecure "http://${IP_ADDR}/version"
-#   echo ""
-#   echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
-# fi
+echo "[ OK ] Cosmian KMS HTTP connection"
+echo "Checking Cosmian KMS HTTPS connection..."
+curl --insecure "https://${IP_ADDR}/version"
+echo ""
+echo "[ OK ] Cosmian KMS HTTPS connection"
+echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
+curl --insecure "http://${IP_ADDR}/version"
+echo ""
+echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
 
 echo "Rebooting instance..."
 gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
@@ -57,18 +51,12 @@ echo "Checking Cosmian KMS HTTP connection..."
 curl "http://${IP_ADDR}:8080/version"
 echo ""
 
-# Bypass HTTPS connection on RHEL for now
-# to make it work, we must apply correct permissions on:
-# /usr/sbin/restorecon /var/lib/cosmian_vm/data/cert.pem
-# /usr/sbin/restorecon /var/lib/cosmian_vm/data/key.pem
-# if [ ! -f /etc/redhat-release ]; then
-#   echo "[ OK ] Cosmian KMS HTTP connection"
-#   echo "Checking Cosmian KMS HTTPS connection..."
-#   curl --insecure "https://${IP_ADDR}/version"
-#   echo ""
-#   echo "[ OK ] Cosmian KMS HTTPS connection"
-#   echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
-#   curl --insecure "http://${IP_ADDR}/version"
-#   echo ""
-#   echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
-# fi
+echo "[ OK ] Cosmian KMS HTTP connection"
+echo "Checking Cosmian KMS HTTPS connection..."
+curl --insecure "https://${IP_ADDR}/version"
+echo ""
+echo "[ OK ] Cosmian KMS HTTPS connection"
+echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
+curl --insecure "http://${IP_ADDR}/version"
+echo ""
+echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
