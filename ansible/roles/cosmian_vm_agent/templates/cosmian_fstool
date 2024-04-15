@@ -137,6 +137,4 @@ fi
 echo "Enrolling the TPM for this container..."
 PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
 
-dracut -fv --regenerate-all
-
 echo "Process completed with success!"

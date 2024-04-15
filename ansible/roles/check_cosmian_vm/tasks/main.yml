@@ -1,5 +1,5 @@
 ---
-# tasks file for launch
+# tasks file for check cosmian vm
 
 - name: Check Cosmian VM Agent version
   ansible.builtin.debug:
@@ -21,6 +21,14 @@
   ansible.builtin.uri:
     url: https://{{ inventory_hostname }}:5355/ima/ascii
     validate_certs: false
+  delegate_to: localhost
+  become: false
+
+- name: Clean potential existing Cosmian VM CLI and snapshot
+  ansible.builtin.command:
+    cmd: |
+      rm -f /tmp/cosmian_vm
+      rm -f ./cosmian_vm.snapshot
   delegate_to: localhost
   become: false
 
@@ -101,3 +109,11 @@
     - verify_cosmian_vm_output.rc is defined
     - verify_cosmian_vm_output.rc != 0
   tags: verify
+
+- name: Clean Cosmian VM CLI and snapshot
+  ansible.builtin.command:
+    cmd: |
+      rm -f /tmp/cosmian_vm
+      rm -f ./cosmian_vm.snapshot
+  delegate_to: localhost
+  become: false

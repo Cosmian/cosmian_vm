@@ -9,6 +9,13 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
+- name: Clean potential existing Cosmian VM CLI
+  ansible.builtin.command:
+    cmd: |
+      rm -f /tmp/cosmian_vm
+  delegate_to: localhost
+  become: false
+
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
@@ -30,6 +37,7 @@
   register: cosmian_vm_output
   ignore_errors: true
   delegate_to: localhost
+  become: false
   tags: app_init
 
 - name: Display agent logs variable
@@ -88,6 +96,7 @@
     timeout: 30
     msg: Timeout waiting for 8080 to respond
   delegate_to: localhost
+  become: false
   tags: listening
 
 - name: Check if port 443 is listening
@@ -98,12 +107,14 @@
     timeout: 30
     msg: Timeout waiting for 443 to respond
   delegate_to: localhost
+  become: false
   tags: listening
 
 - name: Check KMS returns its version
   ansible.builtin.uri:
     url: http://{{ inventory_hostname }}:8080/version
   delegate_to: localhost
+  become: false
   tags: listening
 
 - name: Check KMS returns its version on HTTPS
@@ -111,4 +122,12 @@
     url: https://{{ inventory_hostname }}/version
     validate_certs: false
   delegate_to: localhost
+  become: false
   tags: listening
+
+- name: Clean Cosmian VM CLI
+  ansible.builtin.command:
+    cmd: |
+      rm -f /tmp/cosmian_vm
+  delegate_to: localhost
+  become: false
