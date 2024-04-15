@@ -89,6 +89,11 @@
     group: root
     mode: "0644"
 
+- name: Selinux - add nginx to permissive allow httpd
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.command: semanage permissive -a httpd_t
+  tags: selinux
+
 - name: Add Nginx configuration
   ansible.builtin.template:
     src: nginx.j2
