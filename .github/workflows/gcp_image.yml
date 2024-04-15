@@ -141,7 +141,6 @@ jobs:
             --project ${{ inputs.project }} \
             --tags ssh-full,backend,backend-rust-full,http-server,https-server,cosmian-vm-agent,${{ inputs.product }} \
             --maintenance-policy=TERMINATE \
-            --metadata-from-file=startup-script=.github/scripts/gcp-${{ inputs.product }}-startup-script.sh \
             --shielded-secure-boot \
             --max-run-duration=20m \
             --instance-termination-action=DELETE

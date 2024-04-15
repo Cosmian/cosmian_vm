@@ -1,9 +1,10 @@
 ---
 on:
-  # Run on push except on tags
+  # Run only on pull requests and tags
   push:
-    branches:
-      - '**'
+    tags:
+      - '*'
+  pull_request:
 
 name: CI
 
@@ -36,6 +37,7 @@ jobs:
 
   release:
     name: Release
+    if: startsWith(github.ref, 'refs/tags/')
     needs: [build-test-gcp-sev-image]
     secrets: inherit
     uses: ./.github/workflows/release.yml
