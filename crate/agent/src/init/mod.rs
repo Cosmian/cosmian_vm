@@ -34,16 +34,6 @@ pub fn initialize_agent(conf: &CosmianVmAgent) -> Result<(), Error> {
         return Ok(());
     }
 
-    // Generate the default encrypted fs
-    generate_encrypted_fs()?;
-
-    // Generate the default self signed certificate
-    generate_self_signed_cert(
-        &conf.agent.ssl_private_key(),
-        &conf.agent.ssl_certificate(),
-        &conf.agent.host,
-    )?;
-
     // Generate TPM keys if tpm is enabled in the config file
     if let Some(tpm_device) = &conf.agent.tpm_device {
         generate_tpm_keys(tpm_device)?;
@@ -53,6 +43,16 @@ pub fn initialize_agent(conf: &CosmianVmAgent) -> Result<(), Error> {
             "The agent is not configured to support TPM and files integrity verification"
         );
     }
+
+    // Generate the default encrypted fs
+    generate_encrypted_fs()?;
+
+    // Generate the default self signed certificate
+    generate_self_signed_cert(
+        &conf.agent.ssl_private_key(),
+        &conf.agent.ssl_certificate(),
+        &conf.agent.host,
+    )?;
 
     // Assure we don't pass in that function anymore
     initialized()
