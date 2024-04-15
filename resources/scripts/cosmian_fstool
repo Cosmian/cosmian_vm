@@ -135,8 +135,8 @@ fi
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
 # Details on PCRs: https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
 echo "Enrolling the TPM for this container..."
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto  "$BLOCK_DEVICE"
-echo -n "$PASSWORD" | clevis luks bind -d "$CONTAINER_PATH" -k - tpm2 ''
+# PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto  "$BLOCK_DEVICE"
+echo -n "$PASSWORD" | clevis luks bind -d "$CONTAINER_PATH" -k - tpm2 '{}'
 
 # Remove previous entry from the fstab and crypttab (create a .bak file to ease the rollback)
 echo "Removing previous obsolete auto mounting rules..."
