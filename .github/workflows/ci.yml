@@ -1,10 +1,9 @@
 ---
 on:
-  # Run only on pull requests and tags
+  # Run on push except on tags
   push:
-    tags:
-      - '*'
-  pull_request:
+    branches:
+      - '**'
 
 name: CI
 
@@ -12,32 +11,3 @@ jobs:
   build-cosmian-vm-binaries:
     name: Build binaries
     uses: ./.github/workflows/build.yml
-
-  build-test-gcp-sev-image:
-    strategy:
-      fail-fast: false
-      matrix:
-        distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
-    needs: build-cosmian-vm-binaries
-    secrets: inherit
-    uses: ./.github/workflows/gcp_image.yml
-    with:
-      techno: sev
-      distrib: ${{ matrix.distrib }}
-      machine-type: n2d-standard-2
-      zone: europe-west4-a
-      confidential-compute-type: SEV_SNP
-      min-cpu-platform: AMD Milan
-      project: cosmian-dev
-      mode: beta
-      product: ${{ matrix.product }}
-      kms-version: 4.15.0
-
-  release:
-    name: Release
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [build-test-gcp-sev-image]
-    secrets: inherit
-    uses: ./.github/workflows/release.yml
