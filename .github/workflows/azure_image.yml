@@ -23,6 +23,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: ./packer
     outputs:
       timestamp: ${{ steps.env.outputs.TIMESTAMP }}
       image_name: ${{ steps.env.outputs.IMAGE_NAME }}
@@ -39,41 +42,29 @@ jobs:
           echo "IMAGE_NAME=temp-$TIMESTAMP-cosmian-vm-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
           echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
-      - name: Download binaries
-        uses: actions/download-artifact@v4
-        with:
-          name: cosmian_vm
-
-      - name: Change permissions of binaries
-        run: |
-          chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
-
       - name: Setup packer
         uses: hashicorp/setup-packer@main
 
       - name: Install packer plugins
         run: |
-          cd packer/
           packer plugins install github.com/hashicorp/azure
           packer plugins install github.com/hashicorp/ansible
 
       - name: Init packer
         run: |
-          cd packer/ && packer init azure-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          packer init azure.pkr.hcl
 
       - name: Azure auth and build image
         id: packer-build
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
         run: |
-          cd packer/ && \
-          packer build -var "prefix=alpha" \
-          -var "prefix=temp-$TIMESTAMP" \
+          packer build \
           -var "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
           -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
           -var "tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
           -var "client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" \
-          azure-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          azure.pkr.hcl
 
   # test-image:
   #   name: Test image
