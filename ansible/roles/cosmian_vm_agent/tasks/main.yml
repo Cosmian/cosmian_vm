@@ -65,29 +65,6 @@
     state: mounted
     fstype: tmpfs
 
-- name: Add Mount LUKS script
-  ansible.builtin.template:
-    src: mount_luks.sh.j2
-    dest: /root/mount_luks.sh
-    owner: root
-    group: root
-    mode: "0700"
-
-- name: Add Mount LUKS systemd service
-  ansible.builtin.template:
-    src: mount_luks.service.j2
-    dest: /etc/systemd/system/mount_luks.service
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Check if Mount LUKS is enabled but stopped
-  ansible.builtin.systemd_service:
-    name: mount_luks
-    enabled: true
-    state: stopped
-    daemon_reload: true
-
 - name: Add Cosmian VM systemd service
   ansible.builtin.template:
     src: cosmian_vm_agent.service.j2
