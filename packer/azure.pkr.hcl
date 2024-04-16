@@ -1,27 +1,20 @@
-variable "image_version" {}
-variable "client_id" {}
-variable "tenant_id" {}
-variable "subscription_id" {}
-variable "client_secret" {}
-
-
 source "azure-arm" "ubuntu" {
-  client_id                 = var.client_id
-  tenant_id                 = var.tenant_id
-  subscription_id           = var.subscription_id
-  client_secret             = var.client_secret
+  client_id                 = TEMPLATE_CLIENT_ID
+  tenant_id                 = TEMPLATE_TENANT_ID
+  subscription_id           = TEMPLATE_SUBSCRIPTION_ID
+  client_secret             = TEMPLATE_CLIENT_SECRET
   build_resource_group_name = "packer-snp"
   os_type                   = "Linux"
   image_publisher           = "Canonical"
-  image_offer               = "0001-com-ubuntu-confidential-vm-jammy"
-  image_sku                 = "22_04-lts-cvm"
-  vm_size                   = "Standard_DC2ads_v5"
+  image_offer               = TEMPLATE_IMAGE_OFFER
+  image_sku                 = TEMPLATE_IMAGE_SKU
+  vm_size                   = TEMPLATE_VM_SIZE
   secure_boot_enabled       = true
   vtpm_enabled              = true
   security_type             = "ConfidentialVM"
 
   shared_image_gallery_destination {
-    subscription         = var.subscription_id
+    subscription         = TEMPLATE_SUBSCRIPTION_ID
     resource_group       = "packer-snp"
     gallery_name         = "cosmian_packer"
     image_name           = "cosmian_vm_ubuntu"
@@ -38,8 +31,9 @@ build {
   sources = ["source.azure-arm.ubuntu"]
 
   provisioner "ansible" {
-    playbook_file = "../ansible/cosmian-vm-packer-playbook.yml"
-    local_port    = 22
-    use_proxy     = false
+    playbook_file   = "../ansible/cosmian-vm-packer-playbook.yml"
+    local_port      = 22
+    use_proxy       = false
+    extra_arguments = ["-e", "cosmian_vm_version=TEMPLATE_COSMIAN_VM_VERSION", "-e", "cosmian_kms_version=TEMPLATE_COSMIAN_KMS_VERSION"]
   }
 }
