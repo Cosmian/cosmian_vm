@@ -136,7 +136,7 @@ mount "$CONTAINER_MAPPING_PATH" "$CONTAINER_MOUNT_PATH"
 # Details on PCRs: https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
 echo "Enrolling the TPM for this container..."
 # PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto  "$CONTAINER_PATH"
-echo -n "$PASSWORD" | clevis luks bind -d "$CONTAINER_PATH" -k - tpm2 '{}'
+echo -n "$PASSWORD" | clevis luks bind -d "$CONTAINER_PATH" -k - tpm2 '{"pcr_ids":"7", "pcr_bank":"sha256"}'
 
 # Remove previous entry from the fstab and crypttab (create a .bak file to ease the rollback)
 echo "Removing previous obsolete auto mounting rules..."
