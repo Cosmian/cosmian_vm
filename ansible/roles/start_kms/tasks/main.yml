@@ -14,7 +14,6 @@
     cmd: |
       rm -f /tmp/cosmian_vm
   delegate_to: localhost
-  become: false
 
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
@@ -22,6 +21,7 @@
     dest: /tmp/
     mode: "u+x"
   delegate_to: localhost
+  become: false
 
 - name: Copy KMS configuration
   ansible.builtin.template:
@@ -29,6 +29,7 @@
     dest: /tmp/kms.toml
     mode: "0644"
   delegate_to: localhost
+  become: false
 
 - name: Cosmian VM App initialization
   ansible.builtin.command:
@@ -130,4 +131,3 @@
     cmd: |
       rm -f /tmp/cosmian_vm
   delegate_to: localhost
-  become: false
