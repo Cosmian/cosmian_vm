@@ -1,20 +1,20 @@
 source "azure-arm" "ubuntu" {
-  client_id                 = TEMPLATE_CLIENT_ID
-  tenant_id                 = TEMPLATE_TENANT_ID
-  subscription_id           = TEMPLATE_SUBSCRIPTION_ID
-  client_secret             = TEMPLATE_CLIENT_SECRET
+  client_id                 = "TEMPLATE_CLIENT_ID"
+  tenant_id                 = "TEMPLATE_TENANT_ID"
+  subscription_id           = "TEMPLATE_SUBSCRIPTION_ID"
+  client_secret             = "TEMPLATE_CLIENT_SECRET"
   build_resource_group_name = "packer-snp"
   os_type                   = "Linux"
   image_publisher           = "Canonical"
-  image_offer               = TEMPLATE_IMAGE_OFFER
-  image_sku                 = TEMPLATE_IMAGE_SKU
-  vm_size                   = TEMPLATE_VM_SIZE
+  image_offer               = "TEMPLATE_IMAGE_OFFER"
+  image_sku                 = "TEMPLATE_IMAGE_SKU"
+  vm_size                   = "TEMPLATE_VM_SIZE"
   secure_boot_enabled       = true
   vtpm_enabled              = true
   security_type             = "ConfidentialVM"
 
   shared_image_gallery_destination {
-    subscription         = TEMPLATE_SUBSCRIPTION_ID
+    subscription         = "TEMPLATE_SUBSCRIPTION_ID"
     resource_group       = "packer-snp"
     gallery_name         = "cosmian_packer"
     image_name           = "cosmian_vm_ubuntu"
