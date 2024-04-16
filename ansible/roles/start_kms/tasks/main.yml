@@ -22,6 +22,7 @@
     dest: /tmp/
     mode: "u+x"
   delegate_to: localhost
+  become: false
 
 - name: Copy KMS configuration
   ansible.builtin.template:
@@ -29,6 +30,7 @@
     dest: /tmp/kms.toml
     mode: "0644"
   delegate_to: localhost
+  become: false
 
 - name: Cosmian VM App initialization
   ansible.builtin.command:
