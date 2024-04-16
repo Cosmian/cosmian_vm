@@ -52,7 +52,7 @@ build {
   sources = ["source.azure-arm.ubuntu"]
 
   provisioner "ansible" {
-    playbook_file = "../ansible/packer_sev_playbook.yml"
+    playbook_file = "../ansible/cosmian-vm-packer-playbook.yml"
     local_port    = 22
     use_proxy     = false
   }
