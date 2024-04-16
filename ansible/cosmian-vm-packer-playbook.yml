@@ -9,5 +9,5 @@
     - tpm
     - cosmian_vm_agent
     - no_updates
-    - instance_configs
+    - instance_configs # GCP only
     - upgrade

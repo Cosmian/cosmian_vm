@@ -138,3 +138,8 @@
     opts: size=1G
     state: present
     fstype: tmpfs
+
+- name: Reboot since initrd has changed
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600

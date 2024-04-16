@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2024-04-16
+
+### Bug Fixes
+
+- [Ansible] Automate reboot right after dracut IMA-relative
+- [Rust] Generate TPM keys before generate encrypted FS
+
 ## [1.1.0] - 2024-04-12
 
 ### Features
