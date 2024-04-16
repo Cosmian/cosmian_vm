@@ -100,14 +100,8 @@ assets = [
     "etc/cosmian_vm/",
     "400",
   ],
-  [
-    "../../pkg/mount_luks.sh",
-    "root/",
-    "700",
-  ],
 ]
 systemd-units = [
-  { unit-name = "mount_luks", unit-scripts = "../../pkg", enable = true, start = false, restart-after-upgrade = false },
   { unit-name = "cosmian_vm_agent", unit-scripts = "../../pkg", enable = true, start = false, restart-after-upgrade = false },
 ]
 
@@ -125,8 +119,6 @@ assets = [
   { source = "../../pkg/cosmian_fstool", dest = "/usr/sbin/cosmian_fstool", mode = "500" },
   { source = "../../README.md", dest = "/usr/share/doc/cosmian_vm_agent/README", mode = "644", doc = true },
   { source = "../../pkg/agent.toml", dest = "/etc/cosmian_vm/agent.toml", mode = "400" },
-  { source = "../../pkg/mount_luks.sh", dest = "/root/mount_luks.sh", mode = "700" },
-  { source = "../../pkg/mount_luks.service", dest = "/lib/systemd/system/mount_luks.service", mode = "644" },
   { source = "../../pkg/cosmian_vm_agent.service", dest = "/lib/systemd/system/cosmian_vm_agent.service", mode = "644" },
 ]
 auto-req = "no" # do not try to discover .so dependencies
