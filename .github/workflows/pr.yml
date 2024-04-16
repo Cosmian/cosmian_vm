@@ -13,31 +13,45 @@ jobs:
     name: Build binaries
     uses: ./.github/workflows/build.yml
 
-  build-test-gcp-sev-image:
+  # build-test-gcp-sev-image:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       distrib: [ubuntu, rhel]
+  #       product: [cosmian-vm, kms]
+  #   name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+  #   needs: build-cosmian-vm-binaries
+  #   secrets: inherit
+  #   uses: ./.github/workflows/gcp_image.yml
+  #   with:
+  #     techno: sev
+  #     distrib: ${{ matrix.distrib }}
+  #     machine-type: n2d-standard-2
+  #     zone: europe-west4-a
+  #     confidential-compute-type: SEV_SNP
+  #     min-cpu-platform: AMD Milan
+  #     project: cosmian-dev
+  #     mode: beta
+  #     product: ${{ matrix.product }}
+  #     kms-version: 4.15.0
+
+  build-test-azure-sev-image:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        distrib: [ubuntu]
+    name: (${{ matrix.distrib }}) -> GCP AZURE image
     needs: build-cosmian-vm-binaries
     secrets: inherit
-    uses: ./.github/workflows/gcp_image.yml
+    uses: ./.github/workflows/azure_image.yml
     with:
       techno: sev
       distrib: ${{ matrix.distrib }}
-      machine-type: n2d-standard-2
-      zone: europe-west4-a
-      confidential-compute-type: SEV_SNP
-      min-cpu-platform: AMD Milan
-      project: cosmian-dev
-      mode: beta
-      product: ${{ matrix.product }}
-      kms-version: 4.15.0
 
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build-test-gcp-sev-image]
+    needs: [build-test-azure-sev-image]
+    # needs: [build-test-gcp-sev-image, build-test-azure-sev-image]
     secrets: inherit
     uses: ./.github/workflows/release.yml

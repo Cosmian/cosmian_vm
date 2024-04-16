@@ -59,7 +59,7 @@ jobs:
 
       - name: Init packer
         run: |
-          cd packer/ && packer init auzure-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
+          cd packer/ && packer init azure-${{ inputs.techno }}-${{ inputs.distrib }}.pkr.hcl
 
       - name: Azure auth and build image
         id: packer-build
