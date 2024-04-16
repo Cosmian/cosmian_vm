@@ -4,7 +4,6 @@
   become: true
   roles:
     - check_cpu
-    - clevis
     - configure_ima
     - tpm
     - cosmian_vm_agent
