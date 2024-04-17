@@ -120,19 +120,19 @@ jobs:
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |
-          set -x
+          set -ex
           nsg_name="network_security_group"
 
           az vm create -g $RESOURCE_GROUP \
             -n $CI_INSTANCE \
-            --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/${{ inputs.product }}-${{ inputs.distrib }}
-          \
+            --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/${{ inputs.product }}-${{ inputs.distrib }} \
             --security-type ConfidentialVM \
             --os-disk-security-encryption-type VMGuestStateOnly \
             --size $VM_SIZE \
             --enable-vtpm true \
             --enable-secure-boot true \
-            --nsg $nsg_name
+            --nsg $nsg_name \
+            --generate-ssh-keys
 
           az network nsg rule create --nsg-name $nsg_name --resource-group $RESOURCE_GROUP \
             --name allow-ports \
