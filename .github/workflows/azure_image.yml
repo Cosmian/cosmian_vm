@@ -19,6 +19,7 @@ on:
 
 env:
   RESOURCE_GROUP: packer-snp
+  VM_SIZE: Standard_DC2ads_v5
 
 jobs:
   build-image:
@@ -102,33 +103,31 @@ jobs:
           creds: ${{ secrets.AZURE_CREDS_JSON }}
 
       - name: Launch Azure instance
-        uses: azure/CLI@v2
         id: run-azure-instance
         env:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-        with:
-          inlineScript: >-
-            # az config set extension.use_dynamic_install=yes_without_prompt
-            nsg_name="network_security_group"
-            az network nsg rule create --nsg-name $nsg_name --resource-group $RESOURCE_GROUP \
-              --name allow-ports \
-              --priority 100 --access Allow --direction Inbound --protocol Tcp \
-              --source-address-prefix '*' --source-port-range '*' \
-              --destination-address-prefix '*' --destination-port-ranges 443 5355 8080 \
-              --description "Allow inbound traffic on ports 443, 5355, and 8080"
-            az vm create -g $RESOURCE_GROUP \
-              -n $CI_INSTANCE \
-              --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/ubuntu-cvm
-            \
-              --security-type ConfidentialVM \
-              --os-disk-security-encryption-type VMGuestStateOnly \
-              --size Standard_DC2ads_v5 \
-              --enable-vtpm true \
-              --enable-secure-boot true \
-              --nsg $nsg_name
-            IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
-            echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
+        run: |
+          set -x
+          nsg_name="network_security_group"
+          az network nsg rule create --nsg-name $nsg_name --resource-group $RESOURCE_GROUP \
+            --name allow-ports \
+            --priority 100 --access Allow --direction Inbound --protocol Tcp \
+            --source-address-prefix '*' --source-port-range '*' \
+            --destination-address-prefix '*' --destination-port-ranges 443 5355 8080 \
+            --description "Allow inbound traffic on ports 443, 5355, and 8080"
+          az vm create -g $RESOURCE_GROUP \
+            -n $CI_INSTANCE \
+            --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/${{ inputs.product }}-${{ inputs.distrib }}
+          \
+            --security-type ConfidentialVM \
+            --os-disk-security-encryption-type VMGuestStateOnly \
+            --size $VM_SIZE \
+            --enable-vtpm true \
+            --enable-secure-boot true \
+            --nsg $nsg_name
+          IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
+          echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download Cosmian VM CLI
         if: startsWith(github.ref, 'refs/tags/') != true
