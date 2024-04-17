@@ -18,8 +18,7 @@ on:
         type: string
 
 env:
-  GCP_DEV_PROJECT: cosmian-dev
-  GCP_PUBLIC_PROJECT: cosmian-public
+  RESOURCE_GROUP: packer-snp
 
 jobs:
   build-image:
@@ -55,11 +54,6 @@ jobs:
           packer plugins install github.com/hashicorp/azure
           packer plugins install github.com/hashicorp/ansible
 
-      - name: Az CLI login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDS_JSON }}
-
       - name: Packer build image
         if: startsWith(github.ref, 'refs/tags/') != true
         env:
@@ -91,121 +85,89 @@ jobs:
           COSMIAN_VM_VERSION="$VERSION"
           bash ../.github/scripts/azure_packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
 
-      # - name: Azure auth and build image
-      #   id: packer-build
-      #   env:
-      #     TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
-      #   run: |
-      #     packer init azure.pkr.hcl
-      #     packer build \
-      #     -var "client_id=${{ secrets.AZURE_CLIENT_ID }}" \
-      #     -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-      #     -var "tenant_id=${{ secrets.AZURE_TENANT_ID }}" \
-      #     -var "client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" \
-      #     azure.pkr.hcl
+  test-image:
+    name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    runs-on: ubuntu-22.04
+    needs: build-image
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  # test-image:
-  #   name: Test image
-  #   runs-on: ubuntu-22.04
-  #   needs: build-image
-  #   permissions:
-  #     contents: read
-  #     id-token: write
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+      - name: Az CLI login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDS_JSON }}
 
-  #     - name: GCP auth
-  #       uses: google-github-actions/auth@v1
-  #       with:
-  #         credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
+      - name: Launch Azure instance
+        uses: azure/CLI@v2
+        id: run-azure-instance
+        env:
+          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+        with:
+          inlineScript: >-
+            # az config set extension.use_dynamic_install=yes_without_prompt
+            nsg_name="network_security_group"
+            az network nsg rule create --nsg-name $nsg_name --resource-group $RESOURCE_GROUP \
+              --name allow-ports \
+              --priority 100 --access Allow --direction Inbound --protocol Tcp \
+              --source-address-prefix '*' --source-port-range '*' \
+              --destination-address-prefix '*' --destination-port-ranges 443 5355 8080 \
+              --description "Allow inbound traffic on ports 443, 5355, and 8080"
+            az vm create -g $RESOURCE_GROUP \
+              -n $CI_INSTANCE \
+              --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/ubuntu-cvm
+            \
+              --security-type ConfidentialVM \
+              --os-disk-security-encryption-type VMGuestStateOnly \
+              --size Standard_DC2ads_v5 \
+              --enable-vtpm true \
+              --enable-secure-boot true \
+              --nsg $nsg_name
+            IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
+            echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
-  #     - name: Set up Google Cloud SDK
-  #       uses: google-github-actions/setup-gcloud@v2
-  #       with:
-  #         version: latest
-  #         install_components: ${{ inputs.mode }}
+      - name: Download Cosmian VM CLI
+        if: startsWith(github.ref, 'refs/tags/') != true
+        run: |
+          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          wget https://package.cosmian.com/cosmian_vm/last_build/$BRANCH/cosmian_vm
 
-  #     - name: Launch GCP instance
-  #       id: run-gcp-instance
-  #       env:
-  #         IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
-  #         CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-  #       run: |
-  #         gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE \
-  #           --machine-type ${{ inputs.machine-type }} \
-  #           --zone ${{ inputs.zone }} \
-  #           --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
-  #           --confidential-compute-type=${{ inputs.confidential-compute-type }} \
-  #           --${{ inputs.maintenance }} \
-  #           --image="$IMAGE_NAME" \
-  #           --image-project=${{ inputs.project }} \
-  #           --project ${{ inputs.project }} \
-  #           --tags ssh-full,backend-rust-full,http-server,https-server,cosmian-vm-agent \
-  #           --metadata-from-file=startup-script=resources/scripts/gcp-start-script.sh \
-  #           --max-run-duration=10m \
-  #           --instance-termination-action=DELETE
+      - name: Download Cosmian VM CLI
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          wget https://package.cosmian.com/cosmian_vm/$VERSION/cosmian_vm
 
-  #     - name: Download binaries
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: cosmian_vm
+      - name: Change permissions of binaries
+        run: |
+          set -e
+          chmod +x ./cosmian_vm
 
-  #     - name: Change permissions of binaries
-  #       run: |
-  #         chmod +x target/release/cosmian_certtool target/release/cosmian_vm target/release/cosmian_vm_agent
+      - name: Test Cosmian VM Agent on Azure instance
+        id: test_cosmian_vm
+        env:
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
+        run: |
+          set -ex
+          bash .github/scripts/azure-${{ inputs.product }}-tests.sh "$CI_INSTANCE" "$IP_ADDR"
 
-  #     - name: Test Cosmian VM Agent on GCP instance
-  #       id: test_cosmian_vm
-  #       env:
-  #         CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-  #       run: |
-  #         sudo apt-get install -y jq moreutils
-  #         IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
-  #         echo "Waiting for Cosmian VM agent (${IP_ADDR}:5355)..."
-  #         timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
-
-  #         echo "[ OK ] Cosmian VM ready"
-  #         ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls snapshot
-  #         ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
-
-  #         echo "Rebooting instance..."
-  #         gcloud ${{ inputs.mode }} compute instances stop $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
-  #         gcloud ${{ inputs.mode }} compute instances set-scheduling $CI_INSTANCE --zone ${{ inputs.zone }} --max-run-duration=10m --instance-termination-action=DELETE
-  #         sleep 10
-  #         gcloud ${{ inputs.mode }} compute instances start $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
-  #         IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
-  #         timeout 10m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5355/ima/ascii; do sleep 3; done"
-
-  #         echo "[ OK ] Cosmian VM ready after reboot"
-  #         RESET_COUNT=$(cat cosmian_vm.snapshot | jq '.tpm_policy.reset_count')
-  #         NEW_RESET_COUNT=$(expr $RESET_COUNT + 1)
-  #         jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot > new_cosmian_vm.snapshot
-  #         jq '.tpm_policy.reset_count |= tonumber' new_cosmian_vm.snapshot | sponge new_cosmian_vm.snapshot
-
-  #         ./target/release/cosmian_vm --url https://${IP_ADDR}:5355 --allow-insecure-tls verify --snapshot new_cosmian_vm.snapshot
-  #         echo "[ OK ] Integrity after reboot"
-
-  #         echo "IP_ADDR=$IP_ADDR" >> "$GITHUB_OUTPUT"
-
-  #     - name: Stop and delete GCP instance
-  #       if: success()
-  #       env:
-  #         CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-  #       run: |
-  #         set +e
-  #         gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project ${{ inputs.project }}
-  #         set -e
-
-  #     - name: Delete GCP CI image
-  #       if: startsWith(github.ref, 'refs/tags') != true
-  #       env:
-  #         IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
-  #       run: |
-  #         gcloud ${{ inputs.mode }} compute images delete --quiet $IMAGE_NAME
+      - name: Stop and delete Azure instance
+        if: success()
+        env:
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+        run: |
+          set +e
+          az vm delete -g $RESOURCE_GROUP -n $CI_INSTANCE --yes
 
   # release-image:
-  #   name: Release image
+  #   name: Release image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+  #   if: startsWith(github.ref, 'refs/tags')
   #   runs-on: ubuntu-22.04
   #   needs: [build-image, test-image]
   #   permissions:
@@ -215,30 +177,38 @@ jobs:
   #     - name: Checkout
   #       uses: actions/checkout@v4
 
-  #     - name: GCP auth
-  #       uses: google-github-actions/auth@v1
+  #     - name: Az CLI login
+  #       uses: azure/login@v2
   #       with:
-  #         credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
+  #         creds: ${{ secrets.AZURE_CREDS_JSON }}
 
   #     - name: Copy image to public project
-  #       if: startsWith(github.ref, 'refs/tags')
   #       env:
   #         CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
   #         IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+  #         TAG: ${{ github.ref_name }}
+  #         KMS: ${{ inputs.kms-version }}
   #       run: |
-  #         TAG=${{  github.ref_name }}
-  #         VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
-  #         NEW_IMAGE_NAME=cosmian-vm-$VERSION-sev-${{ inputs.distrib }}
-  #         if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-  #           LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
-  #         else
-  #           LICENSE=${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}
-  #         fi
-  #         gcloud ${{ inputs.mode }} compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME \
-  #           --source-image=$IMAGE_NAME \
-  #           --source-image-project=$GCP_DEV_PROJECT
+  #         set -ex
 
-  #         gcloud ${{ inputs.mode }} compute --project=$GCP_PUBLIC_PROJECT images create $NEW_IMAGE_NAME \
-  #           --source-image=$IMAGE_NAME \
-  #           --source-image-project=$GCP_DEV_PROJECT \
-  #           --licenses=$LICENSE
+  #         VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+  #         KMS_VERSION=$(echo $KMS | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+  #         NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
+
+  #         if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+  #           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+  #             LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
+  #           else
+  #             LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
+  #             NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+  #           fi
+  #         else
+  #           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+  #             LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}"
+  #           else
+  #             LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
+  #             NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+  #           fi
+  #         fi
+
+  #         # TODO: publish if needed

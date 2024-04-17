@@ -1,9 +1,9 @@
-source "azure-arm" "ubuntu" {
+source "azure-arm" "TEMPLATE_DISTRIBUTION" {
   client_id                 = "TEMPLATE_CLIENT_ID"
   tenant_id                 = "TEMPLATE_TENANT_ID"
   subscription_id           = "TEMPLATE_SUBSCRIPTION_ID"
   client_secret             = "TEMPLATE_CLIENT_SECRET"
-  build_resource_group_name = "packer-snp"
+  build_resource_group_name = "TEMPLATE_RESOURCE_GROUP"
   os_type                   = "Linux"
   image_publisher           = "Canonical"
   image_offer               = "TEMPLATE_IMAGE_OFFER"
@@ -17,8 +17,7 @@ source "azure-arm" "ubuntu" {
     subscription         = "TEMPLATE_SUBSCRIPTION_ID"
     resource_group       = "packer-snp"
     gallery_name         = "cosmian_packer"
-    image_name           = "cosmian_vm_ubuntu"
-    # image_name           = "TEMPLATE_PRODUCT-ubuntu"
+    image_name           = "TEMPLATE_DISTRIBUTION-cvm"
     image_version        = "1.0.0"
     storage_account_type = "Standard_LRS"
     target_region {
@@ -29,7 +28,7 @@ source "azure-arm" "ubuntu" {
 }
 
 build {
-  sources = ["source.azure-arm.ubuntu"]
+  sources = ["source.azure-arm.TEMPLATE_DISTRIBUTION"]
 
   provisioner "ansible" {
     playbook_file   = "../ansible/TEMPLATE_PRODUCT-packer-playbook.yml"
