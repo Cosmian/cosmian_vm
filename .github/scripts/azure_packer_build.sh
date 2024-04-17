@@ -8,10 +8,9 @@ COSMIAN_VM_VERSION=$3
 
 set
 
-VM_SIZE="Standard_DC2ads_v5"
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
   IMAGE_OFFER="0001-com-ubuntu-confidential-vm-jammy"
-  IMAGE_SKU="22_04-lts-cvm"
+  IMAGE_SKU="22_04-lts-cvm-cosmian-vm"
 else
   IMAGE_OFFER="XXX"
   IMAGE_SKU="XXX"

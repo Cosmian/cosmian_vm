@@ -17,8 +17,8 @@ source "azure-arm" "TEMPLATE_DISTRIBUTION" {
     subscription         = "TEMPLATE_SUBSCRIPTION_ID"
     resource_group       = "packer-snp"
     gallery_name         = "cosmian_packer"
-    image_name           = "TEMPLATE_DISTRIBUTION-cvm"
-    image_version        = "1.0.0"
+    image_name           = "TEMPLATE_PRODUCT-TEMPLATE_DISTRIBUTION"
+    image_version        = "1.0.0" # TODO: variabilize version
     storage_account_type = "Standard_LRS"
     target_region {
       name = "westeurope"
