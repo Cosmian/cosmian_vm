@@ -18,6 +18,7 @@ source "azure-arm" "ubuntu" {
     resource_group       = "packer-snp"
     gallery_name         = "cosmian_packer"
     image_name           = "cosmian_vm_ubuntu"
+    # image_name           = "TEMPLATE_PRODUCT-ubuntu"
     image_version        = "1.0.0"
     storage_account_type = "Standard_LRS"
     target_region {
@@ -31,7 +32,7 @@ build {
   sources = ["source.azure-arm.ubuntu"]
 
   provisioner "ansible" {
-    playbook_file   = "../ansible/cosmian-vm-packer-playbook.yml"
+    playbook_file   = "../ansible/TEMPLATE_PRODUCT-packer-playbook.yml"
     local_port      = 22
     use_proxy       = false
     extra_arguments = ["-e", "cosmian_vm_version=TEMPLATE_COSMIAN_VM_VERSION", "-e", "cosmian_kms_version=TEMPLATE_COSMIAN_KMS_VERSION"]
