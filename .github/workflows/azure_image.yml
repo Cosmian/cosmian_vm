@@ -22,23 +22,82 @@ env:
   VM_SIZE: Standard_DC2ads_v5
 
 jobs:
-  build-image:
-    name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+  # build-image:
+  #   name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+  #   runs-on: ubuntu-22.04
+  #   permissions:
+  #     contents: read
+  #     id-token: write
+  #   defaults:
+  #     run:
+  #       working-directory: ./packer
+  #   outputs:
+  #     timestamp: ${{ steps.env.outputs.TIMESTAMP }}
+  #     image_name: ${{ steps.env.outputs.IMAGE_NAME }}
+  #     ci_instance: ${{ steps.env.outputs.CI_INSTANCE }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Create env variables
+  #       id: env
+  #       run: |
+  #         TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
+  #         echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+  #         echo "IMAGE_NAME=temp-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+  #         echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+
+  #     - name: Setup packer
+  #       uses: hashicorp/setup-packer@main
+
+  #     - name: Install packer plugins
+  #       run: |
+  #         packer plugins install github.com/hashicorp/azure
+  #         packer plugins install github.com/hashicorp/ansible
+
+  #     - name: Packer build image
+  #       if: startsWith(github.ref, 'refs/tags/') != true
+  #       env:
+  #         TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
+  #         IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+  #         KMS_VERSION: ${{ inputs.kms-version }}
+  #         CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  #         TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #         SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #         CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  #       run: |
+  #         set -ex
+  #         COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+  #         bash ../.github/scripts/azure_packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
+
+  #     - name: Packer build image
+  #       if: startsWith(github.ref, 'refs/tags/')
+  #       env:
+  #         TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
+  #         IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+  #         VERSION: ${{ github.ref_name }}
+  #         KMS_VERSION: ${{ inputs.kms-version }}
+  #         CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  #         TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #         SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #         CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}"
+  #       run: |
+  #         set -ex
+  #         COSMIAN_VM_VERSION="$VERSION"
+  #         bash ../.github/scripts/azure_packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
+
+  test-image:
+    name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
+    # needs: build-image
     permissions:
       contents: read
       id-token: write
-    defaults:
-      run:
-        working-directory: ./packer
     outputs:
       timestamp: ${{ steps.env.outputs.TIMESTAMP }}
       image_name: ${{ steps.env.outputs.IMAGE_NAME }}
       ci_instance: ${{ steps.env.outputs.CI_INSTANCE }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Create env variables
         id: env
         run: |
@@ -47,53 +106,6 @@ jobs:
           echo "IMAGE_NAME=temp-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
           echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
-      - name: Setup packer
-        uses: hashicorp/setup-packer@main
-
-      - name: Install packer plugins
-        run: |
-          packer plugins install github.com/hashicorp/azure
-          packer plugins install github.com/hashicorp/ansible
-
-      - name: Packer build image
-        if: startsWith(github.ref, 'refs/tags/') != true
-        env:
-          TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
-          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
-          KMS_VERSION: ${{ inputs.kms-version }}
-          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        run: |
-          set -ex
-          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          bash ../.github/scripts/azure_packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
-
-      - name: Packer build image
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
-          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
-          VERSION: ${{ github.ref_name }}
-          KMS_VERSION: ${{ inputs.kms-version }}
-          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}"
-        run: |
-          set -ex
-          COSMIAN_VM_VERSION="$VERSION"
-          bash ../.github/scripts/azure_packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
-
-  test-image:
-    name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    runs-on: ubuntu-22.04
-    needs: build-image
-    permissions:
-      contents: read
-      id-token: write
-    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -105,8 +117,8 @@ jobs:
       - name: Launch Azure instance
         id: run-azure-instance
         env:
-          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
-          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+          CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |
           set -x
           nsg_name="network_security_group"
@@ -150,7 +162,7 @@ jobs:
       - name: Test Cosmian VM Agent on Azure instance
         id: test_cosmian_vm
         env:
-          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
           IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
         run: |
           set -ex
@@ -159,7 +171,7 @@ jobs:
       - name: Stop and delete Azure instance
         if: success()
         env:
-          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |
           set +e
           az vm delete -g $RESOURCE_GROUP -n $CI_INSTANCE --yes
