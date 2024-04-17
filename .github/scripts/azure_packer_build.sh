@@ -10,7 +10,7 @@ set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
   IMAGE_OFFER="0001-com-ubuntu-confidential-vm-jammy"
-  IMAGE_SKU="22_04-lts-cvm-cosmian-vm"
+  IMAGE_SKU="22_04-lts-cvm"
 else
   IMAGE_OFFER="XXX"
   IMAGE_SKU="XXX"
