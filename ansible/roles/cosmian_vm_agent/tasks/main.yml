@@ -80,16 +80,6 @@
       ansible.builtin.apt:
         update_cache: true
 
-    # - name: Install Clevis and deps
-    #   ansible.builtin.apt:
-    #     name:
-    #       - clevis
-    #       - clevis-luks
-    #       - clevis-tpm2
-    #       - clevis-dracut
-    #     state: present
-    #     update_cache: true
-
     - name: Install Supervisor
       ansible.builtin.apt:
         name: supervisor
@@ -125,15 +115,6 @@
         state: present
         update_cache: true
         disable_gpg_check: true
-
-    # - name: Install Clevis and deps
-    #   ansible.builtin.dnf:
-    #     name:
-    #       - clevis
-    #       - clevis-luks
-    #       - clevis-dracut
-    #     state: present
-    #     update_cache: true
 
     - name: Install supervisor
       ansible.builtin.dnf:
