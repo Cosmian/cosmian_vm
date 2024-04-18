@@ -2,8 +2,16 @@
 # tasks file for cleanup
 
 - name: Get Supervisor status
+  when: ansible_distribution == 'Ubuntu'
   ansible.builtin.systemd_service:
     name: supervisor
+  register: supervisor_status
+  tags: stopping_agent
+
+- name: Get Supervisor status
+  when: ansible_distribution == 'RedHat'
+  ansible.builtin.systemd_service:
+    name: supervisord
   register: supervisor_status
   tags: stopping_agent
 
@@ -31,13 +39,6 @@
     - stopping_agent.rc is defined
     - stopping_agent.rc !=0
   tags: stopping_agent
-
-- name: Make sure a Supervisor service is down
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
-  ansible.builtin.systemd_service:
-    name: supervisord
-    state: stopped
-  tags: stopping
 
 - name: Check if /dev/mapper/cosmian_vm_container exists
   ansible.builtin.stat:

@@ -108,10 +108,6 @@
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
   block:
-    - name: Check grub2-mkconfig exist
-      ansible.builtin.command: which grub2-mkconfig
-      register: grub2_mkconfig_check
-
     - name: Install missing packages
       ansible.builtin.dnf:
         name:
@@ -119,7 +115,6 @@
           - grub2-efi-modules
           - shim
         state: present
-      when: grub2_mkconfig_check.rc != 0
 
     - name: Update grub
       ansible.builtin.command: grub2-mkconfig -o /etc/grub2.cfg
@@ -129,7 +124,7 @@
       tags: selinux
 
     - name: Dracut
-      ansible.builtin.command: dracut --force
+      ansible.builtin.command: dracut --force /usr/lib/modules
 
 - name: Mount a tmpfs volume
   ansible.posix.mount:
