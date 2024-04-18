@@ -32,6 +32,7 @@
     state: stopped
   when:
     - cosmian_supervisor_conf_check.stat.exists
+    - supervisor_status.status is defined
     - supervisor_status.status.ActiveState=='active'
   register: stopping_agent
   failed_when:
