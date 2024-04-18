@@ -107,8 +107,7 @@ jobs:
           set -ex
           nsg_name="network_security_group"
 
-          az vm create -g $RESOURCE_GROUP \
-            -n $CI_INSTANCE \
+          az vm create -g $RESOURCE_GROUP -n $CI_INSTANCE \
             --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/${{ inputs.product }}-${{ inputs.distrib }} \
             --security-type ConfidentialVM \
             --os-disk-security-encryption-type VMGuestStateOnly \
@@ -124,8 +123,10 @@ jobs:
             --name allow-ports \
             --priority 100 --access Allow --direction Inbound --protocol Tcp \
             --source-address-prefix '*' --source-port-range '*' \
-            --destination-address-prefix '*' --destination-port-ranges 80 443 5355 8080 \
-            --description "Allow inbound traffic on ports 80, 443, 5355, and 8080"
+            --destination-address-prefix '*' --destination-port-ranges 80 5355 8080 \
+            --description "Allow inbound traffic on ports 80, 5355, and 8080"
+
+          az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --port 443
 
           IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
