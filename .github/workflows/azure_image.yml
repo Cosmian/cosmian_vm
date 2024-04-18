@@ -122,7 +122,7 @@ jobs:
             --name allow-ports \
             --priority 100 --access Allow --direction Inbound --protocol Tcp \
             --source-address-prefix '*' --source-port-range '*' \
-            --destination-address-prefix '*' --destination-port-ranges 443 5355 8080 \
+            --destination-address-prefix '*' --destination-port-ranges 80 443 5355 8080 \
             --description "Allow inbound traffic on ports 443, 5355, and 8080"
 
           IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
@@ -160,5 +160,7 @@ jobs:
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |
+          set -x
           set +e
+          # az network public-ip delete -g $RESOURCE_GROUP -n $CI_INSTANCE
           az vm delete -g $RESOURCE_GROUP -n $CI_INSTANCE --yes
