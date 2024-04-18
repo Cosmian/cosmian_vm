@@ -125,7 +125,7 @@ jobs:
             --priority 100 --access Allow --direction Inbound --protocol Tcp \
             --source-address-prefix '*' --source-port-range '*' \
             --destination-address-prefix '*' --destination-port-ranges 80 443 5355 8080 \
-            --description "Allow inbound traffic on ports 443, 5355, and 8080"
+            --description "Allow inbound traffic on ports 80, 443, 5355, and 8080"
 
           IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
