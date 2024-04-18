@@ -116,6 +116,8 @@ jobs:
             --enable-vtpm true \
             --enable-secure-boot true \
             --nsg $nsg_name \
+            --nic-delete-option delete \
+            --os-disk-delete-option delete \
             --generate-ssh-keys
 
           az network nsg rule create --nsg-name $nsg_name --resource-group $RESOURCE_GROUP \
@@ -162,5 +164,6 @@ jobs:
         run: |
           set -x
           set +e
-          # az network public-ip delete -g $RESOURCE_GROUP -n $CI_INSTANCE
           az vm delete -g $RESOURCE_GROUP -n $CI_INSTANCE --yes
+          # az network public-ip delete -g $RESOURCE_GROUP -n $CI_INSTANCE
+          # az network nic delete -g $RESOURCE_GROUP -n $CI_INSTANCE
