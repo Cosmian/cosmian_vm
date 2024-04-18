@@ -14,8 +14,8 @@ if [ "$DISTRIBUTION" = "ubuntu" ]; then
   IMAGE_SKU="22_04-lts-cvm"
 else
   IMAGE_PUBLISHER="redhat"
-  IMAGE_OFFER="9_3_cvm_sev_snp"
-  IMAGE_SKU="rhel-cvm"
+  IMAGE_OFFER="rhel-cvm"
+  IMAGE_SKU="9_3_cvm_sev_snp"
 fi
 
 if [ "$PRODUCT" = "cosmian-vm" ]; then
