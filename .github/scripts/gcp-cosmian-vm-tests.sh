@@ -19,7 +19,7 @@ echo "[ OK ] Cosmian VM ready"
 echo "Rebooting instance..."
 gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "${ZONE}" --project "$GCP_DEV_PROJECT"
 
-gcloud "${MODE}" compute instances set-scheduling "$CI_INSTANCE" --zone "${ZONE}" --max-run-duration=10m --instance-termination-action=DELETE
+gcloud "${MODE}" compute instances set-scheduling "$CI_INSTANCE" --zone "${ZONE}" --max-run-duration=20m --instance-termination-action=DELETE
 
 sleep 60
 

@@ -165,5 +165,5 @@ jobs:
           set -x
           set +e
           az vm delete -g $RESOURCE_GROUP -n $CI_INSTANCE --yes
-          az network public-ip delete -g $RESOURCE_GROUP -n $CI_INSTANCE-sevPublicIP
+          az network public-ip delete -g $RESOURCE_GROUP -n ${CI_INSTANCE}PublicIP
           # az network nic delete -g $RESOURCE_GROUP -n $CI_INSTANCE

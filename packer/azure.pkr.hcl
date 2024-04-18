@@ -5,7 +5,7 @@ source "azure-arm" "TEMPLATE_DISTRIBUTION" {
   client_secret             = "TEMPLATE_CLIENT_SECRET"
   build_resource_group_name = "TEMPLATE_RESOURCE_GROUP"
   os_type                   = "Linux"
-  image_publisher           = "Canonical"
+  image_publisher           = "TEMPLATE_IMAGE_PUBLISHER"
   image_offer               = "TEMPLATE_IMAGE_OFFER"
   image_sku                 = "TEMPLATE_IMAGE_SKU"
   vm_size                   = "TEMPLATE_VM_SIZE"
