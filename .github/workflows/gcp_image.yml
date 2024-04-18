@@ -175,7 +175,7 @@ jobs:
           bash .github/scripts/gcp-${{ inputs.product }}-tests.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
 
       - name: Stop and delete GCP instance
-        if: success()
+        if: success() || cancelled()
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
