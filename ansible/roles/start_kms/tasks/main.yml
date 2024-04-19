@@ -34,7 +34,7 @@
 - name: Cosmian VM App initialization
   ansible.builtin.command:
     cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5355 --allow-insecure-tls app init -c ./kms.toml
+      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app init -c ./kms.toml
   register: cosmian_vm_output
   ignore_errors: true
   delegate_to: localhost

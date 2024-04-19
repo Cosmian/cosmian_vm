@@ -11,7 +11,7 @@ Cosmian VM allows you to deploy an application on a cloud provider instance, run
   <img src="resources/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
-💡 You can find a more complete documentation here:  [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
+💡 You can find a more complete documentation here: [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
 
 ## Table of contents
 
@@ -62,7 +62,7 @@ Cosmian VM supports these kinds of TEE:
 The Cosmian VM contains four major executables:
 
 - `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
-- `cosmian_certtool` is designed to generate a certificate signed by *Let's Encrypt* or an RATLS certificate
+- `cosmian_certtool` is designed to generate a certificate signed by _Let's Encrypt_ or an RATLS certificate
 - `cosmian_fstool` is designed to generate a LUKS container and enroll the TPM to be automatically started on reboot
 - `cosmian_vm` is a CLI designed to be used on your own host. It queries the `cosmian_vm_agent` in order to get the collaterals used to verify the trustworthiness of the Cosmian VM
 
@@ -142,7 +142,7 @@ A minimal configuration file is:
 ```toml
 [agent]
 host = "127.0.0.1"
-port = 5355
+port = 5555
 ssl_certificate = "data/cert.pem"
 ssl_private_key = "data/key.pem"
 tpm_device = "/dev/tpmrm0"
@@ -156,7 +156,7 @@ When `cosmian_vm_agent` starts for the first time, it initializes several compon
 
 1. It generates a self-signed certificate and set the `CommonName` of the certificate to the value of the machine hostname.
 2. It generates a LUKS container (`/var/lib/cosmian_vm/container`) and mounted it at `/var/lib/cosmian_vm/data`. Note that,
-`/var/lib/cosmian_vm/tmp` is a `tmpfs`. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
+   `/var/lib/cosmian_vm/tmp` is a `tmpfs`. It is encrypted but it should contains only volatile data since it is erased at each VM reboot. Data in this directory is encrypted due to the fact that the RAM is encrypted.
 3. It generates the TPM endorsement keys
 
 It is recommended to configure 1. and 2. on your own for production systems.
@@ -164,7 +164,7 @@ It is recommended to configure 1. and 2. on your own for production systems.
 The certificate can be changed at will:
 
 - Edit your DNS register to point to that VM
-- Create a trusted certificate using the method of your choice (*Let's encrypt* for instance) or use `cosmian_certtool`
+- Create a trusted certificate using the method of your choice (_Let's encrypt_ for instance) or use `cosmian_certtool`
 - Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
 
 The LUKS container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container.
@@ -185,7 +185,7 @@ supervisorctl start cosmian_vm_agent
 supervisorctl restart cosmian_vm_agent
 # Or
 supervisorctl stop cosmian_vm_agent
- ```
+```
 
 You can now install any packages or applications you want on the VM.
 
@@ -232,7 +232,7 @@ Prior to send the secrets, you should have configured the `app` section in the `
 ```toml
 [agent]
 host = "0.0.0.0"
-port = 5355
+port = 5555
 ssl_certificate = "data/cosmianvm.cosmian.dev/cert.pem"
 ssl_private_key = "data/cosmianvm.cosmian.dev/key.pem"
 tpm_device = "/dev/tpmrm0"

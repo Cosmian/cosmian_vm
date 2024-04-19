@@ -9,17 +9,17 @@
   ansible.builtin.debug:
     var: inventory_hostname
 
-- name: Check if port 5355 is listening
+- name: Check if port 5555 is listening
   ansible.builtin.wait_for:
     host: "{{ inventory_hostname }}"
-    port: 5355
+    port: 5555
     delay: 5
     timeout: 60
-    msg: Timeout waiting for 5355 to respond
+    msg: Timeout waiting for 5555 to respond
 
-- name: Check if port 5355 is listening on {{ inventory_hostname }}
+- name: Check if port 5555 is listening on {{ inventory_hostname }}
   ansible.builtin.uri:
-    url: https://{{ inventory_hostname }}:5355/ima/ascii
+    url: https://{{ inventory_hostname }}:5555/ima/ascii
     validate_certs: false
   delegate_to: localhost
   become: false
@@ -42,7 +42,7 @@
 - name: Cosmian VM snapshot
   ansible.builtin.command:
     cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5355 --allow-insecure-tls snapshot
+      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls snapshot
   register: cosmian_vm_output
   delegate_to: localhost
   become: false
@@ -77,7 +77,7 @@
 - name: Verify Cosmian VM snapshot
   ansible.builtin.command:
     cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5355 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
   register: verify_cosmian_vm_output
   delegate_to: localhost
   become: false

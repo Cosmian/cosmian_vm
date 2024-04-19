@@ -26,19 +26,19 @@
     path: /var/lib/cosmian_vm/data/cert.pem
     state: present
 
-- name: Check if port 5355 is listening
+- name: Check if port 5555 is listening
   ansible.builtin.wait_for:
-    port: 5355
+    port: 5555
     delay: 5
     timeout: 30
-    msg: Timeout waiting for 5355 to respond
+    msg: Timeout waiting for 5555 to respond
   tags:
     - listening
     - listening_cosmian_vm
 
 - name: Check Cosmian VM Agent is OK
   ansible.builtin.uri:
-    url: https://localhost:5355/ima/ascii
+    url: https://localhost:5555/ima/ascii
     validate_certs: false
   tags: listening
 
