@@ -19,9 +19,10 @@
         permanent: yes
         state: enabled
 
-    - name: Reload firewall configuration
-      ansible.posix.firewalld:
-        state: reload
+    - name: Always reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded
 
     - name: Comment ipv6 ref in /etc/hosts file
       ansible.builtin.template:
