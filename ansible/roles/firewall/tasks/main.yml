@@ -1,0 +1,24 @@
+---
+# tasks file for firewall
+    
+- name: Open port 5555 on RHEL
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Add rule to firewall
+      ansible.posix.firewalld:
+        zone: public
+        port: 5555/tcp
+        permanent: yes
+        state: present
+
+    - name: Reload firewall configuration
+      ansible.posix.firewalld:
+        state: reload
+
+    - name: Comment ipv6 ref in /etc/hosts file
+      ansible.builtin.template:
+        src: hosts
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: "0644"
