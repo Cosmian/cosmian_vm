@@ -34,7 +34,6 @@ pub mod worker;
 const DEFAULT_TPM_HASH_METHOD: tpm_quote::PcrHashMethod = tpm_quote::PcrHashMethod::Sha256;
 
 pub const BIN_PATH: &str = "/usr/sbin/";
-pub const LOG_PATH: &str = "/var/log/cosmian_vm";
 pub const VAR_PATH: &str = "/var/lib/cosmian_vm";
 pub const ETC_PATH: &str = "/etc/cosmian_vm";
 pub const CONF_PATH: &str = formatcp!("{ETC_PATH}/agent.toml");

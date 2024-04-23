@@ -47,14 +47,15 @@
   tags: app_init
 
 - name: Read Cosmian VM agent logs
-  ansible.builtin.slurp:
-    src: /var/log/cosmian_vm/agent.out.log
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_vm_agent
   register: agent_logs
   tags: app_init
 
 - name: Display Agent logs
   ansible.builtin.debug:
-    var: "{{ agent_logs['content'] | b64decode }}"
+    var: agent_logs
   tags: app_init
 
 - name: Fail if Cosmian app init has failed previously
@@ -78,9 +79,21 @@
       tags: restorecon
 
 - name: Start KMS
-  community.general.supervisorctl:
+  ansible.builtin.systemd_service:
     name: cosmian_kms
     state: started
+  tags: launch
+
+- name: Read KMS logs
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_kms
+  register: kms_logs
+  tags: launch
+
+- name: Display KMS logs
+  ansible.builtin.debug:
+    var: kms_logs
   tags: launch
 
 - name: Run Nginx

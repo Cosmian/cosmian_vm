@@ -15,7 +15,7 @@ ssl_private_key = "data/key.pem"
 [app]
 # The service type monitoring the user application
 # It could be: supervisor|systemd|standalone
-service_type = "supervisor"
+service_type = "systemd"
 # The name of the service monitoring the use application
 service_name = "cosmian_helloworld"
 # The location of the user application data

@@ -1,0 +1,14 @@
+[Unit]
+Description=Cosmian VM Agent
+Requires=multi-user.target
+After=multi-user.target mount_luks.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/sbin/cosmian_vm_agent
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target

@@ -65,134 +65,6 @@
     state: mounted
     fstype: tmpfs
 
-- name: Create cosmian agent log directory
-  ansible.builtin.file:
-    path: /var/log/cosmian_vm
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
-
-- name: Supervisor install on Ubuntu
-  when: ansible_distribution == 'Ubuntu'
-  block:
-    - name: Update all packages to their latest version
-      ansible.builtin.apt:
-        update_cache: true
-
-    - name: Install Supervisor
-      ansible.builtin.apt:
-        name: supervisor
-        state: present
-        update_cache: true
-
-    - name: Add Cosmian VM supervisor configuration
-      ansible.builtin.template:
-        src: supervisor_cosmian_vm_agent.conf.j2
-        dest: /etc/supervisor/conf.d/cosmian_vm_agent.conf
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Check if Supervisor is enabled but stopped
-      ansible.builtin.systemd_service:
-        name: supervisor
-        enabled: true
-        state: stopped
-      changed_when: false
-
-- name: Supervisor install on RedHat
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
-  block:
-    - name: Update all packages to their latest version
-      ansible.builtin.dnf:
-        update_cache: true
-
-    - name: Install epel-release
-      ansible.builtin.dnf:
-        name:
-          - https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
-        state: present
-        update_cache: true
-        disable_gpg_check: true
-
-    - name: Install supervisor
-      ansible.builtin.dnf:
-        name: supervisor
-        state: present
-        update_cache: true
-
-    - name: Add Cosmian VM supervisor configuration
-      ansible.builtin.template:
-        src: supervisor_cosmian_vm_agent.conf.j2
-        dest: /etc/supervisord.d/cosmian_vm_agent.ini
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Check if Supervisor is enabled but stopped
-      ansible.builtin.systemd_service:
-        name: supervisord
-        enabled: true
-        state: stopped
-      changed_when: false
-
-- name: Supervisor install on Amazon Linux
-  when: ansible_distribution == 'Amazon'
-  block:
-    - name: Update all packages to their latest version
-      ansible.builtin.dnf:
-        update_cache: true
-
-    - name: Install pip
-      ansible.builtin.dnf:
-        name: pip
-        state: present
-        update_cache: true
-
-    - name: Install supervisor python package
-      ansible.builtin.pip:
-        name: supervisor
-
-    - name: Create supervisord.service file
-      ansible.builtin.template:
-        src: supervisord.service.j2
-        dest: /lib/systemd/system/supervisord.service
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Create supervisor.conf file
-      ansible.builtin.template:
-        src: supervisord.conf.j2
-        dest: /etc/supervisord.conf
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Create supervisor log folder
-      ansible.builtin.file:
-        path: /var/log/supervisor/
-        state: directory
-        owner: root
-        group: root
-        mode: "0755"
-
-    - name: Change permission on supervisord binary
-      ansible.builtin.file:
-        path: /usr/local/bin/supervisord
-        state: file
-        owner: root
-        group: root
-        mode: "0500"
-
-    - name: Check if Supervisor is enabled but stopped
-      ansible.builtin.systemd_service:
-        name: supervisord
-        enabled: true
-        state: stopped
-      changed_when: false
-
 - name: Add Mount LUKS script
   ansible.builtin.template:
     src: mount_luks.sh.j2
@@ -212,6 +84,22 @@
 - name: Check if Mount LUKS is enabled but stopped
   ansible.builtin.systemd_service:
     name: mount_luks
+    enabled: true
+    state: stopped
+    daemon_reload: true
+  changed_when: false
+
+- name: Add Cosmian VM systemd service
+  ansible.builtin.template:
+    src: cosmian_vm_agent.service.j2
+    dest: /etc/systemd/system/cosmian_vm_agent.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Check if Cosmian VM systemd service is enabled but stopped
+  ansible.builtin.systemd_service:
+    name: cosmian_vm_agent
     enabled: true
     state: stopped
     daemon_reload: true
