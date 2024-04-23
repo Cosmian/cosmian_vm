@@ -17,7 +17,7 @@
         zone: public
         port: 5555/tcp
         permanent: yes
-        state: present
+        state: enabled
 
     - name: Reload firewall configuration
       ansible.posix.firewalld:
