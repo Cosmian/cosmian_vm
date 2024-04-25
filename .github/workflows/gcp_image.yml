@@ -87,7 +87,7 @@ jobs:
         run: |
           set -ex
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          bash ../.github/scripts/packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
+          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
 
       - name: Packer build image
         if: startsWith(github.ref, 'refs/tags/')
@@ -99,7 +99,7 @@ jobs:
         run: |
           set -ex
           COSMIAN_VM_VERSION="$VERSION"
-          bash ../.github/scripts/packer_build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
+          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
