@@ -216,3 +216,18 @@
     state: stopped
     daemon_reload: true
   changed_when: false
+
+- name: Open ports on RHEL
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Open port 5555
+      ansible.posix.firewalld:
+        zone: public
+        port: 5555/tcp
+        permanent: yes
+        state: enabled
+
+    - name: Always reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded

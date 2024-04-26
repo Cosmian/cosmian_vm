@@ -9,5 +9,4 @@
     - cosmian_vm_agent
     - no_updates
     - instance_configs # GCP only
-    - firewall # RHEL only
     - upgrade
