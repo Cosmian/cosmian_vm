@@ -5,40 +5,9 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
-- name: Check SSH remote host IP
+- name: Check remote host IP
   ansible.builtin.debug:
     var: inventory_hostname
-
-- name: Open port 5555 on RHEL
-  when: ansible_distribution == 'RedHat'
-  block:
-    - name: Add rule to firewall
-      ansible.posix.firewalld:
-        zone: public
-        port: 5555/tcp
-        permanent: yes
-        state: enabled
-
-    - name: Always reload firewalld
-      ansible.builtin.service:
-        name: firewalld
-        state: reloaded
-
-    - name: Comment ipv6 ref in /etc/hosts file
-      ansible.builtin.template:
-        src: hosts
-        dest: /etc/hosts
-        owner: root
-        group: root
-        mode: "0644"
-
-- name: Check if port 5555 is listening
-  ansible.builtin.wait_for:
-    host: "{{ inventory_hostname }}"
-    port: 5555
-    delay: 5
-    timeout: 60
-    msg: Timeout waiting for 5555 to respond
 
 - name: Check if port 5555 is listening on {{ inventory_hostname }}
   ansible.builtin.uri:
