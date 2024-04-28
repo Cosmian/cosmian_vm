@@ -9,6 +9,14 @@
   ansible.builtin.debug:
     var: inventory_hostname
 
+- name: Check if port 5555 is locally listening on {{ inventory_hostname }}
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 5555
+    delay: 5
+    timeout: 60
+    msg: Timeout waiting for 5555 to respond
+
 - name: Check if port 5555 is listening on {{ inventory_hostname }}
   ansible.builtin.uri:
     url: https://{{ inventory_hostname }}:5555/ima/ascii

@@ -231,11 +231,3 @@
       ansible.builtin.service:
         name: firewalld
         state: reloaded
-
-    - name: Comment ipv6 ref in /etc/hosts file
-      ansible.builtin.template:
-        src: hosts
-        dest: /etc/hosts
-        owner: root
-        group: root
-        mode: "0644"
