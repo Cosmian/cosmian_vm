@@ -106,8 +106,20 @@ jobs:
         run: |
           set -ex
 
+          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+            if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+              IMAGE_VERSION="${GITHUB_REF_NAME}"
+            else
+              IMAGE_VERSION="0.0.0"
+            fi
+          else
+            IMAGE_VERSION="${{ inputs.kms-version }}"
+          fi
+
+          IMAGE_TO_INSTANTIATE="/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/${{ inputs.product }}-${{ inputs.distrib }}/versions/${IMAGE_VERSION}"
+
           az vm create -g $RESOURCE_GROUP -n $CI_INSTANCE \
-            --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/${{ inputs.product }}-${{ inputs.distrib }} \
+            --image ${IMAGE_TO_INSTANTIATE} \
             --security-type ConfidentialVM \
             --os-disk-security-encryption-type VMGuestStateOnly \
             --size $VM_SIZE \
@@ -162,4 +174,5 @@ jobs:
           set +e
           az vm delete -g $RESOURCE_GROUP -n $CI_INSTANCE --yes
           az network public-ip delete -g $RESOURCE_GROUP -n ${CI_INSTANCE}PublicIP
+          az network nsg delete --resource-group $RESOURCE_GROUP -n ${CI_INSTANCE}NSG
           # az network nic delete -g $RESOURCE_GROUP -n $CI_INSTANCE
