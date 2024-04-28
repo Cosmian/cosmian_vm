@@ -224,7 +224,7 @@
       ansible.posix.firewalld:
         zone: public
         port: 5555/tcp
-        permanent: yes
+        permanent: true
         state: enabled
 
     - name: Always reload firewalld

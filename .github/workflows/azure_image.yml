@@ -105,7 +105,6 @@ jobs:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |
           set -ex
-          nsg_name="network_security_group"
 
           az vm create -g $RESOURCE_GROUP -n $CI_INSTANCE \
             --image /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Compute/galleries/cosmian_packer/images/${{ inputs.product }}-${{ inputs.distrib }} \
@@ -114,17 +113,15 @@ jobs:
             --size $VM_SIZE \
             --enable-vtpm true \
             --enable-secure-boot true \
-            --nsg $nsg_name \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --generate-ssh-keys
 
-          az network nsg rule create --nsg-name $nsg_name --resource-group $RESOURCE_GROUP \
-            --name allow-ports \
-            --priority 100 --access Allow --direction Inbound --protocol Tcp \
-            --source-address-prefix '*' --source-port-range '*' \
-            --destination-address-prefix '*' --destination-port-ranges 80 443 5555 8080 \
-            --description "Allow inbound traffic on ports 80, 443, 5555, and 8080"
+          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --port 5555
+          else
+            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --port 5555,80,8080,443
+          fi
 
           IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
