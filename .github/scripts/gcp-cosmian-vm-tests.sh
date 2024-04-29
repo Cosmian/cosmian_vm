@@ -21,7 +21,7 @@ gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "${ZONE}" --projec
 
 gcloud "${MODE}" compute instances set-scheduling "$CI_INSTANCE" --zone "${ZONE}" --max-run-duration=20m --instance-termination-action=DELETE
 
-sleep 60
+sleep 30
 
 gcloud "${MODE}" compute instances start "$CI_INSTANCE" --zone "${ZONE}" --project "$GCP_DEV_PROJECT"
 

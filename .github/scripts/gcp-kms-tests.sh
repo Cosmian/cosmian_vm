@@ -31,6 +31,8 @@ echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
 
 echo "Rebooting instance..."
 gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
+gcloud "${MODE}" compute instances set-scheduling "$CI_INSTANCE" --zone "${ZONE}" --max-run-duration=20m --instance-termination-action=DELETE
+sleep 30
 gcloud "${MODE}" compute instances start "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
 IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")
 timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
@@ -45,6 +47,9 @@ echo "[ OK ] Integrity after reboot"
 
 echo "Starting the KMS"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app restart
+
+# Wait KMS to be started
+sleep 30
 
 echo "[ OK ] KMS is started"
 echo "Checking Cosmian KMS HTTP connection..."
