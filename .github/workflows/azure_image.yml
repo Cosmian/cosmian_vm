@@ -127,6 +127,7 @@ jobs:
             --enable-secure-boot true \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
+            --data-disk-delete-option delete \
             --generate-ssh-keys; do sleep 60; done"
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
