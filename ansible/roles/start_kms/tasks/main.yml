@@ -12,13 +12,13 @@
 - name: Clean potential existing Cosmian VM CLI
   ansible.builtin.command:
     cmd: |
-      rm -f /tmp/cosmian_vm
+      rm -f ./cosmian_vm
   delegate_to: localhost
 
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
-    dest: /tmp/
+    dest: .
     mode: "u+x"
   delegate_to: localhost
   become: false
@@ -26,7 +26,7 @@
 - name: Copy KMS configuration
   ansible.builtin.template:
     src: kms.toml.j2
-    dest: /tmp/kms.toml
+    dest: ./kms.toml
     mode: "0644"
   delegate_to: localhost
   become: false
@@ -34,7 +34,7 @@
 - name: Cosmian VM App initialization
   ansible.builtin.command:
     cmd: |
-      /tmp/cosmian_vm --url https://{{ inventory_hostname }}:5355 --allow-insecure-tls app init -c /tmp/kms.toml
+      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app init -c ./kms.toml
   register: cosmian_vm_output
   ignore_errors: true
   delegate_to: localhost
@@ -129,5 +129,6 @@
 - name: Clean Cosmian VM CLI
   ansible.builtin.command:
     cmd: |
-      rm -f /tmp/cosmian_vm
+      rm -f ./cosmian_vm
+      rm -f ./kms.toml
   delegate_to: localhost

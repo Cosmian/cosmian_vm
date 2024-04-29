@@ -1,16 +1,13 @@
 #!/bin/sh
 
-set -exu
+set -ex
 
-MODE=$1
-CI_INSTANCE=$2
-ZONE=$3
-IP_ADDR=$4
-GCP_DEV_PROJECT=cosmian-dev
+CI_INSTANCE=$1
+IP_ADDR=$2
 
-bash .github/scripts/gcp-cosmian-vm-tests.sh "$MODE" "$CI_INSTANCE" "$ZONE" "$IP_ADDR"
+bash .github/scripts/azure-cosmian-vm-tests.sh "$CI_INSTANCE" "$IP_ADDR"
 
-IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")
+IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
 
 echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/start_kms/templates/kms.toml.j2
@@ -23,6 +20,7 @@ echo "[ OK ] Cosmian KMS HTTP connection"
 echo "Checking Cosmian KMS HTTPS connection..."
 curl --insecure "https://${IP_ADDR}/version"
 echo ""
+
 echo "[ OK ] Cosmian KMS HTTPS connection"
 echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
 curl --insecure "http://${IP_ADDR}/version"
@@ -30,11 +28,8 @@ echo ""
 echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
 
 echo "Rebooting instance..."
-gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
-gcloud "${MODE}" compute instances set-scheduling "$CI_INSTANCE" --zone "${ZONE}" --max-run-duration=20m --instance-termination-action=DELETE
-sleep 30
-gcloud "${MODE}" compute instances start "$CI_INSTANCE" --zone "$ZONE" --project "$GCP_DEV_PROJECT"
-IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")
+az vm restart -g "$RESOURCE_GROUP" -n "$CI_INSTANCE"
+IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
 timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
 
 echo "[ OK ] Cosmian VM ready after reboot"
@@ -60,6 +55,7 @@ echo "[ OK ] Cosmian KMS HTTP connection"
 echo "Checking Cosmian KMS HTTPS connection..."
 curl --insecure "https://${IP_ADDR}/version"
 echo ""
+
 echo "[ OK ] Cosmian KMS HTTPS connection"
 echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
 curl --insecure "http://${IP_ADDR}/version"

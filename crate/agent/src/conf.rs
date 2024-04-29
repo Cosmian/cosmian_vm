@@ -95,7 +95,7 @@ mod tests {
             [agent]
             data_storage = "/var/lib/cosmian_vm/"
             host = "127.0.0.1"
-            port = 5355
+            port = 5555
             ssl_certificate = "data/cert.pem"
             ssl_private_key = "data/key.pem"
             tpm_device = "/dev/tpmrm0"
@@ -112,7 +112,7 @@ mod tests {
             CosmianVmAgent {
                 agent: Agent {
                     host: "127.0.0.1".to_string(),
-                    port: 5355,
+                    port: 5555,
                     ssl_certificate: PathBuf::from("data/cert.pem"),
                     ssl_private_key: PathBuf::from("data/key.pem"),
                     tpm_device: Some(PathBuf::from("/dev/tpmrm0")),
@@ -141,7 +141,7 @@ mod tests {
         let config = CosmianVmAgent {
             agent: Agent {
                 host: "127.0.0.1".to_string(),
-                port: 5355,
+                port: 5555,
                 ssl_certificate: PathBuf::from(".")
                     .canonicalize()
                     .unwrap()
@@ -228,7 +228,7 @@ mod tests {
             [agent]
             data_storage = "/var/lib/cosmian_vm/"
             host = "127.0.0.1"
-            port = 5355
+            port = 5555
             ssl_certificate = "/data/cert.pem"
             ssl_private_key = "/data/key.pem"
             "#;
