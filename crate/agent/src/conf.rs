@@ -19,7 +19,7 @@ impl CosmianVmAgent {
         let mut reader = std::io::BufReader::new(File::open(self.agent.ssl_certificate())?);
         let certificate = rustls_pemfile::read_one(&mut reader)?;
         if let Some(rustls_pemfile::Item::X509Certificate(certificate)) = certificate {
-            Ok(certificate)
+            Ok(certificate.to_vec())
         } else {
             Err(Error::Certificate(format!(
                 "No PEM certificate found in {:?}",
