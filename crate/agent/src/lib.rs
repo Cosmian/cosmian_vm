@@ -105,23 +105,19 @@ pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerCo
         ))
     })?);
 
-    let certificate = rustls_pemfile::certs(&mut cert_reader)?
-        .into_iter()
-        .map(rustls::Certificate)
-        .collect();
-    let key = rustls_pemfile::pkcs8_private_keys(&mut sk_reader)?;
+    let cert_chain = rustls_pemfile::certs(&mut cert_reader)
+        .map(|result| {
+            result.map_err(|err| {
+                Error::Certificate(format!("Unparsable certificate: {:?}", err.to_string()))
+            })
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let key_der = rustls_pemfile::private_key(&mut sk_reader)?
+        .ok_or(Error::Certificate("TLS private key not found!".to_string()))?;
 
     Ok(ServerConfig::builder()
-        .with_safe_defaults()
         .with_no_client_auth()
-        .with_single_cert(
-            certificate,
-            rustls::PrivateKey(
-                key.first()
-                    .ok_or_else(|| Error::Certificate("TLS private key not found!".to_owned()))?
-                    .clone(),
-            ),
-        )?)
+        .with_single_cert(cert_chain, key_der)?)
 }
 
 #[cfg(test)]

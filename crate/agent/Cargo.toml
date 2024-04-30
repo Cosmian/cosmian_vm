@@ -12,7 +12,7 @@ doctest = false
 [dependencies]
 actix-cors = "0.6"
 actix-http = "3"
-actix-web = { version = "4", features = ["rustls"] }
+actix-web = { workspace = true, features = ["http2"] }
 actix-web-lab = "0.20"
 anyhow = { workspace = true }
 awc = "3.4"
@@ -31,8 +31,8 @@ pep440 = "0.2"
 rand = { workspace = true }
 rand_chacha = { workspace = true }
 # Important: align the rustls version with actix rustls dependency
-rustls = { version = "0.20", features = ["dangerous_configuration"] }
-rustls-pemfile = "1.0"
+rustls = "0.22"
+rustls-pemfile = "2.0"
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha1 = { workspace = true }

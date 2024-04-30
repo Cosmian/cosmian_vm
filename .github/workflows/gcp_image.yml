@@ -139,7 +139,7 @@ jobs:
             --image="$IMAGE_NAME" \
             --image-project=${{ inputs.project }} \
             --project ${{ inputs.project }} \
-            --tags cli,${{ inputs.product }} \
+            --tags cli \
             --maintenance-policy=TERMINATE \
             --shielded-secure-boot \
             --max-run-duration=20m \
@@ -151,10 +151,17 @@ jobs:
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
-          gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
-            --network=default \
-            --allow=tcp:22,tcp:80,tcp:443,tcp:5555,tcp:8080 \
-            --target-tags=cli
+          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+            gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
+              --network=default \
+              --allow=tcp:22,tcp:5555 \
+              --target-tags=cli
+          else
+            gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
+              --network=default \
+              --allow=tcp:22,tcp:80,tcp:443,tcp:5555,tcp:8080 \
+              --target-tags=cli
+          fi
 
       - name: Download Cosmian VM CLI
         if: startsWith(github.ref, 'refs/tags/') != true
