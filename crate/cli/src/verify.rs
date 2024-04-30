@@ -52,6 +52,7 @@ impl VerifyArgs {
             }
             Some(filehashes) => {
                 let ima_binary = client.ima_binary().await?;
+                let tpm_quote_response = client.tpm_quote(&nonce).await?;
 
                 if ima_binary.is_empty() {
                     anyhow::bail!("No IMA list recovered");
@@ -60,7 +61,6 @@ impl VerifyArgs {
                 let ima_binary: &[u8] = ima_binary.as_ref();
                 let ima_entries = ima::ima::Ima::try_from(ima_binary)?;
 
-                let tpm_quote_response = client.tpm_quote(&nonce).await?;
                 tpm_verify_quote(
                     &tpm_quote_response.quote,
                     &tpm_quote_response.signature,
