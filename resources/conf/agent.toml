@@ -17,7 +17,7 @@ tpm_device = "/dev/tpmrm0"
 [app]
 # The service type monitoring the user application
 # Possible values: supervisor|systemd|standalone
-service_type = "supervisor"
+service_type = "systemd"
 # The name of the service monitoring the used application
 service_name = "cosmian_helloworld"
 # The location of the user application data

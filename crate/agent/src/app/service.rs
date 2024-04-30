@@ -29,18 +29,18 @@ impl UnixService for Supervisor {
 
 pub struct Systemd;
 impl UnixService for Systemd {
-    const NAME: &'static str = "system";
+    const NAME: &'static str = "systemctl";
 
     fn start(service_app_name: &str) -> Result<Option<String>, Error> {
-        call(Self::NAME, &[service_app_name, "start"], false)
+        call(Self::NAME, &["start", service_app_name], false)
     }
 
     fn stop(service_app_name: &str) -> Result<Option<String>, Error> {
-        call(Self::NAME, &[service_app_name, "stop"], false)
+        call(Self::NAME, &["stop", service_app_name], false)
     }
 
     fn restart(service_app_name: &str) -> Result<Option<String>, Error> {
-        call(Self::NAME, &[service_app_name, "restart"], false)
+        call(Self::NAME, &["restart", service_app_name], false)
     }
 }
 

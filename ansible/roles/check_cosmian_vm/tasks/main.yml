@@ -55,14 +55,15 @@
   tags: snapshot
 
 - name: Read Cosmian VM agent logs
-  ansible.builtin.slurp:
-    src: /var/log/cosmian_vm/agent.out.log
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_vm_agent
   register: agent_logs
   tags: snapshot
 
 - name: Display Agent logs
   ansible.builtin.debug:
-    var: "{{ agent_logs['content'] | b64decode }}"
+    var: agent_logs
   tags: snapshot
 
 - name: Fail if Cosmian snapshot has failed previously
@@ -90,14 +91,15 @@
   tags: verify
 
 - name: Read Cosmian VM agent logs
-  ansible.builtin.slurp:
-    src: /var/log/cosmian_vm/agent.out.log
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_vm_agent
   register: agent_logs
   tags: verify
 
 - name: Display Agent logs
   ansible.builtin.debug:
-    var: "{{ agent_logs['content'] | b64decode }}"
+    var: agent_logs
   tags: verify
 
 - name: Fail if Cosmian snapshot verification has failed previously

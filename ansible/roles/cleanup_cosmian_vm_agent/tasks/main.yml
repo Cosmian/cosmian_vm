@@ -1,45 +1,13 @@
 ---
 # tasks file for cleanup
 
-- name: Get Supervisor status
-  when: ansible_distribution == 'Ubuntu'
+- name: Make sure Cosmian VM Agent service is down
   ansible.builtin.systemd_service:
-    name: supervisor
-  register: supervisor_status
-  tags: stopping_agent
-
-- name: Get Supervisor status
-  when: ansible_distribution == 'RedHat'
-  ansible.builtin.systemd_service:
-    name: supervisord
-  register: supervisor_status
-  tags: stopping_agent
-
-- name: Display Supervisor status
-  ansible.builtin.debug:
-    var: supervisor_status.status.ActiveState
-  tags: stopping_agent
-
-- name: Check if /etc/supervisor/conf.d/cosmian_vm_agent.conf exists
-  ansible.builtin.stat:
-    path: /etc/supervisor/conf.d/cosmian_vm_agent.conf
-  register: cosmian_supervisor_conf_check
-  tags: stopping_agent
-
-- name: Stop Cosmian VM Agent if it exists
-  community.general.supervisorctl:
     name: cosmian_vm_agent
     state: stopped
-  when:
-    - cosmian_supervisor_conf_check.stat.exists
-    - supervisor_status.status is defined
-    - supervisor_status.status.ActiveState=='active'
-  register: stopping_agent
-  failed_when:
-    - stopping_agent is defined
-    - stopping_agent.rc is defined
-    - stopping_agent.rc !=0
-  tags: stopping_agent
+  register: stop_agent
+  failed_when: stop_agent is defined and stop_agent.failed=='true'
+  tags: stopping
 
 - name: Check if /dev/mapper/cosmian_vm_container exists
   ansible.builtin.stat:
@@ -83,8 +51,6 @@
 - name: Clean Cosmian VM existing folders
   ansible.builtin.command:
     cmd: |
+      rm -f /usr/sbin/cosmian_vm_agent
       rm -rf /var/lib/cosmian_vm
-      rm -rf /var/log/cosmian_vm
       rm -rf /etc/cosmian_vm
-      rm -f /etc/supervisord.d/cosmian_vm_agent.ini
-      rm -f /etc/supervisor/conf.d/cosmian_vm_agent.conf

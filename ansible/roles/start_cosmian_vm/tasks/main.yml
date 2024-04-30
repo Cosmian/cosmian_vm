@@ -1,22 +1,8 @@
 ---
 # tasks file for launch
 
-- name: Make sure a Supervisor service is running
-  when: ansible_distribution == 'Ubuntu'
+- name: Make sure Cosmian VM agent service is running
   ansible.builtin.systemd_service:
-    name: supervisor
-    state: started
-  tags: launch
-
-- name: Make sure a Supervisor service is running
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
-  ansible.builtin.systemd_service:
-    name: supervisord
-    state: started
-  tags: launch
-
-- name: Start Cosmian VM Agent
-  community.general.supervisorctl:
     name: cosmian_vm_agent
     state: started
   tags: launch
