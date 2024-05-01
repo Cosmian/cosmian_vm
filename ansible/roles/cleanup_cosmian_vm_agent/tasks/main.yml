@@ -5,8 +5,20 @@
   ansible.builtin.systemd_service:
     name: cosmian_vm_agent
     state: stopped
+    enabled: false
+    daemon_reload: true
   register: stop_agent
   failed_when: stop_agent is defined and stop_agent.failed=='true'
+  tags: stopping
+
+- name: Make sure LUKS service is down
+  ansible.builtin.systemd_service:
+    name: mount_luks
+    state: stopped
+    enabled: false
+    daemon_reload: true
+  register: stop_luks
+  failed_when: stop_luks is defined and stop_luks.failed=='true'
   tags: stopping
 
 - name: Check if /dev/mapper/cosmian_vm_container exists
@@ -51,6 +63,11 @@
 - name: Clean Cosmian VM existing folders
   ansible.builtin.command:
     cmd: |
-      rm -f /usr/sbin/cosmian_vm_agent
       rm -rf /var/lib/cosmian_vm
       rm -rf /etc/cosmian_vm
+      rm -f /usr/sbin/cosmian_vm_agent
+
+- name: Reboot since systemd services have been disabled
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600
