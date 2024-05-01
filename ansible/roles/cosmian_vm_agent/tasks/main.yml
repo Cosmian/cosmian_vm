@@ -87,7 +87,6 @@
     enabled: true
     state: stopped
     daemon_reload: true
-  changed_when: false
 
 - name: Add Cosmian VM systemd service
   ansible.builtin.template:
@@ -103,7 +102,6 @@
     enabled: true
     state: stopped
     daemon_reload: true
-  changed_when: false
 
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'

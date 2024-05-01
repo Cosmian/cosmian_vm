@@ -13,6 +13,8 @@
   ansible.builtin.systemd_service:
     name: cosmian_kms
     state: stopped
+    enabled: false
+    daemon_reload: true
   register: stop_kms
   failed_when: stop_kms is defined and stop_kms.failed=='true'
   ignore_errors: true
@@ -22,3 +24,8 @@
     cmd: |
       rm -f /usr/local/sbin/cosmian_kms
       rm -rf /var/lib/cosmian_vm/data/app
+
+- name: Reboot since systemd service has been disabled
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600

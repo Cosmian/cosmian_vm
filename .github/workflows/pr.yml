@@ -16,6 +16,23 @@ jobs:
     name: Build binaries
     uses: ./.github/workflows/build.yml
 
+  clean-azure-resources:
+    name: Clean CI Azure resources
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Az CLI login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDS_JSON }}
+
+      - name: Delete any existing CI Azure resources
+        run: |
+          set +e
+          bash .github/scripts/azure-delete-ci-resources.sh
+
   build-test-gcp-sev-image:
     strategy:
       fail-fast: false
@@ -45,7 +62,9 @@ jobs:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
-    needs: build-cosmian-vm-binaries
+    needs:
+      - build-cosmian-vm-binaries
+      - clean-azure-resources
     secrets: inherit
     uses: ./.github/workflows/azure_image.yml
     with:
