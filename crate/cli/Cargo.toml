@@ -1,8 +1,10 @@
 [package]
 name = "cosmian_vm"
-version = "1.1.1"
-edition = "2021"
-license-file = "../../LICENSE.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
 description = "Cosmian VM CLI"
 
 [[bin]]
