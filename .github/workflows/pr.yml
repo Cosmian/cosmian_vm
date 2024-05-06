@@ -53,7 +53,7 @@ jobs:
       project: cosmian-dev
       mode: beta
       product: ${{ matrix.product }}
-      kms-version: 4.15.0
+      kms-version: 4.16.0
 
   build-test-azure-sev-image:
     strategy:
@@ -71,7 +71,7 @@ jobs:
       techno: sev
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.15.0
+      kms-version: 4.16.0
 
   release:
     name: Release
