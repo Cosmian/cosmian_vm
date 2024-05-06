@@ -2,12 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2024-05-06
+
+### Features
+
+- Move to systemd service for Cosmian VM and Cosmian KMS ([#100](https://github.com/Cosmian/cosmian_vm/pull/100))
+
+### Bug Fixes
+
+- Add/remove privilege escalation on local tasks ([#97](https://github.com/Cosmian/cosmian_vm/pull/97))
+- Create GCP firewall rule on test instances ([#101](https://github.com/Cosmian/cosmian_vm/pull/101))
+- Fix RUSTSEC-2024-0336 ([#103](https://github.com/Cosmian/cosmian_vm/pull/103))
+- Fetch TPM quote just after IMA event log to prevent side effects ([#104](https://github.com/Cosmian/cosmian_vm/pull/104))
+
+### Miscellaneous Tasks
+
+- Run KMS playbook on a raw VM ([#104](https://github.com/Cosmian/cosmian_vm/pull/104))
+
+### Refactor
+
+- Reuse cargo workspace version in all subcrates ([#106](https://github.com/Cosmian/cosmian_vm/pull/106))
+
 ## [1.1.1] - 2024-04-16
 
 ### Bug Fixes
 
-- [Ansible] Automate reboot right after dracut IMA-relative
-- [Rust] Generate TPM keys before generate encrypted FS
+- [Ansible] Automate reboot right after dracut IMA-relative ([#95](https://github.com/Cosmian/cosmian_vm/pull/95))
+- [Rust] Generate TPM keys before generate encrypted FS ([#95](https://github.com/Cosmian/cosmian_vm/pull/95))
 
 ## [1.1.0] - 2024-04-12
 
