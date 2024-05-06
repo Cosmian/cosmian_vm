@@ -111,27 +111,22 @@ This is a abstract of the updated file tree:
 │   │   └── grub
 │   ├── ima
 │   │   └── ima-policy
-│   └── supervisor
-│       ├── supervisord.conf
-│       └── conf.d
-│           └── cosmian_vm_agent.conf
+│   └── systemd
+│       └── system
+│           └── cosmian_vm_agent.service
 ├── usr
 │   └── sbin
 │       ├── cosmian_certtool
 │       ├── cosmian_fstool
 │       └── cosmian_vm_agent
 └── var
-    ├── lib
-    │   └── cosmian_vm
-    │       ├── container   <--- LUKS container
-    │       ├── tmp
-    │       └── data        <--- LUKS container mounted
-    │           ├── cert.pem
-    │           └── cert.key
-    └── log
+    └── lib
         └── cosmian_vm
-            ├── agent.err.log
-            └── agent.out.log
+            ├── container   <--- LUKS container
+            ├── tmp
+            └── data        <--- LUKS container mounted
+                ├── cert.pem
+                └── cert.key
 ```
 
 ## Configuration file
@@ -178,13 +173,11 @@ Now, instantiate a VM based on the built image. The `cosmian_vm_agent` automatic
 You can start/restart/stop the Cosmian VM Agent as follow:
 
 ```sh
-# If the supervisor configuration file has been edited, reload it first
-supervisorctl reload cosmian_vm_agent
-supervisorctl start cosmian_vm_agent
+systemctl start cosmian_vm_agent
 # Or
-supervisorctl restart cosmian_vm_agent
+systemctl restart cosmian_vm_agent
 # Or
-supervisorctl stop cosmian_vm_agent
+systemctl stop cosmian_vm_agent
 ```
 
 You can now install any packages or applications you want on the VM.
@@ -198,7 +191,7 @@ Then on your localhost, when you are sure your VM is fully configured and should
 1. Create a snapshot (once)
 
 ```sh
-cosmian_vm --url https://cosmianvm.cosmian.dev snapshot
+cosmian_vm --url https://my_app.dev snapshot
 ```
 
 You can process only one snapshot at a time.
@@ -206,21 +199,21 @@ You can process only one snapshot at a time.
 2. Verify the current state of the machine
 
 ```sh
-cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.snapshot
+cosmian_vm --url https://my_app.dev verify --snapshot cosmian_vm.snapshot
 ```
 
 If you use the default Cosmian VM setup relying on a self-signed certificate, you need to add the argument: `--allow-insecure-tls` as follow:
 
 ```sh
-cosmian_vm --url https://cosmianvm.cosmian.dev --allow-insecure-tls snapshot
+cosmian_vm --url https://my_app.dev --allow-insecure-tls snapshot
 ```
 
 When verifying a Cosmian VM you can also check that the TLS certificate of services installed inside this VM are the one used when querying the Cosmian VM Agent during the verification. To do so use `--application` (as many times as you want) as follow:
 
 ```sh
-$ cosmian_vm --url https://cosmianvm.cosmian.dev verify --snapshot cosmian_vm.snapshot \
-                                                        --application service1.cosmian.dev:3655 \
-                                                        --application service2.cosmian.dev
+cosmian_vm --url https://my_app.dev verify --snapshot cosmian_vm.snapshot \
+                                           --application service1.cosmian.dev:3655 \
+                                           --application service2.cosmian.dev
 ```
 
 ## Provide secrets
@@ -233,12 +226,12 @@ Prior to send the secrets, you should have configured the `app` section in the `
 [agent]
 host = "0.0.0.0"
 port = 5555
-ssl_certificate = "data/cosmianvm.cosmian.dev/cert.pem"
-ssl_private_key = "data/cosmianvm.cosmian.dev/key.pem"
+ssl_certificate = "data/my_app.dev/cert.pem"
+ssl_private_key = "data/my_app.dev/key.pem"
 tpm_device = "/dev/tpmrm0"
 
 [app]
-service_type = "supervisor"
+service_type = "systemd"
 service_name = "cosmian_helloworld"
 app_storage = "data/app"
 ```
@@ -250,7 +243,7 @@ The field `app_storage` defined the directory containing the configuration data 
 Now, you can provide the app configuration file from your localhost to the Cosmian VM as follow:
 
 ```sh
-cosmian_vm --url https://cosmianvm.cosmian.dev app init --conf app.json
+cosmian_vm --url https://my_app.dev app init --conf app.json
 ```
 
 The configuration file can be anything the application expects. Here, a JSON file. It will be send to the `cosmian_vm_agent` and stored in the LUKS container in `/var/lib/cosmian_vm/data/app/app.conf`.
