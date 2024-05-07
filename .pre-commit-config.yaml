@@ -26,7 +26,7 @@ repos:
           - markdown
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.39.0
+    rev: v0.40.0
     hooks:
       - id: markdownlint-fix
         args: [--disable=MD004, --disable=MD013, --disable=MD024, --disable=MD029, --disable=MD033, --disable=MD041, --disable=MD046]
@@ -60,7 +60,7 @@ repos:
         exclude: .github|.pre-commit-config.yaml
 
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v24.2.1
+    rev: v24.2.3
     hooks:
       - id: ansible-lint
         additional_dependencies:
@@ -68,7 +68,7 @@ repos:
         exclude: .github
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.20.3
+    rev: v1.21.0
     hooks:
       - id: typos
 
@@ -87,7 +87,7 @@ repos:
       - id: shellcheck
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -118,23 +118,11 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 24.3.0
+    rev: 24.4.2
     hooks:
       - id: black
         # avoid clash with `double-quote-string-fixer`
         args: [--skip-string-normalization]
-
-  - repo: https://github.com/Cube707/mkdocs
-    rev: e8733d1373c1543d6052925d3272b2ff51dbb140
-    hooks:
-      - id: mkdocs-build
-        additional_dependencies:
-          - mkdocs-plugin-progress
-          - mkdocs-kroki-plugin
-          - mkdocs-material
-          - mkdocs-meta-descriptions-plugin
-          - markdown-katex
-        entry: bash -c 'cd documentation && mkdocs build --strict'
 
   - repo: https://github.com/Cosmian/git-hooks.git
     rev: v1.0.25

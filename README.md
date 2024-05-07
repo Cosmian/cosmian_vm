@@ -2,33 +2,55 @@
 
 ![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/ci.yml/badge.svg?branch=main)
 
-Cosmian VM allows you to deploy an application on a cloud provider instance, running in a confidential context with verifiability at any time.
+_Cosmian VM_ are Linux-based system images preconfigured to verify Confidential VM trustworthiness and integrity at anytime.
+The images are based either on Ubuntu 22.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
 
-- **No binary modification**: the application doesn't need any third party library or any specific adaptation
-- **Simplicity is gold**: reduce at its minimum the number of manual actions the user has to do to spawn a Cosmian VM
-- **Confidentiality**: the application runs in a Trusted Execution Environment (encrypted memory)
-- **Verifiability**: a user is able to verify the integrity of the system (OS & application) at any time
+_Cosmian VM_ image provides the following features:
+
+- **Confidentiality**: the whole environment runs in a Trusted Execution Environment (TEE) with encrypted memory
+- **Verifiability**: user can verify the integrity of executables at any time and compare against a reference snapshot
+- **Genericity**: compatible with AMD SEV-SNP and Intel TDX in addition to TPM and vTPM
+- **No code modification**: no need for third party library or any specific adaptation of applications
+- **Simplicity**: manual configuration reduced at its bare minimum
 
 <p align="center">
   <img src="resources/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
-💡 You can find a more complete documentation here: [https://docs.cosmian.com](https://docs.cosmian.com/compute/cosmian_vm/overview/)
+> [!IMPORTANT]
+> Threat Model: _Cosmian VM_ is designed to secure your application against passive (honest-but-curious) and active (malicious) cloud provider staff member
+
+The foundation of _Cosmian VM_ relies on the following components:
+
+- Trusted Execution Environment (TEE) such as AMD SEV-SNP or Intel TDX for memory encryption
+- Trusted Platform Module (TPM) or vTPM (virtual TPM) to store secrets and attest the content of some memory region
+- Integrity Measurement Architecture (IMA), a Linux kernel module used to maintain a measurement log of all executables
+
+In addition, _Cosmian VM_ image contains the following software:
+
+- `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
+- `cosmian_certtool` to ease the generation of **Let's Encrypt** certificates if needed
+- `cosmian_fstool` to ease the generation of LUKS container with secret key stored in the TPM/vTPM
+
+Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli) can be used to interact with `cosmian_vm_agent` and verify the trustworthiness of a specific instance launched with _Cosmian VM_ as base image.
+
+> [!IMPORTANT]
+> Audit: _Cosmian VM_ image construction process can be found in this repository: [https://github.com/Cosmian/cosmian_vm/packer](https://github.com/Cosmian/cosmian_vm/tree/main/packer)
 
 ## Table of contents
 
 <!-- toc -->
 
 - [Setup flow](#setup-flow)
-- [Verification steps](#verification-steps)
-- [Coverage](#coverage)
-- [Compile and run tests](#compile-and-run-tests)
-- [Build a Cosmian VM image for SEV/TDX](#build-a-cosmian-vm-image-for-sevtdx)
-- [Configuration file](#configuration-file)
-- [First Cosmian VM launch](#first-cosmian-vm-launch)
-- [Start a Cosmian VM on SEV/TDX](#start-a-cosmian-vm-on-sevtdx)
-- [Usage](#usage)
-- [Provide secrets](#provide-secrets)
+- [Snapshot of the system](#snapshot-of-the-system)
+- [Verification of the remote instance](#verification-of-the-remote-instance)
+- [Cloud providers support](#cloud-providers-support)
+  * [Marketplace Image content](#marketplace-image-content)
+  * [Configuration file](#configuration-file)
+  * [First Cosmian VM launch](#first-cosmian-vm-launch)
+  * [Handle Cosmian VM status](#handle-cosmian-vm-status)
+  * [Usage](#usage)
+  * [Provide secrets without SSH access](#provide-secrets-without-ssh-access)
 
 <!-- tocstop -->
 
@@ -40,57 +62,47 @@ A confidential VM is instantiated from a cloud provider platform, including Cosm
   <img src="resources/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
-## Verification steps
+## Snapshot of the system
 
-Cosmian verification process is performed by the sys admin, requesting on the running confidential VM, and checks:
+The snapshot of the system is a crucial step performed by `cosmian_vm_agent` to produce a JSON file with:
 
-- IMA measurement list (containing the list of executed file's hash digest)
-- TEE (Trusted Execution Environment) elements to provide assurance that the code is running on secure and confidential hardware
-- TPM (Trusted Platform Module) elements to attest a TEE and the integrity of the system (IMA)
+- TEE policy
+- TPM policy
+- List of measured files and their hash digests
+
+It's a one-time process done before you decide to freeze the system, the content will be compared with TEE attestation, TPM/vTPM attestation and IMA measurement log to verify the trustworthiness of the remote instance.
+
+## Verification of the remote instance
+
+Verification process of the Cosmian VM is performed using client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli) which will check:
+
+- IMA (Integrity Measurement Architecture) measurement log with the list of executable and configuration file's hash digest, to be compared against the snapshot
+- TPM (Trusted Platform Module) attestation of the IMA measurement log
+- TEE (Trusted Execution Environment) trustworthiness to ensure the instance is running on secure hardware using encrypted memory
 
 <p align="center">
-  <img src="resources/images/confidential_vm_verification_flow.drawio.svg" alt="verification flow">
+  <img src="resources/images/confidential_vm_verification_flow.svg" alt="setup flow">
 </p>
 
-## Coverage
+## Cloud providers support
 
-Cosmian VM supports these kinds of TEE:
+_Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on the cloud provider.
 
-- Intel TDX on GCP - Ubuntu 22.04
-- AMD SEV on GCP - Ubuntu 22.04 | RHEL 9 and AWS - AmazonLinux
+Here is a list of compatibility as of March 2024:
 
-## Compile and run tests
+|           |           GCP           |          Azure          |     AWS      |
+| :-------- | :---------------------: | :---------------------: | :----------: |
+| Intel TDX |      Ubuntu 22.04       |      Ubuntu 22.04       | Ubuntu 22.04 |
+| AMD SEV   | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04 |
 
-The Cosmian VM contains four major executables:
+### Marketplace Image content
+
+The Cosmian VM image build on the marketplaces of GCP, Azure or AWS contains four major executables:
 
 - `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
 - `cosmian_certtool` is designed to generate a certificate signed by _Let's Encrypt_ or an RATLS certificate
 - `cosmian_fstool` is designed to generate a LUKS container and enroll the TPM to be automatically started on reboot
 - `cosmian_vm` is a CLI designed to be used on your own host. It queries the `cosmian_vm_agent` in order to get the collaterals used to verify the trustworthiness of the Cosmian VM
-
-You can compile and test these both binaries as follow:
-
-```sh
-sudo apt install libssl-dev libtss2-dev
-cargo build
-cargo test
-```
-
-## Build a Cosmian VM image for SEV/TDX
-
-A Cosmian VM image containing a full configured environment can be built as follow:
-
-```sh
-cargo build
-cp target/debug/cosmian_vm_agent packer
-cd packer
-# Create a service account on GCP and download the JSON file
-# https://console.cloud.google.com/iam-admin/serviceaccounts?cloudshell=false&project=MY_PROJECT
-export GOOGLE_APPLICATION_CREDENTIALS="/home/user/my-project-d42061429e6a.json"
-packer build cosmian-vm-gcp-sev.pkr.hcl
-```
-
-The images are also automatically built by the CI when pushing on main or when releasing a tag.
 
 This image:
 
@@ -131,7 +143,7 @@ This is a abstract of the updated file tree:
                 └── cert.key
 ```
 
-## Configuration file
+### Configuration file
 
 The Cosmian VM Agent relies on a configuration file located at `/etc/cosmian_vm/agent.toml`. Feel free to edit it.
 A minimal configuration file is:
@@ -147,7 +159,7 @@ tpm_device = "/dev/tpmrm0"
 
 You can change the default location of the configuration file by setting the environment variable: `COSMIAN_VM_AGENT_CONF`.
 
-## First Cosmian VM launch
+### First Cosmian VM launch
 
 When `cosmian_vm_agent` starts for the first time, it initializes several components:
 
@@ -168,25 +180,15 @@ The LUKS container can be regenerated using `cosmian_fstool` with your own size 
 
 You can skip all these first startup steps by setting `COSMIAN_VM_PREINIT=0` when starting `cosmian_vm_agent`.
 
-## Start a Cosmian VM on SEV/TDX
+### Handle Cosmian VM status
 
-Now, instantiate a VM based on the built image. The `cosmian_vm_agent` automatically starts when the VM boots.
-
-You can start/restart/stop the Cosmian VM Agent as follow:
-
-```sh
-systemctl start cosmian_vm_agent
-# Or
-systemctl restart cosmian_vm_agent
-# Or
-systemctl stop cosmian_vm_agent
-```
+Once the image instantiated (on GCP, Azure or AWS), the `cosmian_vm_agent` automatically starts as a `systemd` service when the VM boots.
 
 You can now install any packages or applications you want on the VM.
 
 Your VM is now set and ready.
 
-## Usage
+### Usage
 
 Then on your localhost, when you are sure your VM is fully configured and should not change anymore:
 
@@ -218,11 +220,19 @@ cosmian_vm --url https://my_app.dev verify --snapshot cosmian_vm.snapshot \
                                            --application service2.cosmian.dev
 ```
 
-## Provide secrets
+### Provide secrets without SSH access
 
-Before snapshotting the Cosmian VM, you can also provide a secret/configuration file to an application running inside the Cosmian VM. It can be relevant if the secrets provisioning is made by someone who doesn't have the rights to connect to the VM through SSH for instance.
+A user who does not have a SSH access can still securely send secrets to the Cosmian VM Agent that are written in the encrypted Cosmian mount point.
 
-Prior to send the secrets, you should have configured the `app` section in the `agent.toml` as follow:
+> [!IMPORTANT]
+> Indeed the Cosmian VM CLI can be used to remotely:
+>
+> - start, stop or restart your application service (installed as a `systemd` or `supervisor` service),
+> - send secrets, password, keys etc. directly to the Cosmian VM Agent through the TLS connection of the `cosmian_vm_agent` server without SSH access.
+>
+> Furthermore, these secrets are stored in the Cosmian LUKS mount point.
+
+As a prerequisite, before snapshotting the Cosmian VM, you must connect to the Cosmian VM instance via SSH and configure the `app` section in the `agent.toml` as follow:
 
 ```toml
 [agent]
@@ -234,24 +244,36 @@ tpm_device = "/dev/tpmrm0"
 
 [app]
 service_type = "systemd"
-service_name = "cosmian_helloworld"
+service_name = "my_app"
 app_storage = "data/app"
 ```
 
-In this example, [`cosmian_helloworld`](https://github.com/Cosmian/helloworld-service) is the name of the application (as a `supervisor` service).
+> [!TIP]
+> The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommended to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
 
-The field `app_storage` defined the directory containing the configuration data of your application or any data used by the application. It is recommended to store it inside the Cosmian VM encrypted folder: `/var/lib/cosmian_vm/data`.
+From here, restart the Cosmian VM Agent:
 
-Now, you can provide the app configuration file from your localhost to the Cosmian VM as follow:
+```sh
+sudo systemctl restart cosmian_vm_agent
+```
+
+Then, you can provide the app configuration file from your localhost to the Cosmian VM Agent as follow:
 
 ```sh
 cosmian_vm --url https://my_app.dev app init --conf app.json
 ```
 
-The configuration file can be anything the application expects. Here, a JSON file. It will be send to the `cosmian_vm_agent` and stored in the LUKS container in `/var/lib/cosmian_vm/data/app/app.conf`.
+where `app.json` is the configuration file that the application expects. A JSON file here for example.
 
-Note: `data/app/` subpath is provided as `app_storage` variable by `agent.toml` configuration.
+It will be send to the `cosmian_vm_agent` and stored in the LUKS container in `/var/lib/cosmian_vm/data/app/app.conf`.
+
+> [!NOTE]
+> `data/app/` subpath is provided as `app_storage` variable by `agent.toml` configuration.
 
 If you call again `init` the previous configuration file is overwritten.
 
 The `restart` subcommand can restart the application identified in `service_name` field.
+
+```sh
+cosmian_vm --url https://my_app.dev app restart
+```
