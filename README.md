@@ -1,5 +1,7 @@
 # Cosmian VM
 
+![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/ci.yml/badge.svg?branch=main)
+
 Cosmian VM allows you to deploy an application on a cloud provider instance, running in a confidential context with verifiability at any time.
 
 - **No binary modification**: the application doesn't need any third party library or any specific adaptation
