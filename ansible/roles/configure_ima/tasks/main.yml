@@ -91,6 +91,8 @@
 - name: Update the grub configuration
   ansible.builtin.command: /tmp/grub.sh
   when: file_check.stat.exists
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
 
 - name: Remove the update grub configuration script
   ansible.builtin.file:
@@ -104,6 +106,8 @@
   block:
     - name: Update grub
       ansible.builtin.command: update-grub
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
 
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
@@ -118,15 +122,21 @@
 
     - name: Update grub
       ansible.builtin.command: grub2-mkconfig -o /etc/grub2.cfg
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
 
     - name: Selinux - allow https
       ansible.builtin.command: setsebool -P httpd_can_network_connect 1
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
       tags: selinux
 
     - name: Dracut
       ansible.builtin.command:
         cmd: |
           dracut --force /usr/lib/modules
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
 
 - name: Mount a tmpfs volume
   ansible.posix.mount:

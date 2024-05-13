@@ -52,6 +52,8 @@
           ./install.sh
       args:
         chdir: /tmp/tpm2-tools
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
 
     - name: Clean tpm2-tools
       ansible.builtin.file:
