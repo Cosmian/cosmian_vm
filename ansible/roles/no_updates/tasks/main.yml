@@ -78,6 +78,8 @@
 
     - name: Clean Yum metadata
       ansible.builtin.command: dnf clean all
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
 
     - name: Update DNF cache
       ansible.builtin.dnf:

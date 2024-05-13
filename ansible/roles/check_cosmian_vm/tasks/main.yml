@@ -30,6 +30,8 @@
       rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
   delegate_to: localhost
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
 
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
@@ -47,6 +49,7 @@
   delegate_to: localhost
   become: false
   ignore_errors: true
+  changed_when: cosmian_vm_output.rc != 0
   tags: snapshot
 
 - name: Display agent logs variable
@@ -59,6 +62,7 @@
     cmd: |
       journalctl -u cosmian_vm_agent
   register: agent_logs
+  changed_when: agent_logs.rc != 0
   tags: snapshot
 
 - name: Display Agent logs
@@ -84,6 +88,7 @@
   become: false
   ignore_errors: true
   tags: verify
+  changed_when: verify_cosmian_vm_output.rc != 0
 
 - name: Display agent logs variable
   ansible.builtin.debug:
@@ -95,6 +100,7 @@
     cmd: |
       journalctl -u cosmian_vm_agent
   register: agent_logs
+  changed_when: agent_logs.rc != 0
   tags: verify
 
 - name: Display Agent logs
@@ -117,3 +123,5 @@
       rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
   delegate_to: localhost
+  register: cmd_output
+  changed_when: cmd_output.rc != 0

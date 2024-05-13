@@ -13,6 +13,8 @@
   ansible.builtin.command:
     cmd: |
       rm -f ./cosmian_vm
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
   delegate_to: localhost
 
 - name: Download Cosmian VM CLI
@@ -40,6 +42,7 @@
   delegate_to: localhost
   become: false
   tags: app_init
+  changed_when: cosmian_vm_output.rc != 0
 
 - name: Display agent logs variable
   ansible.builtin.debug:
@@ -52,6 +55,7 @@
       journalctl -u cosmian_vm_agent
   register: agent_logs
   tags: app_init
+  changed_when: agent_logs.rc != 0
 
 - name: Display Agent logs
   ansible.builtin.debug:
@@ -77,6 +81,9 @@
           /usr/sbin/restorecon /var/lib/cosmian_vm/data/cert.pem
           /usr/sbin/restorecon /var/lib/cosmian_vm/data/key.pem
       tags: restorecon
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
+
 
 - name: Start KMS
   ansible.builtin.systemd_service:
@@ -90,6 +97,7 @@
       journalctl -u cosmian_kms
   register: kms_logs
   tags: launch
+  changed_when: kms_logs.rc != 0
 
 - name: Display KMS logs
   ansible.builtin.debug:
@@ -145,3 +153,5 @@
       rm -f ./cosmian_vm
       rm -f ./kms.toml
   delegate_to: localhost
+  register: cmd_output
+  changed_when: cmd_output.rc != 0

@@ -40,6 +40,7 @@
   register: unmounting
   failed_when: unmounting.rc !=128 and unmounting.rc !=96 and unmounting.rc !=0
   tags: umount
+  changed_when: unmounting.rc != 0
 
 - name: Check if /var/lib/cosmian_vm/tmp exists
   ansible.builtin.stat:
@@ -66,6 +67,8 @@
       rm -rf /var/lib/cosmian_vm
       rm -rf /etc/cosmian_vm
       rm -f /usr/sbin/cosmian_vm_agent
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
 
 - name: Reboot since systemd services have been disabled
   ansible.builtin.reboot:
