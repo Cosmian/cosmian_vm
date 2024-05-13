@@ -139,30 +139,24 @@ jobs:
           ssh cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
           scp target/release/cosmian_vm_agent target/release/cosmian_vm target/release/cosmian_certtool cosmian@package.cosmian.com:$DESTINATION_DIR/
 
-  audit:
-    name: Rust Audit
+  cargo-deny:
+    name: Security Audit
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+      - uses: EmbarkStudios/cargo-deny-action@v1
 
-      - name: Cargo cache
-        uses: actions/cache@v4
-        id: cargo-cache
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: rust-audit-${{ hashFiles('**/Cargo.lock') }}
+  ansible-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ansible
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install ansible prerequisites
+        run: |
+          python3 -m pip install -r python_modules.txt
+          python3 -m pip install ansible-lint
 
-      - name: Install Rust toolchain
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cargo audit
-        uses: rustsec/audit-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run ansible-lint
+        run: ansible-lint

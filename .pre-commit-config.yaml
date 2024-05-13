@@ -133,10 +133,15 @@ repos:
       # - id: cargo-update
       - id: cargo-machete
       - id: cargo-tests-all
-      - id: cargo-audit
       - id: cargo-outdated
       - id: clippy-autofix-all
       - id: clippy-autofix-pedantic
       - id: clippy-autofix-others
       - id: clippy-all-targets-all-features
       - id: cargo-format # in last due to clippy fixes
+
+  - repo: https://github.com/EmbarkStudios/cargo-deny
+    rev: 0.14.16 # choose your preferred tag
+    hooks:
+      - id: cargo-deny
+        args: [--all-features, check]     # optionally modify the arguments for cargo-deny (default arguments shown here)

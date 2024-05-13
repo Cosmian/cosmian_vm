@@ -553,8 +553,8 @@ dependencies = [
 
 [[package]]
 name = "azure_sev_quote"
-version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "thiserror",
  "tss-esapi",
@@ -2178,8 +2178,8 @@ checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 
 [[package]]
 name = "pccs_client"
-version = "0.1.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "hex",
  "reqwest",
@@ -2377,8 +2377,8 @@ dependencies = [
 
 [[package]]
 name = "ratls"
-version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "const-oid",
  "der",
@@ -2928,8 +2928,8 @@ dependencies = [
 
 [[package]]
 name = "sev_quote"
-version = "0.2.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "asn1-rs",
  "bincode",
@@ -2948,8 +2948,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_pck_extension"
-version = "0.1.1"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -2959,8 +2959,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_quote"
-version = "0.2.1"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "chrono",
  "hex",
@@ -3178,8 +3178,8 @@ checksum = "69758bda2e78f098e4ccb393021a0963bb3442eac05f135c30f61b7370bbafae"
 
 [[package]]
 name = "tdx_quote"
-version = "0.1.1"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "hex",
  "log",
@@ -3196,8 +3196,8 @@ dependencies = [
 
 [[package]]
 name = "tee_attestation"
-version = "0.1.1"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "azure_sev_quote",
  "serde",
@@ -3445,8 +3445,8 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 
 [[package]]
 name = "tpm_quote"
-version = "0.2.1"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.3.1#c948234212ecf9a32c58460e48ed3b35fc764924"
+version = "1.3.1"
+source = "git+https://github.com/Cosmian/tee-tools?rev=d7923dd#d7923ddcfb7b7781693b8f42fc8c6f64a2af7ffb"
 dependencies = [
  "hex",
  "p256",
