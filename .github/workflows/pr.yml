@@ -16,6 +16,49 @@ jobs:
     name: Build binaries
     uses: ./.github/workflows/build.yml
 
+  clean-gcp-resources:
+    name: Clean CI GCP resources
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: GCP auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
+
+      - name: Delete SSH keys from login profile
+        run: |
+          for i in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
+            echo $i;
+            gcloud compute os-login ssh-keys remove --key $i || true;
+          done
+
+  build-test-gcp-sev-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [cosmian-vm, kms]
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    needs:
+      - build-cosmian-vm-binaries
+      - clean-gcp-resources
+    secrets: inherit
+    uses: ./.github/workflows/gcp_image.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      machine-type: n2d-standard-2
+      zone: europe-west4-a
+      confidential-compute-type: SEV_SNP
+      min-cpu-platform: AMD Milan
+      project: cosmian-dev
+      mode: beta
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
   clean-azure-resources:
     name: Clean CI Azure resources
     runs-on: ubuntu-22.04
@@ -32,28 +75,6 @@ jobs:
         run: |
           set +e
           bash .github/scripts/azure-delete-ci-resources.sh
-
-  build-test-gcp-sev-image:
-    strategy:
-      fail-fast: false
-      matrix:
-        distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
-    needs: build-cosmian-vm-binaries
-    secrets: inherit
-    uses: ./.github/workflows/gcp_image.yml
-    with:
-      techno: sev
-      distrib: ${{ matrix.distrib }}
-      machine-type: n2d-standard-2
-      zone: europe-west4-a
-      confidential-compute-type: SEV_SNP
-      min-cpu-platform: AMD Milan
-      project: cosmian-dev
-      mode: beta
-      product: ${{ matrix.product }}
-      kms-version: 4.16.0
 
   build-test-azure-sev-image:
     strategy:
