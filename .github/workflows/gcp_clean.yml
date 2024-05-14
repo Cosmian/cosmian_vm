@@ -17,9 +17,6 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
-      - name: Delete SSH keys from login profile
+      - name: Delete any existing CI GCP resources
         run: |
-          for i in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
-            echo $i;
-            gcloud compute os-login ssh-keys remove --key $i || true;
-          done
+          bash .github/scripts/gcp-delete-ci-resources.sh

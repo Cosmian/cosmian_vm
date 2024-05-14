@@ -58,7 +58,6 @@ done
 
 # List all network security groups and extract their names
 nsg_names=$(az network nsg list --query "[].name" -o tsv)
-
 # Loop through each network security group name and delete it
 for nsg_name in $nsg_names; do
   if [[ $nsg_name = *'pkr'* ]] || [[ $nsg_name = *'gh-ci'* ]]; then
