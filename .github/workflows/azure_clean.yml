@@ -1,0 +1,23 @@
+---
+name: Clean Azure resources
+
+on:
+  workflow_call:
+
+jobs:
+  clean-azure-resources:
+    name: Clean CI Azure resources
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Az CLI login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDS_JSON }}
+
+      - name: Delete any existing CI Azure resources
+        run: |
+          set +e
+          bash .github/scripts/azure-delete-ci-resources.sh

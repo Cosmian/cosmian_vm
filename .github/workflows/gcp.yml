@@ -51,7 +51,6 @@ jobs:
       zone: europe-west4-a
       confidential-compute-type: SEV_SNP
       min-cpu-platform: AMD Milan
-      project: cosmian-dev
       mode: beta
       product: ${{ inputs.product }}
       kms-version: ${{ inputs.kms-version }}
@@ -69,7 +68,6 @@ jobs:
       zone: us-central1-a
       confidential-compute-type: TDX
       min-cpu-platform: AUTOMATIC
-      project: cosmian-dev
       mode: alpha
       product: ${{ inputs.product }}
       kms-version: ${{ inputs.kms-version }}

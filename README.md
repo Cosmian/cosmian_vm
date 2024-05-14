@@ -90,10 +90,10 @@ _Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on t
 
 Here is a list of compatibility as of March 2024:
 
-|           |           GCP           |          Azure          |     AWS      |
-| :-------- | :---------------------: | :---------------------: | :----------: |
-| Intel TDX |      Ubuntu 22.04       |      Ubuntu 22.04       | Ubuntu 22.04 |
-| AMD SEV   | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04 |
+|           |           GCP           |          Azure          |      AWS      |
+| :-------- | :---------------------: | :---------------------: | :-----------: |
+| Intel TDX |      Ubuntu 22.04       |      Ubuntu 22.04       | Not available |
+| AMD SEV   | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04  |
 
 ### Marketplace Image content
 
