@@ -17,23 +17,12 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   clean-gcp-resources:
-    name: Clean CI GCP resources
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    uses: ./.github/workflows/gcp_clean.yml
+    secrets: inherit
 
-      - name: GCP auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
-
-      - name: Delete SSH keys from login profile
-        run: |
-          for i in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
-            echo $i;
-            gcloud compute os-login ssh-keys remove --key $i || true;
-          done
+  clean-azure-resources:
+    uses: ./.github/workflows/azure_clean.yml
+    secrets: inherit
 
   build-test-gcp-sev-image:
     strategy:
@@ -54,27 +43,9 @@ jobs:
       zone: europe-west4-a
       confidential-compute-type: SEV_SNP
       min-cpu-platform: AMD Milan
-      project: cosmian-dev
       mode: beta
       product: ${{ matrix.product }}
       kms-version: 4.16.0
-
-  clean-azure-resources:
-    name: Clean CI Azure resources
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Az CLI login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDS_JSON }}
-
-      - name: Delete any existing CI Azure resources
-        run: |
-          set +e
-          bash .github/scripts/azure-delete-ci-resources.sh
 
   build-test-azure-sev-image:
     strategy:
@@ -94,9 +65,21 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
+  post-clean-azure-resources:
+    needs: build-test-azure-sev-image
+    uses: ./.github/workflows/azure_clean.yml
+    secrets: inherit
+
+  post-clean-gcp-resources:
+    needs: build-test-gcp-sev-image
+    uses: ./.github/workflows/gcp_clean.yml
+    secrets: inherit
+
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build-test-gcp-sev-image, build-test-azure-sev-image]
+    needs:
+      - post-clean-azure-resources
+      - post-clean-gcp-resources
     secrets: inherit
     uses: ./.github/workflows/release.yml

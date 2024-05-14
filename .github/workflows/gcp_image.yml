@@ -22,9 +22,6 @@ on:
       min-cpu-platform:
         required: true
         type: string
-      project:
-        required: true
-        type: string
       mode:
         required: true
         type: string
@@ -42,6 +39,7 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -104,6 +102,7 @@ jobs:
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
+    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     needs: build-image
     permissions:
       contents: read
@@ -137,8 +136,8 @@ jobs:
             --confidential-compute-type=${{ inputs.confidential-compute-type }} \
             --shielded-secure-boot \
             --image="$IMAGE_NAME" \
-            --image-project=${{ inputs.project }} \
-            --project ${{ inputs.project }} \
+            --image-project=$GCP_DEV_PROJECT \
+            --project $GCP_DEV_PROJECT \
             --tags $CI_INSTANCE-fw \
             --maintenance-policy=TERMINATE \
             --max-run-duration=20m \
@@ -195,7 +194,7 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           set +e
-          gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project ${{ inputs.project }}
+          gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
           gcloud compute firewall-rules delete ${CI_INSTANCE}-allow-ports-cli --quiet
           set -e
 
@@ -261,7 +260,7 @@ jobs:
             --shielded-secure-boot \
             --image="$IMAGE_NAME" \
             --image-project=$IMAGE_PROJECT \
-            --project ${{ inputs.project }} \
+            --project $GCP_DEV_PROJECT \
             --tags $CI_INSTANCE-fw \
             --maintenance-policy=TERMINATE \
             --max-run-duration=30m \
@@ -313,7 +312,7 @@ jobs:
           CI_INSTANCE: ${{ steps.env.outputs.ci_instance }}
         run: |
           set +e
-          gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project ${{ inputs.project }}
+          gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
           gcloud compute firewall-rules delete ${CI_INSTANCE}-allow-ports-cli --quiet
           set -e
 

@@ -24,6 +24,7 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -72,6 +73,7 @@ jobs:
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:

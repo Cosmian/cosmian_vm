@@ -147,6 +147,7 @@ jobs:
       - uses: EmbarkStudios/cargo-deny-action@v1
 
   ansible-lint:
+    name: Ansible Lint
     runs-on: ubuntu-latest
     defaults:
       run:
