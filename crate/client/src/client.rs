@@ -327,31 +327,13 @@ mod tests {
 
     #[test]
     fn test_ratls_get_server_certificate() {
-        let server_cert = get_server_certificate("self-signed.badssl.com", 443).unwrap();
-
-        let b64_server_cert = r"
-        MIIDeTCCAmGgAwIBAgIJAM2W4dyViZyyMA0GCSqGSIb3DQEBCwUAMGIxCzAJBgNV
-        BAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNp
-        c2NvMQ8wDQYDVQQKDAZCYWRTU0wxFTATBgNVBAMMDCouYmFkc3NsLmNvbTAeFw0y
-        NDAyMjEyMTI4MzJaFw0yNjAyMjAyMTI4MzJaMGIxCzAJBgNVBAYTAlVTMRMwEQYD
-        VQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMQ8wDQYDVQQK
-        DAZCYWRTU0wxFTATBgNVBAMMDCouYmFkc3NsLmNvbTCCASIwDQYJKoZIhvcNAQEB
-        BQADggEPADCCAQoCggEBAMIE7PiM7gTCs9hQ1XBYzJMY61yoaEmwIrX5lZ6xKyx2
-        PmzAS2BMTOqytMAPgLaw+XLJhgL5XEFdEyt/ccRLvOmULlA3pmccYYz2QULFRtMW
-        hyefdOsKnRFSJiFzbIRMeVXk0WvoBj1IFVKtsyjbqv9u/2CVSndrOfEk0TG23U3A
-        xPxTuW1CrbV8/q71FdIzSOciccfCFHpsKOo3St/qbLVytH5aohbcabFXRNsKEqve
-        ww9HdFxBIuGa+RuT5q0iBikusbpJHAwnnqP7i/dAcgCskgjZjFeEU4EFy+b+a1SY
-        QCeFxxC7c3DvaRhBB0VVfPlkPz0sw6l865MaTIbRyoUCAwEAAaMyMDAwCQYDVR0T
-        BAIwADAjBgNVHREEHDAaggwqLmJhZHNzbC5jb22CCmJhZHNzbC5jb20wDQYJKoZI
-        hvcNAQELBQADggEBAIdCbAQbPbm1u1ZggwBpr0JwJMfdH7dD8gXSfuXlRLt0xek0
-        Y0mJDkM45ry/8AH2G06oRraPlb95A97gA03wLKC639G9uVUwFb2WuFhDmYNgo+NX
-        SiLsZ92ifLw+p8NKBSO7ltk+mpb2FKo4aAYqYTSgaC+GRwQAtH1KKU9j8xThkBLM
-        5HJutQkpb4wWiVVyhgPD5e5HY8B97N4yKWw1H+w5m7WedaOxEOog78az/VY0pvUU
-        AnwJnfRIspinQjrIRXc2O92lpTX63FAQFrkiTf0JP6slLLXEMlRdmQJ4o5tpFjWV
-        GQpeK4UHMmdSwjbWI2HI4WXf4MHfa6hD934mg+I=
-        "
+        let server_cert = get_server_certificate("www.cosmian.com", 443).unwrap();
+        let b64_expected_server_cert = r"
+        MIIFaDCCBFCgAwIBAgIQKzfw8p5mJYERNK8LSLct/jANBgkqhkiG9w0BAQsFADBGMQswCQYDVQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZpY2VzIExMQzETMBEGA1UEAxMKR1RTIENBIDFQNTAeFw0yNDA0MjIxMDM1NTBaFw0yNDA3MjExMDM1NDlaMBYxFDASBgNVBAMTC2Nvc21pYW4uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA07dhi3epwxw0hTTn6U4knOOgjz4M0yJ6ORccbKpbygdxPvahJe5Vxr2IiZm7WMdc3plNzMxn1kMpCAWhAKdHyo6NbBK5F7B4bOCKEslzwArjt6HeQJiOA9esPDV20wujfQKvgxOSTQR0G34GflI1sbTdwIuRL1OM8qZDb4ga9dnLWWAr+9fDYXPyfWkkvzEkUe+EFmKC0vMBBBQXsXwrtbLBVT/udbmCMgdRq0Xe+6SNm6H7m2Q4u3fHE8wmeCV32s8DUcGHrkiZiXCEf1Enn9s/AAjNSLU0ora98CzL+lagfmc9lqwrFeSqnGEZCHWhihYSziKbg2Vm8hassh3q6QIDAQABo4ICgDCCAnwwDgYDVR0PAQH/BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFMI1/5tlHCHJEK9YKm4DqV67t9gFMB8GA1UdIwQYMBaAFNX8ng3fHsrdCJeXbivFX8Ur9ey4MHgGCCsGAQUFBwEBBGwwajA1BggrBgEFBQcwAYYpaHR0cDovL29jc3AucGtpLmdvb2cvcy9ndHMxcDUvOXJhRVIyRDJWZm8wMQYIKwYBBQUHMAKGJWh0dHA6Ly9wa2kuZ29vZy9yZXBvL2NlcnRzL2d0czFwNS5kZXIwJQYDVR0RBB4wHIILY29zbWlhbi5jb22CDSouY29zbWlhbi5jb20wIQYDVR0gBBowGDAIBgZngQwBAgEwDAYKKwYBBAHWeQIFAzA8BgNVHR8ENTAzMDGgL6AthitodHRwOi8vY3Jscy5wa2kuZ29vZy9ndHMxcDUvMTBaM09wU3lscm8uY3JsMIIBAwYKKwYBBAHWeQIEAgSB9ASB8QDvAHYASLDja9qmRzQP5WoC+p0w6xxSActW3SyB2bu/qznYhHMAAAGPBZdF/gAABAMARzBFAiA8qaIx4DXwHPTv3YHKTa0mEEr+nyYXT0QyotE/imdzpQIhAIKMs+dOrtS7kxxliuTdc7MApOFpP7Qt0tkroibXmrZLAHUAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/mZ0xaOnQAAAGPBZdGDQAABAMARjBEAiAv8qYtyndSO2qHz3t+ih50qkOecn0+xhe8LW5IYcdnowIgTI5tJq05ORVY7wJ9EQHNMnifn6DBPkeZszT9DvHZ3LIwDQYJKoZIhvcNAQELBQADggEBAGy5biXJJqB6kXmRcw4wpaCi99AdpCQLppcaEBNI6HNRB61pw2S9EySjoJMzTLRvzoeA3rx1r9Ds90clTb0i3cfu5SJp0cw/S7LuaaTxaJEa/KXjKgCrJ2SbTVfnHt0OHTqX9zCo43VSGPX2wkmMgrOgT/gYCsKQ+1wPXwzviKbHYH2KTDDHlf5zEwdQ1UdVl+Uk0K6wSxWzz5yrG4xLLh9Aftwo6fZbAmLjjrrdRNUeh5+TGKQ+YQokZzNqZ7MGJUqF5I+7qQbkxxX50u/2lTmkXGyY9a0vPetUDs711uODTItEdSpG7gYZX3yd4+pqZpbBjy1q9MQg4LPMHtszv7k="
         .replace(['\n', ' '], "");
-        let expected_server_cert = general_purpose::STANDARD.decode(b64_server_cert).unwrap();
+        let expected_server_cert = general_purpose::STANDARD
+            .decode(b64_expected_server_cert)
+            .unwrap();
         assert_eq!(expected_server_cert, server_cert);
     }
 }

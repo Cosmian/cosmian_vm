@@ -16,10 +16,12 @@ jobs:
   azure:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/azure_main.yml
+    secrets: inherit
 
   gcp:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/gcp_main.yml
+    secrets: inherit
 
   release:
     name: Release
