@@ -51,6 +51,7 @@ jobs:
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
@@ -65,6 +66,7 @@ jobs:
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
           COSMIAN_VM_VERSION="$VERSION"

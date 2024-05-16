@@ -28,6 +28,13 @@ else
   AZURE_IMAGE_VERSION="$KMS_VERSION"
 fi
 
+if [ "$TECHNO" = "sev" ]; then
+  VM_SIZE="Standard_DC2ads_v5"
+else
+  # TDX
+  VM_SIZE="Standard_DC2es_v5"
+fi
+
 PACKER_FILE="azure.pkr.hcl"
 
 sed -i "s#TEMPLATE_PRODUCT#$PRODUCT#g" "$PACKER_FILE"
