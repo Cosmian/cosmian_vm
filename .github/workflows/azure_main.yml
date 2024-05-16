@@ -1,0 +1,35 @@
+---
+on:
+  workflow_call:
+
+concurrency:
+  group: marketplace_azure
+
+name: Azure images build
+
+jobs:
+  clean-azure-resources:
+    uses: ./.github/workflows/azure_clean.yml
+    secrets: inherit
+
+  build-test-azure-sev-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [cosmian-vm, kms]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    needs:
+      - clean-azure-resources
+    secrets: inherit
+    uses: ./.github/workflows/azure_image.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
+  post-clean-azure-resources:
+    needs: build-test-azure-sev-image
+    uses: ./.github/workflows/azure_clean.yml
+    secrets: inherit

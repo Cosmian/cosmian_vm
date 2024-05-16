@@ -1,0 +1,40 @@
+---
+on:
+  workflow_call:
+
+concurrency:
+  group: marketplace_gcp
+
+name: GCP images build
+
+jobs:
+  clean-gcp-resources:
+    uses: ./.github/workflows/gcp_clean.yml
+    secrets: inherit
+
+  build-test-gcp-sev-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [cosmian-vm, kms]
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    needs:
+      - clean-gcp-resources
+    secrets: inherit
+    uses: ./.github/workflows/gcp_image.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      machine-type: n2d-standard-2
+      zone: europe-west4-a
+      confidential-compute-type: SEV_SNP
+      min-cpu-platform: AMD Milan
+      mode: beta
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
+  post-clean-gcp-resources:
+    needs: build-test-gcp-sev-image
+    uses: ./.github/workflows/gcp_clean.yml
+    secrets: inherit
