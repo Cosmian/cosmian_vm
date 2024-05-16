@@ -28,5 +28,6 @@ jobs:
             target/release/cosmian_certtool
 
   cleanup:
+    name: Clean Github cache
     uses: Cosmian/reusable_workflows/.github/workflows/cleanup_cache.yml@main
     secrets: inherit
