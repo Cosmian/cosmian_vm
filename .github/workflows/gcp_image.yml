@@ -209,7 +209,7 @@ jobs:
 
   test-ansible:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: contains(inputs.distrib, 'ubuntu') && contains(inputs.product, 'cosmian-vm')
+    if: contains(inputs.distrib, 'ubuntu') && contains(inputs.techno, 'sev') && contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
