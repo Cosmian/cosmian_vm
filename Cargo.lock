@@ -373,6 +373,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ansi_term"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d52a9bb7ec0cf484c551830a7ce27bd20d67eac647e1befb56b0be4ee39a55d2"
+dependencies = [
+ "winapi",
+]
+
+[[package]]
 name = "anstream"
 version = "0.6.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -525,6 +534,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "atty"
+version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9b39be18770d11421cdb1b9947a45dd3f37e93092cbf377614828a319d5fee8"
+dependencies = [
+ "hermit-abi 0.1.19",
+ "libc",
+ "winapi",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -566,7 +586,7 @@ dependencies = [
 [[package]]
 name = "azure_cvm"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "base64 0.22.1",
  "bincode",
@@ -629,6 +649,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
 dependencies = [
  "serde",
+]
+
+[[package]]
+name = "bindgen"
+version = "0.59.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2bd2a9a458e8f4304c52c43ebb0cfbd520289f8379a52e329a38afda99bf8eb8"
+dependencies = [
+ "bitflags 1.3.2",
+ "cexpr",
+ "clang-sys",
+ "clap 2.34.0",
+ "env_logger 0.9.3",
+ "lazy_static",
+ "lazycell",
+ "log",
+ "peeking_take_while",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "rustc-hash",
+ "shlex",
+ "which",
 ]
 
 [[package]]
@@ -741,6 +784,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cexpr"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6fac387a98bb7c37292057cffc56d62ecb629900026402633ae9160df93a8766"
+dependencies = [
+ "nom",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -758,6 +810,32 @@ dependencies = [
  "num-traits",
  "wasm-bindgen",
  "windows-targets 0.52.5",
+]
+
+[[package]]
+name = "clang-sys"
+version = "1.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67523a3b4be3ce1989d607a828d036249522dd9c1c8de7f4dd2dae43a37369d1"
+dependencies = [
+ "glob",
+ "libc",
+ "libloading",
+]
+
+[[package]]
+name = "clap"
+version = "2.34.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a0610544180c38b88101fecf2dd634b174a62eef6946f84dfc6a7127512b381c"
+dependencies = [
+ "ansi_term",
+ "atty",
+ "bitflags 1.3.2",
+ "strsim",
+ "textwrap",
+ "unicode-width",
+ "vec_map",
 ]
 
 [[package]]
@@ -894,7 +972,7 @@ dependencies = [
  "actix-files",
  "actix-web",
  "anyhow",
- "clap",
+ "clap 4.5.4",
  "cosmian_vm_client",
  "curve25519-dalek",
  "hex",
@@ -910,7 +988,7 @@ name = "cosmian_vm"
 version = "1.1.2"
 dependencies = [
  "anyhow",
- "clap",
+ "clap 4.5.4",
  "cosmian_vm_client",
  "hex",
  "ima",
@@ -935,7 +1013,7 @@ dependencies = [
  "cosmian_vm_client",
  "der",
  "ecdsa",
- "env_logger",
+ "env_logger 0.11.3",
  "futures",
  "gethostname",
  "hex",
@@ -1300,6 +1378,19 @@ dependencies = [
 
 [[package]]
 name = "env_logger"
+version = "0.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a12e6657c4c97ebab115a42dcee77225f7f482cdd841cf7088c657a42e9e00e7"
+dependencies = [
+ "atty",
+ "humantime",
+ "log",
+ "regex",
+ "termcolor",
+]
+
+[[package]]
+name = "env_logger"
 version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38b35839ba51819680ba087cd351788c9a3c476841207e0b8cee0b04722343b9"
@@ -1530,6 +1621,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4271d37baee1b8c7e4b708028c57d816cf9d2434acb33a549475f78c181f6253"
 
 [[package]]
+name = "glob"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
+
+[[package]]
 name = "group"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1570,6 +1667,15 @@ name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+
+[[package]]
+name = "hermit-abi"
+version = "0.1.19"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "62b467343b94ba476dcb2500d242dadbb39557df889310ac77c5d99100aaac33"
+dependencies = [
+ "libc",
+]
 
 [[package]]
 name = "hermit-abi"
@@ -1626,6 +1732,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e4ce1f4656bae589a3fab938f9f09bf58645b7ed01a2c5f8a3c238e01a4ef78a"
 dependencies = [
  "digest 0.10.7",
+]
+
+[[package]]
+name = "home"
+version = "0.5.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3d1354bf6b7235cb4a0576c2619fd4ed18183f689b12b006a0ee7329eeff9a5"
+dependencies = [
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1962,10 +2077,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "lazycell"
+version = "1.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+
+[[package]]
 name = "libc"
 version = "0.2.153"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c198f91728a82281a64e1f4f9eeb25d82cb32a5de251c6bd1b5154d63a8e7bd"
+
+[[package]]
+name = "libloading"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c2a198fb6b0eada2a8df47933734e6d35d350665a33a3593d7164fa52c75c19"
+dependencies = [
+ "cfg-if",
+ "windows-targets 0.52.5",
+]
 
 [[package]]
 name = "libm"
@@ -2025,7 +2156,7 @@ checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 [[package]]
 name = "maa_client"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "base64 0.22.1",
  "hex",
@@ -2255,7 +2386,7 @@ version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4161fcb6d602d4d2081af7c3a45852d875a03dd337a6bfdd6e06407b61342a43"
 dependencies = [
- "hermit-abi",
+ "hermit-abi 0.3.9",
  "libc",
 ]
 
@@ -2408,13 +2539,19 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 [[package]]
 name = "pccs_client"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "hex",
  "reqwest",
  "thiserror",
  "urlencoding",
 ]
+
+[[package]]
+name = "peeking_take_while"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "19b17cddbe7ec3f8bc800887bab5e717348c95ea2ca0b1bf0837fb964dc67099"
 
 [[package]]
 name = "pem"
@@ -2606,7 +2743,7 @@ dependencies = [
 [[package]]
 name = "ratls"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "const-oid",
  "der",
@@ -2803,6 +2940,12 @@ name = "rustc-demangle"
 version = "0.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "719b953e2095829ee67db738b3bfa9fa368c94900df327b3f07fe6e794d2fe1f"
+
+[[package]]
+name = "rustc-hash"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
 
 [[package]]
 name = "rustc_version"
@@ -3131,7 +3274,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "asn1-rs",
  "bincode",
@@ -3151,7 +3294,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -3162,7 +3305,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "chrono",
  "hex",
@@ -3202,6 +3345,12 @@ dependencies = [
  "cpufeatures",
  "digest 0.10.7",
 ]
+
+[[package]]
+name = "shlex"
+version = "1.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "signal-hook-registry"
@@ -3289,6 +3438,12 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+
+[[package]]
+name = "strsim"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
 
 [[package]]
 name = "subtle"
@@ -3392,9 +3547,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1fc403891a21bcfb7c37834ba66a547a8f402146eba7265b5a6d88059c9ff2f"
 
 [[package]]
+name = "tdx-attest-rs"
+version = "0.1.2"
+source = "git+https://github.com/intel/SGXDataCenterAttestationPrimitives.git?tag=DCAP_1.21#e945c58bff60bb96e4daca57b73c93f96b14418a"
+dependencies = [
+ "tdx-attest-sys",
+]
+
+[[package]]
+name = "tdx-attest-sys"
+version = "0.1.0"
+source = "git+https://github.com/intel/SGXDataCenterAttestationPrimitives.git?tag=DCAP_1.21#e945c58bff60bb96e4daca57b73c93f96b14418a"
+dependencies = [
+ "bindgen",
+]
+
+[[package]]
 name = "tdx_quote"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "hex",
  "log",
@@ -3406,13 +3577,14 @@ dependencies = [
  "serde-hex",
  "sgx_quote",
  "sha2",
+ "tdx-attest-rs",
  "thiserror",
 ]
 
 [[package]]
 name = "tee_attestation"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "azure_cvm",
  "hex",
@@ -3435,6 +3607,24 @@ dependencies = [
  "fastrand",
  "rustix",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "termcolor"
+version = "1.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
+dependencies = [
+ "winapi-util",
+]
+
+[[package]]
+name = "textwrap"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060"
+dependencies = [
+ "unicode-width",
 ]
 
 [[package]]
@@ -3663,7 +3853,7 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 [[package]]
 name = "tpm_quote"
 version = "1.3.1"
-source = "git+https://github.com/Cosmian/tee-tools?branch=maa-cvm#83a5f559d2f3e23b722971ae8d785a9ec9fb3a8b"
+source = "git+https://github.com/Cosmian/tee-tools?branch=fix-tdx#b341cf8c0bc65dd346cd43d7bf882b583d230b37"
 dependencies = [
  "hex",
  "p256",
@@ -3781,6 +3971,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "unicode-width"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68f5e5f3158ecfd4b8ff6fe086db7c8467a2dfdac97fe420f2b7c4aa97af66d6"
+
+[[package]]
 name = "unicode-xid"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3859,6 +4055,12 @@ name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
+
+[[package]]
+name = "vec_map"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
 
 [[package]]
 name = "version_check"
@@ -4014,6 +4216,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b3de34ae270483955a94f4b21bdaaeb83d508bb84a01435f393818edb0012009"
 dependencies = [
  "rustls-pki-types",
+]
+
+[[package]]
+name = "which"
+version = "4.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
+dependencies = [
+ "either",
+ "home",
+ "once_cell",
+ "rustix",
 ]
 
 [[package]]
