@@ -9,6 +9,25 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
+- name: Add Intel SGX/TDX APT repository
+  when: ansible_distribution == 'Ubuntu'
+  block:
+    - name: Intel's public key
+      ansible.builtin.get_url:
+        url: https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
+        dest: /usr/share/keyrings/intel-sgx-deb.asc
+        mode: '0644'
+
+    - name: Intel's APT repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main"
+        state: present
+
+    - name: Update cache and install libtdx-attest-dev package
+      ansible.builtin.apt:
+        name: libtdx-attest-dev
+        update_cache: true
+
 - name: Download Cosmian VM agent
   ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm_agent
