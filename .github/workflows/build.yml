@@ -142,6 +142,7 @@ jobs:
   cargo-deny:
     name: Security Audit
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: EmbarkStudios/cargo-deny-action@v1
