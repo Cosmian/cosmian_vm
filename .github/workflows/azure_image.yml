@@ -186,7 +186,7 @@ jobs:
 
   test-ansible:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: contains(inputs.techno, 'sev') && contains(inputs.product, 'cosmian-vm')
+    if: startsWith(github.ref, 'refs/tags/') != true && contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -256,7 +256,6 @@ jobs:
           sleep 60
 
       - name: Ansible installation
-        if: startsWith(github.ref, 'refs/tags/') != true
         env:
           IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
         run: |
