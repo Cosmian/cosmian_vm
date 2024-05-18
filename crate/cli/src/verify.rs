@@ -33,12 +33,15 @@ impl VerifyArgs {
         let snapshot = fs::read_to_string(&self.snapshot)?;
         let snapshot: CosmianVmSnapshot = serde_json::from_str(&snapshot)?;
 
-        println!("Fetching the collaterals...");
+        println!(
+            "Fetching the collaterals... (cloud_type: {:?})",
+            snapshot.cloud_type
+        );
 
         let mut nonce: [u8; 32] = [0u8; 32];
 
         if let Some(cloud_type) = snapshot.cloud_type {
-            if cloud_type != CloudProvider::Azure {
+            if cloud_type != CloudProvider::Azure && cloud_type != CloudProvider::AWS {
                 // Random nonce for all cloud provider except Microsoft Azure
                 // because REPORT_DATA can't be set in quote
                 rand::thread_rng().fill_bytes(&mut nonce);

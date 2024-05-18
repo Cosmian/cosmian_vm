@@ -110,6 +110,7 @@
   delegate_to: localhost
   register: cmd_output
   changed_when: cmd_output.rc != 0
+  become: false
 
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
@@ -215,3 +216,4 @@
   delegate_to: localhost
   register: cmd_output
   changed_when: cmd_output.rc != 0
+  become: false

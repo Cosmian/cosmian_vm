@@ -13,21 +13,27 @@ jobs:
     name: Build binaries
     uses: ./.github/workflows/build.yml
 
-  azure:
-    needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/azure_main.yml
-    secrets: inherit
+  # azure:
+  #   needs: build-cosmian-vm-binaries
+  #   uses: ./.github/workflows/azure_main.yml
+  #   secrets: inherit
 
-  gcp:
+  # gcp:
+  #   needs: build-cosmian-vm-binaries
+  #   uses: ./.github/workflows/gcp_main.yml
+  #   secrets: inherit
+
+  aws:
     needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/gcp_main.yml
+    uses: ./.github/workflows/aws_main.yml
     secrets: inherit
 
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
     needs:
-      - azure
-      - gcp
+      # - azure
+      # - gcp
+      - aws
     secrets: inherit
     uses: ./.github/workflows/release.yml
