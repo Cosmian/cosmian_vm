@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [1.2.0] - 2024-05-XX
 
+### Features
+
+- Support Intel TDX on GCP and Azure ([#102](https://github.com/Cosmian/cosmian_vm/pull/102))
+
 ### Bug Fixes
 
 - Handle error in Ansible command
@@ -12,6 +16,16 @@ All notable changes to this project will be documented in this file.
 ### Documentation
 
 - Sync with public doc
+
+### Miscellaneous Tasks
+
+- Bump KMS version to 4.16.0
+
+### Ci
+
+- Add cargo deny in CI ([#106](https://github.com/Cosmian/cosmian_vm/pull/106))
+- Systematically clean cloud provider resources before and after ([#111](https://github.com/Cosmian/cosmian_vm/pull/111))
+- Run concurrency build by cloud provider ([#113](https://github.com/Cosmian/cosmian_vm/pull/113))
 
 ## [1.1.2] - 2024-05-06
 
