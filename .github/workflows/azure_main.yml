@@ -29,7 +29,26 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
+  build-test-azure-tdx-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu]
+        product: [cosmian-vm, kms]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
+    needs:
+      - clean-azure-resources
+    secrets: inherit
+    uses: ./.github/workflows/azure_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
   post-clean-azure-resources:
-    needs: build-test-azure-sev-image
+    needs:
+      - build-test-azure-sev-image
+      - build-test-azure-tdx-image
     uses: ./.github/workflows/azure_clean.yml
     secrets: inherit

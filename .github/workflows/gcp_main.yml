@@ -34,7 +34,31 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
+  build-test-gcp-tdx-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu]
+        product: [cosmian-vm, kms]
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
+    needs:
+      - clean-gcp-resources
+    secrets: inherit
+    uses: ./.github/workflows/gcp_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      machine-type: c3-standard-4
+      zone: us-central1-a
+      confidential-compute-type: TDX
+      min-cpu-platform: AUTOMATIC
+      mode: alpha
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
   post-clean-gcp-resources:
-    needs: build-test-gcp-sev-image
+    needs:
+      - build-test-gcp-sev-image
+      - build-test-gcp-tdx-image
     uses: ./.github/workflows/gcp_clean.yml
     secrets: inherit
