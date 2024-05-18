@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2024-05-XX
+
+### Bug Fixes
+
+- Handle error in Ansible command
+- Fix rust test `test_ratls_get_server_certificate`
+
+### Documentation
+
+- Sync with public doc
+
 ## [1.1.2] - 2024-05-06
 
 ### Features
