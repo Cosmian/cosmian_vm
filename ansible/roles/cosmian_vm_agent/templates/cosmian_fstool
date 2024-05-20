@@ -137,4 +137,6 @@ fi
 echo "Enrolling the TPM for this container..."
 PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
 
+/lib/systemd/systemd-cryptsetup attach $CONTAINER_MAPPING_NAME $CONTAINER_PATH - tpm2-device=auto,headless=true
+
 echo "Process completed with success!"

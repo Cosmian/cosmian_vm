@@ -100,7 +100,7 @@ impl VerifyArgs {
         let mut policy = snapshot.tee_policy;
 
         match snapshot.cloud_type {
-            Some(CloudProvider::GCP) | Some(CloudProvider::AWS) | None => {
+            Some(CloudProvider::GCP | CloudProvider::AWS) | None => {
                 policy.set_report_data(&forge_report_data_with_nonce(
                     &nonce,
                     &client.certificate.0,
