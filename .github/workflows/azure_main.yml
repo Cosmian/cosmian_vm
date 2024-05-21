@@ -8,11 +8,11 @@ concurrency:
 name: Azure images build
 
 jobs:
-  clean-azure-resources:
+  clean-resources:
     uses: ./.github/workflows/azure_clean.yml
     secrets: inherit
 
-  build-test-azure-sev-image:
+  sev-image:
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +20,7 @@ jobs:
         product: [cosmian-vm, kms]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
-      - clean-azure-resources
+      - clean-resources
     secrets: inherit
     uses: ./.github/workflows/azure_image.yml
     with:
@@ -29,7 +29,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
-  build-test-azure-tdx-image:
+  tdx-image:
     strategy:
       fail-fast: false
       matrix:
@@ -37,7 +37,7 @@ jobs:
         product: [cosmian-vm, kms]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
     needs:
-      - clean-azure-resources
+      - clean-resources
     secrets: inherit
     uses: ./.github/workflows/azure_image.yml
     with:
@@ -46,9 +46,9 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
-  post-clean-azure-resources:
+  post-clean-resources:
     needs:
-      - build-test-azure-sev-image
-      - build-test-azure-tdx-image
+      - sev-image
+      - tdx-image
     uses: ./.github/workflows/azure_clean.yml
     secrets: inherit

@@ -28,7 +28,7 @@ pub(crate) fn generate_encrypted_fs() -> Result<(), Error> {
         .map(char::from)
         .collect();
 
-    call(
+    let output = call(
         &std::env::var("COSMIAN_VM_FSTOOL").unwrap_or(FSTOOL_PATH.to_string()),
         &[
             "--size",
@@ -40,6 +40,10 @@ pub(crate) fn generate_encrypted_fs() -> Result<(), Error> {
         ],
         false,
     )?;
+
+    if let Some(output) = output {
+        tracing::info!("The cosmian_fstool output is: {}", output);
+    }
 
     tracing::info!("The container has been generated at: {FSTOOL_DEFAULT_CONTAINER_FILE:?} and is mounted at: {FSTOOL_DEFAULT_CONTAINER_MOUNT_POINT:?}");
 

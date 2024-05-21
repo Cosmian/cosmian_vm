@@ -9,6 +9,32 @@
   ansible.builtin.debug:
     var: inventory_hostname
 
+- name: Before any check - Read Cosmian VM agent logs
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u mount_luks
+  register: mount_luks_service_logs
+  changed_when: mount_luks_service_logs.rc != 0
+  tags: mount_luks_service_logs
+
+- name: Before any check - Display Mount LUKS service logs
+  ansible.builtin.debug:
+    var: mount_luks_service_logs
+  tags: mount_luks_service_logs
+
+- name: Before any check - Read Cosmian VM agent logs
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_vm_agent
+  register: agent_logs
+  changed_when: agent_logs.rc != 0
+  tags: snapshot
+
+- name: Before any check - Display Agent logs
+  ansible.builtin.debug:
+    var: agent_logs
+  tags: snapshot
+
 - name: Check if port 5555 is locally listening on {{ inventory_hostname }}
   ansible.builtin.wait_for:
     host: "{{ inventory_hostname }}"

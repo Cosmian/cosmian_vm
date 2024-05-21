@@ -8,11 +8,11 @@ concurrency:
 name: GCP images build
 
 jobs:
-  clean-gcp-resources:
+  clean-resources:
     uses: ./.github/workflows/gcp_clean.yml
     secrets: inherit
 
-  build-test-gcp-sev-image:
+  sev-image:
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +20,7 @@ jobs:
         product: [cosmian-vm, kms]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
-      - clean-gcp-resources
+      - clean-resources
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
     with:
@@ -34,7 +34,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
-  build-test-gcp-tdx-image:
+  tdx-image:
     strategy:
       fail-fast: false
       matrix:
@@ -42,7 +42,7 @@ jobs:
         product: [cosmian-vm, kms]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
     needs:
-      - clean-gcp-resources
+      - clean-resources
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
     with:
@@ -58,7 +58,7 @@ jobs:
 
   post-clean-gcp-resources:
     needs:
-      - build-test-gcp-sev-image
-      - build-test-gcp-tdx-image
+      - sev-image
+      - tdx-image
     uses: ./.github/workflows/gcp_clean.yml
     secrets: inherit

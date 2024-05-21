@@ -136,6 +136,7 @@
     owner: root
     group: root
     mode: "0700"
+  tags: mount_luks_service
 
 - name: Add Mount LUKS systemd service
   ansible.builtin.template:
@@ -144,6 +145,7 @@
     owner: root
     group: root
     mode: "0644"
+  tags: mount_luks_service
 
 - name: Check if Mount LUKS is enabled but stopped
   ansible.builtin.systemd_service:
@@ -151,6 +153,7 @@
     enabled: true
     state: stopped
     daemon_reload: true
+  tags: mount_luks_service
 
 - name: Add Cosmian VM systemd service
   ansible.builtin.template:
