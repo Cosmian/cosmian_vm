@@ -9,7 +9,6 @@ source "amazon-ebssurrogate" "TEMPLATE_DISTRIBUTION" {
   ena_support             = true
   tpm_support             = "TEMPLATE_SUPPORT"
   boot_mode               = "uefi"
-  imds_support            = "TEMPLATE_SUPPORT"
 
   launch_block_device_mappings {
     volume_type           = "gp3"
