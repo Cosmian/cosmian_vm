@@ -26,6 +26,7 @@ pub async fn which_cloud_provider() -> Option<CloudProvider> {
         .finish();
 
     // Azure
+    tracing::debug!("Cosmian VM Agent: which_cloud_provider: try Azure");
     let req = client
         .get(format!("{METADATA_URL}{AZURE_ENDPOINT}"))
         .insert_header(("Metadata", "true"));
@@ -42,6 +43,7 @@ pub async fn which_cloud_provider() -> Option<CloudProvider> {
     }
 
     // GCP
+    tracing::debug!("Cosmian VM Agent: which_cloud_provider: try GCP");
     let req = client
         .get(format!("{METADATA_URL}{GCP_ENDPOINT}"))
         .insert_header(("Metadata-Flavor", "Google"));
@@ -53,6 +55,7 @@ pub async fn which_cloud_provider() -> Option<CloudProvider> {
     }
 
     // AWS
+    tracing::debug!("Cosmian VM Agent: which_cloud_provider: try AWS");
     let req = client.get(format!("{METADATA_URL}{AWS_ENDPOINT}"));
 
     if let Ok(res) = req.send().await {

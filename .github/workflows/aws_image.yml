@@ -295,4 +295,3 @@ jobs:
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
           timeout 10m bash -c "until aws ec2 describe-instances --instance-ids $CI_INSTANCE_ID --query 'Reservations[].Instances[].State[].Name[]' --output text | grep -q terminated; do sleep 60; done"
           aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg
-
