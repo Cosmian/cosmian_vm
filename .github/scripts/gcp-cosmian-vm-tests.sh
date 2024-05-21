@@ -9,6 +9,8 @@ IP_ADDR=$4
 
 sudo apt-get install -y jq moreutils
 
+sha256sum cosmian_vm
+
 echo "Waiting for Cosmian VM agent (${IP_ADDR}:5555)..."
 timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
 

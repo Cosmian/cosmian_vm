@@ -70,6 +70,7 @@
 - name: Cosmian VM snapshot
   ansible.builtin.command:
     cmd: |
+      sha256sum cosmian_vm
       ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls snapshot
   register: cosmian_vm_output
   delegate_to: localhost
