@@ -185,7 +185,7 @@ jobs:
           export SNAPSHOT_ID=$(aws ec2 describe-images --filters "Name=name,Values=$IMAGE_NAME" --query 'Images[].BlockDeviceMappings[].Ebs[].SnapshotId[]' --output text)
 
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
-          timeout 10m bash -c "until aws ec2 describe-instance-status --instance-ids $CI_INSTANCE_ID --query 'Instances[].State[].Name[]' --output text | grep -q terminated; do sleep 60; done"
+          timeout 10m bash -c "until aws ec2 describe-instances --instance-ids $CI_INSTANCE_ID --query 'Reservations[].Instances[].State[].Name[]' --output text | grep -q terminated; do sleep 60; done"
           aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ci-sg
           aws ec2 deregister-image --image-id $IMAGE_TO_DELETE
           aws ec2 delete-snapshot --snapshot-id $SNAPSHOT_ID
@@ -227,16 +227,16 @@ jobs:
           chmod 400 $HOME/packer.pem
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ci-sg --description "Security group for ansible test"
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
+            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
           else
-            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ci-sg --description "Security group for ansible test"
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
+            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
@@ -251,7 +251,7 @@ jobs:
           --instance-type ${{ inputs.machine-type }} \
           --cpu-options AmdSevSnp=enabled \
           --key-name packer \
-          --security-groups ${CI_INSTANCE}-ci-sg
+          --security-groups ${CI_INSTANCE}-ansible-sg
 
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
@@ -293,5 +293,6 @@ jobs:
           set +e
           export CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
-          timeout 10m bash -c "until aws ec2 describe-instance-status --instance-ids $CI_INSTANCE_ID --query 'Instances[].State[].Name[]' --output text | grep -q terminated; do sleep 60; done"
-          aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ci-sg
+          timeout 10m bash -c "until aws ec2 describe-instances --instance-ids $CI_INSTANCE_ID --query 'Reservations[].Instances[].State[].Name[]' --output text | grep -q terminated; do sleep 60; done"
+          aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg
+
