@@ -3,12 +3,7 @@
 set -ex
 
 # unlock the partition
-if [ -f /var/lib/cosmian_vm/container ]; then
 /lib/systemd/systemd-cryptsetup attach cosmian_vm_container /var/lib/cosmian_vm/container - tpm2-device=auto,headless=true
 
 # mount the partition
 mount /dev/mapper/cosmian_vm_container /var/lib/cosmian_vm/data
-exit 0
-fi
-
-exit 1

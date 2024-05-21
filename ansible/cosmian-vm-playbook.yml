@@ -13,5 +13,4 @@
   hosts: all
   become: true
   roles:
-    - start_cosmian_vm
     - check_cosmian_vm
