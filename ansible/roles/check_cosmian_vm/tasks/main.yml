@@ -52,7 +52,7 @@
     var: agent_logs
   tags: snapshot
 
-- name: Wait certificate is generated /var/lib/cosmian_vm/data/cert.pem
+- name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
   ansible.builtin.wait_for:
     path: /var/lib/cosmian_vm/data/cert.pem
     state: present
@@ -72,6 +72,11 @@
     url: https://localhost:5555/ima/ascii
     validate_certs: false
   tags: listening
+
+- name: Wait for LUKS password generation
+  ansible.builtin.wait_for:
+    path: /var/lib/cosmian_vm/data/luks_password
+    state: present
 
 - name: Read LUKS password
   ansible.builtin.slurp:

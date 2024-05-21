@@ -9,7 +9,7 @@
 - name: Install Cosmian VM Agent
   ansible.builtin.import_playbook: cosmian-vm-packer-playbook.yml
 
-- name: Start and check Cosmian VM
+- name: Check Cosmian VM
   hosts: all
   become: true
   roles:
