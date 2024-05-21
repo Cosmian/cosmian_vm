@@ -108,7 +108,7 @@ echo "Creating a $CONTAINER_SIZE container..."
 fallocate -l "$CONTAINER_SIZE" "$CONTAINER_PATH"
 
 # Encrypt the container (a password is required to run this command)
-echo "Encrypting the container (with password=$PASSWORD)..."
+echo "Encrypting the container (with password=${PASSWORD})..."
 echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" -d -
 
 # Open the container and map it (a password is required to run this command)
@@ -136,5 +136,10 @@ fi
 # Details on PCRs: https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
 echo "Enrolling the TPM for this container on block device $BLOCK_DEVICE..."
 PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
+
+# Display debug information
+set -x
+cryptsetup luksDump $CONTAINER_PATH
+set +x
 
 echo "Process completed with success!"

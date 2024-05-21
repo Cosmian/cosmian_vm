@@ -1,13 +1,25 @@
 ---
 # tasks file for check cosmian vm
 
-- name: Check Cosmian VM Agent version
+- name: Display Cosmian VM Agent version
   ansible.builtin.debug:
     var: cosmian_vm_version
 
-- name: Check remote host IP
+- name: Display remote host IP
   ansible.builtin.debug:
     var: inventory_hostname
+
+- name: Before any check - LUKS dump
+  ansible.builtin.command:
+    cmd: |
+      cryptsetup luksDump /var/lib/cosmian_vm/container
+  register: cryptsetup_luks_dump
+  changed_when: cryptsetup_luks_dump.rc != 0
+  tags: cryptsetup_luks_dump
+
+- name: Display LUKS dump
+  ansible.builtin.debug:
+    var: cryptsetup_luks_dump
 
 - name: Before any check - Read Cosmian VM agent logs
   ansible.builtin.command:
@@ -67,10 +79,21 @@
   delegate_to: localhost
   become: false
 
+- name: Compute cosmian_vm hash
+  ansible.builtin.stat:
+    path: ./cosmian_vm
+    checksum_algorithm: sha256
+  delegate_to: localhost
+  become: false
+  register: cosmian_vm_hash
+
+- name: Check Cosmian VM hash
+  ansible.builtin.debug:
+    var: cosmian_vm_hash
+
 - name: Cosmian VM snapshot
   ansible.builtin.command:
     cmd: |
-      sha256sum cosmian_vm
       ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls snapshot
   register: cosmian_vm_output
   delegate_to: localhost

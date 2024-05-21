@@ -1,11 +1,16 @@
 ---
 # tasks file for launch
 
-- name: Make sure Cosmian VM agent service is running
-  ansible.builtin.systemd_service:
-    name: cosmian_vm_agent
-    state: started
-  tags: launch
+- name: Reboot before anything
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600
+
+# - name: Make sure Cosmian VM agent service is running
+#   ansible.builtin.systemd_service:
+#     name: cosmian_vm_agent
+#     state: restarted
+#   tags: launch
 
 - name: Wait certificate is generated /var/lib/cosmian_vm/data/cert.pem
   ansible.builtin.wait_for:
@@ -28,16 +33,11 @@
     validate_certs: false
   tags: listening
 
-- name: Read LUKS password
-  ansible.builtin.slurp:
-    src: /var/lib/cosmian_vm/data/luks_password
-  register: luks_password
+# - name: Read LUKS password
+#   ansible.builtin.slurp:
+#     src: /var/lib/cosmian_vm/data/luks_password
+#   register: luks_password
 
-- name: Display LUKS password
-  ansible.builtin.debug:
-    var: "{{ luks_password['content'] | b64decode }}"
-
-- name: Reboot since all checks pass
-  ansible.builtin.reboot:
-    connect_timeout: 3600
-    reboot_timeout: 3600
+# - name: Display LUKS password
+#   ansible.builtin.debug:
+#     var: "{{ luks_password['content'] | b64decode }}"
