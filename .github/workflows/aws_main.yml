@@ -8,11 +8,11 @@ concurrency:
 name: AWS images build
 
 jobs:
-  clean-aws-resources:
+  clean-resources:
     uses: ./.github/workflows/aws_clean.yml
     secrets: inherit
 
-  build-test-aws-sev-image:
+  sev-image:
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +20,7 @@ jobs:
         product: [cosmian-vm, kms]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
-      - clean-aws-resources
+      - clean-resources
     secrets: inherit
     uses: ./.github/workflows/aws_image.yml
     with:
@@ -30,7 +30,7 @@ jobs:
       kms-version: 4.16.0
       machine-type: c6a.large
 
-  post-clean-aws-resources:
-    needs: build-test-aws-sev-image
+  post-clean-resources:
+    needs: sev-image
     uses: ./.github/workflows/aws_clean.yml
     secrets: inherit
