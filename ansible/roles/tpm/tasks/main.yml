@@ -65,3 +65,8 @@
         name: tpm2-tss
         state: present
         update_cache: true
+
+- name: Reboot since TPM support has been installed
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600

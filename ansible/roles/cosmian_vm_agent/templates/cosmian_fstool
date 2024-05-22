@@ -120,7 +120,7 @@ echo "Formatting the container in Ext4..."
 mkfs -t ext4 "$CONTAINER_MAPPING_PATH"
 
 # Mount it
-echo "Mouting the container at $CONTAINER_MOUNT_PATH..."
+echo "Mounting the container at $CONTAINER_MOUNT_PATH..."
 mkdir -p "$CONTAINER_MOUNT_PATH"
 mount "$CONTAINER_MAPPING_PATH" "$CONTAINER_MOUNT_PATH"
 
