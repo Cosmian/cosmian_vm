@@ -31,7 +31,7 @@ else
     aws ec2 run-instances \
       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME}]" \
       --image-id ami-0f523b3f4402ef624 \
-      --instance-type c6a.large \
+      --instance-type c6a.xlarge \
       --cpu-options AmdSevSnp=enabled \
       --key-name packer \
       --security-groups "$NAME-ansible-sg" \
