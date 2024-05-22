@@ -21,7 +21,7 @@ on:
         type: string
 
 env:
-  AWS_REGION: eu-west-1
+  AWS_REGION: us-east-2
 
 jobs:
   build-image:
@@ -63,7 +63,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: us-east-2
 
       - name: Packer build image
         if: startsWith(github.ref, 'refs/tags/') != true
@@ -105,7 +105,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: us-east-2
 
       - name: Launch AWS instance
         id: run-aws-instance
@@ -117,22 +117,18 @@ jobs:
 
           IMAGE_TO_INSTANTIATE=$(aws ec2 describe-images --filters "Name=name,Values=$IMAGE_NAME" --query 'Images[].ImageId' --output text)
 
-          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ci-sg --description "Security group for image test"
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
-          else
-            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ci-sg --description "Security group for image test"
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
+          aws ec2 create-security-group --group-name ${CI_INSTANCE}-ci-sg --description "Security group for image test"
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
+          if [ "${{ inputs.product }}" = "kms" ]; then
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
           fi
 
           timeout 40m bash -c "until
           aws ec2 run-instances \
-          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=$CI_INSTANCE}]' \
+          --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value=$CI_INSTANCE}] \
           --image-id ${IMAGE_TO_INSTANTIATE} \
           --instance-type ${{ inputs.machine-type }} \
           --cpu-options AmdSevSnp=enabled \
@@ -194,7 +190,6 @@ jobs:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     if: startsWith(github.ref, 'refs/tags/') != true && contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
-    needs: test-image
     permissions:
       contents: read
       id-token: write
@@ -214,7 +209,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: us-east-2
 
       - name: Launch AWS instance
         id: run-aws-instance
@@ -227,16 +222,12 @@ jobs:
           echo "$SSH_KEY" > $HOME/packer.pem
           chmod 400 $HOME/packer.pem
 
-          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
-          else
-            aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
+          aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
+          if [ "${{ inputs.product }}" = "kms" ]; then
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
           fi
 
@@ -247,7 +238,7 @@ jobs:
           fi
 
           aws ec2 run-instances \
-          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]' \
+          --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
           --image-id $IMAGE_TO_INSTANTIATE \
           --instance-type ${{ inputs.machine-type }} \
           --cpu-options AmdSevSnp=enabled \

@@ -14,7 +14,6 @@ jobs:
 
   sev-image:
     strategy:
-      max-parallel: 1 # too many troubles with EC2 lagging machines
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]

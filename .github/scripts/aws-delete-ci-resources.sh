@@ -3,7 +3,7 @@
 set +e
 
 # Set your AWS region
-REGION="eu-west-1"
+REGION="us-east-2"
 
 # List all EC2 instance IDs and extract instance IDs
 instance_ids=$(aws ec2 describe-instances --query 'Reservations[].Instances[].InstanceId' --region "$REGION" --output text)
