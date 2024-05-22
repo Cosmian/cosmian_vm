@@ -25,13 +25,14 @@ set -ex
 
 if [ "$TECHNO" = "tdx" ]; then
   # Ubuntu TDX
+  true
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV
     aws ec2 run-instances \
       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME}]" \
       --image-id ami-0f523b3f4402ef624 \
-      --instance-type c6a.8xlarge \
+      --instance-type c6a.xlarge \
       --cpu-options AmdSevSnp=enabled \
       --key-name packer \
       --security-groups "$NAME-ansible-sg" \
@@ -45,5 +46,6 @@ else
     echo $IP_ADDR
   else
     # Redhat SEV
+    true
   fi
 fi
