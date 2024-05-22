@@ -186,13 +186,6 @@
         name: firewalld
         state: started
 
-    - name: Open port 22
-      ansible.posix.firewalld:
-        zone: public
-        port: 22/tcp
-        permanent: true
-        state: enabled
-
     - name: Open port 5555
       ansible.posix.firewalld:
         zone: public
