@@ -173,6 +173,19 @@
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'
   block:
+    - name: Install packages
+      ansible.builtin.dnf:
+        name:
+          - python-firewall
+          - firewalld
+        state: present
+        update_cache: true
+
+    - name: Start firewalld service
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+
     - name: Open port 5555
       ansible.posix.firewalld:
         zone: public

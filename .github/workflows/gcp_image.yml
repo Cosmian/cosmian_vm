@@ -39,7 +39,6 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -104,7 +103,6 @@ jobs:
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
-    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     needs: build-image
     permissions:
       contents: read
@@ -209,7 +207,6 @@ jobs:
 
   test-ansible:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: startsWith(github.ref, 'refs/tags/') != true && contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -269,7 +266,7 @@ jobs:
             $IMAGE_OPTIONS \
             --tags $CI_INSTANCE-fw \
             --maintenance-policy=TERMINATE \
-            --max-run-duration=30m \
+            --max-run-duration=120m \
             --instance-termination-action=DELETE \
             --metadata=ssh-keys="cosmian:$PUBKEY"
           IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})

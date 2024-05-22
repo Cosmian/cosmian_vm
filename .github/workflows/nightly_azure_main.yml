@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu]
-        product: [cosmian-vm]
+        distrib: [ubuntu, rhel]
+        product: [cosmian-vm, kms]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -29,8 +29,26 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
+  tdx-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu]
+        product: [cosmian-vm, kms]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
+    needs:
+      - clean-resources
+    secrets: inherit
+    uses: ./.github/workflows/azure_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
   post-clean-resources:
     needs:
       - sev-image
+      - tdx-image
     uses: ./.github/workflows/azure_clean.yml
     secrets: inherit

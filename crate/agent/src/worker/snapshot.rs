@@ -142,6 +142,8 @@ async fn do_snapshot(tpm_device: Option<PathBuf>) -> Result<CosmianVmSnapshot, E
     let tee_policy = TeePolicy::try_from(tee_quote.as_ref())?;
     let cloud_type = which_cloud_provider().await;
 
+    tracing::info!("Cosmian VM Agent: do_snapshot: {cloud_type:?}");
+
     let (filehashes, tpm_policy) = match tpm_device {
         None => (None, None),
         Some(tpm_device) => {

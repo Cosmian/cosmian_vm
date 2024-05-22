@@ -3,13 +3,13 @@ on:
   workflow_call:
 
 concurrency:
-  group: marketplace_azure
+  group: marketplace_aws
 
-name: Azure images build
+name: AWS images build
 
 jobs:
   clean-resources:
-    uses: ./.github/workflows/azure_clean.yml
+    uses: ./.github/workflows/aws_clean.yml
     secrets: inherit
 
   sev-image:
@@ -18,19 +18,19 @@ jobs:
       matrix:
         distrib: [ubuntu]
         product: [cosmian-vm]
-    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
     secrets: inherit
-    uses: ./.github/workflows/azure_image.yml
+    uses: ./.github/workflows/aws_image.yml
     with:
       techno: sev
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      machine-type: c6a.2xlarge
 
   post-clean-resources:
-    needs:
-      - sev-image
-    uses: ./.github/workflows/azure_clean.yml
+    needs: sev-image
+    uses: ./.github/workflows/aws_clean.yml
     secrets: inherit
