@@ -194,6 +194,7 @@ jobs:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     if: startsWith(github.ref, 'refs/tags/') != true && contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
+    needs: test-image
     permissions:
       contents: read
       id-token: write
