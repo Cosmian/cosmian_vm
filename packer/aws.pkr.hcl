@@ -1,6 +1,6 @@
 source "amazon-ebssurrogate" "TEMPLATE_DISTRIBUTION" {
   source_ami              = "TEMPLATE_SOURCE_AMI"
-  region                  = "eu-west-1"
+  region                  = "us-east-2"
   ssh_username            = "TEMPLATE_SSH_USERNAME"
   ami_name                = "TEMPLATE_IMAGE_NAME"
   instance_type           = "c6a.large"
