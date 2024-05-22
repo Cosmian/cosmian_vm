@@ -1,9 +1,15 @@
 ---
-on:
-  # Run only on pull requests
-  pull_request:
+name: Cloud providers nightly
 
-name: Cloud providers
+on:
+  push:
+    # any tags, including tags with / like v1.0/alpha
+    tags:
+      - '**'
+  schedule:
+    # every day at 1 AM
+    - cron: 00 1 * * *
+  workflow_dispatch:
 
 jobs:
   build-cosmian-vm-binaries:
@@ -12,17 +18,17 @@ jobs:
 
   azure:
     needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/azure_main.yml
+    uses: ./.github/workflows/nightly_azure_main.yml
     secrets: inherit
 
   gcp:
     needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/gcp_main.yml
+    uses: ./.github/workflows/nightly_gcp_main.yml
     secrets: inherit
 
   aws:
     needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/aws_main.yml
+    uses: ./.github/workflows/nightly_aws_main.yml
     secrets: inherit
 
   release:
