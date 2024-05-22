@@ -21,7 +21,7 @@ on:
         type: string
 
 env:
-  AWS_REGION: us-east-2
+  AWS_REGION: eu-west-1
 
 jobs:
   build-image:
@@ -63,7 +63,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          aws-region: eu-west-1
 
       - name: Packer build image
         if: startsWith(github.ref, 'refs/tags/') != true
@@ -105,7 +105,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          aws-region: eu-west-1
 
       - name: Launch AWS instance
         id: run-aws-instance
@@ -209,7 +209,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          aws-region: eu-west-1
 
       - name: Launch AWS instance
         id: run-aws-instance
