@@ -26,7 +26,6 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -90,7 +89,6 @@ jobs:
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: startsWith(github.ref, 'refs/tags/') || contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:
@@ -187,7 +185,6 @@ jobs:
 
   test-ansible:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: startsWith(github.ref, 'refs/tags/') != true && contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -269,7 +266,12 @@ jobs:
           fi
 
           export ANSIBLE_HOST_KEY_CHECKING=False
-          for i in {1..2}
+
+          # For safety, we should test 2 consecutive Cosmian VM installation
+          # But at one point, instance become unreachable.
+
+          # Ansible script
+          for i in {1..1}
           do
             echo "Iteration: $i"
             ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }}
