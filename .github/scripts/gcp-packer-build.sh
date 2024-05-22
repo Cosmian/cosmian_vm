@@ -9,7 +9,11 @@ COSMIAN_VM_VERSION=$3
 set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
-  SOURCE_IMAGE="ubuntu-2204-jammy-v20240319"
+  if [ "$TECHNO" = "sev" ]; then
+    SOURCE_IMAGE="ubuntu-2204-jammy-v20240319"
+  else
+    SOURCE_IMAGE="ubuntu-2204-tdx-v20240220"
+  fi
   SOURCE_IMAGE_FAMILY="ubuntu-2204-lts"
   GOOGLE_COMPUTE="ubuntu"
 else

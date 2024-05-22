@@ -82,6 +82,7 @@ jobs:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           KMS_VERSION: ${{ inputs.kms-version }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
@@ -94,6 +95,7 @@ jobs:
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           VERSION: ${{ github.ref_name }}
           KMS_VERSION: ${{ inputs.kms-version }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
           COSMIAN_VM_VERSION="$VERSION"
@@ -207,7 +209,7 @@ jobs:
 
   test-ansible:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: contains(inputs.distrib, 'ubuntu') && contains(inputs.product, 'cosmian-vm')
+    if: startsWith(github.ref, 'refs/tags/') != true && contains(inputs.product, 'cosmian-vm')
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -242,11 +244,16 @@ jobs:
           set -ex
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            IMAGE_NAME="ubuntu-2204-jammy-v20240501"
-            IMAGE_PROJECT="ubuntu-os-cloud"
+            IMAGE_OPTIONS="--image-project=ubuntu-os-cloud --project $GCP_DEV_PROJECT"
+            if [ "${{ inputs.techno }}" = "sev" ]; then
+              IMAGE_NAME="ubuntu-2204-jammy-v20240501"
+            else
+              IMAGE_NAME="ubuntu-2204-tdx-v20240220"
+              IMAGE_OPTIONS=""
+            fi
           else
+            IMAGE_OPTIONS="--image-project=rhel-cloud --project $GCP_DEV_PROJECT"
             IMAGE_NAME="rhel-9-v20240415"
-            IMAGE_PROJECT="rhel-cloud"
           fi
 
           ssh-keygen -t rsa -b 4096 -C "$CI_INSTANCE@example.com" -f $HOME/.ssh/id_rsa -q -N ""
@@ -259,8 +266,7 @@ jobs:
             --confidential-compute-type=${{ inputs.confidential-compute-type }} \
             --shielded-secure-boot \
             --image="$IMAGE_NAME" \
-            --image-project=$IMAGE_PROJECT \
-            --project $GCP_DEV_PROJECT \
+            $IMAGE_OPTIONS \
             --tags $CI_INSTANCE-fw \
             --maintenance-policy=TERMINATE \
             --max-run-duration=30m \
@@ -289,7 +295,6 @@ jobs:
           fi
 
       - name: Ansible installation
-        if: startsWith(github.ref, 'refs/tags/') != true
         env:
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
         run: |

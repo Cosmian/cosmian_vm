@@ -17,7 +17,7 @@ source "azure-arm" "TEMPLATE_DISTRIBUTION" {
     subscription         = "TEMPLATE_SUBSCRIPTION_ID"
     resource_group       = "packer-snp"
     gallery_name         = "cosmian_packer"
-    image_name           = "TEMPLATE_PRODUCT-TEMPLATE_DISTRIBUTION"
+    image_name           = "TEMPLATE_PRODUCT-TEMPLATE_DISTRIBUTION-TEMPLATE_TECHNO"
     image_version        = "TEMPLATE_AZURE_IMAGE_VERSION"
     storage_account_type = "Standard_LRS"
     target_region {

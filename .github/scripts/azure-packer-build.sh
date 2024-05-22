@@ -28,6 +28,13 @@ else
   AZURE_IMAGE_VERSION="$KMS_VERSION"
 fi
 
+if [ "$TECHNO" = "sev" ]; then
+  VM_SIZE="Standard_DC2ads_v5"
+else
+  # TDX
+  VM_SIZE="Standard_DC2es_v5"
+fi
+
 PACKER_FILE="azure.pkr.hcl"
 
 sed -i "s#TEMPLATE_PRODUCT#$PRODUCT#g" "$PACKER_FILE"
@@ -38,6 +45,7 @@ sed -i "s#TEMPLATE_SUBSCRIPTION_ID#$SUBSCRIPTION_ID#g" "$PACKER_FILE"
 sed -i "s#TEMPLATE_CLIENT_SECRET#$CLIENT_SECRET#g" "$PACKER_FILE"
 
 sed -i "s#TEMPLATE_DISTRIBUTION#$DISTRIBUTION#g" "$PACKER_FILE"
+sed -i "s#TEMPLATE_TECHNO#$TECHNO#g" "$PACKER_FILE"
 sed -i "s#TEMPLATE_RESOURCE_GROUP#$RESOURCE_GROUP#g" "$PACKER_FILE"
 
 sed -i "s#TEMPLATE_IMAGE_PUBLISHER#$IMAGE_PUBLISHER#g" "$PACKER_FILE"
@@ -55,4 +63,4 @@ cat "$PACKER_FILE"
 packer init "$PACKER_FILE"
 
 # Since packer build fails randomly because of external resources use, retry packer build until it succeeds
-timeout 35m bash -c "until packer build -force $PACKER_FILE; do sleep 30; done"
+timeout 60m bash -c "until packer build -force $PACKER_FILE; do sleep 30; done"

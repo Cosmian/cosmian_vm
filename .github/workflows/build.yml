@@ -11,7 +11,9 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
+          sudo curl -fsSLo /usr/share/keyrings/intel-sgx-deb.asc https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/intel-sgx.list
+          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev libtdx-attest-dev
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,8 +55,9 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
-
+          sudo curl -fsSLo /usr/share/keyrings/intel-sgx-deb.asc https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/intel-sgx.list
+          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev libtdx-attest-dev
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -80,8 +83,9 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev
-
+          sudo curl -fsSLo /usr/share/keyrings/intel-sgx-deb.asc https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/intel-sgx.list
+          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev libtdx-attest-dev
       - name: Checkout
         uses: actions/checkout@v4
 

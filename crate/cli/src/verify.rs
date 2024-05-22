@@ -7,7 +7,10 @@ use cosmian_vm_client::{
 };
 use rand::RngCore;
 use std::{fs, path::PathBuf};
-use tee_attestation::{forge_report_data_with_nonce, verify_quote as tee_verify_quote};
+use tee_attestation::{
+    az_verify_quote as az_tee_verify_quote, forge_report_data_with_nonce,
+    verify_quote as tee_verify_quote,
+};
 use tokio::task::spawn_blocking;
 use tpm_quote::verify_quote as tpm_verify_quote;
 
@@ -96,17 +99,18 @@ impl VerifyArgs {
 
         let mut policy = snapshot.tee_policy;
 
-        if let Some(cloud_type) = snapshot.cloud_type {
-            // REPORT_DATA can't be set on Microsoft Azure
-            if cloud_type != CloudProvider::Azure {
+        match snapshot.cloud_type {
+            Some(CloudProvider::GCP | CloudProvider::AWS) | None => {
                 policy.set_report_data(&forge_report_data_with_nonce(
                     &nonce,
                     &client.certificate.0,
                 )?)?;
+                spawn_blocking(move || tee_verify_quote(&quote, Some(&policy))).await??;
+            }
+            Some(CloudProvider::Azure) => {
+                spawn_blocking(move || az_tee_verify_quote(&quote, &policy)).await??;
             }
         }
-
-        spawn_blocking(move || tee_verify_quote(&quote, Some(&policy))).await??;
 
         println!("[ OK ] Verifying TEE attestation");
 

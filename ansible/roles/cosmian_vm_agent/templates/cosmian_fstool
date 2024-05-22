@@ -108,7 +108,7 @@ echo "Creating a $CONTAINER_SIZE container..."
 fallocate -l "$CONTAINER_SIZE" "$CONTAINER_PATH"
 
 # Encrypt the container (a password is required to run this command)
-echo "Encrypting the container (with password=$PASSWORD)..."
+echo "Encrypting the container (with password=${PASSWORD})..."
 echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" -d -
 
 # Open the container and map it (a password is required to run this command)
@@ -120,7 +120,7 @@ echo "Formatting the container in Ext4..."
 mkfs -t ext4 "$CONTAINER_MAPPING_PATH"
 
 # Mount it
-echo "Mouting the container at $CONTAINER_MOUNT_PATH..."
+echo "Mounting the container at $CONTAINER_MOUNT_PATH..."
 mkdir -p "$CONTAINER_MOUNT_PATH"
 mount "$CONTAINER_MAPPING_PATH" "$CONTAINER_MOUNT_PATH"
 
@@ -134,7 +134,19 @@ fi
 
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
 # Details on PCRs: https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
-echo "Enrolling the TPM for this container..."
+echo "Enrolling the TPM for this container on block device $BLOCK_DEVICE..."
+
+set +e
 PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
+if [ $? -ne 0 ]; then
+    # Need to clean container after failure
+    rm -f "$CONTAINER_PATH"
+    exit 1
+fi
+
+# Display debug information
+set -x
+cryptsetup luksDump $CONTAINER_PATH
+set +x
 
 echo "Process completed with success!"

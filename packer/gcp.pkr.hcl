@@ -6,7 +6,7 @@ source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
   ssh_username            = "root"
   ssh_timeout             = "5m"
   image_name              = "TEMPLATE_IMAGE_NAME"
-  image_guest_os_features = ["SEV_SNP_CAPABLE"]
+  image_guest_os_features = ["SEV_SNP_CAPABLE"] # Fix on TDX
   network                 = "default"
   subnetwork              = "default"
   tags                    = ["ssh"]
