@@ -126,13 +126,13 @@ jobs:
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
           fi
 
-          timeout 40m bash -c "until
           aws ec2 run-instances \
-          --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value=$CI_INSTANCE}] \
-          --image-id ${IMAGE_TO_INSTANTIATE} \
-          --instance-type ${{ inputs.machine-type }} \
-          --cpu-options AmdSevSnp=enabled \
-          --security-groups ${CI_INSTANCE}-ci-sg; do sleep 60; done"
+            --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$CI_INSTANCE}]" \
+            --image-id ${IMAGE_TO_INSTANTIATE} \
+            --instance-type ${{ inputs.machine-type }} \
+            --cpu-options AmdSevSnp=enabled \
+            --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+            --security-groups ${CI_INSTANCE}-ci-sg
 
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
@@ -181,7 +181,6 @@ jobs:
           export SNAPSHOT_ID=$(aws ec2 describe-images --filters "Name=name,Values=$IMAGE_NAME" --query 'Images[].BlockDeviceMappings[].Ebs[].SnapshotId[]' --output text)
 
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
-          timeout 10m bash -c "until aws ec2 describe-instances --instance-ids $CI_INSTANCE_ID --query 'Reservations[].Instances[].State[].Name[]' --output text | grep -q terminated; do sleep 60; done"
           aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ci-sg
           aws ec2 deregister-image --image-id $IMAGE_TO_DELETE
           aws ec2 delete-snapshot --snapshot-id $SNAPSHOT_ID
@@ -238,12 +237,13 @@ jobs:
           fi
 
           aws ec2 run-instances \
-          --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
-          --image-id $IMAGE_TO_INSTANTIATE \
-          --instance-type ${{ inputs.machine-type }} \
-          --cpu-options AmdSevSnp=enabled \
-          --key-name packer \
-          --security-groups ${CI_INSTANCE}-ansible-sg
+            --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
+            --image-id $IMAGE_TO_INSTANTIATE \
+            --instance-type ${{ inputs.machine-type }} \
+            --cpu-options AmdSevSnp=enabled \
+            --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+            --key-name packer \
+            --security-groups ${CI_INSTANCE}-ansible-sg
 
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
@@ -284,5 +284,4 @@ jobs:
           set +e
           export CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
-          timeout 10m bash -c "until aws ec2 describe-instances --instance-ids $CI_INSTANCE_ID --query 'Reservations[].Instances[].State[].Name[]' --output text | grep -q terminated; do sleep 60; done"
           aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg
