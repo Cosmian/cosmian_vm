@@ -135,7 +135,14 @@ fi
 # Enroll the TPM to decrypt the luks without password (a password is required to run this command)
 # Details on PCRs: https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
 echo "Enrolling the TPM for this container on block device $BLOCK_DEVICE..."
+
+set +e
 PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
+if [ $? -ne 0 ]; then
+    # Need to clean container after failure
+    rm -f "$CONTAINER_PATH"
+    exit 1
+fi
 
 # Display debug information
 set -x
