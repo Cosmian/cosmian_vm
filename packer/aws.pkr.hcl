@@ -3,7 +3,7 @@ source "amazon-ebssurrogate" "TEMPLATE_DISTRIBUTION" {
   region                  = "eu-west-1"
   ssh_username            = "TEMPLATE_SSH_USERNAME"
   ami_name                = "TEMPLATE_IMAGE_NAME"
-  instance_type           = "c6a.xlarge"
+  instance_type           = "c6a.2xlarge"
   ssh_timeout             = "5m"
   ami_virtualization_type = "hvm"
   ena_support             = true

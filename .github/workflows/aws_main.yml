@@ -28,7 +28,7 @@ jobs:
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
-      machine-type: c6a.xlarge
+      machine-type: c6a.2xlarge
 
   post-clean-resources:
     needs: sev-image
