@@ -180,8 +180,8 @@ jobs:
           export IMAGE_TO_DELETE=$(aws ec2 describe-images --filters "Name=name,Values=$IMAGE_NAME" --query 'Images[].ImageId' --output text)
           export SNAPSHOT_ID=$(aws ec2 describe-images --filters "Name=name,Values=$IMAGE_NAME" --query 'Images[].BlockDeviceMappings[].Ebs[].SnapshotId[]' --output text)
 
+          # aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ci-sg # done later in .github/scripts/aws-delete-ci-resources.sh
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
-          aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ci-sg
           aws ec2 deregister-image --image-id $IMAGE_TO_DELETE
           aws ec2 delete-snapshot --snapshot-id $SNAPSHOT_ID
 
@@ -282,6 +282,7 @@ jobs:
         run: |
           set -x
           set +e
-          export CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
+          # aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg # done later in .github/scripts/aws-delete-ci-resources.sh
+
+          CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
-          aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg
