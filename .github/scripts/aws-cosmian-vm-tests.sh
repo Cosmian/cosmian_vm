@@ -15,7 +15,7 @@ echo "[ OK ] Cosmian VM ready"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls snapshot
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
 
-CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query Reservations[].Instances[].[InstanceId]' --output text)
+CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
 
 echo "Rebooting instance..."
 aws ec2 reboot-instances --instance-ids "$CI_INSTANCE_ID" --region "${ZONE}"
