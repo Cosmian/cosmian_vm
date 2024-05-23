@@ -1,0 +1,15 @@
+[Unit]
+Description=Cosmian Runner AI
+Requires=multi-user.target
+After=multi-user.target mount_luks.service cosmian_vm_agent.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/home/azureuser/.local/bin/cosmian_ai_runner -p 5001
+Restart=on-failure
+RestartSec=3s
+Environment="CONFIG_PATH='/etc/cosmian_vm/config.json'"
+
+[Install]
+WantedBy=multi-user.target

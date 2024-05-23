@@ -1,0 +1,33 @@
+---
+# tasks file for ansible/roles/runner_ai
+
+- name: Check OS distribution
+  ansible.builtin.debug:
+    var: ansible_distribution
+
+- name: Check Cosmian Runner AI version
+  ansible.builtin.debug:
+    var: cosmian_runner_ai_version
+
+- name: Stop Cosmian Runner AI if it exists
+  ansible.builtin.systemd_service:
+    name: cosmian_runner_ai
+    state: stopped
+    enabled: false
+    daemon_reload: true
+  register: stop_cosmian_runner_ai
+  failed_when: stop_cosmian_runner_ai is defined and stop_cosmian_runner_ai.failed=='true'
+  ignore_errors: true
+
+- name: Clean Runner AI existing folders
+  ansible.builtin.command:
+    cmd: |
+      rm -f ~/.local/bin/cosmian_runner_ai
+      rm -rf /var/lib/cosmian_vm/data/app
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
+
+- name: Reboot since systemd service has been disabled
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600

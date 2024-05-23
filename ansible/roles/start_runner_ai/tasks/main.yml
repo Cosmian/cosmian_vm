@@ -1,0 +1,98 @@
+---
+# tasks file for Runner AI startup
+
+- name: Check SSH remote host IP
+  ansible.builtin.debug:
+    var: inventory_hostname
+
+- name: Check Cosmian VM Agent version
+  ansible.builtin.debug:
+    var: cosmian_vm_version
+
+- name: Clean potential existing Cosmian VM CLI
+  ansible.builtin.command:
+    cmd: |
+      rm -f ./cosmian_vm
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
+  delegate_to: localhost
+
+- name: Download Cosmian VM CLI
+  ansible.builtin.get_url:
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
+    dest: .
+    mode: "u+x"
+  delegate_to: localhost
+  become: false
+
+- name: Display agent logs variable
+  ansible.builtin.debug:
+    var: cosmian_vm_output
+  tags: app_init
+
+- name: Read Cosmian VM agent logs
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_vm_agent
+  register: agent_logs
+  tags: app_init
+  changed_when: agent_logs.rc != 0
+
+- name: Display Agent logs
+  ansible.builtin.debug:
+    var: agent_logs
+  tags: app_init
+
+- name: Fail if Cosmian app init has failed previously
+  ansible.builtin.fail:
+    msg: Cosmian app init failed with return code {{ cosmian_vm_output }}
+  when:
+    - cosmian_vm_output is defined
+    - cosmian_vm_output.rc is defined
+    - cosmian_vm_output.rc != 0
+  tags: app_init
+
+- name: Start Runner AI
+  ansible.builtin.systemd_service:
+    name: cosmian_runner_ai
+    state: started
+  tags: launch
+
+- name: Read Runner AI logs
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_runner_ai
+  register: cosmian_runner_ai_logs
+  tags: launch
+  changed_when: cosmian_runner_ai_logs.rc != 0
+
+- name: Display Runner AI logs
+  ansible.builtin.debug:
+    var: cosmian_runner_ai_logs
+  tags: launch
+
+- name: Check if port 5001 is listening
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 5001
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 5001 to respond
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Check Runner AI returns its version
+  ansible.builtin.uri:
+    url: http://{{ inventory_hostname }}:5001/health
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Clean Cosmian VM CLI
+  ansible.builtin.command:
+    cmd: |
+      rm -f ./cosmian_vm
+  delegate_to: localhost
+  register: cmd_output
+  changed_when: cmd_output.rc != 0

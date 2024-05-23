@@ -1,0 +1,70 @@
+---
+# tasks file for ansible/roles/runner_ai
+
+- name: Check OS distribution
+  ansible.builtin.debug:
+    var: ansible_distribution
+
+- name: Check Cosmian Runner AI version
+  ansible.builtin.debug:
+    var: cosmian_runner_ai_version
+
+- name: Install prerequisites packages
+  ansible.builtin.package:
+    name: pip
+    state: present
+
+- name: Install prerequisites pip packages
+  ansible.builtin.pip:
+    name: build
+    state: present
+
+- name: Download Runner AI
+  ansible.builtin.get_url:
+    url: https://package.cosmian.com/cosmian-ai-runner/last_build/cosmian_ai_runner-0.3.0-py3-none-any.whl
+    dest: /tmp
+    mode: "0755"
+    group: root
+    owner: root
+
+- name: Install requirements
+  ansible.builtin.pip:
+    name: file:///tmp/cosmian_ai_runner-0.3.0-py3-none-any.whl
+
+- name: Add Cosmian Runner AI systemd service
+  ansible.builtin.template:
+    src: cosmian_runner_ai.service.j2
+    dest: /etc/systemd/system/cosmian_runner_ai.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create Runner AI configuration
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: /etc/cosmian_vm/config.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable systemd Cosmian Runner AI service
+  ansible.builtin.systemd_service:
+    name: cosmian_runner_ai
+    enabled: true
+    state: stopped
+    daemon_reload: true
+
+- name: Open ports on RHEL
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Open port 5001 for Runner AI
+      ansible.posix.firewalld:
+        zone: public
+        port: 5001/tcp
+        permanent: true
+        state: enabled
+
+    - name: Always reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded

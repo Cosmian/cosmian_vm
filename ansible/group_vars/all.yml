@@ -1,5 +1,7 @@
 ---
-cosmian_vm_version: 1.2.0
+# cosmian_vm_version: 1.1.2
+cosmian_vm_version: "last_build/main"
 cosmian_kms_version: 4.16.0
+cosmian_runner_ai_version: 0.3.0
 
 nginx_user: root
