@@ -2,11 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.0] - 2024-05-XX
+## [1.2.0] - 2024-05-23
 
 ### Features
 
 - Support Intel TDX on GCP and Azure ([#102](https://github.com/Cosmian/cosmian_vm/pull/102))
+- Support Ubuntu/RHEL image on AWS
 
 ### Bug Fixes
 
