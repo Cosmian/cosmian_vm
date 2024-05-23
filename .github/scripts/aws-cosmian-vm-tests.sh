@@ -21,7 +21,7 @@ echo "Rebooting instance..."
 aws ec2 reboot-instances --instance-ids "$CI_INSTANCE_ID" --region "${ZONE}"
 
 sleep 30
-timeout 10m bash -c "until aws ec2 describe-instance-status --instance-ids $CI_INSTANCE_ID --query 'InstanceStatuses[].InstanceStatus[].Status[]' --output text | grep -q ok; do sleep 60; done"
+aws ec2 wait instance-running --instance-ids $CI_INSTANCE_ID
 
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$CI_INSTANCE_ID" --query 'Reservations[].Instances[].PublicIpAddress' --output text)
 echo "IP_ADDR=${IP_ADDR}" >>"$GITHUB_OUTPUT"

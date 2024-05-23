@@ -88,7 +88,7 @@ jobs:
 
           # Wait for VM to be ready
           export CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
-          timeout 40m bash -c "until aws ec2 describe-instance-status --instance-ids $CI_INSTANCE_ID --query 'InstanceStatuses[].InstanceStatus[].Status[]' --output text | grep -q ok; do sleep 60; done"
+          aws ec2 wait instance-running --instance-ids $CI_INSTANCE_ID
 
       - name: Ansible installation
         env:
