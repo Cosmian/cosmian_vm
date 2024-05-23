@@ -289,3 +289,48 @@ jobs:
 
           CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
+
+  release-image:
+    name: Release image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: startsWith(github.ref, 'refs/tags')
+    runs-on: ubuntu-22.04
+    needs: [build-image, test-image]
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Copy image to public project
+        env:
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
+          IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+          TAG: ${{ github.ref_name }}
+          KMS: ${{ inputs.kms-version }}
+        run: |
+          set -ex
+
+          VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          KMS_VERSION=$(echo $KMS | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
+
+          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+            NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
+          else
+            NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+          fi
+
+          AMI=$(aws ec2 describe-images --filters "Name=name,Values=$IMAGE_NAME" --query 'Images[].ImageId' --output text)
+
+          aws ec2 copy-image \
+            --name $NEW_IMAGE_NAME \
+            --source-region eu-west-1 \
+            --source-image-id ${AMI}
