@@ -4,7 +4,7 @@
   become: true
   roles:
     - check_cpu
-    - cleanup_runner_ai
+    - cleanup_ai_runner
     - cleanup_cosmian_vm_agent
 
 - name: Install Runner AI
@@ -15,4 +15,4 @@
   become: true
   roles:
     - check_cosmian_vm
-    - start_runner_ai
+    - start_ai_runner

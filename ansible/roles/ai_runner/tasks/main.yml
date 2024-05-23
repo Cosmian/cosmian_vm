@@ -1,5 +1,5 @@
 ---
-# tasks file for ansible/roles/runner_ai
+# tasks file for ansible/roles/ai_runner
 
 - name: Check OS distribution
   ansible.builtin.debug:
@@ -7,7 +7,7 @@
 
 - name: Check Cosmian Runner AI version
   ansible.builtin.debug:
-    var: cosmian_runner_ai_version
+    var: cosmian_ai_runner_version
 
 - name: Install prerequisites packages
   ansible.builtin.package:
@@ -33,8 +33,8 @@
 
 - name: Add Cosmian Runner AI systemd service
   ansible.builtin.template:
-    src: cosmian_runner_ai.service.j2
-    dest: /etc/systemd/system/cosmian_runner_ai.service
+    src: cosmian_ai_runner.service.j2
+    dest: /etc/systemd/system/cosmian_ai_runner.service
     owner: root
     group: root
     mode: "0644"
@@ -49,7 +49,7 @@
 
 - name: Enable systemd Cosmian Runner AI service
   ansible.builtin.systemd_service:
-    name: cosmian_runner_ai
+    name: cosmian_ai_runner
     enabled: true
     state: stopped
     daemon_reload: true

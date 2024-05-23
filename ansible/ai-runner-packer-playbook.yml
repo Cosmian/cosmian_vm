@@ -6,4 +6,4 @@
   hosts: all
   become: true
   roles:
-    - runner_ai
+    - ai_runner

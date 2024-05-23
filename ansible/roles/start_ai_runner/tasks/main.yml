@@ -16,6 +16,7 @@
   register: cmd_output
   changed_when: cmd_output.rc != 0
   delegate_to: localhost
+  become: false
 
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
@@ -54,21 +55,21 @@
 
 - name: Start Runner AI
   ansible.builtin.systemd_service:
-    name: cosmian_runner_ai
+    name: cosmian_ai_runner
     state: started
   tags: launch
 
 - name: Read Runner AI logs
   ansible.builtin.command:
     cmd: |
-      journalctl -u cosmian_runner_ai
-  register: cosmian_runner_ai_logs
+      journalctl -u cosmian_ai_runner
+  register: cosmian_ai_runner_logs
   tags: launch
-  changed_when: cosmian_runner_ai_logs.rc != 0
+  changed_when: cosmian_ai_runner_logs.rc != 0
 
 - name: Display Runner AI logs
   ansible.builtin.debug:
-    var: cosmian_runner_ai_logs
+    var: cosmian_ai_runner_logs
   tags: launch
 
 - name: Check if port 5001 is listening
@@ -82,7 +83,7 @@
   become: false
   tags: listening
 
-- name: Check Runner AI returns its version
+- name: Check Runner AI returns http status
   ansible.builtin.uri:
     url: http://{{ inventory_hostname }}:5001/health
   delegate_to: localhost
@@ -94,5 +95,6 @@
     cmd: |
       rm -f ./cosmian_vm
   delegate_to: localhost
+  become: false
   register: cmd_output
   changed_when: cmd_output.rc != 0
