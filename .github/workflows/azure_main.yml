@@ -1,6 +1,7 @@
 ---
 on:
   workflow_call:
+  workflow_dispatch:
 
 concurrency:
   group: marketplace_azure
@@ -30,6 +31,7 @@ jobs:
       kms-version: 4.16.0
 
   post-clean-resources:
+    if: success() || failure() || cancelled()
     needs:
       - sev-image
     uses: ./.github/workflows/azure_clean.yml

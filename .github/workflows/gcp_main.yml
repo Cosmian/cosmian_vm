@@ -1,6 +1,7 @@
 ---
 on:
   workflow_call:
+  workflow_dispatch:
 
 concurrency:
   group: marketplace_gcp
@@ -35,6 +36,7 @@ jobs:
       kms-version: 4.16.0
 
   post-clean-gcp-resources:
+    if: success() || failure() || cancelled()
     needs:
       - sev-image
     uses: ./.github/workflows/gcp_clean.yml
