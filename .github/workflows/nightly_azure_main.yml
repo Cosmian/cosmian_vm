@@ -47,9 +47,47 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
 
+  sev-ansible:
+    if: startsWith(github.ref, 'refs/tags/') != true
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [cosmian-vm, kms]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    needs:
+      - clean-resources
+    secrets: inherit
+    uses: ./.github/workflows/azure_ansible.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
+  tdx-ansible:
+    if: startsWith(github.ref, 'refs/tags/') != true
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu]
+        product: [cosmian-vm, kms]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
+    needs:
+      - clean-resources
+    secrets: inherit
+    uses: ./.github/workflows/azure_ansible.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
   post-clean-resources:
     needs:
       - sev-image
       - tdx-image
+      - sev-ansible
+      - tdx-ansible
     uses: ./.github/workflows/azure_clean.yml
     secrets: inherit

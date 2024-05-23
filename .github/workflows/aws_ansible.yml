@@ -1,0 +1,127 @@
+---
+name: Test Ansible script on AWS instance
+
+on:
+  workflow_call:
+    inputs:
+      distrib:
+        required: true
+        type: string
+      techno:
+        required: true
+        type: string
+      product:
+        required: true
+        type: string
+      kms-version:
+        required: true
+        type: string
+      machine-type:
+        required: true
+        type: string
+
+env:
+  AWS_REGION: eu-west-1
+
+jobs:
+  test-ansible:
+    name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Create env variables
+        id: env
+        run: |
+          TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
+          echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+          echo "CI_INSTANCE=gh-ci-ansible-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: AWS auth
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Launch AWS instance
+        id: run-aws-instance
+        env:
+          CI_INSTANCE: ${{ steps.env.outputs.ci_instance }}
+          SSH_KEY: ${{ secrets.PACKER_AWS_SSH_PRIVATE_KEY }}
+        run: |
+          set -ex
+
+          echo "$SSH_KEY" > $HOME/packer.pem
+          chmod 400 $HOME/packer.pem
+
+          aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
+          if [ "${{ inputs.product }}" = "kms" ]; then
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
+          fi
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            IMAGE_TO_INSTANTIATE="ami-083360161b7e953b6"
+          else
+            IMAGE_TO_INSTANTIATE="ami-02d912d1649d1e091"
+          fi
+
+          aws ec2 run-instances \
+            --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
+            --image-id $IMAGE_TO_INSTANTIATE \
+            --instance-type ${{ inputs.machine-type }} \
+            --cpu-options AmdSevSnp=enabled \
+            --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+            --key-name packer \
+            --security-groups ${CI_INSTANCE}-ansible-sg
+
+          IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+          echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
+
+          # Wait for VM to be ready
+          export CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
+          timeout 40m bash -c "until aws ec2 describe-instance-status --instance-ids $CI_INSTANCE_ID --query 'InstanceStatuses[].InstanceStatus[].Status[]' --output text | grep -q ok; do sleep 60; done"
+
+      - name: Ansible installation
+        env:
+          IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
+        run: |
+          set -ex
+          cd ansible
+          python3 -m pip install -r python_modules.txt
+
+          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            SSH_USER="ubuntu"
+          else
+            SSH_USER="ec2-user"
+          fi
+
+          export ANSIBLE_HOST_KEY_CHECKING=False
+          # Ansible script
+          for i in {1..2}
+          do
+            echo "Iteration: $i"
+            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }}
+          done
+
+      - name: Stop and delete AWS instance
+        if: success() || failure() || cancelled()
+        env:
+          CI_INSTANCE: ${{ steps.env.outputs.ci_instance }}
+        run: |
+          set -x
+          set +e
+          # aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg # done later in .github/scripts/aws-delete-ci-resources.sh
+
+          CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
+          aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID

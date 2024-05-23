@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu]
-        product: [kms]
+        product: [cosmian-vm]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -32,6 +32,7 @@ jobs:
       machine-type: c6a.2xlarge
 
   post-clean-resources:
-    needs: sev-image
+    needs:
+      - sev-image
     uses: ./.github/workflows/aws_clean.yml
     secrets: inherit
