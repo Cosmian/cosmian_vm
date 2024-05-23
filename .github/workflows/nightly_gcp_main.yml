@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_gcp
 
-name: GCP images build
+name: GCP images nightly build
 
 jobs:
   clean-resources:
@@ -104,6 +104,7 @@ jobs:
       kms-version: 4.16.0
 
   post-clean-gcp-resources:
+    if: success() || failure() || cancelled()
     needs:
       - sev-image
       - tdx-image

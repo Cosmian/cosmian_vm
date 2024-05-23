@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_azure
 
-name: Azure images build
+name: Azure images nightly build
 
 jobs:
   clean-resources:
@@ -84,6 +84,7 @@ jobs:
       kms-version: 4.16.0
 
   post-clean-resources:
+    if: success() || failure() || cancelled()
     needs:
       - sev-image
       - tdx-image

@@ -32,6 +32,7 @@ jobs:
       machine-type: c6a.2xlarge
 
   post-clean-resources:
+    if: success() || failure() || cancelled()
     needs:
       - sev-image
     uses: ./.github/workflows/aws_clean.yml
