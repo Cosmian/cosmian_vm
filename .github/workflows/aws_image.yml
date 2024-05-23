@@ -185,6 +185,7 @@ jobs:
 
   test-ansible:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: false # disable for now - too slow and too many errors with EC2 instances
     runs-on: ubuntu-22.04
     permissions:
       contents: read

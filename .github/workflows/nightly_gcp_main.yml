@@ -1,6 +1,7 @@
 ---
 on:
   workflow_call:
+  workflow_dispatch:
 
 concurrency:
   group: marketplace_gcp

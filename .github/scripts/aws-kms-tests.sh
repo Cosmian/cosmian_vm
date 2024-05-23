@@ -2,12 +2,11 @@
 
 set -exu
 
-MODE=$1
-CI_INSTANCE=$2
+CI_INSTANCE=$1
+IP_ADDR=$2
 ZONE=$3
-IP_ADDR=$4
 
-bash .github/scripts/aws-cosmian-vm-tests.sh "$MODE" "$CI_INSTANCE" "$ZONE" "$IP_ADDR"
+bash .github/scripts/aws-cosmian-vm-tests.sh "$CI_INSTANCE" "$IP_ADDR" "$ZONE"
 
 CI_INSTANCE=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$CI_INSTANCE" --query 'Reservations[].Instances[].[InstanceId]'   --output text)
 
