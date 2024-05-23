@@ -1,5 +1,7 @@
 #!/bin/sh
 
+rm -f cosmian_vm.snapshot
+
 set -exu
 
 MODE=$1
