@@ -109,7 +109,7 @@ jobs:
 
           export ANSIBLE_HOST_KEY_CHECKING=False
           # Ansible script
-          for i in {1..2}
+          for i in {1..1}
           do
             echo "Iteration: $i"
             ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }}
