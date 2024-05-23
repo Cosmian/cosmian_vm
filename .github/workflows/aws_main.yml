@@ -1,6 +1,7 @@
 ---
 on:
   workflow_call:
+  workflow_dispatch:
 
 concurrency:
   group: marketplace_aws
@@ -17,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu]
-        product: [cosmian-vm]
+        product: [kms]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
