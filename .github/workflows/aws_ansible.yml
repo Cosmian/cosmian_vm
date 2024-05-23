@@ -74,21 +74,21 @@ jobs:
             IMAGE_TO_INSTANTIATE="ami-02d912d1649d1e091"
           fi
 
-          aws ec2 run-instances \
+          AMI=$(aws ec2 run-instances \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
             --image-id $IMAGE_TO_INSTANTIATE \
             --instance-type ${{ inputs.machine-type }} \
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
             --key-name packer \
-            --security-groups ${CI_INSTANCE}-ansible-sg
+            --security-groups ${CI_INSTANCE}-ansible-sg \
+            --query 'Instances[0].InstanceId' --output text)
 
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
           # Wait for VM to be ready
-          export CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
-          aws ec2 wait instance-running --instance-ids $CI_INSTANCE_ID
+          aws ec2 wait instance-running --instance-ids $AMI
 
       - name: Ansible installation
         env:
