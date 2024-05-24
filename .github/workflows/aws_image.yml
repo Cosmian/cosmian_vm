@@ -173,6 +173,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags') != true
         env:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
+          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           set -x
           set +e

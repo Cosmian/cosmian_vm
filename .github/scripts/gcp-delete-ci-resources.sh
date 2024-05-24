@@ -57,6 +57,6 @@ for image_name in $image_names; do
 done
 
 for i in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
-  echo $i;
-  gcloud compute os-login ssh-keys remove --impersonate-service-account="packer@cosmian-dev.iam.gserviceaccount.com" --key $i || true;
+  echo "$i";
+  gcloud compute os-login ssh-keys remove --key "$i" || true;
 done

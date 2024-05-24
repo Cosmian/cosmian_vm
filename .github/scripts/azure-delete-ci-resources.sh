@@ -10,9 +10,9 @@ vm_names=$(az vm list -g "$RESOURCE_GROUP" --query "[].name" -o tsv)
 for vm_name in $vm_names; do
   if [[ $vm_name = *'pkr'* ]] || [[ $vm_name = *'gh-ci'* ]]; then
     echo "Deleting VM: $vm_name"
-    az vm delete -g "$RESOURCE_GROUP" -n $vm_name --yes
-    az network public-ip delete -g "$RESOURCE_GROUP" -n ${vm_name}PublicIP
-    az network nsg delete -g "$RESOURCE_GROUP" -n ${vm_name}NSG
+    az vm delete -g "$RESOURCE_GROUP" -n "$vm_name" --yes
+    az network public-ip delete -g "$RESOURCE_GROUP" -n "${vm_name}PublicIP"
+    az network nsg delete -g "$RESOURCE_GROUP" -n "${vm_name}NSG"
   fi
 done
 
@@ -22,7 +22,7 @@ nic_names=$(az network nic list --query "[].name" -o tsv)
 for nic_name in $nic_names; do
   if [[ $nic_name = *'pkr'* ]] || [[ $nic_name = *'gh-ci'* ]]; then
     echo "Deleting Network Interface: $nic_name"
-    az network nic delete -g "$RESOURCE_GROUP" --name $nic_name
+    az network nic delete -g "$RESOURCE_GROUP" --name "$nic_name"
   fi
 done
 
@@ -42,7 +42,7 @@ vnet_names=$(az network vnet list --query "[].name" -o tsv)
 for vnet_name in $vnet_names; do
   if [[ $vnet_name = *'pkr'* ]] || [[ $vnet_name = *'gh-ci'* ]]; then
     echo "Deleting Virtual Network: $vnet_name"
-    az network vnet delete -g "$RESOURCE_GROUP" --name $vnet_name
+    az network vnet delete -g "$RESOURCE_GROUP" --name "$vnet_name"
   fi
 done
 
@@ -52,7 +52,7 @@ disk_names=$(az disk list --query "[].name" -o tsv)
 for disk_name in $disk_names; do
   if [[ $disk_name = *'pkr'* ]] || [[ $disk_name = *'gh-ci'* ]]; then
     echo "Deleting Disk: $disk_name"
-    az disk delete -g "$RESOURCE_GROUP" --name $disk_name --yes
+    az disk delete -g "$RESOURCE_GROUP" --name "$disk_name" --yes
   fi
 done
 
@@ -62,6 +62,6 @@ nsg_names=$(az network nsg list --query "[].name" -o tsv)
 for nsg_name in $nsg_names; do
   if [[ $nsg_name = *'pkr'* ]] || [[ $nsg_name = *'gh-ci'* ]]; then
     echo "Deleting Network Security Group: $nsg_name"
-    az network nsg delete -g "$RESOURCE_GROUP" --name $nsg_name
+    az network nsg delete -g "$RESOURCE_GROUP" --name "$nsg_name"
   fi
 done
