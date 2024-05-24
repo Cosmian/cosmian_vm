@@ -1,0 +1,24 @@
+---
+on:
+  workflow_dispatch:
+
+name: Build base images
+
+jobs:
+
+  aws:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [base-image]
+    name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    secrets: inherit
+    uses: ./.github/workflows/aws_base_image.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+
+

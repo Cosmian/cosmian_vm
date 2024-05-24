@@ -1,0 +1,77 @@
+---
+name: Build base image for AWS SEV
+
+on:
+  workflow_call:
+    inputs:
+      distrib:
+        required: true
+        type: string
+      techno:
+        required: true
+        type: string
+      product:
+        required: true
+        type: string
+      kms-version:
+        required: true
+        type: string
+
+env:
+  AWS_REGION: eu-west-1
+
+jobs:
+  build-image:
+    name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ./packer
+    outputs:
+      timestamp: ${{ steps.env.outputs.TIMESTAMP }}
+      image_name: ${{ steps.env.outputs.IMAGE_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create env variables
+        id: env
+        run: |
+          TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
+          echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_NAME=${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-$TIMESTAMP" >> "$GITHUB_OUTPUT"
+
+      - name: Setup packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Install packer plugins
+        run: |
+          packer plugins install github.com/hashicorp/amazon
+          packer plugins install github.com/hashicorp/ansible
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Packer build image
+        env:
+          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+          KMS_VERSION: ${{ inputs.kms-version }}
+        run: |
+          set -ex
+          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+
+          if [ "${{ inputs.techno }}" = "ubuntu" ]; then
+            export AMI="ami-0776c814353b4814d"
+          else
+            export AMI="ami-08e592fbb0f535224"
+          fi
+
+          bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION" "$AMI"
+
