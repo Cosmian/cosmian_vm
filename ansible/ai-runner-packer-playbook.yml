@@ -2,7 +2,7 @@
 - name: Install Cosmian VM Agent
   ansible.builtin.import_playbook: cosmian-vm-packer-playbook.yml
 
-- name: Install Runner AI
+- name: Install AI Runner
   hosts: all
   become: true
   roles:

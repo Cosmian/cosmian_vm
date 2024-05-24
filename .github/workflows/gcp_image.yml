@@ -31,6 +31,9 @@ on:
       kms-version:
         required: true
         type: string
+      ai-runner-version:
+        required: true
+        type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
@@ -39,6 +42,7 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -76,32 +80,24 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
 
       - name: Packer build image
-        if: startsWith(github.ref, 'refs/tags/') != true
         env:
           TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           KMS_VERSION: ${{ inputs.kms-version }}
+          AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
           TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
-          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
-
-      - name: Packer build image
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
-          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
-          VERSION: ${{ github.ref_name }}
-          KMS_VERSION: ${{ inputs.kms-version }}
-          TECHNO: ${{ inputs.techno }}
-        run: |
-          set -ex
-          COSMIAN_VM_VERSION="$VERSION"
-          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            export COSMIAN_VM_VERSION="${{ github.ref_name }}"
+          else
+            export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
+          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:
@@ -154,29 +150,27 @@ jobs:
               --network=default \
               --allow=tcp:5555 \
               --target-tags=$CI_INSTANCE-fw
+          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+            gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
+              --network=default \
+              --allow=tcp:5555,tcp:80,tcp:443,tcp:5001 \
+              --target-tags=$CI_INSTANCE-fw
           else
             gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
               --network=default \
-              --allow=tcp:80,tcp:443,tcp:5555,tcp:8080 \
+              --allow=tcp:5555,tcp:80,tcp:443,tcp:8080 \
               --target-tags=$CI_INSTANCE-fw
           fi
 
       - name: Download Cosmian VM CLI
-        if: startsWith(github.ref, 'refs/tags/') != true
-        run: |
-          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          wget https://package.cosmian.com/cosmian_vm/last_build/$BRANCH/cosmian_vm
-
-      - name: Download Cosmian VM CLI
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          VERSION: ${{ github.ref_name }}
-        run: |
-          wget https://package.cosmian.com/cosmian_vm/$VERSION/cosmian_vm
-
-      - name: Change permissions of binaries
         run: |
           set -e
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            COSMIAN_VM_VERSION="${{ github.ref_name }}"
+          else
+            COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
+          wget https://package.cosmian.com/cosmian_vm/$COSMIAN_VM_VERSION/cosmian_vm
           chmod +x ./cosmian_vm
 
       - name: Test Cosmian VM Agent on GCP instance
@@ -207,7 +201,7 @@ jobs:
 
   release-image:
     name: Release image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: startsWith(github.ref, 'refs/tags')
+    if: (contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true) && startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-22.04
     needs: [build-image, test-image]
     permissions:
@@ -228,16 +222,21 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           TAG: ${{ github.ref_name }}
           KMS: ${{ inputs.kms-version }}
+          AI_RUNNER: ${{ inputs.ai-runner-version }}
         run: |
           set -ex
 
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           KMS_VERSION=$(echo $KMS | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          AI_RUNNER_VERSION=$(echo $AI_RUNNER | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
+            elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+              LICENSE=${{ secrets.GCP_AI_RUNNER_UBUNTU_LICENSE }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             else
               LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
@@ -245,6 +244,9 @@ jobs:
           else
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}"
+            elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+              LICENSE=${{ secrets.GCP_AI_RUNNER_RHEL_LICENSE }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             else
               LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}

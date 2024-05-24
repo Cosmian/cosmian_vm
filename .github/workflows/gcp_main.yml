@@ -34,6 +34,7 @@ jobs:
       mode: beta
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      ai-runner-version: 0.3.0
 
   post-clean-gcp-resources:
     if: success() || failure() || cancelled()

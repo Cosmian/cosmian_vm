@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
+        product: [cosmian-vm, kms, ai-runner]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -29,13 +29,14 @@ jobs:
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      ai-runner-version: 0.3.0
 
   tdx-image:
     strategy:
       fail-fast: false
       matrix:
         distrib: [ubuntu]
-        product: [cosmian-vm, kms]
+        product: [cosmian-vm, kms, ai-runner]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
     needs:
       - clean-resources
@@ -46,6 +47,7 @@ jobs:
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      ai-runner-version: 0.3.0
 
   sev-ansible:
     if: startsWith(github.ref, 'refs/tags/') != true
@@ -53,7 +55,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
+        product: [cosmian-vm, kms, ai-runner]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -64,6 +66,7 @@ jobs:
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      ai-runner-version: 0.3.0
 
   tdx-ansible:
     if: startsWith(github.ref, 'refs/tags/') != true
@@ -71,7 +74,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu]
-        product: [cosmian-vm, kms]
+        product: [cosmian-vm, kms, ai-runner]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
     needs:
       - clean-resources
@@ -82,6 +85,7 @@ jobs:
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      ai-runner-version: 0.3.0
 
   post-clean-resources:
     if: success() || failure() || cancelled()
