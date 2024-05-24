@@ -22,11 +22,7 @@ echo "[ OK ] Cosmian VM ready"
 
 echo "Rebooting instance..."
 gcloud "${MODE}" compute instances stop "$CI_INSTANCE" --zone "${ZONE}" --project "$GCP_DEV_PROJECT"
-
 gcloud "${MODE}" compute instances set-scheduling "$CI_INSTANCE" --zone "${ZONE}" --max-run-duration=20m --instance-termination-action=DELETE
-
-sleep 30
-
 gcloud "${MODE}" compute instances start "$CI_INSTANCE" --zone "${ZONE}" --project "$GCP_DEV_PROJECT"
 
 IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")

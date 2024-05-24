@@ -150,7 +150,6 @@ jobs:
           else
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
-          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           wget https://package.cosmian.com/cosmian_vm/$COSMIAN_VM_VERSION/cosmian_vm
           chmod +x ./cosmian_vm
 

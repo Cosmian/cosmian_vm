@@ -19,8 +19,6 @@ echo "[ OK ] Cosmian VM ready"
 echo "Rebooting instance..."
 az vm restart -g "$RESOURCE_GROUP" -n "$CI_INSTANCE"
 
-sleep 30
-
 IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
 
 timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
