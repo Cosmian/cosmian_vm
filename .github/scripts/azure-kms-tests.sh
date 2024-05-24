@@ -13,7 +13,7 @@ echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/start_kms/templates/kms.toml.j2
 
 echo "Checking Cosmian KMS HTTP connection..."
-curl "http://${IP_ADDR}:8080/version"
+timeout 5m bash -c "until curl http://${IP_ADDR}:8080/version; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian KMS HTTP connection"
@@ -48,7 +48,7 @@ sleep 30
 
 echo "[ OK ] KMS is started"
 echo "Checking Cosmian KMS HTTP connection..."
-curl "http://${IP_ADDR}:8080/version"
+timeout 5m bash -c "until curl http://${IP_ADDR}:8080/version; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian KMS HTTP connection"
