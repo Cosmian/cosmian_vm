@@ -88,9 +88,9 @@ jobs:
         run: |
           set -ex
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
-            COSMIAN_VM_VERSION="${{ github.ref_name }}"
+            export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
-            COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+            export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
 
