@@ -31,6 +31,9 @@ on:
       kms-version:
         required: true
         type: string
+      ai-runner-version:
+        required: true
+        type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
@@ -39,6 +42,7 @@ env:
 jobs:
   test-ansible:
     name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -116,6 +120,11 @@ jobs:
               --network=default \
               --allow=tcp:22,tcp:5555 \
               --target-tags=$CI_INSTANCE-fw
+          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+            gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
+              --network=default \
+              --allow=tcp:22,tcp:80,tcp:443,tcp:5555,tcp:5001 \
+              --target-tags=$CI_INSTANCE-fw
           else
             gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
               --network=default \
@@ -137,7 +146,7 @@ jobs:
           for i in {1..2}
           do
             echo "Iteration: $i"
-            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }}
+            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }}
           done
 
       - name: Stop and delete GCP instance

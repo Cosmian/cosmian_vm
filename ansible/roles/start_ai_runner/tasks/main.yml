@@ -1,5 +1,5 @@
 ---
-# tasks file for KMS startup
+# tasks file for AI Runner startup
 
 - name: Check SSH remote host IP
   ansible.builtin.debug:
@@ -25,25 +25,6 @@
     mode: "u+x"
   delegate_to: localhost
   become: false
-
-- name: Copy KMS configuration
-  ansible.builtin.template:
-    src: kms.toml.j2
-    dest: ./kms.toml
-    mode: "0644"
-  delegate_to: localhost
-  become: false
-
-- name: Cosmian VM App initialization
-  ansible.builtin.command:
-    cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app init -c ./kms.toml
-  register: cosmian_vm_output
-  ignore_errors: true
-  delegate_to: localhost
-  become: false
-  tags: app_init
-  changed_when: cosmian_vm_output.rc != 0
 
 - name: Display agent logs variable
   ansible.builtin.debug:
@@ -72,36 +53,23 @@
     - cosmian_vm_output.rc != 0
   tags: app_init
 
-- name: Override KMS supervisor configuration with autostart to true
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
-  tags: certificate_nginx_permissions
-  block:
-    - name: Restorecon on cert and key
-      ansible.builtin.command:
-        cmd: |
-          /usr/sbin/restorecon /var/lib/cosmian_vm/data/cert.pem
-          /usr/sbin/restorecon /var/lib/cosmian_vm/data/key.pem
-      tags: restorecon
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
-
-- name: Start KMS
+- name: Start AI Runner
   ansible.builtin.systemd_service:
-    name: cosmian_kms
+    name: cosmian_ai_runner
     state: started
   tags: launch
 
-- name: Read KMS logs
+- name: Read AI Runner logs
   ansible.builtin.command:
     cmd: |
-      journalctl -u cosmian_kms
-  register: kms_logs
+      journalctl -u cosmian_ai_runner
+  register: cosmian_ai_runner_logs
   tags: launch
-  changed_when: kms_logs.rc != 0
+  changed_when: cosmian_ai_runner_logs.rc != 0
 
-- name: Display KMS logs
+- name: Display AI Runner logs
   ansible.builtin.debug:
-    var: kms_logs
+    var: cosmian_ai_runner_logs
   tags: launch
 
 - name: Run Nginx
@@ -110,13 +78,13 @@
     name: nginx
   tags: restart_nginx
 
-- name: Check if port 8080 is listening
+- name: Check if port 5001 is listening
   ansible.builtin.wait_for:
     host: "{{ inventory_hostname }}"
-    port: 8080
+    port: 5001
     delay: 5
     timeout: 30
-    msg: Timeout waiting for 8080 to respond
+    msg: Timeout waiting for 5001 to respond
   delegate_to: localhost
   become: false
   tags: listening
@@ -132,16 +100,16 @@
   become: false
   tags: listening
 
-- name: Check KMS returns its version
+- name: Check AI Runner returns is healthy
   ansible.builtin.uri:
-    url: http://{{ inventory_hostname }}:8080/version
+    url: http://{{ inventory_hostname }}:5001/health
   delegate_to: localhost
   become: false
   tags: listening
 
-- name: Check KMS returns its version on HTTPS
+- name: Check AI Runner returns its version on HTTPS
   ansible.builtin.uri:
-    url: https://{{ inventory_hostname }}/version
+    url: https://{{ inventory_hostname }}/health
     validate_certs: false
   delegate_to: localhost
   become: false
@@ -151,7 +119,6 @@
   ansible.builtin.command:
     cmd: |
       rm -f ./cosmian_vm
-      rm -f ./kms.toml
   delegate_to: localhost
   become: false
   register: cmd_output

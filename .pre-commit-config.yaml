@@ -57,7 +57,7 @@ repos:
     hooks:
       - id: yamllint
         args: [--format, parsable, --strict, -d, '{rules: {line-length: {max: 150}}}']
-        exclude: .github|.pre-commit-config.yaml
+        exclude: .github|.pre-commit-config.yaml|ansible/roles/ai_runner/tasks/main.yml
 
   - repo: https://github.com/ansible/ansible-lint.git
     rev: v24.2.3

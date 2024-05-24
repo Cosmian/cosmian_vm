@@ -1,0 +1,18 @@
+---
+- name: Clean previous install of Cosmian VM Agent
+  hosts: all
+  become: true
+  roles:
+    - check_cpu
+    - cleanup_ai_runner
+    - cleanup_cosmian_vm_agent
+
+- name: Install AI Runner
+  ansible.builtin.import_playbook: ai-runner-packer-playbook.yml
+
+- name: Check AI runner
+  hosts: all
+  become: true
+  roles:
+    - check_cosmian_vm
+    - start_ai_runner

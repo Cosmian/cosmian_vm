@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
+        product: [cosmian-vm, kms, ai-runner]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -29,6 +29,7 @@ jobs:
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      ai-runner-version: 0.3.0
       machine-type: c6a.xlarge
 
   sev-ansible:
@@ -37,7 +38,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms]
+        product: [cosmian-vm, kms, ai-runner]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -48,6 +49,7 @@ jobs:
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
+      ai-runner-version: 0.3.0
       machine-type: c6a.xlarge
 
   post-clean-resources:

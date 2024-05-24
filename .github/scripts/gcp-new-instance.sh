@@ -10,12 +10,12 @@ WHO="$(whoami)"
 NAME="$WHO-$TECHNO-$DISTRIB"
 
 DURATION=240m
-REGION="us-central1-a"
 
 SSH_PUB_KEY=$(cat ~/.ssh/id_rsa.pub)
 
-gcloud compute firewall-rules delete "$NAME"
-gcloud beta compute instances delete --quiet "$NAME" --zone $REGION --project cosmian-dev
+gcloud compute firewall-rules delete "$NAME" --quiet
+gcloud beta compute instances delete --quiet "$NAME" --zone "us-central1-a" --project cosmian-dev
+gcloud beta compute instances delete --quiet "$NAME" --zone "europe-west4-a" --project cosmian-dev
 
 set -ex
 
@@ -23,7 +23,7 @@ if [ "$TECHNO" = "tdx" ]; then
   # Ubuntu TDX
   gcloud alpha compute instances create "$NAME" \
     --machine-type c3-standard-4 \
-    --zone $REGION \
+    --zone us-central1-a \
     --min-cpu-platform=AUTOMATIC \
     --confidential-compute-type=TDX \
     --shielded-secure-boot \
@@ -33,6 +33,7 @@ if [ "$TECHNO" = "tdx" ]; then
     --maintenance-policy=TERMINATE \
     --max-run-duration=$DURATION \
     --instance-termination-action=DELETE \
+    --boot-disk-size=20GB \
     --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
@@ -49,6 +50,7 @@ else
       --maintenance-policy=TERMINATE \
       --instance-termination-action=DELETE \
       --max-run-duration=$DURATION \
+      --boot-disk-size=20GB \
       --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
   else
     # RHEL SEV
@@ -64,8 +66,9 @@ else
       --maintenance-policy=TERMINATE \
       --instance-termination-action=DELETE \
       --max-run-duration=$DURATION \
+      --boot-disk-size=20GB \
       --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
   fi
 fi
 
-gcloud compute firewall-rules create "$NAME" --network=default --allow=tcp:22,tcp:5555 --target-tags="$NAME-cli"
+gcloud compute firewall-rules create "$NAME" --network=default --allow=tcp:22,tcp:5555,tcp:80,tcp:443,tcp:8080,tcp:5001 --target-tags="$NAME-cli"

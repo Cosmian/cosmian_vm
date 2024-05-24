@@ -24,6 +24,7 @@ aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --proto
 aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 80 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 8080 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 443 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 5001 --cidr 0.0.0.0/0
 
 set -ex
 
@@ -42,11 +43,11 @@ else
       --key-name packer \
       --security-groups "$NAME-ansible-sg" \
       --query 'Instances[0].InstanceId' --output text \
-      --user-data '#!/bin/bash
+      --user-data "#!/bin/bash
       mkdir -p /home/ubuntu/.ssh
-      echo "$SSH_PUB_KEY" >> /home/ubuntu/.ssh/authorized_keys
+      echo $SSH_PUB_KEY >> /home/ubuntu/.ssh/authorized_keys
       chmod 600 /home/ubuntu/.ssh/authorized_keys
-      chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys')
+      chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys")
 
     aws ec2 wait instance-running --instance-ids "$AMI"
     IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${NAME}" --query 'Reservations[*].instances[*].PublicIpAddress' --output text)

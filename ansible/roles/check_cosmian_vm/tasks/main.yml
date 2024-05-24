@@ -108,9 +108,9 @@
       rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
   delegate_to: localhost
+  become: false
   register: cmd_output
   changed_when: cmd_output.rc != 0
-  become: false
 
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
@@ -214,6 +214,6 @@
       rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
   delegate_to: localhost
+  become: false
   register: cmd_output
   changed_when: cmd_output.rc != 0
-  become: false

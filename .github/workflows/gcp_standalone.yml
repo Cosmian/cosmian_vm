@@ -54,6 +54,7 @@ jobs:
       mode: beta
       product: ${{ inputs.product }}
       kms-version: ${{ inputs.kms-version }}
+      ai-runner-version: 0.3.0
 
   build-test-gcp-tdx-image:
     if: contains(inputs.cpu, 'tdx')
@@ -71,3 +72,4 @@ jobs:
       mode: alpha
       product: ${{ inputs.product }}
       kms-version: ${{ inputs.kms-version }}
+      ai-runner-version: 0.3.0

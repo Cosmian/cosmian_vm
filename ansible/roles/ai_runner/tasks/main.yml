@@ -1,0 +1,130 @@
+---
+# tasks file for ansible/roles/ai_runner
+
+- name: Check OS distribution
+  ansible.builtin.debug:
+    var: ansible_distribution
+
+- name: Check Cosmian AI Runner version
+  ansible.builtin.debug:
+    var: cosmian_ai_runner_version
+
+- name: Install prerequisites packages
+  ansible.builtin.package:
+    name:
+      - nginx
+      - virtualenv
+      - pip
+    state: present
+
+- name: Download AI Runner
+  ansible.builtin.get_url:
+    url: https://package.cosmian.com/cosmian-ai-runner/{{ cosmian_ai_runner_version }}/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
+    dest: /tmp
+    mode: "0755"
+    group: root
+    owner: root
+
+- name: Install Cosmian AI Runner WHL
+  ansible.builtin.pip:
+    name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
+    virtualenv: /src/cosmian-ai-runner
+
+- name: Add Cosmian AI Runner systemd service
+  ansible.builtin.template:
+    src: cosmian_ai_runner.service.j2
+    dest: /etc/systemd/system/cosmian_ai_runner.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create AI Runner configuration
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: /etc/cosmian_vm/config.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Override Cosmian VM configuration
+  ansible.builtin.template:
+    src: agent.toml.j2
+    dest: /etc/cosmian_vm/agent.toml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create the directory /var/www/html if it does not exist
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Selinux - add nginx to permissive allow httpd
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.command: semanage permissive -a httpd_t
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
+  tags: selinux
+
+- name: Add Nginx configuration
+  ansible.builtin.template:
+    src: nginx.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable systemd Nginx service
+  ansible.builtin.systemd_service:
+    name: nginx
+    enabled: true
+    state: stopped
+    daemon_reload: true
+
+- name: Make systemd Nginx restarting on failure
+  ansible.builtin.blockinfile:
+    path: /etc/systemd/system/multi-user.target.wants/nginx.service
+    block: |
+      [Service]
+      Restart=on-failure
+      RestartSec=10s
+  tags: systemd_nginx
+
+- name: Enable systemd Cosmian AI Runner service
+  ansible.builtin.systemd_service:
+    name: cosmian_ai_runner
+    enabled: true
+    state: stopped
+    daemon_reload: true
+
+- name: Open ports on RHEL
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Open port 5001 for AI Runner
+      ansible.posix.firewalld:
+        zone: public
+        port: 5001/tcp
+        permanent: true
+        state: enabled
+
+    - name: Open port 80 for HTTP redirect to HTTPS
+      ansible.posix.firewalld:
+        zone: public
+        port: 80/tcp
+        permanent: true
+        state: enabled
+
+    - name: Open port 443 for HTTPS
+      ansible.posix.firewalld:
+        zone: public
+        port: 443/tcp
+        permanent: true
+        state: enabled
+
+    - name: Always reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded
