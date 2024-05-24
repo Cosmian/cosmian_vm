@@ -10,7 +10,7 @@
 - name: Install AI Runner
   ansible.builtin.import_playbook: ai-runner-packer-playbook.yml
 
-- name: Start and check
+- name: Check AI runner
   hosts: all
   become: true
   roles:

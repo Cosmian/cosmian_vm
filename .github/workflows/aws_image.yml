@@ -120,6 +120,8 @@ jobs:
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
           elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 5001 --cidr 0.0.0.0/0
           fi
 
@@ -173,7 +175,7 @@ jobs:
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
 
       - name: Delete AWS image
-        if: startsWith(github.ref, 'refs/tags') != true
+        if: (success() || failure() || cancelled()) && startsWith(github.ref, 'refs/tags') != true
         env:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
