@@ -4,7 +4,6 @@ set -ex
 
 PRODUCT=$1
 DISTRIBUTION=$2
-COSMIAN_VM_VERSION=$3
 
 set
 
@@ -24,6 +23,8 @@ if [ "$PRODUCT" = "cosmian-vm" ]; then
   else
     AZURE_IMAGE_VERSION="$COSMIAN_VM_VERSION"
   fi
+elif  [ "$PRODUCT" = "ai-runner" ]; then
+  AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
 else
   AZURE_IMAGE_VERSION="$KMS_VERSION"
 fi

@@ -16,6 +16,9 @@ on:
       kms-version:
         required: true
         type: string
+      ai-runner-version:
+        required: true
+        type: string
       machine-type:
         required: true
         type: string
@@ -66,6 +69,8 @@ jobs:
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
+          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5001 --cidr 0.0.0.0/0
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
@@ -112,7 +117,7 @@ jobs:
           for i in {1..1}
           do
             echo "Iteration: $i"
-            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }}
+            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }}
           done
 
       - name: Stop and delete AWS instance
@@ -122,7 +127,7 @@ jobs:
         run: |
           set -x
           set +e
-          # aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg # done later in .github/scripts/aws-delete-ci-resources.sh
 
           CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
+          aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg

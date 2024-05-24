@@ -16,6 +16,9 @@ on:
       kms-version:
         required: true
         type: string
+      ai-runner-version:
+        required: true
+        type: string
 
 env:
   RESOURCE_GROUP: packer-snp
@@ -43,9 +46,9 @@ jobs:
           packer plugins install github.com/hashicorp/ansible
 
       - name: Packer build image
-        if: startsWith(github.ref, 'refs/tags/') != true
         env:
           KMS_VERSION: ${{ inputs.kms-version }}
+          AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
           CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -53,23 +56,12 @@ jobs:
           TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
-          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
-
-      - name: Packer build image
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          VERSION: ${{ github.ref_name }}
-          KMS_VERSION: ${{ inputs.kms-version }}
-          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          TECHNO: ${{ inputs.techno }}
-        run: |
-          set -ex
-          COSMIAN_VM_VERSION="$VERSION"
-          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION"
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            COSMIAN_VM_VERSION="${{ github.ref_name }}"
+          else
+            COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
+          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
@@ -110,8 +102,10 @@ jobs:
             else
               IMAGE_VERSION="0.0.0"
             fi
-          else
+          elif [ "${{ inputs.product }}" = "kms" ]; then
             IMAGE_VERSION="${{ inputs.kms-version }}"
+          else
+            IMAGE_VERSION="${{ inputs.ai-runner-version }}"
           fi
 
           if [ "${{ inputs.techno }}" = "sev" ]; then
@@ -137,6 +131,8 @@ jobs:
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
             az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555
+          elif  [ "${{ inputs.product }}" = "ai-runner" ]; then
+            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 00 --port 5555,5001
           else
             az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,80,8080,443
           fi
@@ -145,21 +141,15 @@ jobs:
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
       - name: Download Cosmian VM CLI
-        if: startsWith(github.ref, 'refs/tags/') != true
-        run: |
-          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          wget https://package.cosmian.com/cosmian_vm/last_build/$BRANCH/cosmian_vm
-
-      - name: Download Cosmian VM CLI
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          VERSION: ${{ github.ref_name }}
-        run: |
-          wget https://package.cosmian.com/cosmian_vm/$VERSION/cosmian_vm
-
-      - name: Change permissions of binaries
         run: |
           set -e
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            COSMIAN_VM_VERSION="${{ github.ref_name }}"
+          else
+            COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
+          export BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          wget https://package.cosmian.com/cosmian_vm/$COSMIAN_VM_VERSION/cosmian_vm
           chmod +x ./cosmian_vm
 
       - name: Test Cosmian VM Agent on Azure instance

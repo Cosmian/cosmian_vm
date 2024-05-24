@@ -16,6 +16,7 @@
   register: cmd_output
   changed_when: cmd_output.rc != 0
   delegate_to: localhost
+  become: false
 
 - name: Download Cosmian VM CLI
   ansible.builtin.get_url:
@@ -83,7 +84,6 @@
       tags: restorecon
       register: cmd_output
       changed_when: cmd_output.rc != 0
-
 
 - name: Start KMS
   ansible.builtin.systemd_service:
@@ -153,5 +153,6 @@
       rm -f ./cosmian_vm
       rm -f ./kms.toml
   delegate_to: localhost
+  become: false
   register: cmd_output
   changed_when: cmd_output.rc != 0

@@ -7,10 +7,10 @@
     - cleanup_ai_runner
     - cleanup_cosmian_vm_agent
 
-- name: Install Runner AI
-  ansible.builtin.import_playbook: runner-ai-packer-playbook.yml
+- name: Install AI Runner
+  ansible.builtin.import_playbook: ai-runner-packer-playbook.yml
 
-- name: Start and check 
+- name: Start and check
   hosts: all
   become: true
   roles:

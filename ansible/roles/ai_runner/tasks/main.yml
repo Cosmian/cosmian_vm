@@ -5,13 +5,15 @@
   ansible.builtin.debug:
     var: ansible_distribution
 
-- name: Check Cosmian Runner AI version
+- name: Check Cosmian AI Runner version
   ansible.builtin.debug:
     var: cosmian_ai_runner_version
 
 - name: Install prerequisites packages
   ansible.builtin.package:
-    name: pip
+    name:
+      - nginx
+      - pip
     state: present
 
 - name: Install prerequisites pip packages
@@ -19,9 +21,9 @@
     name: build
     state: present
 
-- name: Download Runner AI
+- name: Download AI Runner
   ansible.builtin.get_url:
-    url: https://package.cosmian.com/cosmian-ai-runner/last_build/cosmian_ai_runner-0.3.0-py3-none-any.whl
+    url: https://package.cosmian.com/cosmian-ai-runner/{{ cosmian_ai_runner_version }}/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
     dest: /tmp
     mode: "0755"
     group: root
@@ -29,9 +31,9 @@
 
 - name: Install requirements
   ansible.builtin.pip:
-    name: file:///tmp/cosmian_ai_runner-0.3.0-py3-none-any.whl
+    name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
 
-- name: Add Cosmian Runner AI systemd service
+- name: Add Cosmian AI Runner systemd service
   ansible.builtin.template:
     src: cosmian_ai_runner.service.j2
     dest: /etc/systemd/system/cosmian_ai_runner.service
@@ -39,7 +41,7 @@
     group: root
     mode: "0644"
 
-- name: Create Runner AI configuration
+- name: Create AI Runner configuration
   ansible.builtin.template:
     src: config.json.j2
     dest: /etc/cosmian_vm/config.json
@@ -47,7 +49,54 @@
     group: root
     mode: "0644"
 
-- name: Enable systemd Cosmian Runner AI service
+- name: Override Cosmian VM configuration
+  ansible.builtin.template:
+    src: agent.toml.j2
+    dest: /etc/cosmian_vm/agent.toml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create the directory /var/www/html if it does not exist
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Selinux - add nginx to permissive allow httpd
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky'
+  ansible.builtin.command: semanage permissive -a httpd_t
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
+  tags: selinux
+
+- name: Add Nginx configuration
+  ansible.builtin.template:
+    src: nginx.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable systemd Nginx service
+  ansible.builtin.systemd_service:
+    name: nginx
+    enabled: true
+    state: stopped
+    daemon_reload: true
+
+- name: Make systemd Nginx restarting on failure
+  ansible.builtin.blockinfile:
+    path: /etc/systemd/system/multi-user.target.wants/nginx.service
+    block: |
+      [Service]
+      Restart=on-failure
+      RestartSec=10s
+  tags: systemd_nginx
+
+- name: Enable systemd Cosmian AI Runner service
   ansible.builtin.systemd_service:
     name: cosmian_ai_runner
     enabled: true
@@ -57,10 +106,24 @@
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'
   block:
-    - name: Open port 5001 for Runner AI
+    - name: Open port 5001 for AI Runner
       ansible.posix.firewalld:
         zone: public
         port: 5001/tcp
+        permanent: true
+        state: enabled
+
+    - name: Open port 80 for HTTP redirect to HTTPS
+      ansible.posix.firewalld:
+        zone: public
+        port: 80/tcp
+        permanent: true
+        state: enabled
+
+    - name: Open port 443 for HTTPS
+      ansible.posix.firewalld:
+        zone: public
+        port: 443/tcp
         permanent: true
         state: enabled
 

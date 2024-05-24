@@ -1,5 +1,5 @@
 ---
-# tasks file for Runner AI startup
+# tasks file for AI Runner startup
 
 - name: Check SSH remote host IP
   ansible.builtin.debug:
@@ -53,13 +53,13 @@
     - cosmian_vm_output.rc != 0
   tags: app_init
 
-- name: Start Runner AI
+- name: Start AI Runner
   ansible.builtin.systemd_service:
     name: cosmian_ai_runner
     state: started
   tags: launch
 
-- name: Read Runner AI logs
+- name: Read AI Runner logs
   ansible.builtin.command:
     cmd: |
       journalctl -u cosmian_ai_runner
@@ -67,10 +67,16 @@
   tags: launch
   changed_when: cosmian_ai_runner_logs.rc != 0
 
-- name: Display Runner AI logs
+- name: Display AI Runner logs
   ansible.builtin.debug:
     var: cosmian_ai_runner_logs
   tags: launch
+
+- name: Run Nginx
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: nginx
+  tags: restart_nginx
 
 - name: Check if port 5001 is listening
   ansible.builtin.wait_for:
@@ -83,9 +89,28 @@
   become: false
   tags: listening
 
-- name: Check Runner AI returns http status
+- name: Check if port 443 is listening
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 443
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 443 to respond
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Check AI Runner returns is healthy
   ansible.builtin.uri:
     url: http://{{ inventory_hostname }}:5001/health
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Check AI Runner returns its version on HTTPS
+  ansible.builtin.uri:
+    url: https://{{ inventory_hostname }}/health
+    validate_certs: false
   delegate_to: localhost
   become: false
   tags: listening

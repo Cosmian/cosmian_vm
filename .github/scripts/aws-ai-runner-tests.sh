@@ -13,21 +13,22 @@ AMI=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$CI_INSTANCE" -
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$AMI" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 
 echo "Cosmian VM app init"
-./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/start_kms/templates/kms.toml.j2
+./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/ai_runner/templates/agent.toml.j2
 
-echo "Checking Cosmian KMS HTTP connection..."
-timeout 1m bash -c "until curl http://${IP_ADDR}:8080/version; do sleep 3; done"
+echo "Checking Cosmian AI Runner HTTP connection..."
+timeout 1m bash -c "until curl http://${IP_ADDR}:5001/health; do sleep 3; done"
 echo ""
+echo "[ OK ] Cosmian AI Runner HTTP connection"
 
-echo "[ OK ] Cosmian KMS HTTP connection"
-echo "Checking Cosmian KMS HTTPS connection..."
-curl --insecure "https://${IP_ADDR}/version"
+echo "Checking Cosmian AI Runner HTTPS connection..."
+curl --insecure "https://${IP_ADDR}/health"
 echo ""
-echo "[ OK ] Cosmian KMS HTTPS connection"
-echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
-curl --insecure "http://${IP_ADDR}/version"
+echo "[ OK ] Cosmian AI Runner HTTPS connection"
+
+echo "Checking Cosmian AI Runner HTTP to HTTPS redirect connection..."
+curl --insecure "http://${IP_ADDR}/health"
 echo ""
-echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
+echo "[ OK ] Cosmian AI Runner HTTP to HTTPS redirect connection"
 
 echo "Rebooting instance..."
 aws ec2 reboot-instances --instance-ids "$AMI" --region "${ZONE}"
@@ -44,23 +45,23 @@ jq '.tpm_policy.reset_count |= tonumber' new_cosmian_vm.snapshot | sponge new_co
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls verify --snapshot new_cosmian_vm.snapshot
 echo "[ OK ] Integrity after reboot"
 
-echo "Starting the KMS"
+echo "Starting the AI Runner"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app restart
 
-# Wait KMS to be started
+# Wait AI Runner to be started
 sleep 30
 
-echo "[ OK ] KMS is started"
-echo "Checking Cosmian KMS HTTP connection..."
-curl "http://${IP_ADDR}:8080/version"
+echo "[ OK ] AI Runner is started"
+echo "Checking Cosmian AI Runner HTTP connection..."
+curl "http://${IP_ADDR}:8080/health"
 echo ""
 
-echo "[ OK ] Cosmian KMS HTTP connection"
-echo "Checking Cosmian KMS HTTPS connection..."
-curl --insecure "https://${IP_ADDR}/version"
+echo "[ OK ] Cosmian AI Runner HTTP connection"
+echo "Checking Cosmian AI Runner HTTPS connection..."
+curl --insecure "https://${IP_ADDR}/health"
 echo ""
-echo "[ OK ] Cosmian KMS HTTPS connection"
-echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
-curl --insecure "http://${IP_ADDR}/version"
+echo "[ OK ] Cosmian AI Runner HTTPS connection"
+echo "Checking Cosmian AI Runner HTTP to HTTPS redirect connection..."
+curl --insecure "http://${IP_ADDR}/health"
 echo ""
-echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
+echo "[ OK ] Cosmian AI Runner HTTP to HTTPS redirect connection"
