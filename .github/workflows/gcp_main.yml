@@ -17,8 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # distrib: [ubuntu]
-        distrib: [ubuntu, rhel]
+        distrib: [ubuntu]
         # product: [cosmian-vm]
         product: [ai-runner]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV

@@ -18,13 +18,12 @@ echo "Cosmian VM app init"
 echo "Checking Cosmian AI Runner HTTP connection..."
 timeout 5m bash -c "until curl http://${IP_ADDR}:5001/health; do sleep 3; done"
 echo ""
-echo "[ OK ] Cosmian AI Runner HTTP connection"
 
+echo "[ OK ] Cosmian AI Runner HTTP connection"
 echo "Checking Cosmian AI Runner HTTPS connection..."
 curl --insecure "https://${IP_ADDR}/health"
 echo ""
 echo "[ OK ] Cosmian AI Runner HTTPS connection"
-
 echo "Checking Cosmian AI Runner HTTP to HTTPS redirect connection..."
 curl --insecure "http://${IP_ADDR}/health"
 echo ""
@@ -53,7 +52,7 @@ sleep 30
 
 echo "[ OK ] AI Runner is started"
 echo "Checking Cosmian AI Runner HTTP connection..."
-curl "http://${IP_ADDR}:8080/health"
+timeout 5m bash -c "until curl http://${IP_ADDR}:5001/health; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTP connection"

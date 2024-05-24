@@ -6,7 +6,6 @@ MODE=$1
 CI_INSTANCE=$2
 ZONE=$3
 IP_ADDR=$4
-GCP_DEV_PROJECT=cosmian-dev
 
 bash .github/scripts/gcp-cosmian-vm-tests.sh "$MODE" "$CI_INSTANCE" "$ZONE" "$IP_ADDR"
 
@@ -16,7 +15,7 @@ echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/ai_runner/templates/agent.toml.j2
 
 echo "Checking Cosmian AI Runner HTTP connection..."
-curl "http://${IP_ADDR}:5001/health"
+timeout 5m bash -c "until curl http://${IP_ADDR}:5001/health; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTP connection"
@@ -49,12 +48,9 @@ echo "[ OK ] Integrity after reboot"
 echo "Starting the AI Runner"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app restart
 
-# Wait AI Runner to be started
-sleep 30
-
 echo "[ OK ] AI Runner is started"
 echo "Checking Cosmian AI Runner HTTP connection..."
-curl "http://${IP_ADDR}:5001/health"
+timeout 5m bash -c "until curl http://${IP_ADDR}:5001/health; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTP connection"

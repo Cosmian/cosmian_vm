@@ -187,7 +187,6 @@ jobs:
 
           aws ec2 deregister-image --image-id $IMAGE_TO_DELETE
           aws ec2 delete-snapshot --snapshot-id $SNAPSHOT_ID
-          aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ci-sg
 
   release-image:
     name: Release image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
