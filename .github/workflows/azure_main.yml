@@ -18,6 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu]
+        # product: [cosmian-vm]
         product: [ai-runner]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:

@@ -25,6 +25,12 @@
     group: root
     owner: root
 
+- name: Install torch
+  ansible.builtin.pip:
+    name:
+      - torch==2.2.1
+    virtualenv: /src/cosmian-ai-runner
+
 - name: Install Cosmian AI Runner WHL
   ansible.builtin.pip:
     name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
