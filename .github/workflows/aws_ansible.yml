@@ -133,4 +133,3 @@ jobs:
 
           CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
           aws ec2 terminate-instances --instance-ids $CI_INSTANCE_ID
-          aws ec2 delete-security-group --group-name ${CI_INSTANCE}-ansible-sg
