@@ -14,7 +14,6 @@ test_opened_ports() {
 
   echo "[ OK ] Cosmian KMS HTTP connection"
   echo "Checking Cosmian KMS HTTPS connection..."
-  curl --insecure "https://${REMOTE_HOST}/version"
   timeout 5m bash -c "until curl --fail --insecure https://${REMOTE_HOST}/version; do sleep 3; done"
   echo ""
 

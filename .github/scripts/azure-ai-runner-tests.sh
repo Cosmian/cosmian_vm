@@ -18,7 +18,7 @@ echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTP connection"
 echo "Checking Cosmian AI Runner HTTPS connection..."
-curl --insecure "https://${IP_ADDR}/health"
+timeout 5m bash -c "until curl --fail --insecure https://${IP_ADDR}/health; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTPS connection"
@@ -50,7 +50,7 @@ echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTP connection"
 echo "Checking Cosmian AI Runner HTTPS connection..."
-curl --insecure "https://${IP_ADDR}/health"
+timeout 5m bash -c "until curl --fail --insecure https://${IP_ADDR}/health; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTPS connection"
