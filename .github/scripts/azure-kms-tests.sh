@@ -5,6 +5,25 @@ set -ex
 CI_INSTANCE=$1
 IP_ADDR=$2
 
+test_opened_ports() {
+  REMOTE_HOST=$1
+  echo "Checking Cosmian KMS HTTP connection..."
+  timeout 5m bash -c "until curl http://${REMOTE_HOST}:8080/version; do sleep 3; done"
+  echo ""
+
+  echo "[ OK ] Cosmian KMS HTTP connection"
+  echo "Checking Cosmian KMS HTTPS connection..."
+  curl --insecure "https://${REMOTE_HOST}/version"
+  timeout 5m bash -c "until curl --insecure https://${REMOTE_HOST}/version; do sleep 3; done"
+  echo ""
+
+  echo "[ OK ] Cosmian KMS HTTPS connection"
+  echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
+  curl --insecure "http://${REMOTE_HOST}/version"
+  echo ""
+  echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
+}
+
 bash .github/scripts/azure-cosmian-vm-tests.sh "$CI_INSTANCE" "$IP_ADDR"
 
 IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
@@ -12,20 +31,7 @@ IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps
 echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/start_kms/templates/kms.toml.j2
 
-echo "Checking Cosmian KMS HTTP connection..."
-timeout 5m bash -c "until curl http://${IP_ADDR}:8080/version; do sleep 3; done"
-echo ""
-
-echo "[ OK ] Cosmian KMS HTTP connection"
-echo "Checking Cosmian KMS HTTPS connection..."
-curl --insecure "https://${IP_ADDR}/version"
-echo ""
-
-echo "[ OK ] Cosmian KMS HTTPS connection"
-echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
-curl --insecure "http://${IP_ADDR}/version"
-echo ""
-echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
+test_opened_ports "$IP_ADDR"
 
 echo "Rebooting instance..."
 az vm restart -g "$RESOURCE_GROUP" -n "$CI_INSTANCE"
@@ -43,21 +49,4 @@ echo "[ OK ] Integrity after reboot"
 echo "Starting the KMS"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app restart
 
-# Wait KMS to be started
-sleep 30
-
-echo "[ OK ] KMS is started"
-echo "Checking Cosmian KMS HTTP connection..."
-timeout 5m bash -c "until curl http://${IP_ADDR}:8080/version; do sleep 3; done"
-echo ""
-
-echo "[ OK ] Cosmian KMS HTTP connection"
-echo "Checking Cosmian KMS HTTPS connection..."
-curl --insecure "https://${IP_ADDR}/version"
-echo ""
-
-echo "[ OK ] Cosmian KMS HTTPS connection"
-echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
-curl --insecure "http://${IP_ADDR}/version"
-echo ""
-echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
+test_opened_ports "$IP_ADDR"

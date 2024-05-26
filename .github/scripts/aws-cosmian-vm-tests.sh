@@ -11,7 +11,7 @@ ZONE=$3
 sudo apt-get install -y jq moreutils
 
 echo "Waiting for Cosmian VM agent (${IP_ADDR}:5555)..."
-timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+timeout 20m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
 
 echo "[ OK ] Cosmian VM ready"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls snapshot
@@ -26,7 +26,7 @@ aws ec2 wait instance-running --instance-ids "$CI_INSTANCE_ID"
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$CI_INSTANCE_ID" --query 'Reservations[].Instances[].PublicIpAddress' --output text)
 echo "IP_ADDR=${IP_ADDR}" >>"$GITHUB_OUTPUT"
 
-timeout 15m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+timeout 20m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
 
 echo "[ OK ] Cosmian VM ready after reboot"
 RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)

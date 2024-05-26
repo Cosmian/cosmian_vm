@@ -96,7 +96,7 @@ jobs:
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |
-          set -ex
+          set -exo pipefail
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
             if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then

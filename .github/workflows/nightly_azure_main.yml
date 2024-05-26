@@ -59,6 +59,7 @@ jobs:
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
+      - sev-image # to avoid reaching the Azure quota VM (20)
     secrets: inherit
     uses: ./.github/workflows/azure_ansible.yml
     with:
@@ -78,6 +79,7 @@ jobs:
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
     needs:
       - clean-resources
+      - tdx-image # to avoid reaching the Azure quota VM (20)
     secrets: inherit
     uses: ./.github/workflows/azure_ansible.yml
     with:

@@ -42,6 +42,7 @@ jobs:
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
+      - sev-image # only to avoid too many EC2 creation
     secrets: inherit
     uses: ./.github/workflows/aws_ansible.yml
     with:
