@@ -16,7 +16,7 @@ echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/ai_runner/templates/agent.toml.j2
 
 echo "Checking Cosmian AI Runner HTTP connection..."
-timeout 5m bash -c "until curl http://${IP_ADDR}:5001/health; do sleep 3; done"
+timeout 5m bash -c "until curl --fail http://${IP_ADDR}:5001/health; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTP connection"
@@ -33,7 +33,7 @@ echo "Rebooting instance..."
 aws ec2 reboot-instances --instance-ids "$AMI" --region "${ZONE}"
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$AMI" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 aws ec2 wait instance-running --instance-ids "$AMI"
-timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+timeout 8m bash -c "until curl --fail --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
 echo "IP_ADDR=${IP_ADDR}" >>"$GITHUB_OUTPUT"
 
 echo "[ OK ] Cosmian VM ready after reboot"
@@ -52,7 +52,7 @@ sleep 30
 
 echo "[ OK ] AI Runner is started"
 echo "Checking Cosmian AI Runner HTTP connection..."
-timeout 5m bash -c "until curl http://${IP_ADDR}:5001/health; do sleep 3; done"
+timeout 5m bash -c "until curl --fail http://${IP_ADDR}:5001/health; do sleep 3; done"
 echo ""
 
 echo "[ OK ] Cosmian AI Runner HTTP connection"

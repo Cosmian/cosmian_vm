@@ -1,6 +1,11 @@
 ---
 # tasks file for KMS startup
 
+- name: Reboot before anything
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600
+
 - name: Check SSH remote host IP
   ansible.builtin.debug:
     var: inventory_hostname
@@ -8,6 +13,11 @@
 - name: Check Cosmian VM Agent version
   ansible.builtin.debug:
     var: cosmian_vm_version
+
+- name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
+  ansible.builtin.wait_for:
+    path: /var/lib/cosmian_vm/data/cert.pem
+    state: present
 
 - name: Clean potential existing Cosmian VM CLI
   ansible.builtin.command:
@@ -85,12 +95,6 @@
       register: cmd_output
       changed_when: cmd_output.rc != 0
 
-- name: Start KMS
-  ansible.builtin.systemd_service:
-    name: cosmian_kms
-    state: started
-  tags: launch
-
 - name: Read KMS logs
   ansible.builtin.command:
     cmd: |
@@ -103,12 +107,6 @@
   ansible.builtin.debug:
     var: kms_logs
   tags: launch
-
-- name: Run Nginx
-  ansible.builtin.systemd_service:
-    state: restarted
-    name: nginx
-  tags: restart_nginx
 
 - name: Check if port 8080 is listening
   ansible.builtin.wait_for:
@@ -142,6 +140,14 @@
 - name: Check KMS returns its version on HTTPS
   ansible.builtin.uri:
     url: https://{{ inventory_hostname }}/version
+    validate_certs: false
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Cosmian KMS HTTP to HTTPS redirect connection
+  ansible.builtin.uri:
+    url: http://{{ inventory_hostname }}/version
     validate_certs: false
   delegate_to: localhost
   become: false

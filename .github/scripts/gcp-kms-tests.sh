@@ -11,13 +11,13 @@ GCP_DEV_PROJECT=cosmian-dev
 test_opened_ports() {
   REMOTE_HOST=$1
   echo "Checking Cosmian KMS HTTP connection..."
-  timeout 5m bash -c "until curl http://${REMOTE_HOST}:8080/version; do sleep 3; done"
+  timeout 5m bash -c "until curl --fail http://${REMOTE_HOST}:8080/version; do sleep 3; done"
   echo ""
 
   echo "[ OK ] Cosmian KMS HTTP connection"
   echo "Checking Cosmian KMS HTTPS connection..."
   curl --insecure "https://${REMOTE_HOST}/version"
-  timeout 5m bash -c "until curl --insecure https://${REMOTE_HOST}/version; do sleep 3; done"
+  timeout 5m bash -c "until curl --fail --insecure https://${REMOTE_HOST}/version; do sleep 3; done"
   echo ""
 
   echo "[ OK ] Cosmian KMS HTTPS connection"
