@@ -67,13 +67,9 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
           if [ "${{ inputs.product }}" = "kms" ]; then
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 8080 --cidr 0.0.0.0/0
           elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
             aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5001 --cidr 0.0.0.0/0
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
