@@ -105,7 +105,7 @@ jobs:
           fi
 
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
-          
+
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     if: contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true

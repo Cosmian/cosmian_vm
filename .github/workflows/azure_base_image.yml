@@ -1,72 +1,72 @@
 ---
-  name: Build and test image for Azure SEV
-  
-  on:
-    workflow_call:
-      inputs:
-        distrib:
-          required: true
-          type: string
-        techno:
-          required: true
-          type: string
-        product:
-          required: true
-          type: string
-        kms-version:
-          required: true
-          type: string
-        ai-runner-version:
-          required: true
-          type: string
-  
-  env:
-    RESOURCE_GROUP: packer-snp
-  
-  jobs:
-    build-image:
-      name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-      if: contains(inputs.distrib, 'rhel') != true
-      runs-on: ubuntu-22.04
-      permissions:
-        contents: read
-        id-token: write
-      defaults:
-        run:
-          working-directory: ./packer
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-  
-        - name: Setup packer
-          uses: hashicorp/setup-packer@main
-  
-        - name: Install packer plugins
-          run: |
-            packer plugins install github.com/hashicorp/azure
-            packer plugins install github.com/hashicorp/ansible
-  
-        - name: Packer build image
-          env:
-            KMS_VERSION: ${{ inputs.kms-version }}
-            AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
-            CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-            TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-            SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-            TECHNO: ${{ inputs.techno }}
-          run: |
-            set -ex
-            if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
-              export COSMIAN_VM_VERSION="${{ github.ref_name }}"
-            else
-              export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-            fi
+name: Build and test image for Azure SEV
 
-            if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-              export PUBLISHER="canonical"
-            else
-              export PUBLISHER="redhat"
-            fi
+on:
+  workflow_call:
+    inputs:
+      distrib:
+        required: true
+        type: string
+      techno:
+        required: true
+        type: string
+      product:
+        required: true
+        type: string
+      kms-version:
+        required: true
+        type: string
+      ai-runner-version:
+        required: true
+        type: string
 
-            bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$PUBLISHER"
+env:
+  RESOURCE_GROUP: packer-snp
+
+jobs:
+  build-image:
+    name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: contains(inputs.distrib, 'rhel') != true
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ./packer
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Install packer plugins
+        run: |
+          packer plugins install github.com/hashicorp/azure
+          packer plugins install github.com/hashicorp/ansible
+
+      - name: Packer build image
+        env:
+          KMS_VERSION: ${{ inputs.kms-version }}
+          AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
+          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TECHNO: ${{ inputs.techno }}
+        run: |
+          set -ex
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            export COSMIAN_VM_VERSION="${{ github.ref_name }}"
+          else
+            export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            export PUBLISHER="canonical"
+          else
+            export PUBLISHER="redhat"
+          fi
+
+          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$PUBLISHER"
