@@ -24,6 +24,8 @@ if [ "$PRODUCT" = "cosmian-vm" ]; then
   fi
 elif  [ "$PRODUCT" = "ai-runner" ]; then
   AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
+elif  [ "$PRODUCT" = "base-image" ]; then
+  AZURE_IMAGE_VERSION="0.1.0"
 else
   AZURE_IMAGE_VERSION="$KMS_VERSION"
 fi

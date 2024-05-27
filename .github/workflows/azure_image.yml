@@ -64,9 +64,17 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export PUBLISHER="canonical"
+            if [ "${{ inputs.techno }}" = "sev" ]; then
+              export PUBLISHER="base-image-ubuntu-sev"
+            else
+              export PUBLISHER="base-image-ubuntu-tdx"
+            fi
           else
-            export PUBLISHER="redhat"
+            if [ "${{ inputs.techno }}" = "sev" ]; then
+              export PUBLISHER="base-image-rhel-sev"
+            else
+              export PUBLISHER="base-image-rhel-tdx"
+            fi
           fi
 
           bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$PUBLISHER"
