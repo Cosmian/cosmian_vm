@@ -38,14 +38,6 @@
     group: root
     mode: "0644"
 
-- name: Create AI Runner configuration
-  ansible.builtin.template:
-    src: config.json.j2
-    dest: /etc/cosmian_vm/config.json
-    owner: root
-    group: root
-    mode: "0644"
-
 - name: Override Cosmian VM configuration
   ansible.builtin.template:
     src: agent.toml.j2

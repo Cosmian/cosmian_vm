@@ -10,7 +10,7 @@ ExecStart=/src/cosmian-ai-runner/bin/python3 /src/cosmian-ai-runner/bin/cosmian_
 WorkingDirectory=/src/cosmian-ai-runner/
 Restart=on-failure
 RestartSec=3s
-Environment="CONFIG_PATH=/etc/cosmian_vm/config.json"
+Environment="CONFIG_PATH=/var/lib/cosmian_vm/data/app/app.conf"
 
 [Install]
 WantedBy=multi-user.target
