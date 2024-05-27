@@ -30,7 +30,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
-      machine-type: c6a.xlarge
+      machine-type: c6a.2xlarge
 
   sev-ansible:
     if: startsWith(github.ref, 'refs/tags/') != true
@@ -51,7 +51,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
-      machine-type: c6a.xlarge
+      machine-type: c6a.2xlarge
 
   post-clean-resources:
     if: success() || failure() || cancelled()

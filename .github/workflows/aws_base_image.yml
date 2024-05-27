@@ -13,9 +13,6 @@ on:
       product:
         required: true
         type: string
-      kms-version:
-        required: true
-        type: string
 
 env:
   AWS_REGION: eu-west-1
@@ -62,16 +59,18 @@ jobs:
       - name: Packer build image
         env:
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
-          KMS_VERSION: ${{ inputs.kms-version }}
         run: |
           set -ex
-          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            export COSMIAN_VM_VERSION="${{ github.ref_name }}"
+          else
+            export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
 
-          if [ "${{ inputs.techno }}" = "ubuntu" ]; then
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             export AMI="ami-0776c814353b4814d"
           else
             export AMI="ami-08e592fbb0f535224"
           fi
 
-          bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$COSMIAN_VM_VERSION" "$AMI"
-
+          bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"

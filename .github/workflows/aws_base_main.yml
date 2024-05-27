@@ -2,11 +2,13 @@
 on:
   workflow_dispatch:
 
-name: Build base images
+concurrency:
+  group: marketplace_aws
+
+name: AWS base images build
 
 jobs:
-
-  aws:
+  sev-base-image:
     strategy:
       fail-fast: false
       matrix:
@@ -19,6 +21,3 @@ jobs:
       techno: sev
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.16.0
-
-
