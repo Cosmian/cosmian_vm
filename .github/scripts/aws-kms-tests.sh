@@ -31,7 +31,7 @@ AMI=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$CI_INSTANCE" -
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$AMI" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 
 echo "Cosmian VM app init"
-./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/start_kms/templates/kms.toml.j2
+./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/kms/templates/kms.toml.j2
 
 test_opened_ports "$IP_ADDR"
 

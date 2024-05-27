@@ -1,0 +1,174 @@
+---
+# tasks file for App checkup
+
+- name: Reboot before anything - {{ app_name }}
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600
+
+- name: Check SSH remote host IP
+  ansible.builtin.debug:
+    var: inventory_hostname
+
+- name: Check Cosmian VM Agent version
+  ansible.builtin.debug:
+    var: cosmian_vm_version
+
+- name: Clean potential existing Cosmian VM CLI
+  ansible.builtin.command:
+    cmd: |
+      rm -f ./cosmian_vm
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
+  delegate_to: localhost
+  become: false
+
+- name: Download Cosmian VM CLI
+  ansible.builtin.get_url:
+    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
+    dest: .
+    mode: "u+x"
+  delegate_to: localhost
+  become: false
+
+- name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
+  ansible.builtin.wait_for:
+    path: /var/lib/cosmian_vm/data/cert.pem
+    state: present
+
+- name: Check if port 5555 is listening
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 5555
+    delay: 5
+    timeout: 60
+    msg: Timeout waiting for 5555 to respond
+
+- name: Before anything - read logs of {{ app_name }}
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u {{ check_app_systemd_name }}
+  register: app_logs
+  tags: launch
+  changed_when: app_logs.rc != 0
+
+- name: Display logs of {{ app_name }}
+  ansible.builtin.debug:
+    var: app_logs
+  tags: launch
+
+- name: App initialization - sending configuration {{ check_app_configuration_path }}
+  ansible.builtin.command:
+    cmd: |
+      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app init -c {{ check_app_configuration_path }}
+  register: cosmian_vm_app_init
+  tags: app_init
+  ignore_errors: true
+  delegate_to: localhost
+  changed_when: cosmian_vm_app_init.rc != 0
+
+- name: App initialization - reading Cosmian VM agent logs
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_vm_agent
+  register: agent_logs
+  tags: app_init
+  changed_when: agent_logs.rc != 0
+
+- name: App initialization - displaying Agent logs
+  ansible.builtin.debug:
+    var: agent_logs
+  tags: app_init
+
+- name: Fail if Cosmian app init has failed previously
+  ansible.builtin.fail:
+    msg: Cosmian snapshot failed with return code {{ cosmian_vm_app_init }}
+  when:
+    - cosmian_vm_app_init is defined
+    - cosmian_vm_app_init.rc is defined
+    - cosmian_vm_app_init.rc != 0
+  tags: app_init
+
+- name: App restart -
+  ansible.builtin.command:
+    cmd: |
+      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app restart
+  register: cosmian_vm_app_restart
+  tags: app_restart
+  delegate_to: localhost
+  changed_when: cosmian_vm_app_restart.rc != 0
+
+- name: App restart - reading Cosmian VM agent logs
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u cosmian_vm_agent
+  register: agent_logs
+  ignore_errors: true
+  tags: app_restart
+  changed_when: agent_logs.rc != 0
+
+- name: App restart - displaying Agent logs
+  ansible.builtin.debug:
+    var: agent_logs
+  tags: app_restart
+
+- name: Fail if Cosmian app init has failed previously
+  ansible.builtin.fail:
+    msg: Cosmian snapshot failed with return code {{ cosmian_vm_app_restart }}
+  when:
+    - cosmian_vm_app_restart is defined
+    - cosmian_vm_app_restart.rc is defined
+    - cosmian_vm_app_restart.rc != 0
+  tags: app_init
+
+- name: Check if port is listening on {{ check_app_port }}
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "{{ check_app_port }}"
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for {{ check_app_port }} to respond
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Check if port 443 is listening
+  ansible.builtin.wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 443
+    delay: 5
+    timeout: 30
+    msg: Timeout waiting for 443 to respond
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Is healthy - {{ app_name }}
+  ansible.builtin.uri:
+    url: http://{{ inventory_hostname }}:{{ check_app_port }}/{{ check_app_endpoint }}
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: HTTPS connection - {{ app_name }}
+  ansible.builtin.uri:
+    url: https://{{ inventory_hostname }}/{{ check_app_endpoint }}
+    validate_certs: false
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: HTTP to HTTPS redirect connection - {{ check_app_name }}
+  ansible.builtin.uri:
+    url: http://{{ inventory_hostname }}/{{ check_app_endpoint }}
+    validate_certs: false
+  delegate_to: localhost
+  become: false
+  tags: listening
+
+- name: Clean Cosmian VM existing folders
+  ansible.builtin.command:
+    cmd: |
+      rm -f cosmian_vm
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
