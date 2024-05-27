@@ -13,7 +13,7 @@ AMI=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$CI_INSTANCE" -
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$AMI" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 
 echo "Cosmian VM app init"
-./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/ai_runner/templates/agent.toml.j2
+./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/ai_runner/templates/config.json.j2
 
 echo "Checking Cosmian AI Runner HTTP connection..."
 timeout 5m bash -c "until curl --fail http://${IP_ADDR}:5001/health; do sleep 3; done"
