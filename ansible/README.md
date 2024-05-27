@@ -2,23 +2,23 @@
 
 # AWS images
 
-|                  | Ubuntu base image | RHEL base image | Creation date |
-| :--------------- | :---------------: | :-------------: | ------------- |
-| AWS - AMD SEV    |                   |                 |               |
+|               |   Ubuntu base image   |    RHEL base image    | Creation date |
+|:--------------|:---------------------:|:---------------------:|---------------|
+| AWS - AMD SEV | ami-083360161b7e953b6 | ami-02d912d1649d1e091 |               |
 
 # Azure images
 
 |                  | Ubuntu base image | RHEL base image | Creation date |
-| :--------------- | :---------------: | :-------------: | ------------- |
-| Azure - AMD SEV  |                   |                 |               |
+|:-----------------|:-----------------:|:---------------:|---------------|
+| Azure - AMD SEV  |     canonical     |     redhat      |               |
 | Azure- Intel TDX |                   |                 |               |
 
 # GCP images
 
-|                  | Ubuntu base image | RHEL base image | Creation date |
-| :--------------- | :---------------: | :-------------: | ------------- |
-| GCP - Intel TDX  |                   |                 |               |
-| GCP - AMD SEV    |                   |                 |               |
+|                 |      Ubuntu base image      | RHEL base image  | Creation date |
+|:----------------|:---------------------------:|:----------------:|---------------|
+| GCP - Intel TDX |  ubuntu-2204-tdx-v20240220  |                  |               |
+| GCP - AMD SEV   | ubuntu-2204-jammy-v20240319 | rhel-9-v20240312 |               |
 
 ## Manually run playbook
 
