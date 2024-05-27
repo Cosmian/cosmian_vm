@@ -93,7 +93,18 @@ jobs:
           else
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
-          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            if [ "${{ inputs.techno }}" = "sev" ]; then
+              export AMI="ubuntu-2204-jammy-v20240319"
+            else
+              export AMI="ubuntu-2204-tdx-v20240220"
+            fi
+          else
+            export AMI="rhel-9-v20240312"
+          fi
+
+          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}

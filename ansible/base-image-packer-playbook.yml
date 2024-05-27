@@ -1,0 +1,10 @@
+---
+- name: Setup base image
+  hosts: all
+  become: true
+  roles:
+    - configure_ima
+    - tpm
+    - no_updates
+    - instance_configs # GCP only
+    - upgrade

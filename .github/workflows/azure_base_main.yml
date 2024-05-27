@@ -1,0 +1,41 @@
+---
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: marketplace_azure
+
+name: Azure base images build
+
+jobs:
+  sev-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [base-image]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    secrets: inherit
+    uses: ./.github/workflows/azure_base_image.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+      ai-runner-version: 0.3.0
+
+  tdx-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu]
+        product: [base-image]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
+    secrets: inherit
+    uses: ./.github/workflows/azure_base_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+      ai-runner-version: 0.3.0

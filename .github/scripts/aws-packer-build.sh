@@ -4,17 +4,16 @@ set -ex
 
 PRODUCT=$1
 DISTRIBUTION=$2
+SOURCE_AMI=$3
 
 VOLUME_SIZE=20
 
 set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
-  SOURCE_AMI="ami-083360161b7e953b6"
   SSH_USERNAME="ubuntu"
   TEMPLATE_DISTRIBUTION="ubuntu"
 else
-  SOURCE_AMI="ami-02d912d1649d1e091"
   SSH_USERNAME="ec2-user"
   TEMPLATE_DISTRIBUTION="redhat"
 fi

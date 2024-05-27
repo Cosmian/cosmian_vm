@@ -4,19 +4,14 @@ set -ex
 
 PRODUCT=$1
 DISTRIBUTION=$2
+SOURCE_IMAGE=$3
 
 set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
-  if [ "$TECHNO" = "sev" ]; then
-    SOURCE_IMAGE="ubuntu-2204-jammy-v20240319"
-  else
-    SOURCE_IMAGE="ubuntu-2204-tdx-v20240220"
-  fi
   SOURCE_IMAGE_FAMILY="ubuntu-2204-lts"
   GOOGLE_COMPUTE="ubuntu"
 else
-  SOURCE_IMAGE="rhel-9-v20240312"
   SOURCE_IMAGE_FAMILY="rhel-9"
   GOOGLE_COMPUTE="redhat"
 fi

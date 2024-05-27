@@ -1,4 +1,46 @@
-This ansible is designed to work with packer.
+# Image build
+
+## Cloud providers base images
+
+### AWS images
+
+|               | Official image | OS image | OS version | AMI                   | Creation date |
+| :------------ | :------------: | :------: | ---------- | --------------------- | ------------- |
+| AWS - AMD SEV |      yes       |  Ubuntu  | 24.04      | ami-083360161b7e953b6 | 2024-05-27    |
+| AWS - AMD SEV |      yes       |  Redhat  | 9.3        | ami-02d912d1649d1e091 | 2024-05-27    |
+
+If needed:
+
+```sh
+aws ec2 describe-images > aws_list.txt
+```
+
+### Azure images
+
+|                             | Official image | OS image | OS version      | Publisher | Offer                                 | SKU             | Creation date |
+| :-------------------------- | :------------: | :------: | --------------- | --------- | ------------------------------------- | --------------- | ------------- |
+| Azure - AMD SEV / Intel TDX |      yes       |  Ubuntu  | 22.04.202404090 | Canonical | 0001-com-ubuntu-confidential-vm-jammy | 22_04-lts-cvm   | 2024-04-18    |
+| Azure - AMD SEV / Intel TDX |      yes       |  Redhat  | 9.3.2023111017  | Redhat    | rhel-cvm                              | 9_3_cvm_sev_snp | 2024-04-18    |
+
+```sh
+az vm list> azure_list.json
+```
+
+### GCP images
+
+|                 | Official image | OS image | OS version | Name                        | Creation date |
+| :-------------- | :------------: | :------: | ---------- | --------------------------- | ------------- |
+| GCP - Intel TDX |      yes       |  Ubuntu  | 22.04      | ubuntu-2204-tdx-v20240220   | 2024-02-20    |
+| GCP - AMD SEV   |      yes       |  Ubuntu  | 22.04      | ubuntu-2204-jammy-v20240319 | 2024-03-19    |
+| GCP - AMD SEV   |      yes       |  Redhat  | 9.3        | rhel-9-v20240312            | 2024-03-12    |
+
+```sh
+gcloud compute images list > gcloud_list.json
+```
+
+## Ansible script
+
+This Ansible script is designed to work with packer.
 
 You can run it anyway without packer as follow:
 

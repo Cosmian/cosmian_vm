@@ -1,0 +1,81 @@
+---
+name: Build and test image for GCP SEV and TDX
+
+on:
+  workflow_call:
+    inputs:
+      distrib:
+        required: true
+        type: string
+      techno:
+        required: true
+        type: string
+      product:
+        required: true
+        type: string
+
+env:
+  GCP_DEV_PROJECT: cosmian-dev
+  GCP_PUBLIC_PROJECT: cosmian-public
+
+jobs:
+  build-image:
+    name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    if: contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ./packer
+    outputs:
+      timestamp: ${{ steps.env.outputs.TIMESTAMP }}
+      image_name: ${{ steps.env.outputs.IMAGE_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create env variables
+        id: env
+        run: |
+          TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
+          echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_NAME=${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-$TIMESTAMP" >> "$GITHUB_OUTPUT"
+
+      - name: Setup packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Install packer plugins
+        run: |
+          packer plugins install github.com/hashicorp/googlecompute
+          packer plugins install github.com/hashicorp/ansible
+
+      - name: GCP auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_COSMIAN_DEV_CREDENTIALS }}
+
+      - name: Packer build image
+        env:
+          IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+          TECHNO: ${{ inputs.techno }}
+        run: |
+          set -ex
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            export COSMIAN_VM_VERSION="${{ github.ref_name }}"
+          else
+            export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            if [ "${{ inputs.techno }}" = "sev" ]; then
+              export AMI="ubuntu-2204-jammy-v20240319"
+            else
+              export AMI="ubuntu-2204-tdx-v20240220"
+            fi
+          else
+              export AMI="rhel-9-v20240312"
+          fi
+
+          bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"

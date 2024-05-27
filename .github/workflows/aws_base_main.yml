@@ -1,0 +1,23 @@
+---
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: marketplace_aws
+
+name: AWS base images build
+
+jobs:
+  sev-base-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [base-image]
+    name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    secrets: inherit
+    uses: ./.github/workflows/aws_base_image.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
