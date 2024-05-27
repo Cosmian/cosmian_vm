@@ -1,4 +1,28 @@
-This ansible is designed to work with packer.
+# Ansible + Packer
+
+# AWS images
+
+|                  | Ubuntu base image | RHEL base image | Creation date |
+| :--------------- | :---------------: | :-------------: | ------------- |
+| AWS - AMD SEV    |                   |                 |               |
+
+# Azure images
+
+|                  | Ubuntu base image | RHEL base image | Creation date |
+| :--------------- | :---------------: | :-------------: | ------------- |
+| Azure - AMD SEV  |                   |                 |               |
+| Azure- Intel TDX |                   |                 |               |
+
+# GCP images
+
+|                  | Ubuntu base image | RHEL base image | Creation date |
+| :--------------- | :---------------: | :-------------: | ------------- |
+| GCP - Intel TDX  |                   |                 |               |
+| GCP - AMD SEV    |                   |                 |               |
+
+## Manually run playbook
+
+This Ansible script is designed to work with packer.
 
 You can run it anyway without packer as follow:
 

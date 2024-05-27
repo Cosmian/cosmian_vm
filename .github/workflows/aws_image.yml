@@ -82,7 +82,7 @@ jobs:
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
 
-          if [ "${{ inputs.techno }}" = "ubuntu" ]; then
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             export AMI="ami-083360161b7e953b6"
           else
             export AMI="ami-02d912d1649d1e091"
