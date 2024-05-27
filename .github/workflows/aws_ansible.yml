@@ -77,9 +77,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            IMAGE_TO_INSTANTIATE="ami-083360161b7e953b6"
+            IMAGE_TO_INSTANTIATE="ami-0655bf2193e40564e"
           else
-            IMAGE_TO_INSTANTIATE="ami-02d912d1649d1e091"
+            IMAGE_TO_INSTANTIATE="ami-08e592fbb0f535224"
           fi
 
           AMI=$(aws ec2 run-instances \

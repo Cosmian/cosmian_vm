@@ -36,7 +36,7 @@ else
     # Ubuntu SEV
     AMI=$(aws ec2 run-instances \
       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME}]" \
-      --image-id ami-083360161b7e953b6 \
+      --image-id ami-0655bf2193e40564e \
       --instance-type c6a.2xlarge \
       --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
       --cpu-options AmdSevSnp=enabled \

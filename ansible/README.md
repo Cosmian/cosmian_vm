@@ -6,8 +6,8 @@
 
 |               | Official image | OS image | OS version | AMI                   | Creation date |
 | :------------ | :------------: | :------: | ---------- | --------------------- | ------------- |
-| AWS - AMD SEV |      yes       |  Ubuntu  | 24.04      | ami-083360161b7e953b6 | 2024-05-27    |
-| AWS - AMD SEV |      yes       |  Redhat  | 9.3        | ami-02d912d1649d1e091 | 2024-05-27    |
+| AWS - AMD SEV |      yes       |  Ubuntu  | 24.04      | ami-0655bf2193e40564e | 2024-05-27    |
+| AWS - AMD SEV |      yes       |  Redhat  | 9.3        | ami-08e592fbb0f535224 | 2024-05-27    |
 
 If needed:
 
