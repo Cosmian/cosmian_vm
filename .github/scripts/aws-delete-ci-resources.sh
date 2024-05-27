@@ -40,3 +40,13 @@ for security_group_id in $security_group_ids; do
     aws ec2 delete-security-group --group-id "$security_group_id" --region "$REGION"
   fi
 done
+
+# List all snapshots IDs and extract their IDs
+snapshot_ids=$(aws ec2 describe-snapshots --owner-ids 803923670805 --filters Name=description,Values=*Packer* --query "Snapshots[*].[SnapshotId]" --region "$REGION" --output text)
+# Loop through each snapshots ID and delete it
+for snapshot_id in $snapshot_ids; do
+  aws ec2 delete-snapshot --snapshot-id "$snapshot_id" --region "$REGION"
+done
+
+#voir avec manu
+#aws ec2 describe-images --filters "Name=tag:Name,Values=dont-delete"
