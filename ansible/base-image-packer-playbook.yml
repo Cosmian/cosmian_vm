@@ -7,4 +7,5 @@
     - tpm
     - no_updates
     - instance_configs # GCP only
+    - intel
     - upgrade
