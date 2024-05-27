@@ -62,7 +62,14 @@ jobs:
           else
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
-          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            export PUBLISHER="canonical"
+          else
+            export PUBLISHER="redhat"
+          fi
+
+          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$PUBLISHER"
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
