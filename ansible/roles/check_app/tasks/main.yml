@@ -121,17 +121,6 @@
     - cosmian_vm_app_restart.rc != 0
   tags: app_init
 
-- name: Check if port is listening on {{ check_app_port }}
-  ansible.builtin.wait_for:
-    host: "{{ inventory_hostname }}"
-    port: "{{ check_app_port }}"
-    delay: 5
-    timeout: 30
-    msg: Timeout waiting for {{ check_app_port }} to respond
-  delegate_to: localhost
-  become: false
-  tags: listening
-
 - name: Check if port 443 is listening
   ansible.builtin.wait_for:
     host: "{{ inventory_hostname }}"
@@ -143,24 +132,9 @@
   become: false
   tags: listening
 
-- name: Is healthy - {{ app_name }}
-  ansible.builtin.uri:
-    url: http://{{ inventory_hostname }}:{{ check_app_port }}/{{ check_app_endpoint }}
-  delegate_to: localhost
-  become: false
-  tags: listening
-
 - name: HTTPS connection - {{ app_name }}
   ansible.builtin.uri:
     url: https://{{ inventory_hostname }}/{{ check_app_endpoint }}
-    validate_certs: false
-  delegate_to: localhost
-  become: false
-  tags: listening
-
-- name: HTTP to HTTPS redirect connection - {{ check_app_name }}
-  ansible.builtin.uri:
-    url: http://{{ inventory_hostname }}/{{ check_app_endpoint }}
     validate_certs: false
   delegate_to: localhost
   become: false

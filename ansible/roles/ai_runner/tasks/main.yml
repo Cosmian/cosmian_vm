@@ -95,20 +95,6 @@
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'
   block:
-    - name: Open port 5001 for AI Runner
-      ansible.posix.firewalld:
-        zone: public
-        port: 5001/tcp
-        permanent: true
-        state: enabled
-
-    - name: Open port 80 for HTTP redirect to HTTPS
-      ansible.posix.firewalld:
-        zone: public
-        port: 80/tcp
-        permanent: true
-        state: enabled
-
     - name: Open port 443 for HTTPS
       ansible.posix.firewalld:
         zone: public
