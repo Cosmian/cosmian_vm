@@ -26,7 +26,6 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: contains(inputs.distrib, 'rhel') != true
     runs-on: ubuntu-22.04
     permissions:
       contents: read

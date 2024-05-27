@@ -9,14 +9,6 @@
     upgrade: safe
   tags: ubuntu
 
-- name: Install packages
-  ansible.builtin.dnf:
-    name:
-      - python-firewall
-      - firewalld
-    state: present
-    update_cache: true
-
 - name: Upgrade all packages
   when: ansible_distribution == 'Redhat' or ansible_distribution == 'Amazon'
   block:
