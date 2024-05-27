@@ -7,31 +7,10 @@
         distrib:
           required: true
           type: string
-        machine-type:
-          required: true
-          type: string
-        zone:
-          required: true
-          type: string
-        confidential-compute-type:
-          required: true
-          type: string
         techno:
           required: true
           type: string
-        min-cpu-platform:
-          required: true
-          type: string
-        mode:
-          required: true
-          type: string
         product:
-          required: true
-          type: string
-        kms-version:
-          required: true
-          type: string
-        ai-runner-version:
           required: true
           type: string
   
@@ -53,7 +32,6 @@
       outputs:
         timestamp: ${{ steps.env.outputs.TIMESTAMP }}
         image_name: ${{ steps.env.outputs.IMAGE_NAME }}
-        ci_instance: ${{ steps.env.outputs.CI_INSTANCE }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -63,8 +41,7 @@
           run: |
             TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
             echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
-            echo "IMAGE_NAME=temp-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
-            echo "CI_INSTANCE=gh-ci-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+            echo "IMAGE_NAME=${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-$TIMESTAMP" >> "$GITHUB_OUTPUT"
   
         - name: Setup packer
           uses: hashicorp/setup-packer@main
@@ -81,10 +58,7 @@
   
         - name: Packer build image
           env:
-            TIMESTAMP: ${{ steps.env.outputs.TIMESTAMP }}
             IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
-            KMS_VERSION: ${{ inputs.kms-version }}
-            AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
             TECHNO: ${{ inputs.techno }}
           run: |
             set -ex
@@ -93,4 +67,15 @@
             else
               export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
             fi
-            bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
+
+            if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+              if [ "${{ inputs.techno }}" = "sev" ]; then
+                export AMI="ubuntu-2204-jammy-v20240319"
+              else
+                export AMI="ubuntu-2204-tdx-v20240220"
+              fi
+            else
+                export AMI="rhel-9-v20240312"
+            fi
+
+            bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"

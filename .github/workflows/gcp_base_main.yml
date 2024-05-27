@@ -1,0 +1,37 @@
+---
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: marketplace_gcp
+
+name: GCP base images build
+
+jobs:
+  sev-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu, rhel]
+        product: [base-image]
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    secrets: inherit
+    uses: ./.github/workflows/gcp_base_image.yml
+    with:
+      techno: sev
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+
+  tdx-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu]
+        product: [base-image]
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
+    secrets: inherit
+    uses: ./.github/workflows/gcp_base_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
