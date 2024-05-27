@@ -97,7 +97,7 @@ jobs:
 
           # Wait for VM to be ready
           aws ec2 wait instance-running --instance-ids $AMI
-          timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 10; done"
+          timeout 40m bash -c "until nc -z $IP_ADDR 22; do sleep 10; done"
 
       - name: Ansible installation
         env:
