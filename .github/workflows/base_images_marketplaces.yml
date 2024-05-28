@@ -2,7 +2,6 @@
 name: Manual base images recreation
 
 on:
-  push: # TODO: remove it
   workflow_dispatch:
 
 jobs:

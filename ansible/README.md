@@ -10,8 +10,8 @@
 | AWS - AMD SEV |      yes       |  Redhat  | 9.3        | ami-02d912d1649d1e091 | 2024-XX-YY    |
 | AWS - AMD SEV |      yes       |  Ubuntu  | 24.04      | ami-0655bf2193e40564e | 2024-05-27    |
 | AWS - AMD SEV |      yes       |  Redhat  | 9.3        | ami-08e592fbb0f535224 | 2024-05-27    |
-| AWS - AMD SEV |       no       |  Ubuntu  | 24.04      | ami-0620af58af89e9980 | 2024-05-27    |
-| AWS - AMD SEV |       no       |  Redhat  | 9.3        | ami-06707d5f1aeecc075 | 2024-05-27    |
+| AWS - AMD SEV |       no       |  Ubuntu  | 24.04      | ami-078b6cc5ff646a9ec | 2024-05-28    |
+| AWS - AMD SEV |       no       |  Redhat  | 9.3        | ami-0a410cf86963e05ef | 2024-05-28    |
 
 If needed:
 
@@ -27,9 +27,9 @@ aws ec2 describe-images > aws_list.txt
 | Azure - AMD SEV / Intel TDX |      yes       |  Redhat  | 9.3.2023111017  | Redhat                | rhel-cvm                              | 9_3_cvm_sev_snp | 2024-04-18    |
 | Azure - AMD SEV / Intel TDX |      yes       |  Ubuntu  | 22.04.202404090 | Canonical             | 0001-com-ubuntu-confidential-vm-jammy | 22_04-lts-cvm   | 2024-04-18    |
 | Azure - AMD SEV / Intel TDX |      yes       |  Redhat  | 9.3.2023111017  | Redhat                | rhel-cvm                              | 9_3_cvm_sev_snp | 2024-04-18    |
-| Azure - AMD SEV             |       no       |  Redhat  | 0.1.0           | base-image-rhel-sev   | rhel-cvm                              | 9_3_cvm_sev_snp | 2024-05-27    |
-| Azure - AMD TDX             |       no       |  Ubuntu  | 0.1.0           | base-image-ubuntu-tdx | Canonical                             | 22_04-lts-cvm   | 2024-05-27    |
-| Azure - AMD SEV             |       no       |  Ubuntu  | 0.1.0           | base-image-ubuntu-sev | Canonical                             | 22_04-lts-cvm   | 2024-05-27    |
+| Azure - AMD SEV             |       no       |  Redhat  | 0.1.0           | base-image-rhel-sev   | rhel-cvm                              | 9_3_cvm_sev_snp | 2024-05-28    |
+| Azure - AMD TDX             |       no       |  Ubuntu  | 0.1.0           | base-image-ubuntu-tdx | Canonical                             | 22_04-lts-cvm   | 2024-05-28    |
+| Azure - AMD SEV             |       no       |  Ubuntu  | 0.1.0           | base-image-ubuntu-sev | Canonical                             | 22_04-lts-cvm   | 2024-05-28    |
 
 ```sh
 az vm list> azure_list.json
@@ -42,9 +42,9 @@ az vm list> azure_list.json
 | GCP - Intel TDX |      yes       |  Ubuntu  | 22.04      | ubuntu-2204-tdx-v20240220            | 2024-02-20    |
 | GCP - AMD SEV   |      yes       |  Ubuntu  | 22.04      | ubuntu-2204-jammy-v20240319          | 2024-03-19    |
 | GCP - AMD SEV   |      yes       |  Redhat  | 9.3        | rhel-9-v20240312                     | 2024-03-12    |
-| GCP - Intel TDX |       no       |  Ubuntu  | 22.04      | base-image-ubuntu-tdx-20240527141624 | 2024-05-27    |
-| GCP - AMD SEV   |       no       |  Ubuntu  | 22.04      | base-image-ubuntu-sev-20240527141626 | 2024-05-27    |
-| GCP - AMD SEV   |       np       |  Redhat  | 9.3        | base-image-rhel-sev-20240527141627   | 2024-05-27    |
+| GCP - Intel TDX |       no       |  Ubuntu  | 22.04      | base-image-ubuntu-tdx-20240528081327 | 2024-05-28    |
+| GCP - AMD SEV   |       no       |  Ubuntu  | 22.04      | base-image-ubuntu-sev-20240528081327 | 2024-05-28    |
+| GCP - AMD SEV   |       np       |  Redhat  | 9.3        | base-image-rhel-sev-20240528081331   | 2024-05-28    |
 
 ```sh
 gcloud compute images list > gcloud_list.json

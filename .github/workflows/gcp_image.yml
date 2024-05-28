@@ -96,12 +96,12 @@ jobs:
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.techno }}" = "sev" ]; then
-              export AMI="base-image-ubuntu-sev-20240527141626"
+              export AMI="base-image-ubuntu-sev-20240528081327"
             else
-              export AMI="base-image-ubuntu-tdx-20240527141624"
+              export AMI="base-image-ubuntu-tdx-20240528081327"
             fi
           else
-            export AMI="base-image-rhel-sev-20240527141627"
+            export AMI="base-image-rhel-sev-20240528081331"
           fi
 
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
