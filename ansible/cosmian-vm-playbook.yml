@@ -11,6 +11,7 @@
 
 - name: Reboot after GRUB changes and TPM support installation
   hosts: all
+  become: true
   tasks:
     - name: Reboot the system
       ansible.builtin.reboot:

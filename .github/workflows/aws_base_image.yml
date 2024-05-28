@@ -28,7 +28,6 @@ jobs:
       run:
         working-directory: ./packer
     outputs:
-      timestamp: ${{ steps.env.outputs.TIMESTAMP }}
       image_name: ${{ steps.env.outputs.IMAGE_NAME }}
     steps:
       - name: Checkout
@@ -37,9 +36,7 @@ jobs:
       - name: Create env variables
         id: env
         run: |
-          TIMESTAMP="$(date -u +'%Y%m%d%H%M%S')"
-          echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
-          echo "IMAGE_NAME=${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-$TIMESTAMP" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_NAME=${{ inputs.product }}-0-1-0-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
       - name: Setup packer
         uses: hashicorp/setup-packer@main
