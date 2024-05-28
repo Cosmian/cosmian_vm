@@ -7,6 +7,17 @@
     - cleanup_kms
     - cleanup_cosmian_vm_agent
 
+- name: Install base image prerequisites
+  ansible.builtin.import_playbook: base-image-packer-playbook.yml
+
+- name: Reboot after GRUB changes and TPM support installation
+  hosts: all
+  tasks:
+    - name: Reboot the system
+      ansible.builtin.reboot:
+        connect_timeout: 3600
+        reboot_timeout: 3600
+
 - name: Install KMS
   ansible.builtin.import_playbook: kms-packer-playbook.yml
 
