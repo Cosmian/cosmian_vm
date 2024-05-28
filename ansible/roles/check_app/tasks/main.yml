@@ -1,7 +1,7 @@
 ---
 # tasks file for App checkup
 
-- name: Reboot before anything - {{ app_name }}
+- name: Reboot before anything - {{ check_app_name }}
   ansible.builtin.reboot:
     connect_timeout: 3600
     reboot_timeout: 3600
@@ -44,7 +44,7 @@
     timeout: 60
     msg: Timeout waiting for 5555 to respond
 
-- name: Before anything - read logs of {{ app_name }}
+- name: Before anything - read logs of {{ check_app_name }}
   ansible.builtin.command:
     cmd: |
       journalctl -u {{ check_app_systemd_name }}
@@ -52,7 +52,7 @@
   tags: launch
   changed_when: app_logs.rc != 0
 
-- name: Display logs of {{ app_name }}
+- name: Display logs of {{ check_app_name }}
   ansible.builtin.debug:
     var: app_logs
   tags: launch
@@ -132,7 +132,7 @@
   become: false
   tags: listening
 
-- name: HTTPS connection - {{ app_name }}
+- name: HTTPS connection - {{ check_app_name }}
   ansible.builtin.uri:
     url: https://{{ inventory_hostname }}/{{ check_app_endpoint }}
     validate_certs: false
@@ -144,5 +144,6 @@
   ansible.builtin.command:
     cmd: |
       rm -f cosmian_vm
+  delegate_to: localhost
   register: cmd_output
   changed_when: cmd_output.rc != 0
