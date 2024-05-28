@@ -7,20 +7,10 @@ IP_ADDR=$2
 
 test_opened_ports() {
   REMOTE_HOST=$1
-  echo "Checking Cosmian KMS HTTP connection..."
-  timeout 5m bash -c "until curl --fail http://${REMOTE_HOST}:8080/version; do sleep 3; done"
-  echo ""
-
-  echo "[ OK ] Cosmian KMS HTTP connection"
   echo "Checking Cosmian KMS HTTPS connection..."
   timeout 5m bash -c "until curl --fail --insecure https://${REMOTE_HOST}/version; do sleep 3; done"
   echo ""
-
   echo "[ OK ] Cosmian KMS HTTPS connection"
-  echo "Checking Cosmian KMS HTTP to HTTPS redirect connection..."
-  curl --insecure "http://${REMOTE_HOST}/version"
-  echo ""
-  echo "[ OK ] Cosmian KMS HTTP to HTTPS redirect connection"
 }
 
 bash .github/scripts/azure-cosmian-vm-tests.sh "$CI_INSTANCE" "$IP_ADDR"

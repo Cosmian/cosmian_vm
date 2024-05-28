@@ -63,4 +63,4 @@ else
   fi
 fi
 
-az vm open-port -g packer-snp -n "$NAME" --priority 100 --port 5555,80,8080,443,22,5001
+az vm open-port -g packer-snp -n "$NAME" --priority 100 --port 5555,443,22

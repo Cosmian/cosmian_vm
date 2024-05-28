@@ -71,4 +71,4 @@ else
   fi
 fi
 
-gcloud compute firewall-rules create "$NAME" --network=default --allow=tcp:22,tcp:5555,tcp:80,tcp:443,tcp:8080,tcp:5001 --target-tags="$NAME-cli"
+gcloud compute firewall-rules create "$NAME" --network=default --allow=tcp:22,tcp:5555,tcp:443 --target-tags="$NAME-cli"

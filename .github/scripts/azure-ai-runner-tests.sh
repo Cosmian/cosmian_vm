@@ -12,20 +12,10 @@ IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps
 echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/ai_runner/templates/config.json.j2
 
-echo "Checking Cosmian AI Runner HTTP connection..."
-timeout 5m bash -c "until curl --fail http://${IP_ADDR}:5001/health; do sleep 3; done"
-echo ""
-
-echo "[ OK ] Cosmian AI Runner HTTP connection"
 echo "Checking Cosmian AI Runner HTTPS connection..."
 timeout 5m bash -c "until curl --fail --insecure https://${IP_ADDR}/health; do sleep 3; done"
 echo ""
-
 echo "[ OK ] Cosmian AI Runner HTTPS connection"
-echo "Checking Cosmian AI Runner HTTP to HTTPS redirect connection..."
-curl --insecure "http://${IP_ADDR}/health"
-echo ""
-echo "[ OK ] Cosmian AI Runner HTTP to HTTPS redirect connection"
 
 echo "Rebooting instance..."
 az vm restart -g "$RESOURCE_GROUP" -n "$CI_INSTANCE"
@@ -43,18 +33,7 @@ echo "[ OK ] Integrity after reboot"
 echo "Starting the AI Runner"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app restart
 
-echo "[ OK ] AI Runner is started"
-echo "Checking Cosmian AI Runner HTTP connection..."
-timeout 5m bash -c "until curl --fail http://${IP_ADDR}:5001/health; do sleep 3; done"
-echo ""
-
-echo "[ OK ] Cosmian AI Runner HTTP connection"
 echo "Checking Cosmian AI Runner HTTPS connection..."
 timeout 5m bash -c "until curl --fail --insecure https://${IP_ADDR}/health; do sleep 3; done"
 echo ""
-
 echo "[ OK ] Cosmian AI Runner HTTPS connection"
-echo "Checking Cosmian AI Runner HTTP to HTTPS redirect connection..."
-curl --insecure "http://${IP_ADDR}/health"
-echo ""
-echo "[ OK ] Cosmian AI Runner HTTP to HTTPS redirect connection"

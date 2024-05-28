@@ -21,10 +21,7 @@ aws ec2 delete-security-group --group-name "$NAME-ansible-sg" --output text
 aws ec2 create-security-group --group-name "$NAME-ansible-sg" --description "Security group for ansible test"
 aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 22 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 5555 --cidr 0.0.0.0/0
-aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 80 --cidr 0.0.0.0/0
-aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 8080 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 443 --cidr 0.0.0.0/0
-aws ec2 authorize-security-group-ingress --group-name "$NAME-ansible-sg" --protocol tcp --port 5001 --cidr 0.0.0.0/0
 
 set -ex
 
