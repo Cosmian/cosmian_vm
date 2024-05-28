@@ -1,0 +1,26 @@
+---
+name: Manual base images recreation
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-cosmian-vm-binaries:
+    name: Build binaries
+    uses: ./.github/workflows/build.yml
+
+  azure:
+    needs: build-cosmian-vm-binaries
+    uses: ./.github/workflows/azure_base_main.yml
+    secrets: inherit
+
+  gcp:
+    needs: build-cosmian-vm-binaries
+    uses: ./.github/workflows/gcp_base_main.yml
+    secrets: inherit
+
+  aws:
+    needs: build-cosmian-vm-binaries
+    uses: ./.github/workflows/aws_base_main.yml
+    secrets: inherit

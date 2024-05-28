@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_gcp
 
-name: GCP images nightly build
+name: Nightly GCP images build
 
 jobs:
   clean-resources:

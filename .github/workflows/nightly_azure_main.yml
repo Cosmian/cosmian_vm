@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_azure
 
-name: Azure images nightly build
+name: Nightly Azure images build
 
 jobs:
   clean-resources:
