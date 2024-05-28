@@ -18,6 +18,5 @@
     - role: check_app
       check_app_name: AI Runner
       check_app_systemd_name: cosmian_ai_runner
-      check_app_port: 5001
       check_app_endpoint: health
       check_app_configuration_path: roles/ai_runner/templates/config.json.j2
