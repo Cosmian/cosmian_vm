@@ -4,9 +4,4 @@
   become: true
   roles:
     - check_cpu
-    - configure_ima
-    - tpm
     - cosmian_vm_agent
-    - no_updates
-    - instance_configs # GCP only
-    - upgrade
