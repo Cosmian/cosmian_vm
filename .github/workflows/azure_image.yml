@@ -141,9 +141,9 @@ jobs:
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
             az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555
           elif  [ "${{ inputs.product }}" = "ai-runner" ]; then
-            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,80,5001,443
+            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,443
           else
-            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,80,8080,443
+            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,443
           fi
 
           IP_ADDR=$(az vm show -d -g $RESOURCE_GROUP -n $CI_INSTANCE --query publicIps -o tsv)
