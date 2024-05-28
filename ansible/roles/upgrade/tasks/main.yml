@@ -10,7 +10,7 @@
   tags: ubuntu
 
 - name: Upgrade all packages
-  when: ansible_distribution == 'Redhat'
+  when: ansible_distribution == 'RedHat'
   block:
     - name: Install packages
       ansible.builtin.dnf:
