@@ -56,3 +56,23 @@ for snapshot_id in $snapshot_ids; do
   echo "Delete $snapshot_id related the images starting with temp-"
   aws ec2 delete-snapshot --snapshot-id "$snapshot_id" --region "$REGION" || true
 done
+
+# Step 1: List all AMIs with no tags get their ImageId
+tags_ami_ids=$(aws ec2 describe-images --owners self --query 'Images[?!Tags].ImageId' --region "$REGION" --output text)
+for image_id in $temp_ami_ids; do
+  echo "Listing image: $image_id"
+  aws ec2 deregister-image --image-id "$image_id"
+done
+
+# Step 2: Get the Snapshot IDs associated with these AMIs
+snapshot_ids=""
+for ami_id in $tags_ami_ids; do
+  ami_snapshot_ids=$(aws ec2 describe-images --image-ids "$ami_id" --query 'Images[*].BlockDeviceMappings[*].Ebs.SnapshotId' --region "$REGION" --output text)
+  snapshot_ids="$snapshot_ids $ami_snapshot_ids"
+done
+
+# Step 3: Delete the snapshots
+for snapshot_id in $snapshot_ids; do
+  echo "Delete $snapshot_id related the images starting with temp-"
+  aws ec2 delete-snapshot --snapshot-id "$snapshot_id" --region "$REGION" || true
+done
