@@ -83,9 +83,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI="ami-02398b8659888fbd8"
+            export AMI="ami-091f9dc2c8ed8dafe"
           else
-            export AMI="ami-08a93ecad32026dcf"
+            export AMI="ami-0495cdf439d75bcb4"
           fi
           bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
 

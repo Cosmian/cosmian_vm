@@ -6,8 +6,8 @@
 
 |               |    Official image     | OS image | OS version | Cosmian base image    | Version | Creation date |
 | :------------ | :-------------------: | :------: | ---------- | --------------------- | ------- | ------------- |
-| AWS - AMD SEV | ami-0655bf2193e40564e |  Ubuntu  | 24.04      | ami-02398b8659888fbd8 | 0.1.0   | 2024-05-27    |
-| AWS - AMD SEV | ami-08e592fbb0f535224 |  Redhat  | 9.3        | ami-08a93ecad32026dcf | 0.1.0   | 2024-05-27    |
+| AWS - AMD SEV | ami-0655bf2193e40564e |  Ubuntu  | 24.04      | ami-091f9dc2c8ed8dafe | 0.1.0   | 2024-05-27    |
+| AWS - AMD SEV | ami-08e592fbb0f535224 |  Redhat  | 9.3        | ami-0495cdf439d75bcb4 | 0.1.0   | 2024-05-27    |
 
 If needed:
 
