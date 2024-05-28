@@ -13,6 +13,18 @@ source "azure-arm" "TEMPLATE_DISTRIBUTION" {
   vtpm_enabled              = true
   security_type             = "ConfidentialVM"
 
+  # shared_image_gallery {
+  #   subscription         = "TEMPLATE_SUBSCRIPTION_ID"
+  #   resource_group       = "packer-snp"
+  #   gallery_name         = "cosmian_packer"
+  #   image_name           = "base-image-TEMPLATE_DISTRIBUTION-TEMPLATE_TECHNO"
+  #   image_version        = "TEMPLATE_BASE_IMAGE_VERSION"
+  #   storage_account_type = "Standard_LRS"
+  #   target_region {
+  #     name = "westeurope"
+  #   }
+  # }
+
   shared_image_gallery_destination {
     subscription         = "TEMPLATE_SUBSCRIPTION_ID"
     resource_group       = "packer-snp"
