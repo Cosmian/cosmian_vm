@@ -153,7 +153,11 @@
     validate_certs: false
   delegate_to: localhost
   become: false
-  tags: listening
+  register: result
+  retries: 10
+  delay: 10
+  until: result.status == 200
+  tags: listening,listening_app
   when: (check_app_name == "AI Runner") or (check_app_name == "KMS")
 
 - name: Check endpoint {{ check_app_endpoint[1] }}
@@ -210,5 +214,6 @@
   ansible.builtin.command:
     cmd: |
       rm -f cosmian_vm
+  delegate_to: localhost
   register: cmd_output
   changed_when: cmd_output.rc != 0

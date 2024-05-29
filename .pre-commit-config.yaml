@@ -71,6 +71,7 @@ repos:
     rev: v1.21.0
     hooks:
       - id: typos
+        exclude: ansible/roles/check_app/tasks/main.yml
 
   - repo: https://github.com/sirosen/texthooks
     rev: 0.6.6
