@@ -138,7 +138,11 @@
     validate_certs: false
   delegate_to: localhost
   become: false
-  tags: listening
+  register: result
+  retries: 10
+  delay: 10
+  until: result.status == 200
+  tags: listening,listening_app
 
 - name: Clean Cosmian VM existing folders
   ansible.builtin.command:
