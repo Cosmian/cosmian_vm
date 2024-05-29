@@ -5,12 +5,14 @@ set -ex
 SNAPSHOT="azure_${PRODUCT}_${DISTRIB}_${TECHNO}.snapshot"
 NEW_SNAPSHOT="new_$SNAPSHOT"
 
-bash .github/scripts/azure-cosmian-vm-tests.sh
-
-IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
+echo "Waiting for Cosmian VM agent (${IP_ADDR}:5555)..."
+timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
 
 echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/ai_runner/templates/config.json.j2
+
+bash .github/scripts/azure-cosmian-vm-tests.sh
+IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
 
 echo "Checking Cosmian AI Runner HTTPS connection..."
 timeout 5m bash -c "until curl --fail --insecure https://${IP_ADDR}/health; do sleep 3; done"
