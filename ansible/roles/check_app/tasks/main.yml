@@ -112,14 +112,27 @@
     var: agent_logs
   tags: app_restart
 
-- name: Fail if Cosmian app init has failed previously
+- name: Fail if Cosmian app restart has failed previously
   ansible.builtin.fail:
     msg: Cosmian snapshot failed with return code {{ cosmian_vm_app_restart }}
   when:
     - cosmian_vm_app_restart is defined
     - cosmian_vm_app_restart.rc is defined
     - cosmian_vm_app_restart.rc != 0
-  tags: app_init
+  tags: app_restart
+
+- name: Read logs of {{ check_app_name }}
+  ansible.builtin.command:
+    cmd: |
+      journalctl -u {{ check_app_systemd_name }}
+  register: app_logs
+  tags: after_restart
+  changed_when: app_logs.rc != 0
+
+- name: Display logs of {{ check_app_name }}
+  ansible.builtin.debug:
+    var: app_logs
+  tags: launch
 
 - name: Check if port 443 is listening
   ansible.builtin.wait_for:

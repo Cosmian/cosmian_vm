@@ -1,12 +1,11 @@
 #!/bin/sh
 
-set -exu
+set -ex
 
-CI_INSTANCE=$1
-IP_ADDR=$2
-ZONE=$3
+SNAPSHOT="aws_${PRODUCT}_${DISTRIB}_${TECHNO}.snapshot"
+NEW_SNAPSHOT="new_$SNAPSHOT"
 
-bash .github/scripts/aws-cosmian-vm-tests.sh "$CI_INSTANCE" "$IP_ADDR" "$ZONE"
+bash .github/scripts/aws-cosmian-vm-tests.sh
 
 AMI=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$CI_INSTANCE" --query 'Reservations[].Instances[].[InstanceId]' --output text)
 
@@ -28,20 +27,15 @@ timeout 8m bash -c "until curl --fail --insecure --output /dev/null --silent --f
 echo "IP_ADDR=${IP_ADDR}" >>"$GITHUB_OUTPUT"
 
 echo "[ OK ] Cosmian VM ready after reboot"
-RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)
+RESET_COUNT=$(jq '.tpm_policy.reset_count' "$SNAPSHOT")
 NEW_RESET_COUNT=$((RESET_COUNT + 2))
-jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot >new_cosmian_vm.snapshot
-jq '.tpm_policy.reset_count |= tonumber' new_cosmian_vm.snapshot | sponge new_cosmian_vm.snapshot
-./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls verify --snapshot new_cosmian_vm.snapshot
+jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' "$SNAPSHOT" >"$NEW_SNAPSHOT"
+jq '.tpm_policy.reset_count |= tonumber' "$NEW_SNAPSHOT" | sponge "$NEW_SNAPSHOT"
+./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls verify --snapshot "$NEW_SNAPSHOT"
 echo "[ OK ] Integrity after reboot"
 
 echo "Starting the AI Runner"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app restart
-
-# Wait AI Runner to be started
-sleep 30
-
-echo "[ OK ] AI Runner is started"
 
 echo "Checking Cosmian AI Runner HTTPS connection..."
 timeout 5m bash -c "until curl --fail --insecure https://${IP_ADDR}/health; do sleep 3; done"

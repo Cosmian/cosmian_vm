@@ -161,7 +161,7 @@ jobs:
           IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
         run: |
           set -ex
-          bash .github/scripts/azure-${{ inputs.product }}-tests.sh "$CI_INSTANCE" "$IP_ADDR"
+          bash .github/scripts/azure-${{ inputs.product }}-tests.sh
 
       - name: Stop and delete Azure instance
         if: success() || failure() || cancelled()

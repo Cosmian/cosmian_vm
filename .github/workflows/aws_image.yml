@@ -13,10 +13,10 @@ on:
       product:
         required: true
         type: string
-      kms-version:
+      machine-type:
         required: true
         type: string
-      machine-type:
+      kms-version:
         required: true
         type: string
       ai-runner-version:
@@ -83,9 +83,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI="ami-091f9dc2c8ed8dafe"
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-ubuntu-sev" --query "Images[*].{ID:ImageId}" --output text)
           else
-            export AMI="ami-0495cdf439d75bcb4"
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-rhel-sev" --query "Images[*].{ID:ImageId}" --output text)
           fi
           bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
 
@@ -162,7 +162,7 @@ jobs:
           IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
         run: |
           set -ex
-          bash .github/scripts/aws-${{ inputs.product }}-tests.sh "$CI_INSTANCE" "$IP_ADDR" "$AWS_REGION"
+          bash .github/scripts/aws-${{ inputs.product }}-tests.sh
 
       - name: Terminate AWS instance
         if: success() || failure() || cancelled()

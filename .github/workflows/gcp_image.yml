@@ -190,9 +190,14 @@ jobs:
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
+          MODE: ${{ inputs.mode }}
+          ZONE: ${{ inputs.zone }}
+          DISTRIB: ${{ inputs.distrib }}
+          PRODUCT: ${{ inputs.product }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
-          bash .github/scripts/gcp-${{ inputs.product }}-tests.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
+          bash .github/scripts/gcp-${{ inputs.product }}-tests.sh
 
       - name: Stop and delete GCP instance
         if: success() || failure() || cancelled()
