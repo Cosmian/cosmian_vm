@@ -154,7 +154,7 @@
   delegate_to: localhost
   become: false
   register: result
-  retries: 10
+  retries: 30
   delay: 10
   until: result.status == 200
   tags: listening,listening_app
