@@ -38,37 +38,31 @@ if [ "$TECHNO" = "tdx" ]; then
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV
-    gcloud beta compute instances create "$NAME" \
-      --machine-type n2d-standard-2 \
-      --zone europe-west4-a \
-      --min-cpu-platform='AMD Milan' \
-      --confidential-compute-type=SEV_SNP \
-      --shielded-secure-boot \
-      --image=ubuntu-2204-jammy-v20240515 --image-project=ubuntu-os-cloud \
-      --project cosmian-dev \
-      --tags "$NAME-cli" \
-      --maintenance-policy=TERMINATE \
-      --instance-termination-action=DELETE \
-      --max-run-duration=$DURATION \
-      --boot-disk-size=20GB \
-      --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
+    IMAGE="ubuntu-2404-noble-amd64-v20240523a"
+    IMAGE_PROJECT="ubuntu-os-cloud"
+    # Cosmian Ubuntu SEV
+    IMAGE="base-image-0-1-0-ubuntu-sev"
+    IMAGE_PROJECT="cosmian-dev"
   else
     # RHEL SEV
-    gcloud beta compute instances create "$NAME" \
-      --machine-type n2d-standard-2 \
-      --zone europe-west4-a \
-      --min-cpu-platform='AMD Milan' \
-      --confidential-compute-type=SEV_SNP \
-      --shielded-secure-boot \
-      --image=rhel-9-v20240312 --image-project=rhel-cloud \
-      --project cosmian-dev \
-      --tags "$NAME-cli" \
-      --maintenance-policy=TERMINATE \
-      --instance-termination-action=DELETE \
-      --max-run-duration=$DURATION \
-      --boot-disk-size=20GB \
-      --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
+    IMAGE="rhel-9-v20240515"
+    IMAGE_PROJECT="rhel-cloud"
   fi
+  gcloud beta compute instances create "$NAME" \
+    --machine-type n2d-standard-2 \
+    --zone europe-west4-a \
+    --min-cpu-platform='AMD Milan' \
+    --confidential-compute-type=SEV_SNP \
+    --shielded-secure-boot \
+    --image=$IMAGE --image-project=$IMAGE_PROJECT \
+    --project cosmian-dev \
+    --tags "$NAME-cli" \
+    --maintenance-policy=TERMINATE \
+    --instance-termination-action=DELETE \
+    --max-run-duration=$DURATION \
+    --boot-disk-size=20GB \
+    --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
+
 fi
 
 gcloud compute firewall-rules create "$NAME" --network=default --allow=tcp:22,tcp:5555,tcp:443 --target-tags="$NAME-cli"
