@@ -159,6 +159,9 @@ jobs:
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
           IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
+          DISTRIB: ${{ inputs.distrib }}
+          PRODUCT: ${{ inputs.product }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
           bash .github/scripts/azure-${{ inputs.product }}-tests.sh

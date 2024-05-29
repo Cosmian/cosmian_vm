@@ -47,6 +47,9 @@ else
     # RHEL SEV
     IMAGE="rhel-9-v20240515"
     IMAGE_PROJECT="rhel-cloud"
+    # Cosmian Ubuntu SEV
+    IMAGE="base-image-0-1-0-rhel-sev"
+    IMAGE_PROJECT="cosmian-dev"
   fi
   gcloud beta compute instances create "$NAME" \
     --machine-type n2d-standard-2 \
