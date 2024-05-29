@@ -160,6 +160,7 @@ jobs:
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
+          ZONE: eu-west-1
         run: |
           set -ex
           bash .github/scripts/aws-${{ inputs.product }}-tests.sh
