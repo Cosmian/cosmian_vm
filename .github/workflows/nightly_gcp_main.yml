@@ -16,6 +16,7 @@ jobs:
   sev-image:
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
@@ -39,6 +40,7 @@ jobs:
   tdx-image:
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         distrib: [ubuntu]
         product: [cosmian-vm, kms, ai-runner]
@@ -63,12 +65,15 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') != true
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
+      - sev-image # to avoid too many job in parallel
+      - tdx-image # to avoid too many job in parallel
     secrets: inherit
     uses: ./.github/workflows/gcp_ansible.yml
     with:
@@ -87,12 +92,15 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') != true
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         distrib: [ubuntu]
         product: [cosmian-vm, kms, ai-runner]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
     needs:
       - clean-resources
+      - sev-image # to avoid too many job in parallel
+      - tdx-image # to avoid too many job in parallel
     secrets: inherit
     uses: ./.github/workflows/gcp_ansible.yml
     with:
