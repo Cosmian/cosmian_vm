@@ -37,7 +37,7 @@ jobs:
       ai-runner-version: 0.3.0
 
   post-clean-gcp-resources:
-    if: success() || failure() || cancelled()
+    if: success() || cancelled()
     needs:
       - sev-image
     uses: ./.github/workflows/gcp_clean.yml

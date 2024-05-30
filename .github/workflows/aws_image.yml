@@ -169,7 +169,7 @@ jobs:
           bash .github/scripts/aws-${{ inputs.product }}-tests.sh
 
       - name: Terminate AWS instance
-        if: success() || failure() || cancelled()
+        if: success() || cancelled()
         env:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
