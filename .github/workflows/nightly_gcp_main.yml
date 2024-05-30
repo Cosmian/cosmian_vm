@@ -13,55 +13,50 @@ jobs:
     uses: ./.github/workflows/gcp_clean.yml
     secrets: inherit
 
-  sev-image:
+  image:
     strategy:
       fail-fast: false
       max-parallel: 3
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno: [sev, tdx]
+        exclude:
+          - product: ai-runner
+            distrib: rhel
+          - techno: tdx
+            distrib: rhel
+        include:
+          - techno: sev
+            machine-type: n2d-standard-2
+            zone: europe-west4-a
+            confidential-compute-type: SEV_SNP
+            min-cpu-platform: AMD Milan
+            mode: beta
+          - techno: tdx
+            machine-type: c3-standard-4
+            zone: us-central1-a
+            confidential-compute-type: TDX
+            min-cpu-platform: AUTOMATIC
+            mode: alpha
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
     secrets: inherit
     uses: ./.github/workflows/gcp_image.yml
     with:
-      techno: sev
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
-      machine-type: n2d-standard-2
-      zone: europe-west4-a
-      confidential-compute-type: SEV_SNP
-      min-cpu-platform: AMD Milan
-      mode: beta
+      machine-type: ${{ matrix.machine-type }}
+      zone: ${{ matrix.zone }}
+      confidential-compute-type: ${{ matrix.confidential-compute-type }}
+      min-cpu-platform: ${{ matrix.min-cpu-platform }}
+      mode: ${{ matrix.mode }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
 
-  tdx-image:
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        distrib: [ubuntu]
-        product: [cosmian-vm, kms, ai-runner]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
-    needs:
-      - clean-resources
-    secrets: inherit
-    uses: ./.github/workflows/gcp_image.yml
-    with:
-      techno: tdx
-      distrib: ${{ matrix.distrib }}
-      machine-type: c3-standard-4
-      zone: us-central1-a
-      confidential-compute-type: TDX
-      min-cpu-platform: AUTOMATIC
-      mode: alpha
-      product: ${{ matrix.product }}
-      kms-version: 4.16.0
-      ai-runner-version: 0.3.0
-
-  sev-ansible:
+  ansible:
     if: startsWith(github.ref, 'refs/tags/') != true
     strategy:
       fail-fast: false
@@ -69,48 +64,38 @@ jobs:
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno: [sev, tdx]
+        exclude:
+          - product: ai-runner
+            distrib: rhel
+          - techno: tdx
+            distrib: rhel
+        include:
+          - techno: sev
+            machine-type: n2d-standard-2
+            zone: europe-west4-a
+            confidential-compute-type: SEV_SNP
+            min-cpu-platform: AMD Milan
+            mode: beta
+          - techno: tdx
+            machine-type: c3-standard-4
+            zone: us-central1-a
+            confidential-compute-type: TDX
+            min-cpu-platform: AUTOMATIC
+            mode: alpha
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
-      - sev-image # to avoid too many job in parallel
-      - tdx-image # to avoid too many job in parallel
     secrets: inherit
     uses: ./.github/workflows/gcp_ansible.yml
     with:
-      techno: sev
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
-      machine-type: n2d-standard-2
-      zone: europe-west4-a
-      confidential-compute-type: SEV_SNP
-      min-cpu-platform: AMD Milan
-      mode: beta
-      product: ${{ matrix.product }}
-      kms-version: 4.16.0
-      ai-runner-version: 0.3.0
-
-  tdx-ansible:
-    if: startsWith(github.ref, 'refs/tags/') != true
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        distrib: [ubuntu]
-        product: [cosmian-vm, kms, ai-runner]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
-    needs:
-      - clean-resources
-      - sev-image # to avoid too many job in parallel
-      - tdx-image # to avoid too many job in parallel
-    secrets: inherit
-    uses: ./.github/workflows/gcp_ansible.yml
-    with:
-      techno: tdx
-      distrib: ${{ matrix.distrib }}
-      machine-type: c3-standard-4
-      zone: us-central1-a
-      confidential-compute-type: TDX
-      min-cpu-platform: AUTOMATIC
-      mode: alpha
+      machine-type: ${{ matrix.machine-type }}
+      zone: ${{ matrix.zone }}
+      confidential-compute-type: ${{ matrix.confidential-compute-type }}
+      min-cpu-platform: ${{ matrix.min-cpu-platform }}
+      mode: ${{ matrix.mode }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
@@ -118,9 +103,7 @@ jobs:
   post-clean-gcp-resources:
     if: success() || cancelled()
     needs:
-      - sev-image
-      - tdx-image
-      - sev-ansible
-      - tdx-ansible
+      - image
+      - ansible
     uses: ./.github/workflows/gcp_clean.yml
     secrets: inherit

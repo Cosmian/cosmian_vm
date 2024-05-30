@@ -27,7 +27,6 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -68,7 +67,6 @@ jobs:
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: contains(inputs.product, 'ai-runner') != true || contains(inputs.distrib, 'rhel') != true
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:
