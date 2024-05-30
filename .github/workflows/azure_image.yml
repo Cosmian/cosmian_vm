@@ -168,7 +168,8 @@ jobs:
           bash .github/scripts/azure-${{ inputs.product }}-tests.sh
 
       - name: Stop and delete Azure instance
-        if: success() || failure() || cancelled()
+        if: success() || cancelled()
+        # if: success() || failure() || cancelled()
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |
