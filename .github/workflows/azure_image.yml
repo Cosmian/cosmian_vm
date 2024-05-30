@@ -22,6 +22,7 @@ on:
 
 env:
   RESOURCE_GROUP: packer-snp
+  RUST_LOG: trace
 
 jobs:
   build-image:

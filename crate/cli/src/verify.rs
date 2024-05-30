@@ -60,11 +60,16 @@ impl VerifyArgs {
                 let ima_binary = client.ima_binary().await?;
                 let tpm_quote_response = client.tpm_quote(&nonce).await?;
 
+                tracing::debug!(
+                    "Cosmian VM CLI: verify: tpm_quote_response: {tpm_quote_response:?}"
+                );
+
                 if ima_binary.is_empty() {
                     anyhow::bail!("No IMA list recovered");
                 }
 
                 let ima_binary: &[u8] = ima_binary.as_ref();
+                tracing::debug!("Cosmian VM CLI: verify: ima_binary: {ima_binary:?}");
                 let ima_entries = ima::ima::Ima::try_from(ima_binary)?;
 
                 tpm_verify_quote(

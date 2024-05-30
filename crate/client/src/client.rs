@@ -20,7 +20,7 @@ pub struct CosmianVmClient {
     pub certificate: Certificate,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TpmQuoteResponse {
     pub pcr_value_hash_method: PcrHashMethod,
     #[serde(with = "base64_serde")]

@@ -18,7 +18,8 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu]
-        product: [cosmian-vm]
+        # product: [cosmian-vm]
+        product: [ai-runner]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -30,6 +31,26 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
+
+  # To be removed
+  tdx-image:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu]
+        product: [ai-runner]
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
+    needs:
+      - clean-resources
+    secrets: inherit
+    uses: ./.github/workflows/azure_image.yml
+    with:
+      techno: tdx
+      distrib: ${{ matrix.distrib }}
+      product: ${{ matrix.product }}
+      kms-version: 4.16.0
+      ai-runner-version: 0.3.0
+  # To be removed
 
   post-clean-resources:
     if: success() || failure() || cancelled()
