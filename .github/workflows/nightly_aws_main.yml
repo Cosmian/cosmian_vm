@@ -13,27 +13,31 @@ jobs:
     uses: ./.github/workflows/aws_clean.yml
     secrets: inherit
 
-  sev-image:
+  image:
     strategy:
       fail-fast: false
       max-parallel: 3
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
-    name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno: [sev]
+        exclude:
+          - product: ai-runner
+            distrib: rhel
+    name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
     secrets: inherit
     uses: ./.github/workflows/aws_image.yml
     with:
-      techno: sev
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
       machine-type: c6a.2xlarge
 
-  sev-ansible:
+  ansible:
     if: startsWith(github.ref, 'refs/tags/') != true
     strategy:
       fail-fast: false
@@ -41,10 +45,14 @@ jobs:
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
+        techno: [sev]
+        exclude:
+          - product: ai-runner
+            distrib: rhel
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
-      - sev-image # only to avoid too many EC2 creation
+      - image # only to avoid too many EC2 creation
     secrets: inherit
     uses: ./.github/workflows/aws_ansible.yml
     with:
@@ -58,7 +66,7 @@ jobs:
   post-clean-resources:
     if: success() || cancelled()
     needs:
-      - sev-image
-      - sev-ansible
+      - image
+      - ansible
     uses: ./.github/workflows/aws_clean.yml
     secrets: inherit

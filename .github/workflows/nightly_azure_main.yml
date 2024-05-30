@@ -13,45 +13,32 @@ jobs:
     uses: ./.github/workflows/azure_clean.yml
     secrets: inherit
 
-  sev-image:
+  image:
     strategy:
       fail-fast: false
       max-parallel: 3
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
-    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno: [sev, tdx]
+        exclude:
+          - product: ai-runner
+            distrib: rhel
+          - techno: tdx
+            distrib: rhel
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
     secrets: inherit
     uses: ./.github/workflows/azure_image.yml
     with:
-      techno: sev
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
 
-  tdx-image:
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        distrib: [ubuntu]
-        product: [cosmian-vm, kms, ai-runner]
-    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
-    needs:
-      - clean-resources
-    secrets: inherit
-    uses: ./.github/workflows/azure_image.yml
-    with:
-      techno: tdx
-      distrib: ${{ matrix.distrib }}
-      product: ${{ matrix.product }}
-      kms-version: 4.16.0
-      ai-runner-version: 0.3.0
-
-  sev-ansible:
+  ansible:
     if: startsWith(github.ref, 'refs/tags/') != true
     strategy:
       fail-fast: false
@@ -59,37 +46,19 @@ jobs:
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
-    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno: [sev, tdx]
+        exclude:
+          - product: ai-runner
+            distrib: rhel
+          - techno: tdx
+            distrib: rhel
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
-      - sev-image # to avoid reaching the Azure quota VM (20)
-      - tdx-image # to avoid reaching the Azure quota VM (20)
     secrets: inherit
     uses: ./.github/workflows/azure_ansible.yml
     with:
-      techno: sev
-      distrib: ${{ matrix.distrib }}
-      product: ${{ matrix.product }}
-      kms-version: 4.16.0
-      ai-runner-version: 0.3.0
-
-  tdx-ansible:
-    if: startsWith(github.ref, 'refs/tags/') != true
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        distrib: [ubuntu]
-        product: [cosmian-vm, kms, ai-runner]
-    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
-    needs:
-      - clean-resources
-      - sev-image # to avoid reaching the Azure quota VM (20)
-      - tdx-image # to avoid reaching the Azure quota VM (20)
-    secrets: inherit
-    uses: ./.github/workflows/azure_ansible.yml
-    with:
-      techno: tdx
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
@@ -98,9 +67,7 @@ jobs:
   post-clean-resources:
     if: success() || cancelled()
     needs:
-      - sev-image
-      - tdx-image
-      - sev-ansible
-      - tdx-ansible
+      - image
+      - ansible
     uses: ./.github/workflows/azure_clean.yml
     secrets: inherit

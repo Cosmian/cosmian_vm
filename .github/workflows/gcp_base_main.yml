@@ -9,30 +9,20 @@ concurrency:
 name: GCP base images build
 
 jobs:
-  sev-image:
+  image:
     strategy:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
         product: [base-image]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno: [sev, tdx]
+        exclude:
+          - techno: tdx
+            distrib: rhel
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     secrets: inherit
     uses: ./.github/workflows/gcp_base_image.yml
     with:
-      techno: sev
-      distrib: ${{ matrix.distrib }}
-      product: ${{ matrix.product }}
-
-  tdx-image:
-    strategy:
-      fail-fast: false
-      matrix:
-        distrib: [ubuntu]
-        product: [base-image]
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - TDX
-    secrets: inherit
-    uses: ./.github/workflows/gcp_base_image.yml
-    with:
-      techno: tdx
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}

@@ -166,7 +166,6 @@
     validate_certs: false
     method: POST
     body_format: form-multipart
-    status_code: 200
     return_content: true
     body:
       doc: "Mais, vous savez, moi je ne crois pas
@@ -194,6 +193,12 @@
         Mais demain, qui sait, peut-être simplement
         à me mettre au service de la communauté,
         à faire le don, le don de soi..."
+  delegate_to: localhost
+  become: false
+  register: result
+  retries: 30
+  delay: 10
+  until: result.status == 200
   when: (check_app_name == "AI Runner")
 
 - name: Check endpoint {{ check_app_endpoint[2] }}
@@ -202,12 +207,17 @@
     validate_certs: false
     method: POST
     body_format: form-multipart
-    status_code: 200
     return_content: true
     body:
       doc: Hello
       src_lang: en
       tgt_lang: fr
+  delegate_to: localhost
+  become: false
+  register: result
+  retries: 30
+  delay: 10
+  until: result.status == 200
   when: (check_app_name == "AI Runner")
 
 - name: Clean Cosmian VM existing folders
