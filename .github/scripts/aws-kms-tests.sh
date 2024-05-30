@@ -14,9 +14,7 @@ test_opened_ports() {
 }
 
 bash .github/scripts/aws-cosmian-vm-tests.sh
-
 AMI=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$CI_INSTANCE" --query 'Reservations[].Instances[].[InstanceId]' --output text)
-
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$AMI" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 
 echo "Cosmian VM app init"

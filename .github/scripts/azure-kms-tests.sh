@@ -13,14 +13,11 @@ test_opened_ports() {
   echo "[ OK ] Cosmian KMS HTTPS connection"
 }
 
-echo "Waiting for Cosmian VM agent (${IP_ADDR}:5555)..."
-timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+bash .github/scripts/azure-cosmian-vm-tests.sh
+IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
 
 echo "Cosmian VM app init"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls app init -c ansible/roles/kms/templates/kms.toml.j2
-
-bash .github/scripts/azure-cosmian-vm-tests.sh
-IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
 
 test_opened_ports "$IP_ADDR"
 
