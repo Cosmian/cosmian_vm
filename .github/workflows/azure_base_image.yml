@@ -26,7 +26,6 @@ env:
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    if: contains(inputs.distrib, 'rhel') != true
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -63,10 +62,4 @@ jobs:
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
 
-          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export PUBLISHER="canonical"
-          else
-            export PUBLISHER="redhat"
-          fi
-
-          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$PUBLISHER"
+          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"

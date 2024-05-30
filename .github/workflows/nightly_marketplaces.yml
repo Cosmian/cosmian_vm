@@ -1,5 +1,5 @@
 ---
-name: Cloud providers nightly
+name: Nightly Cloud providers
 
 on:
   push:

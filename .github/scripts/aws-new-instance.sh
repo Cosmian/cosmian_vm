@@ -40,6 +40,7 @@ else
       --key-name packer \
       --security-groups "$NAME-ansible-sg" \
       --query 'Instances[0].InstanceId' --output text \
+      --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
       --user-data "#!/bin/bash
       mkdir -p /home/ubuntu/.ssh
       echo $SSH_PUB_KEY >> /home/ubuntu/.ssh/authorized_keys

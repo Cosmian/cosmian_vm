@@ -7,13 +7,15 @@
 
 - name: Disable automatic updates on Ubuntu
   when: ansible_distribution == 'Ubuntu'
-  tags: ubuntu
+  tags: disable_automatic_update
   block:
     - name: Disable auto upgrade services
       ansible.builtin.systemd_service:
         name: "{{ item }}"
         enabled: false
+        masked: true
         state: stopped
+        daemon_reload: true
       with_items:
         - unattended-upgrades
         - apt-daily
@@ -36,8 +38,8 @@
         update_cache: true
 
 - name: Disable automatic updates on Red Hat
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
-  tags: redhat
+  when: ansible_distribution == 'RedHat'
+  tags: disable_automatic_update
   block:
     - name: Populate service facts
       ansible.builtin.service_facts:
@@ -47,6 +49,8 @@
         name: dnf-automatic.timer
         enabled: false
         state: stopped
+        masked: true
+        daemon_reload: true
       when: "'dnf-automatic' in services"
 
     - name: Disable automatic updates in dnf.conf

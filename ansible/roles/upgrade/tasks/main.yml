@@ -10,9 +10,20 @@
   tags: ubuntu
 
 - name: Upgrade all packages
-  when: ansible_distribution == 'Redhat' or ansible_distribution == 'Amazon'
-  ansible.builtin.dnf:
-    name: "*"
-    state: latest
-    update_only: true
-  tags: redhat
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Install packages
+      ansible.builtin.dnf:
+        name:
+          - python-firewall
+          - firewalld
+          - policycoreutils-python-utils
+        state: present
+        update_cache: true
+
+    - name: Update all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_only: true
+      tags: redhat

@@ -7,6 +7,18 @@
     - cleanup_ai_runner
     - cleanup_cosmian_vm_agent
 
+- name: Install base image prerequisites
+  ansible.builtin.import_playbook: base-image-packer-playbook.yml
+
+- name: Reboot after GRUB changes and TPM support installation
+  hosts: all
+  become: true
+  tasks:
+    - name: Reboot the system
+      ansible.builtin.reboot:
+        connect_timeout: 3600
+        reboot_timeout: 3600
+
 - name: Install AI Runner
   ansible.builtin.import_playbook: ai-runner-packer-playbook.yml
 
@@ -18,5 +30,8 @@
     - role: check_app
       check_app_name: AI Runner
       check_app_systemd_name: cosmian_ai_runner
-      check_app_endpoint: health
+      check_app_endpoint:
+        - health
+        - summarize
+        - translate
       check_app_configuration_path: roles/ai_runner/templates/config.json.j2

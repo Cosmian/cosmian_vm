@@ -96,12 +96,12 @@ jobs:
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.techno }}" = "sev" ]; then
-              export AMI="ubuntu-2204-jammy-v20240319"
+              export AMI="base-image-0-1-0-ubuntu-sev"
             else
-              export AMI="ubuntu-2204-tdx-v20240220"
+              export AMI="base-image-0-1-0-ubuntu-tdx"
             fi
           else
-            export AMI="rhel-9-v20240312"
+            export AMI="base-image-0-1-0-rhel-sev"
           fi
 
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
@@ -190,12 +190,17 @@ jobs:
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
+          MODE: ${{ inputs.mode }}
+          ZONE: ${{ inputs.zone }}
+          DISTRIB: ${{ inputs.distrib }}
+          PRODUCT: ${{ inputs.product }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
-          bash .github/scripts/gcp-${{ inputs.product }}-tests.sh "${{ inputs.mode }}" "$CI_INSTANCE" "${{ inputs.zone }}" "$IP_ADDR"
+          bash .github/scripts/gcp-${{ inputs.product }}-tests.sh
 
       - name: Stop and delete GCP instance
-        if: success() || failure() || cancelled()
+        if: success() || cancelled()
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |

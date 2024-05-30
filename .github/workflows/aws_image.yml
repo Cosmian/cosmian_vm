@@ -13,10 +13,10 @@ on:
       product:
         required: true
         type: string
-      kms-version:
+      machine-type:
         required: true
         type: string
-      machine-type:
+      kms-version:
         required: true
         type: string
       ai-runner-version:
@@ -83,9 +83,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI="ami-0655bf2193e40564e"
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-ubuntu-sev" --query "Images[*].{ID:ImageId}" --output text)
           else
-            export AMI="ami-08e592fbb0f535224"
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-rhel-sev" --query "Images[*].{ID:ImageId}" --output text)
           fi
           bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
 
@@ -134,6 +134,7 @@ jobs:
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
             --security-groups ${CI_INSTANCE}-ci-sg \
+            --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
             --query 'Instances[0].InstanceId' --output text)
 
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
@@ -159,12 +160,16 @@ jobs:
         env:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
           IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
+          ZONE: eu-west-1
+          DISTRIB: ${{ inputs.distrib }}
+          PRODUCT: ${{ inputs.product }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
-          bash .github/scripts/aws-${{ inputs.product }}-tests.sh "$CI_INSTANCE" "$IP_ADDR" "$AWS_REGION"
+          bash .github/scripts/aws-${{ inputs.product }}-tests.sh
 
       - name: Terminate AWS instance
-        if: success() || failure() || cancelled()
+        if: success() || cancelled()
         env:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}

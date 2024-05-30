@@ -6,6 +6,18 @@
     - check_cpu
     - cleanup_cosmian_vm_agent
 
+- name: Install base image prerequisites
+  ansible.builtin.import_playbook: base-image-packer-playbook.yml
+
+- name: Reboot after GRUB changes and TPM support installation
+  hosts: all
+  become: true
+  tasks:
+    - name: Reboot the system
+      ansible.builtin.reboot:
+        connect_timeout: 3600
+        reboot_timeout: 3600
+
 - name: Install Cosmian VM Agent
   ansible.builtin.import_playbook: cosmian-vm-packer-playbook.yml
 

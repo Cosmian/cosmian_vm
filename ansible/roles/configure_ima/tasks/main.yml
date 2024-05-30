@@ -68,7 +68,7 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
       fi
     dest: /tmp/grub.sh
-    mode: "0700"  # Make the script executable
+    mode: "0700" # Make the script executable
     remote_src: true
   when: file_check.stat.exists
 
@@ -110,7 +110,7 @@
       changed_when: cmd_output.rc != 0
 
 - name: Update grub on RedHat
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Amazon'
+  when: ansible_distribution == 'RedHat'
   block:
     - name: Install missing packages
       ansible.builtin.dnf:
@@ -145,8 +145,3 @@
     opts: size=1G
     state: present
     fstype: tmpfs
-
-- name: Reboot since initrd has changed
-  ansible.builtin.reboot:
-    connect_timeout: 3600
-    reboot_timeout: 3600

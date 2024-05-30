@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_azure
 
-name: Azure images nightly build
+name: Nightly Azure images build
 
 jobs:
   clean-resources:
@@ -92,7 +92,7 @@ jobs:
       ai-runner-version: 0.3.0
 
   post-clean-resources:
-    if: success() || failure() || cancelled()
+    if: success() || cancelled()
     needs:
       - sev-image
       - tdx-image

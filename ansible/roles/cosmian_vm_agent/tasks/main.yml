@@ -9,70 +9,6 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
-- name: Add Intel SGX/TDX APT repository
-  when: ansible_distribution == 'Ubuntu'
-  block:
-    - name: Intel's public key
-      ansible.builtin.get_url:
-        url: https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
-        dest: /usr/share/keyrings/intel-sgx-deb.asc
-        mode: "0644"
-
-    - name: Intel's APT repository
-      ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main"
-        state: present
-
-    - name: Update cache and install libtdx-attest-dev package
-      ansible.builtin.apt:
-        name: libtdx-attest-dev
-        update_cache: true
-
-- name: Add Intel SGX/TDX RPM repository
-  tags: intel_libs
-  when: ansible_distribution == 'RedHat'
-  block:
-    - name: Intel's RPM local repo
-      ansible.builtin.get_url:
-        url: https://download.01.org/intel-sgx/latest/dcap-latest/linux/distro/rhel9.2-server/sgx_rpm_local_repo.tgz
-        dest: /tmp/
-        mode: "0600"
-
-    - name: Extract the tar.gz file
-      ansible.builtin.unarchive:
-        src: /tmp/sgx_rpm_local_repo.tgz
-        dest: /srv/
-        remote_src: true
-        mode: "0600"
-
-    - name: Set up local RPM repository
-      ansible.builtin.blockinfile:
-        path: /etc/yum.repos.d/tdx-attestation.repo
-        block: |
-          [tdx-attestation-local]
-          name=tdx-attestation-local
-          baseurl=file:///srv/sgx_rpm_local_repo
-          enabled=1
-        create: true
-        mode: "0600"
-
-    - name: Update cache and install libtdx-attest-devel package
-      ansible.builtin.dnf:
-        name:
-          - libtdx-attest
-          - libtdx-attest-devel
-        state: present
-        update_cache: true
-        disable_gpg_check: true
-      tags: libtdx-attest
-
-    - name: Remove the update grub configuration script
-      ansible.builtin.file:
-        path: |
-          /tmp/sgx_rpm_local_repo.tgz
-          /srv/sgx_rpm_local_repo
-        state: absent
-
 - name: Download Cosmian VM agent
   ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm_agent
@@ -173,14 +109,6 @@
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'
   block:
-    - name: Install packages
-      ansible.builtin.dnf:
-        name:
-          - python-firewall
-          - firewalld
-        state: present
-        update_cache: true
-
     - name: Start firewalld service
       ansible.builtin.service:
         name: firewalld

@@ -142,25 +142,32 @@ async fn do_snapshot(tpm_device: Option<PathBuf>) -> Result<CosmianVmSnapshot, E
     let tee_policy = TeePolicy::try_from(tee_quote.as_ref())?;
     let cloud_type = which_cloud_provider().await;
 
-    tracing::info!("Cosmian VM Agent: do_snapshot: {cloud_type:?}");
+    tracing::info!("Cosmian VM Agent: do_snapshot: cloud type: {cloud_type:?}");
 
     let (filehashes, tpm_policy) = match tpm_device {
-        None => (None, None),
+        None => {
+            tracing::debug!("Cosmian VM Agent: do_snapshot: no file hash, no tpm_policy");
+            (None, None)
+        }
         Some(tpm_device) => {
+            tracing::debug!("Cosmian VM Agent: do_snapshot: tpm_device: {tpm_device:?}");
             let mut tpm_context = create_tpm_context(&tpm_device)?;
 
             // Get the policy of the tpm (the nonce and the pcr_list don't matter)
             let (tpm_quote, _, _) =
                 tpm_get_quote(&mut tpm_context, &[], None, DEFAULT_TPM_HASH_METHOD)?;
             let tpm_policy = TpmPolicy::try_from(tpm_quote.as_ref())?;
+            tracing::debug!("Cosmian VM Agent: do_snapshot: tpm_quote: {tpm_quote:?}, tpm_policy: {tpm_policy:?}");
 
             // Get the IMA hashes
             let ima = read_ima_binary()?;
+            tracing::debug!("Cosmian VM Agent: do_snapshot: read_ima_binary: {ima:?}");
             let ima: &[u8] = ima.as_ref();
             let ima = Ima::try_from(ima)?;
 
             // We use the same hash method as the one IMA used
             let hash_method = ima.hash_file_method();
+            tracing::debug!("Cosmian VM Agent: do_snapshot: hash_method: {hash_method:?}");
 
             // Create the snapshot files with files contained in the IMA list
             let mut filehashes = SnapshotFiles(

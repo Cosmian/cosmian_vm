@@ -4,14 +4,17 @@ set -ex
 
 PRODUCT=$1
 DISTRIBUTION=$2
-IMAGE_PUBLISHER=$3
+
+BASE_IMAGE_VERSION="0.1.0"
 
 set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
+  IMAGE_PUBLISHER="canonical"
   IMAGE_OFFER="0001-com-ubuntu-confidential-vm-jammy"
   IMAGE_SKU="22_04-lts-cvm"
 else
+  IMAGE_PUBLISHER="redhat"
   IMAGE_OFFER="rhel-cvm"
   IMAGE_SKU="9_3_cvm_sev_snp"
 fi
@@ -22,8 +25,10 @@ if [ "$PRODUCT" = "cosmian-vm" ]; then
   else
     AZURE_IMAGE_VERSION="$COSMIAN_VM_VERSION"
   fi
-elif  [ "$PRODUCT" = "ai-runner" ]; then
+elif [ "$PRODUCT" = "ai-runner" ]; then
   AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
+elif [ "$PRODUCT" = "base-image" ]; then
+  AZURE_IMAGE_VERSION="$BASE_IMAGE_VERSION"
 else
   AZURE_IMAGE_VERSION="$KMS_VERSION"
 fi
@@ -58,6 +63,15 @@ sed -i "s#TEMPLATE_VM_SIZE#$VM_SIZE#g" "$PACKER_FILE"
 sed -i "s#TEMPLATE_COSMIAN_VM_VERSION#$COSMIAN_VM_VERSION#g" "$PACKER_FILE"
 sed -i "s#TEMPLATE_COSMIAN_KMS_VERSION#$KMS_VERSION#g" "$PACKER_FILE"
 sed -i "s#TEMPLATE_COSMIAN_AI_RUNNER_VERSION#$AI_RUNNER_VERSION#g" "$PACKER_FILE"
+
+if [ ! "$PRODUCT" = "base-image" ]; then
+  # We want to use the shared_image_gallery parameters
+  sed -i "s/# //g" "$PACKER_FILE"
+  sed -i "s/image_publisher/# image_publisher/g" "$PACKER_FILE"
+  sed -i "s/image_offer/# image_offer/g" "$PACKER_FILE"
+  sed -i "s/image_sku/# image_sku/g" "$PACKER_FILE"
+  sed -i "s#TEMPLATE_BASE_IMAGE_VERSION#$BASE_IMAGE_VERSION#g" "$PACKER_FILE"
+fi
 
 cat "$PACKER_FILE"
 

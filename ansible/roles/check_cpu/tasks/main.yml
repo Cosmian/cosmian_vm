@@ -9,7 +9,7 @@
 #   ansible.builtin.debug:
 #     var: ansible_facts
 
-- name: Check Confidential VM compatibility
+- name: Check Confidential VM compatibility - Microsoft
   when: ansible_facts['bios_vendor'] == 'Microsoft Corporation'
   ansible.builtin.uri:
     url: http://169.254.169.254/metadata/instance?api-version=2021-02-01
@@ -24,7 +24,7 @@
   ansible.builtin.debug:
     var: instance_metadata
 
-- name: Check Confidential VM compatibility
+- name: Check Confidential VM compatibility - Google
   when: ansible_facts['bios_vendor'] == 'Google'
   ansible.builtin.uri:
     url: http://169.254.169.254/computeMetadata/v1/project/
@@ -39,7 +39,7 @@
   ansible.builtin.debug:
     var: instance_metadata
 
-- name: Check Confidential VM compatibility
+- name: Check Confidential VM compatibility - AWS
   when: ansible_facts['bios_vendor'] == 'Amazon EC2'
   ansible.builtin.uri:
     url: http://169.254.169.254/latest/meta-data/

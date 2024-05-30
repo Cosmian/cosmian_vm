@@ -22,6 +22,7 @@ on:
 
 env:
   RESOURCE_GROUP: packer-snp
+  RUST_LOG: trace
 
 jobs:
   build-image:
@@ -63,13 +64,7 @@ jobs:
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
 
-          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export PUBLISHER="canonical"
-          else
-            export PUBLISHER="redhat"
-          fi
-
-          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$PUBLISHER"
+          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
@@ -165,12 +160,15 @@ jobs:
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
           IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
+          DISTRIB: ${{ inputs.distrib }}
+          PRODUCT: ${{ inputs.product }}
+          TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
-          bash .github/scripts/azure-${{ inputs.product }}-tests.sh "$CI_INSTANCE" "$IP_ADDR"
+          bash .github/scripts/azure-${{ inputs.product }}-tests.sh
 
       - name: Stop and delete Azure instance
-        if: success() || failure() || cancelled()
+        if: success() || cancelled()
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |

@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_aws
 
-name: AWS images nightly build
+name: Nightly AWS images build
 
 jobs:
   clean-resources:
@@ -54,7 +54,7 @@ jobs:
       machine-type: c6a.2xlarge
 
   post-clean-resources:
-    if: success() || failure() || cancelled()
+    if: success() || cancelled()
     needs:
       - sev-image
       - sev-ansible
