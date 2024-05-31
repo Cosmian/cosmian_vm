@@ -42,11 +42,14 @@ else
       --security-groups "$NAME-ansible-sg" \
       --query 'Instances[0].InstanceId' --output text \
       --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
+      --region eu-west-1 \
+      --placement AvailabilityZone=eu-west-1c \
       --user-data "#!/bin/bash
       mkdir -p /home/ubuntu/.ssh
       echo $SSH_PUB_KEY >> /home/ubuntu/.ssh/authorized_keys
       chmod 600 /home/ubuntu/.ssh/authorized_keys
-      chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys")
+      chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys"
+    )
 
     aws ec2 wait instance-running --instance-ids "$AMI"
     IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${NAME}" --query 'Reservations[*].instances[*].PublicIpAddress' --output text)

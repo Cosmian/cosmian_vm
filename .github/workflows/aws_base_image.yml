@@ -14,9 +14,6 @@ on:
         required: true
         type: string
 
-env:
-  AWS_REGION: eu-west-1
-
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}

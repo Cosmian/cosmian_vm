@@ -23,7 +23,7 @@ echo "Cosmian VM app init"
 test_opened_ports "$IP_ADDR"
 
 echo "Rebooting instance..."
-aws ec2 reboot-instances --instance-ids "$AMI" --region "${ZONE}"
+aws ec2 reboot-instances --instance-ids "$AMI" # do not specify region. Should reuse Region and Placement from `run-instances` command
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$AMI" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 aws ec2 wait instance-running --instance-ids "$AMI"
 timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
