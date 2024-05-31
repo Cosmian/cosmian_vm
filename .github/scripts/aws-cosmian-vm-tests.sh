@@ -19,7 +19,7 @@ echo "[ OK ] Cosmian VM ready"
 CI_INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
 
 echo "Rebooting instance..."
-aws ec2 reboot-instances --instance-ids "$CI_INSTANCE_ID" --region "${ZONE}"
+aws ec2 reboot-instances --instance-ids "$CI_INSTANCE_ID" # do not specify region. Should reuse Region and Placement from `run-instances` command
 aws ec2 wait instance-running --instance-ids "$CI_INSTANCE_ID"
 
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$CI_INSTANCE_ID" --query 'Reservations[].Instances[].PublicIpAddress' --output text)

@@ -23,9 +23,6 @@ on:
         required: true
         type: string
 
-env:
-  AWS_REGION: eu-west-1
-
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
@@ -133,6 +130,8 @@ jobs:
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
             --security-groups ${CI_INSTANCE}-ci-sg \
             --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
+            --region eu-west-1 \
+            --placement AvailabilityZone=eu-west-1c \
             --query 'Instances[0].InstanceId' --output text)
 
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
