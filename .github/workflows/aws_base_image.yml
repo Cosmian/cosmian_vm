@@ -38,11 +38,6 @@ jobs:
       - name: Setup packer
         uses: hashicorp/setup-packer@main
 
-      - name: Install packer plugins
-        run: |
-          packer plugins install github.com/hashicorp/amazon
-          packer plugins install github.com/hashicorp/ansible
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

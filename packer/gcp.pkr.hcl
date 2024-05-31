@@ -1,3 +1,16 @@
+packer {
+  required_plugins {
+    googlecompute = {
+      version = "= 1.1.4"
+      source  = "github.com/hashicorp/googlecompute"
+    }
+    ansible = {
+      version = "= 1.1.1"
+      source  = "github.com/hashicorp/ansible"
+    }
+  }
+}
+
 source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
   project_id              = "cosmian-dev"
   source_image            = "TEMPLATE_SOURCE_IMAGE"

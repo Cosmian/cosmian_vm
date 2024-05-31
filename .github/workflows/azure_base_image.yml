@@ -40,11 +40,6 @@ jobs:
       - name: Setup packer
         uses: hashicorp/setup-packer@main
 
-      - name: Install packer plugins
-        run: |
-          packer plugins install github.com/hashicorp/azure
-          packer plugins install github.com/hashicorp/ansible
-
       - name: Packer build image
         env:
           KMS_VERSION: ${{ inputs.kms-version }}
