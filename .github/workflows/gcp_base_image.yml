@@ -42,11 +42,6 @@ jobs:
       - name: Setup packer
         uses: hashicorp/setup-packer@main
 
-      - name: Install packer plugins
-        run: |
-          packer plugins install github.com/hashicorp/googlecompute
-          packer plugins install github.com/hashicorp/ansible
-
       - name: GCP auth
         uses: google-github-actions/auth@v2
         with:

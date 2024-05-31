@@ -1,3 +1,16 @@
+packer {
+  required_plugins {
+    azure = {
+      version = "= 2.1.4"
+      source  = "github.com/hashicorp/azure"
+    }
+    ansible = {
+      version = "= 1.1.1"
+      source  = "github.com/hashicorp/ansible"
+    }
+  }
+}
+
 source "azure-arm" "TEMPLATE_DISTRIBUTION" {
   client_id                 = "TEMPLATE_CLIENT_ID"
   tenant_id                 = "TEMPLATE_TENANT_ID"

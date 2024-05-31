@@ -13,9 +13,6 @@ on:
       product:
         required: true
         type: string
-      machine-type:
-        required: true
-        type: string
       kms-version:
         required: true
         type: string
@@ -51,11 +48,6 @@ jobs:
 
       - name: Setup packer
         uses: hashicorp/setup-packer@main
-
-      - name: Install packer plugins
-        run: |
-          packer plugins install github.com/hashicorp/amazon
-          packer plugins install github.com/hashicorp/ansible
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -125,7 +117,7 @@ jobs:
           AMI=$(aws ec2 run-instances \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$CI_INSTANCE}]" \
             --image-id ${IMAGE_TO_INSTANTIATE} \
-            --instance-type ${{ inputs.machine-type }} \
+            --instance-type c6a.2xlarge \
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
             --security-groups ${CI_INSTANCE}-ci-sg \
@@ -139,7 +131,7 @@ jobs:
 
           # Wait for VM to be ready
           aws ec2 wait instance-running --instance-ids $AMI
-          timeout 40m bash -c "until nc -z $IP_ADDR 5555; do sleep 10; done"
+          timeout 20m bash -c "until nc -z $IP_ADDR 5555; do sleep 10; done"
 
       - name: Download Cosmian VM CLI
         run: |

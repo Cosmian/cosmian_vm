@@ -19,9 +19,6 @@ on:
       ai-runner-version:
         required: true
         type: string
-      machine-type:
-        required: true
-        type: string
 
 jobs:
   test-ansible:
@@ -52,12 +49,9 @@ jobs:
         id: run-aws-instance
         env:
           CI_INSTANCE: ${{ steps.env.outputs.ci_instance }}
-          SSH_KEY: ${{ secrets.PACKER_AWS_SSH_PRIVATE_KEY }}
         run: |
           set -ex
 
-          echo "$SSH_KEY" > $HOME/packer.pem
-          chmod 400 $HOME/packer.pem
 
           aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
@@ -77,7 +71,7 @@ jobs:
           AMI=$(aws ec2 run-instances \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
             --image-id $IMAGE_TO_INSTANTIATE \
-            --instance-type ${{ inputs.machine-type }} \
+            --instance-type c6a.2xlarge \
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
             --key-name packer \
@@ -97,8 +91,13 @@ jobs:
       - name: Ansible installation
         env:
           IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
+          SSH_KEY: ${{ secrets.PACKER_AWS_SSH_PRIVATE_KEY }}
         run: |
           set -ex
+
+          echo "$SSH_KEY" > $HOME/packer.pem
+          chmod 400 $HOME/packer.pem
+
           cd ansible
           python3 -m pip install -r python_modules.txt
 
