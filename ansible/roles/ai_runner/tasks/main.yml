@@ -9,6 +9,16 @@
   ansible.builtin.debug:
     var: cosmian_ai_runner_version
 
+- name: Update apt cache
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Update dnf cache
+  when: ansible_distribution == 'RedHat'
+  ansible.builtin.dnf:
+    update_cache: true
+
 - name: Install prerequisites packages
   ansible.builtin.package:
     name:
