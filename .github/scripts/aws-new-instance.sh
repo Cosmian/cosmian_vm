@@ -31,9 +31,10 @@ if [ "$TECHNO" = "tdx" ]; then
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV
+    AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
     AMI=$(aws ec2 run-instances \
       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME}]" \
-      --image-id ami-0655bf2193e40564e \
+      --image-id "$AMI_BASE" \
       --instance-type c6a.2xlarge \
       --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
       --cpu-options AmdSevSnp=enabled \

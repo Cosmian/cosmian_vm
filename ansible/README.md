@@ -4,15 +4,15 @@
 
 ### AWS images
 
-|               |    Official image     | OS image | OS version | Cosmian base image          | Creation date |
-| :------------ | :-------------------: | :------: | ---------- | --------------------------- | ------------- |
-| AWS - AMD SEV | ami-0655bf2193e40564e |  Ubuntu  | 24.04      | base-image-0-1-0-ubuntu-sev | 2024-05-27    |
-| AWS - AMD SEV | ami-08e592fbb0f535224 |  Redhat  | 9.3        | base-image-0-1-0-ubuntu-sev | 2024-05-27    |
+|               |                            Official image                            | OS image | OS version | Cosmian base image          | Creation date |
+| :------------ | :------------------------------------------------------------------: | :------: | ---------- | --------------------------- | ------------- |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1 |  Ubuntu  | 24.04      | base-image-0-1-0-ubuntu-sev | 2024-05-27    |
+| AWS - AMD SEV |            RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3             |  Redhat  | 9.3        | base-image-0-1-0-ubuntu-sev | 2024-05-27    |
 
 If needed:
 
 ```sh
-aws ec2 describe-images > aws_list.txt
+aws ec2 describe-images --output json > aws_list.json
 ```
 
 ### Azure images
