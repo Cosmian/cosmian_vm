@@ -161,7 +161,6 @@ async fn do_snapshot(tpm_device: Option<PathBuf>) -> Result<CosmianVmSnapshot, E
 
             // Get the IMA hashes
             let ima = read_ima_binary()?;
-            // tracing::debug!("Cosmian VM Agent: do_snapshot: read_ima_binary: {ima:?}");
             let ima: &[u8] = ima.as_ref();
             let ima = Ima::try_from(ima)?;
 

@@ -39,7 +39,7 @@ enum CliCommands {
 #[tokio::main]
 async fn main() -> Result<()> {
     // Initialize the logger
-    log_init("cosmian_vm=trace");
+    log_init(None);
 
     let opts = Cli::parse();
 

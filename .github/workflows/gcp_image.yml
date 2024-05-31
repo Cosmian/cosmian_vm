@@ -38,6 +38,7 @@ on:
 env:
   GCP_DEV_PROJECT: cosmian-dev
   GCP_PUBLIC_PROJECT: cosmian-public
+  RUST_LOG: cosmian_vm=trace
 
 jobs:
   build-image:
