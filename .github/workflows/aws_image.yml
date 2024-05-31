@@ -20,6 +20,9 @@ on:
         required: true
         type: string
 
+env:
+  RUST_LOG: cosmian_vm=trace
+
 jobs:
   build-image:
     name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
