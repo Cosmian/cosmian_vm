@@ -69,7 +69,7 @@ impl VerifyArgs {
                 }
 
                 let ima_binary: &[u8] = ima_binary.as_ref();
-                tracing::debug!("Cosmian VM CLI: verify: ima_binary: {ima_binary:?}");
+                // tracing::debug!("Cosmian VM CLI: verify: ima_binary: {ima_binary:?}");
                 let ima_entries = ima::ima::Ima::try_from(ima_binary)?;
 
                 tpm_verify_quote(

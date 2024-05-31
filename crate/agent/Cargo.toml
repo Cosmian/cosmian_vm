@@ -51,7 +51,7 @@ tokio = { version = "1.24.2", features = [
 tokio-util = "0.7.4"
 toml = "0.8"
 tpm_quote = { workspace = true }
-tracing = "0.1"
+tracing = { workspace = true }
 tss-esapi = "7.4.0"
 uuid = { version = "1.3", features = ["serde", "v4"] }
 walkdir = "2.4"

@@ -30,4 +30,5 @@ serde_json = { workspace = true }
 tee_attestation = { workspace = true }
 tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }
 tpm_quote = { workspace = true }
-tracing = "0.1"
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

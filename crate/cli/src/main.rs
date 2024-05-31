@@ -3,11 +3,13 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 
 pub mod app;
+pub mod log_init;
 pub mod snapshot;
 pub mod verify;
 
 use app::AppConfArgs;
 use cosmian_vm_client::client::CosmianVmClient;
+use log_init::log_init;
 use snapshot::SnapshotArgs;
 use verify::VerifyArgs;
 
@@ -36,6 +38,9 @@ enum CliCommands {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Initialize the logger
+    log_init("cosmian_vm=trace");
+
     let opts = Cli::parse();
 
     let client = CosmianVmClient::instantiate(

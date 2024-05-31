@@ -52,6 +52,7 @@ spki = "0.7"
 tee_attestation = { git = "https://github.com/Cosmian/tee-tools", tag = "1.4.0" }
 tpm_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.4.0" }
 thiserror = "1.0"
+tracing = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.96"
 x509-cert = { version = "0.2", features = ["builder", "hazmat"] }
