@@ -106,6 +106,11 @@ pub async fn get_tpm_quote(
     }
 
     let pcr_slot = Ima::try_from(read_ima_ascii_first_line()?.as_str())?.pcr_id();
+    tracing::debug!(
+        "Cosmian VM agent: get_tpm_quote: pcr_slot: {pcr_slot:?}, nonce: {:?}, hash method: {:?}",
+        quote_param.nonce,
+        DEFAULT_TPM_HASH_METHOD
+    );
 
     let (quote, signature, public_key) = tpm_get_quote(
         tpm_context,

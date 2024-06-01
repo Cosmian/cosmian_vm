@@ -21,7 +21,7 @@ echo "Rebooting instance..."
 aws ec2 reboot-instances --instance-ids "$AMI" # do not specify region. Should reuse Region and Placement from `run-instances` command
 IP_ADDR=$(aws ec2 describe-instances --instance-ids "$AMI" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 aws ec2 wait instance-running --instance-ids "$AMI"
-timeout 8m bash -c "until curl --fail --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+timeout 8m bash -c "until curl --fail --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 10; done"
 echo "IP_ADDR=${IP_ADDR}" >>"$GITHUB_OUTPUT"
 
 echo "[ OK ] Cosmian VM ready after reboot"

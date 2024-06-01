@@ -24,7 +24,7 @@ test_opened_ports "$IP_ADDR"
 echo "Rebooting instance..."
 az vm restart -g "$RESOURCE_GROUP" -n "$CI_INSTANCE"
 IP_ADDR=$(az vm show -d -g "$RESOURCE_GROUP" -n "$CI_INSTANCE" --query publicIps -o tsv)
-timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 10; done"
 
 echo "[ OK ] Cosmian VM ready after reboot"
 RESET_COUNT=$(jq '.tpm_policy.reset_count' "$SNAPSHOT")

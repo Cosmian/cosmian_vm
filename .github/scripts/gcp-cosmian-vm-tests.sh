@@ -12,7 +12,7 @@ sudo apt-get install -y jq moreutils
 sha256sum cosmian_vm
 
 echo "Waiting for Cosmian VM agent (${IP_ADDR}:5555)..."
-timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 10; done"
 
 echo "[ OK ] Cosmian VM ready"
 ./cosmian_vm --url "https://${IP_ADDR}:5555" --allow-insecure-tls snapshot --output "$SNAPSHOT"
@@ -26,7 +26,7 @@ gcloud "${MODE}" compute instances start "$CI_INSTANCE" --zone "${ZONE}" --proje
 IP_ADDR=$(gcloud "${MODE}" compute instances describe "$CI_INSTANCE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone="${ZONE}")
 echo "IP_ADDR=${IP_ADDR}" >>"$GITHUB_OUTPUT"
 
-timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 3; done"
+timeout 8m bash -c "until curl --insecure --output /dev/null --silent --fail https://${IP_ADDR}:5555/ima/ascii; do sleep 10; done"
 
 echo "[ OK ] Cosmian VM ready after reboot"
 RESET_COUNT=$(jq '.tpm_policy.reset_count' "$SNAPSHOT")
