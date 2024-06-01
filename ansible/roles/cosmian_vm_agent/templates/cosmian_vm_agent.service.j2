@@ -9,7 +9,7 @@ User=root
 ExecStart=/usr/sbin/cosmian_vm_agent
 Restart=on-failure
 RestartSec=3s
-Environment="RUST_LOG='cosmian_vm_agent=trace'"
+Environment="RUST_LOG=trace"
 
 [Install]
 WantedBy=multi-user.target
