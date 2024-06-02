@@ -25,4 +25,5 @@
   hosts: all
   become: true
   roles:
-    - check_cosmian_vm
+    - role: check_cosmian_vm
+      tags: check-cosmian-vm

@@ -16,7 +16,7 @@ jobs:
   image:
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 2
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
@@ -40,7 +40,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') != true
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 2
       matrix:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]

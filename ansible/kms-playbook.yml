@@ -26,10 +26,13 @@
   hosts: all
   become: true
   roles:
-    - check_cosmian_vm
+    - role: check_cosmian_vm
+      tags: check-kms
+
     - role: check_app
       check_app_name: KMS
       check_app_systemd_name: cosmian_kms
       check_app_endpoint:
         - version
       check_app_configuration_path: roles/kms/templates/kms.toml.j2
+      tags: check-kms

@@ -123,6 +123,7 @@ jobs:
             --instance-type c6a.2xlarge \
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+            --key-name packer \
             --security-groups ${CI_INSTANCE}-ci-sg \
             --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
             --region eu-west-1 \
@@ -134,31 +135,36 @@ jobs:
 
           # Wait for VM to be ready
           aws ec2 wait instance-running --instance-ids $AMI
-          timeout 20m bash -c "until nc -z $IP_ADDR 5555; do sleep 10; done"
+          timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 60; done"
 
-      - name: Download Cosmian VM CLI
+      - name: Check Cosmian VM
+        env:
+          IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
+          SSH_KEY: ${{ secrets.PACKER_AWS_SSH_PRIVATE_KEY }}
         run: |
-          set -e
+          set -ex
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
-          wget https://package.cosmian.com/cosmian_vm/$COSMIAN_VM_VERSION/cosmian_vm
-          chmod +x ./cosmian_vm
 
-      - name: Test Cosmian VM Agent on AWS instance
-        id: test_cosmian_vm
-        env:
-          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-          IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
-          ZONE: eu-west-1
-          DISTRIB: ${{ inputs.distrib }}
-          PRODUCT: ${{ inputs.product }}
-          TECHNO: ${{ inputs.techno }}
-        run: |
-          set -ex
-          bash .github/scripts/aws-${{ inputs.product }}-tests.sh
+          echo "$SSH_KEY" > $HOME/packer.pem
+          chmod 400 $HOME/packer.pem
+
+          cd ansible
+          python3 -m pip install -r python_modules.txt
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            SSH_USER="ubuntu"
+          else
+            SSH_USER="ec2-user"
+          fi
+
+          export ANSIBLE_HOST_KEY_CHECKING=False
+          # Ansible script
+          ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --tags check-${{ inputs.product }}
 
       - name: Terminate AWS instance
         if: success() || cancelled()

@@ -63,9 +63,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
+            export IMAGE_TO_INSTANTIATE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
           else
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
+            export IMAGE_TO_INSTANTIATE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
           fi
 
           AMI=$(aws ec2 run-instances \
@@ -86,7 +86,7 @@ jobs:
 
           # Wait for VM to be ready
           aws ec2 wait instance-running --instance-ids $AMI
-          timeout 40m bash -c "until nc -z $IP_ADDR 22; do sleep 10; done"
+          timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 60; done"
 
       - name: Ansible installation
         env:

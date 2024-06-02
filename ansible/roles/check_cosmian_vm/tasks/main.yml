@@ -1,7 +1,15 @@
 ---
 # tasks file for check cosmian vm
+- name: Install prerequisites for testing
+  ansible.builtin.package:
+    name:
+      - moreutils
+      - jq
+    state: present
+  delegate_to: localhost
+  become: true
 
-- name: Reboot before anything
+- name: Reboot before anything to test boot of systemd services
   ansible.builtin.reboot:
     connect_timeout: 3600
     reboot_timeout: 3600
@@ -170,10 +178,35 @@
     - cosmian_vm_output.rc != 0
   tags: snapshot
 
+- name: Reboot after snapshot
+  ansible.builtin.reboot:
+    connect_timeout: 3600
+    reboot_timeout: 3600
+
+- name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
+  ansible.builtin.wait_for:
+    path: /var/lib/cosmian_vm/data/cert.pem
+    state: present
+
+- name: Read current reset count from snapshot
+  ansible.builtin.shell:
+    cmd: |
+      set -exo pipefail
+      RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)
+      NEW_RESET_COUNT=$((RESET_COUNT + 1))
+      jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot >cosmian_vm.new_snapshot
+      jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | sponge cosmian_vm.new_snapshot
+    executable: /bin/bash
+  delegate_to: localhost
+  become: false
+  register: sponge
+  changed_when: sponge.rc != 0
+  tags: sponge
+
 - name: Verify Cosmian VM snapshot
   ansible.builtin.command:
     cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.new_snapshot
   register: verify_cosmian_vm_output
   delegate_to: localhost
   become: false
