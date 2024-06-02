@@ -5,6 +5,20 @@
   ansible.builtin.reboot:
     connect_timeout: 3600
     reboot_timeout: 3600
+  when: check_app_test_reboot
+
+- name: Start systemd services - {{ check_app_name }}
+  when: not check_app_test_reboot
+  block:
+    - name: Start systemd service - {{ check_app_systemd_name }}
+      ansible.builtin.systemd_service:
+        name: "{{ check_app_systemd_name }}"
+        state: started
+
+    - name: Start systemd service - nginx
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: started
 
 - name: Check SSH remote host IP
   ansible.builtin.debug:
@@ -68,6 +82,11 @@
   become: false
   changed_when: cosmian_vm_app_init.rc != 0
 
+- name: Display CLI logs after app init
+  ansible.builtin.debug:
+    var: cosmian_vm_app_init
+  tags: app_init
+
 - name: App initialization - reading Cosmian VM agent logs
   ansible.builtin.command:
     cmd: |
@@ -90,7 +109,7 @@
     - cosmian_vm_app_init.rc != 0
   tags: app_init
 
-- name: App restart -
+- name: App restart
   ansible.builtin.command:
     cmd: |
       ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app restart
@@ -99,6 +118,11 @@
   delegate_to: localhost
   become: false
   changed_when: cosmian_vm_app_restart.rc != 0
+
+- name: Display CLI logs after app restart
+  ansible.builtin.debug:
+    var: cosmian_vm_app_restart
+  tags: app_restart
 
 - name: App restart - reading Cosmian VM agent logs
   ansible.builtin.command:

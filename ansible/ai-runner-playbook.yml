@@ -25,6 +25,8 @@
 - name: Check AI runner
   hosts: all
   become: true
+  environment:
+    RUST_LOG: "cosmian_vm=trace"
   roles:
     - role: check_cosmian_vm
       tags: check-ai-runner

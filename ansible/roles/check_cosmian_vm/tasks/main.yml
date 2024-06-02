@@ -13,6 +13,13 @@
   ansible.builtin.reboot:
     connect_timeout: 3600
     reboot_timeout: 3600
+  when: check_cosmian_vm_test_reboot
+
+- name: Start Cosmian VM agent
+  ansible.builtin.systemd_service:
+    name: cosmian_vm_agent
+    state: started
+  when: not check_cosmian_vm_test_reboot
 
 - name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
   ansible.builtin.wait_for:
@@ -115,6 +122,7 @@
     cmd: |
       rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
+      rm -f ./cosmian_vm.new_snapshot
   delegate_to: localhost
   become: false
   register: cmd_output
@@ -151,7 +159,7 @@
   changed_when: cosmian_vm_output.rc != 0
   tags: snapshot
 
-- name: Display agent logs variable
+- name: Display CLI logs after snapshot
   ansible.builtin.debug:
     var: cosmian_vm_output
   tags: snapshot
@@ -179,45 +187,67 @@
   tags: snapshot
 
 - name: Reboot after snapshot
-  ansible.builtin.reboot:
-    connect_timeout: 3600
-    reboot_timeout: 3600
+  when: check_cosmian_vm_test_reboot
+  block:
+    - name: Reboot after snapshot
+      ansible.builtin.reboot:
+        connect_timeout: 3600
+        reboot_timeout: 3600
 
-- name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
-  ansible.builtin.wait_for:
-    path: /var/lib/cosmian_vm/data/cert.pem
-    state: present
+    - name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
+      ansible.builtin.wait_for:
+        path: /var/lib/cosmian_vm/data/cert.pem
+        state: present
 
-- name: Read current reset count from snapshot
-  ansible.builtin.shell:
-    cmd: |
-      set -exo pipefail
-      RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)
-      NEW_RESET_COUNT=$((RESET_COUNT + 1))
-      jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot >cosmian_vm.new_snapshot
-      jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | sponge cosmian_vm.new_snapshot
-    executable: /bin/bash
-  delegate_to: localhost
-  become: false
-  register: sponge
-  changed_when: sponge.rc != 0
-  tags: sponge
+    - name: Read current reset count from snapshot
+      ansible.builtin.shell:
+        cmd: |
+          set -exo pipefail
+          RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)
+          NEW_RESET_COUNT=$((RESET_COUNT + 1))
+          jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot >cosmian_vm.new_snapshot
+          jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | sponge cosmian_vm.new_snapshot
+        executable: /bin/bash
+      delegate_to: localhost
+      become: false
+      register: sponge
+      changed_when: sponge.rc != 0
+      tags: sponge
 
-- name: Verify Cosmian VM snapshot
-  ansible.builtin.command:
-    cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.new_snapshot
-  register: verify_cosmian_vm_output
-  delegate_to: localhost
-  become: false
-  ignore_errors: true
-  tags: verify
-  changed_when: verify_cosmian_vm_output.rc != 0
+    - name: Verify Cosmian VM snapshot
+      ansible.builtin.command:
+        cmd: |
+          ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.new_snapshot
+      register: verify_cosmian_vm_output
+      delegate_to: localhost
+      become: false
+      ignore_errors: true
+      tags: verify
+      changed_when: verify_cosmian_vm_output.rc != 0
 
-- name: Display agent logs variable
-  ansible.builtin.debug:
-    var: verify_cosmian_vm_output
-  tags: verify
+    - name: Display CLI logs after verify snapshot
+      ansible.builtin.debug:
+        var: verify_cosmian_vm_output
+      tags: verify
+
+- name: Verify Cosmian VM snapshot - no reboot
+  when: not check_cosmian_vm_test_reboot
+  block:
+    - name: Verify Cosmian VM snapshot -no reboot
+      ansible.builtin.command:
+        cmd: |
+          ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+      register: verify_cosmian_vm_output
+      delegate_to: localhost
+      become: false
+      ignore_errors: true
+      tags: verify
+      changed_when: verify_cosmian_vm_output.rc != 0
+
+    - name: Display CLI logs after verify snapshot
+      ansible.builtin.debug:
+        var: verify_cosmian_vm_output
+      tags: verify
 
 - name: Read Cosmian VM agent logs
   ansible.builtin.command:
@@ -246,6 +276,7 @@
     cmd: |
       rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
+      rm -f ./cosmian_vm.new_snapshot
   delegate_to: localhost
   become: false
   register: cmd_output
