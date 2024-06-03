@@ -19,6 +19,9 @@ on:
       ai-runner-version:
         required: true
         type: string
+      base-version:
+        required: true
+        type: string
 
 env:
   RUST_LOG: cosmian_vm=trace
@@ -65,8 +68,12 @@ jobs:
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           KMS_VERSION: ${{ inputs.kms-version }}
           AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
+          VERSION: ${{ inputs.base-version }}
         run: |
           set -ex
+
+          BASE_VERSION=$(echo $VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
@@ -74,9 +81,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-ubuntu-sev" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-${BASE_VERSION}-ubuntu-sev" --query "Images[*].{ID:ImageId}" --output text)
           else
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-rhel-sev" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-${BASE_VERSION}-rhel-sev" --query "Images[*].{ID:ImageId}" --output text)
           fi
           bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
 
@@ -123,6 +130,7 @@ jobs:
             --instance-type c6a.2xlarge \
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+            --key-name packer \
             --security-groups ${CI_INSTANCE}-ci-sg \
             --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
             --region eu-west-1 \
@@ -132,33 +140,50 @@ jobs:
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
+          set +e
           # Wait for VM to be ready
-          aws ec2 wait instance-running --instance-ids $AMI
-          timeout 20m bash -c "until nc -z $IP_ADDR 5555; do sleep 10; done"
+          aws ec2 wait instance-status-ok --instance-ids $AMI
+          RET=$?
 
-      - name: Download Cosmian VM CLI
-        run: |
           set -e
+          if [ "$RET" -ne 0 ]; then
+            aws ec2 stop-instances --instance-ids $AMI
+            aws ec2 wait instance-stopped --instance-ids $AMI
+
+            aws ec2 start-instances --instance-ids $AMI
+            aws ec2 wait instance-status-ok --instance-ids $AMI
+          fi
+
+          timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 60; done"
+
+      - name: Check Cosmian VM
+        env:
+          IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
+          SSH_KEY: ${{ secrets.PACKER_AWS_SSH_PRIVATE_KEY }}
+        run: |
+          set -ex
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
-          wget https://package.cosmian.com/cosmian_vm/$COSMIAN_VM_VERSION/cosmian_vm
-          chmod +x ./cosmian_vm
 
-      - name: Test Cosmian VM Agent on AWS instance
-        id: test_cosmian_vm
-        env:
-          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-          IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
-          ZONE: eu-west-1
-          DISTRIB: ${{ inputs.distrib }}
-          PRODUCT: ${{ inputs.product }}
-          TECHNO: ${{ inputs.techno }}
-        run: |
-          set -ex
-          bash .github/scripts/aws-${{ inputs.product }}-tests.sh
+          echo "$SSH_KEY" > $HOME/packer.pem
+          chmod 400 $HOME/packer.pem
+
+          cd ansible
+          python3 -m pip install -r python_modules.txt
+
+          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
+            SSH_USER="ubuntu"
+          else
+            SSH_USER="ec2-user"
+          fi
+
+          export ANSIBLE_HOST_KEY_CHECKING=False
+          # Ansible script
+          ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --tags check-${{ inputs.product }} -e '{ "check_app_test_reboot": false, "check_cosmian_vm_test_reboot": false }'
 
       - name: Terminate AWS instance
         if: success() || cancelled()

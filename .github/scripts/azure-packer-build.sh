@@ -5,8 +5,6 @@ set -ex
 PRODUCT=$1
 DISTRIBUTION=$2
 
-BASE_IMAGE_VERSION="0.1.0"
-
 set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
@@ -17,20 +15,6 @@ else
   IMAGE_PUBLISHER="redhat"
   IMAGE_OFFER="rhel-cvm"
   IMAGE_SKU="9_3_cvm_sev_snp"
-fi
-
-if [ "$PRODUCT" = "cosmian-vm" ]; then
-  if [[ $COSMIAN_VM_VERSION = *'last_build'* ]]; then
-    AZURE_IMAGE_VERSION="0.0.0"
-  else
-    AZURE_IMAGE_VERSION="$COSMIAN_VM_VERSION"
-  fi
-elif [ "$PRODUCT" = "ai-runner" ]; then
-  AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
-elif [ "$PRODUCT" = "base-image" ]; then
-  AZURE_IMAGE_VERSION="$BASE_IMAGE_VERSION"
-else
-  AZURE_IMAGE_VERSION="$KMS_VERSION"
 fi
 
 if [ "$TECHNO" = "sev" ]; then
@@ -78,4 +62,4 @@ cat "$PACKER_FILE"
 packer init "$PACKER_FILE"
 
 # Since packer build fails randomly because of external resources use, retry packer build until it succeeds
-timeout 60m bash -c "until packer build -force $PACKER_FILE; do sleep 30; done"
+timeout 30m bash -c "until packer build -force $PACKER_FILE; do sleep 30; done"

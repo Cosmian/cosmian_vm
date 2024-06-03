@@ -2,12 +2,29 @@
 
 ## Cloud providers base images
 
+### Changelog
+
+## [0.1.1] - 2024-06-03
+
+- Install TPM2 Access Broker & Resource Manager (tpm2-abrmd)
+- Add dependency to tpm2-abrmd in cosmian_vm_agent.service
+
+## [0.1.0] - 2024-05-28
+
+- Modify GRUB for IMA support
+- Add TPM Support
+- Install Intel dependencies (libtdx-attest support)
+- Upgrade distribution package
+- Disable auto upgrade services
+
+Replace `X.Y.Z` in the 3 following tables.
+
 ### AWS images
 
-|               |                            Official image                            | OS image | OS version | Cosmian base image          | Creation date |
-| :------------ | :------------------------------------------------------------------: | :------: | ---------- | --------------------------- | ------------- |
-| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1 |  Ubuntu  | 24.04      | base-image-0-1-0-ubuntu-sev | 2024-05-27    |
-| AWS - AMD SEV |            RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3             |  Redhat  | 9.3        | base-image-0-1-0-ubuntu-sev | 2024-05-27    |
+|               |                            Official image                            | OS image | OS version | Cosmian base image          |
+| :------------ | :------------------------------------------------------------------: | :------: | ---------- | --------------------------- |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1 |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV |            RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3             |  Redhat  | 9.3        | base-image-X-Y-Z-ubuntu-sev |
 
 If needed:
 
@@ -17,11 +34,11 @@ aws ec2 describe-images --output json > aws_list.json
 
 ### Azure images
 
-|                   |                        Official image                         | OS image | OS version      | Cosmian base image    | Version | Creation date |
-| :---------------- | :-----------------------------------------------------------: | :------: | --------------- | --------------------- | ------- | ------------- |
-| Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-tdx | 0.1.0   | 2024-05-28    |
-| Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-sev | 0.1.0   | 2024-05-28    |
-| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | base-image-rhel-sev   | 0.1.0   | 2024-05-28    |
+|                   |                        Official image                         | OS image | OS version      | Cosmian base image    | Version |
+| :---------------- | :-----------------------------------------------------------: | :------: | --------------- | --------------------- | ------- |
+| Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-tdx | X.Y.Z   |
+| Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
 az vm list> azure_list.json
@@ -29,12 +46,11 @@ az vm list> azure_list.json
 
 ### GCP images
 
-|                 |           Official image           | OS image | OS version | Cosmian base image                   | Creation date |
-| :-------------- | :--------------------------------: | :------: | ---------- | ------------------------------------ | ------------- |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220      |  Ubuntu  | 22.04      | base-image-0-1-0-ubuntu-tdx          | 2024-05-28    |
-| GCP - AMD SEV   |    ubuntu-2204-jammy-v20240519     |  Ubuntu  | 22.04      | base-image-ubuntu-sev-20240528081327 | 2024-05-28    |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240523a |  Ubuntu  | 24.04      | base-image-0-1-0-ubuntu-sev          | 2024-05-28    |
-| GCP - AMD SEV   |          rhel-9-v20240515          |  Redhat  | 9.3        | base-image-0-1-0-rhel-sev            | 2024-05-28    |
+|                 |           Official image           | OS image | OS version | Cosmian base image                   |
+| :-------------- | :--------------------------------: | :------: | ---------- | ------------------------------------ |
+| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220      |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx          |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240523a |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev          |
+| GCP - AMD SEV   |          rhel-9-v20240515          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev            |
 
 ```sh
 gcloud compute images list > gcloud_list.json

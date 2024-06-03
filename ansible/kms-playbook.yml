@@ -25,11 +25,16 @@
 - name: Start and check KMS
   hosts: all
   become: true
+  environment:
+    RUST_LOG: "cosmian_vm=trace"
   roles:
-    - check_cosmian_vm
+    - role: check_cosmian_vm
+      tags: check-kms
+
     - role: check_app
       check_app_name: KMS
       check_app_systemd_name: cosmian_kms
       check_app_endpoint:
         - version
       check_app_configuration_path: roles/kms/templates/kms.toml.j2
+      tags: check-kms

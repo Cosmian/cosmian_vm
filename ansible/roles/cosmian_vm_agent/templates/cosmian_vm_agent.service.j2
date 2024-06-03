@@ -1,7 +1,7 @@
 [Unit]
 Description=Cosmian VM Agent
 Requires=multi-user.target
-After=multi-user.target mount_luks.service
+After=multi-user.target mount_luks.service dev-tpm0.device
 
 [Service]
 Type=simple
@@ -9,7 +9,7 @@ User=root
 ExecStart=/usr/sbin/cosmian_vm_agent
 Restart=on-failure
 RestartSec=3s
-Environment="RUST_LOG=trace"
+Environment="RUST_LOG=cosmian_vm_agent=trace"
 
 [Install]
 WantedBy=multi-user.target

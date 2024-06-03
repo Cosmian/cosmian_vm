@@ -34,6 +34,9 @@ on:
       ai-runner-version:
         required: true
         type: string
+      base-version:
+        required: true
+        type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
@@ -81,8 +84,12 @@ jobs:
           KMS_VERSION: ${{ inputs.kms-version }}
           AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
           TECHNO: ${{ inputs.techno }}
+          VERSION: ${{ inputs.base-version }}
         run: |
           set -ex
+
+          BASE_VERSION=$(echo $VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
@@ -91,12 +98,12 @@ jobs:
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.techno }}" = "sev" ]; then
-              export AMI="base-image-0-1-0-ubuntu-sev"
+              export AMI="base-image-${BASE_VERSION}-ubuntu-sev"
             else
-              export AMI="base-image-0-1-0-ubuntu-tdx"
+              export AMI="base-image-${BASE_VERSION}-ubuntu-tdx"
             fi
           else
-            export AMI="base-image-0-1-0-rhel-sev"
+            export AMI="base-image-${BASE_VERSION}-rhel-sev"
           fi
 
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
@@ -130,6 +137,10 @@ jobs:
           CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
         run: |
           set -ex
+
+          ssh-keygen -t rsa -b 4096 -C "$CI_INSTANCE@example.com" -f $HOME/.ssh/id_rsa -q -N ""
+          PUBKEY=$(cat $HOME/.ssh/id_rsa.pub)
+
           gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE \
             --machine-type ${{ inputs.machine-type }} \
             --zone ${{ inputs.zone }} \
@@ -142,56 +153,47 @@ jobs:
             --tags $CI_INSTANCE-fw \
             --maintenance-policy=TERMINATE \
             --max-run-duration=120m \
+            --instance-termination-action=DELETE \
             --boot-disk-size=20GB \
-            --instance-termination-action=DELETE
+            --metadata=ssh-keys="cosmian:$PUBKEY"
           IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
-      - name: Create Firewall Rules for CLI Ports
-        env:
-          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-        run: |
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
             gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
               --network=default \
-              --allow=tcp:5555 \
+              --allow=tcp:22,tcp:5555 \
               --target-tags=$CI_INSTANCE-fw
           elif [ "${{ inputs.product }}" = "ai-runner" ]; then
             gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
               --network=default \
-              --allow=tcp:5555,tcp:443 \
+              --allow=tcp:22,tcp:443,tcp:5555 \
               --target-tags=$CI_INSTANCE-fw
           else
             gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
               --network=default \
-              --allow=tcp:5555,tcp:443 \
+              --allow=tcp:22,tcp:443,tcp:5555 \
               --target-tags=$CI_INSTANCE-fw
           fi
 
-      - name: Download Cosmian VM CLI
+          timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 60; done"
+
+      - name: Check Cosmian VM
+        env:
+          IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
         run: |
-          set -e
+          set -ex
+          cd ansible
+          python3 -m pip install -r python_modules.txt
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
-          wget https://package.cosmian.com/cosmian_vm/$COSMIAN_VM_VERSION/cosmian_vm
-          chmod +x ./cosmian_vm
 
-      - name: Test Cosmian VM Agent on GCP instance
-        id: test_cosmian_vm
-        env:
-          CI_INSTANCE: ${{ needs.build-image.outputs.ci_instance }}
-          IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
-          MODE: ${{ inputs.mode }}
-          ZONE: ${{ inputs.zone }}
-          DISTRIB: ${{ inputs.distrib }}
-          PRODUCT: ${{ inputs.product }}
-          TECHNO: ${{ inputs.techno }}
-        run: |
-          set -ex
-          bash .github/scripts/gcp-${{ inputs.product }}-tests.sh
+          export ANSIBLE_HOST_KEY_CHECKING=False
+          ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --tags check-${{ inputs.product }}
 
       - name: Stop and delete GCP instance
         if: success() || cancelled()

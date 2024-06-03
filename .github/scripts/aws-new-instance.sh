@@ -32,26 +32,27 @@ else
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV
     AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
-    AMI=$(aws ec2 run-instances \
-      --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME}]" \
-      --image-id "$AMI_BASE" \
-      --instance-type c6a.2xlarge \
-      --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
-      --cpu-options AmdSevSnp=enabled \
-      --key-name packer \
-      --security-groups "$NAME-ansible-sg" \
-      --query 'Instances[0].InstanceId' --output text \
-      --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
-      --region eu-west-1 \
-      --placement AvailabilityZone=eu-west-1c \
-      --user-data "#!/bin/bash
+    AMI=$(
+      aws ec2 run-instances \
+        --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME}]" \
+        --image-id "$AMI_BASE" \
+        --instance-type c6a.2xlarge \
+        --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+        --cpu-options AmdSevSnp=enabled \
+        --key-name packer \
+        --security-groups "$NAME-ansible-sg" \
+        --query 'Instances[0].InstanceId' --output text \
+        --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
+        --region eu-west-1 \
+        --placement AvailabilityZone=eu-west-1c \
+        --user-data "#!/bin/bash
       mkdir -p /home/ubuntu/.ssh
       echo $SSH_PUB_KEY >> /home/ubuntu/.ssh/authorized_keys
       chmod 600 /home/ubuntu/.ssh/authorized_keys
       chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys"
     )
 
-    aws ec2 wait instance-running --instance-ids "$AMI"
+    aws ec2 wait instance-status-ok --instance-ids "$AMI"
     IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${NAME}" --query 'Reservations[*].instances[*].PublicIpAddress' --output text)
     echo "$IP_ADDR"
   else
