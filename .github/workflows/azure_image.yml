@@ -19,6 +19,9 @@ on:
       ai-runner-version:
         required: true
         type: string
+      base-version:
+        required: true
+        type: string
 
 env:
   RESOURCE_GROUP: packer-snp
@@ -52,10 +55,32 @@ jobs:
           TECHNO: ${{ inputs.techno }}
         run: |
           set -ex
+
+          export BASE_IMAGE_VERSION="${{ inputs.base-version }}"
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          fi
+
+          if [[ $COSMIAN_VM_VERSION = *'last_build'* ]]; then
+            export AZURE_IMAGE_VERSION="0.0.0"
+            export KMS_VERSION="0.0.0"
+            export AI_RUNNER_VERSION="0.0.0"
+
+          else
+            if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
+              export AZURE_IMAGE_VERSION="$COSMIAN_VM_VERSION"
+            elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+              export AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
+            elif [ "${{ inputs.product }}" = "base-image" ]; then
+              export AZURE_IMAGE_VERSION="$BASE_IMAGE_VERSION"
+            else
+              echo "Unexpected product"
+              exit 1
+            fi
+
           fi
 
           bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"

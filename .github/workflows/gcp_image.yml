@@ -34,6 +34,9 @@ on:
       ai-runner-version:
         required: true
         type: string
+      base-version:
+        required: true
+        type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
@@ -81,8 +84,12 @@ jobs:
           KMS_VERSION: ${{ inputs.kms-version }}
           AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
           TECHNO: ${{ inputs.techno }}
+          VERSION: ${{ inputs.base-version }}
         run: |
           set -ex
+
+          BASE_VERSION=$(echo $VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
@@ -91,12 +98,12 @@ jobs:
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.techno }}" = "sev" ]; then
-              export AMI="base-image-0-1-0-ubuntu-sev"
+              export AMI="base-image-${BASE_VERSION}-ubuntu-sev"
             else
-              export AMI="base-image-0-1-0-ubuntu-tdx"
+              export AMI="base-image-${BASE_VERSION}-ubuntu-tdx"
             fi
           else
-            export AMI="base-image-0-1-0-rhel-sev"
+            export AMI="base-image-${BASE_VERSION}-rhel-sev"
           fi
 
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"

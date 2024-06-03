@@ -223,6 +223,7 @@
   retries: 30
   delay: 10
   until: result.status == 200
+  tags: second_endpoint
   when: (check_app_name == "AI Runner")
 
 - name: Check endpoint {{ check_app_endpoint[2] }}
@@ -242,6 +243,7 @@
   retries: 30
   delay: 10
   until: result.status == 200
+  tags: third_endpoint
   when: (check_app_name == "AI Runner")
 
 - name: Clean Cosmian VM existing folders

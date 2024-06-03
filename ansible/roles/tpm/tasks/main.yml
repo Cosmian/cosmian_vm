@@ -12,9 +12,11 @@
       ansible.builtin.apt:
         update_cache: true
 
-    - name: Install packages
+    - name: Install TPM support on Ubuntu
       ansible.builtin.apt:
-        name: tpm2-tools
+        name:
+          - tpm2-tools
+          - tpm2-abrmd
         state: present
         update_cache: true
 
@@ -25,44 +27,18 @@
       ansible.builtin.dnf:
         update_cache: true
 
-    - name: Install packages
+    - name: Install TPM support on RedHat
       ansible.builtin.dnf:
         name:
           - tpm2-tools
+          - tpm2-abrmd
           - cryptsetup
         state: present
         update_cache: true
 
-- name: TPM packages installation on Amazon-linux
-  when: ansible_distribution == 'Amazon'
-  # TODO: fix if needed
-  # should be: when: ansible_facts['bios_vendor'] == 'Amazon EC2'
-  block:
-    - name: Update all packages to their latest version
-      ansible.builtin.dnf:
-        update_cache: true
-
-    - name: Download and unzip tpm2-tools
-      ansible.builtin.unarchive:
-        src: https://package.cosmian.com/tpm2-tools/tpm2-tools-amazonlinux-20240116.zip
-        dest: /tmp/
-        remote_src: true
-
-    - name: Install tpm2-tools
-      ansible.builtin.command:
-        cmd: ./install.sh
-      args:
-        chdir: /tmp/tpm2-tools
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
-
-    - name: Clean tpm2-tools
-      ansible.builtin.file:
-        path: /tmp/tpm2-tools/
-        state: absent
-
-    - name: Install packages tpm2-tss
-      ansible.builtin.dnf:
-        name: tpm2-tss
-        state: present
-        update_cache: true
+- name: Check if tpm2-abrmd systemd service is enabled but stopped
+  ansible.builtin.systemd_service:
+    name: tpm2-abrmd
+    enabled: true
+    state: stopped
+    daemon_reload: true

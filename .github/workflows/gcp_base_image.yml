@@ -13,6 +13,9 @@ on:
       product:
         required: true
         type: string
+      base-version:
+        required: true
+        type: string
 
 env:
   GCP_DEV_PROJECT: cosmian-dev
@@ -35,9 +38,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create env variables
+        env:
+          VERSION: ${{ inputs.base-version }}
         id: env
         run: |
-          echo "IMAGE_NAME=${{ inputs.product }}-0-1-0-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
+          set -ex
+          BASE_VERSION=$(echo $VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          echo "IMAGE_NAME=${{ inputs.product }}-${BASE_VERSION}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
       - name: Setup packer
         uses: hashicorp/setup-packer@main

@@ -19,6 +19,9 @@ on:
       ai-runner-version:
         required: true
         type: string
+      base-version:
+        required: true
+        type: string
 
 env:
   RUST_LOG: cosmian_vm=trace
@@ -65,8 +68,12 @@ jobs:
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           KMS_VERSION: ${{ inputs.kms-version }}
           AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
+          VERSION: ${{ inputs.base-version }}
         run: |
           set -ex
+
+          BASE_VERSION=$(echo $VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
@@ -74,9 +81,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-ubuntu-sev" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-${BASE_VERSION}-ubuntu-sev" --query "Images[*].{ID:ImageId}" --output text)
           else
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-0-1-0-rhel-sev" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=base-image-${BASE_VERSION}-rhel-sev" --query "Images[*].{ID:ImageId}" --output text)
           fi
           bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
 

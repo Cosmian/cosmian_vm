@@ -13,10 +13,7 @@ on:
       product:
         required: true
         type: string
-      kms-version:
-        required: true
-        type: string
-      ai-runner-version:
+      base-version:
         required: true
         type: string
 
@@ -42,19 +39,24 @@ jobs:
 
       - name: Packer build image
         env:
-          KMS_VERSION: ${{ inputs.kms-version }}
-          AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
           CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           TECHNO: ${{ inputs.techno }}
+          BASE_IMAGE_VERSION: ${{ inputs.base-version }}
+        id: env
         run: |
           set -ex
+
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
+
+          export AZURE_IMAGE_VERSION="$BASE_IMAGE_VERSION"
+          export KMS_VERSION="0.0.0"
+          export AI_RUNNER_VERSION="0.0.0"
 
           bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"

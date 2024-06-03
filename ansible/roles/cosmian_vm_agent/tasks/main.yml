@@ -9,44 +9,6 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
-- name: Test using TPM2 Access Broker and Resource Manager
-  when: ansible_distribution == 'Ubuntu'
-  block:
-    - name: Update packages cache
-      ansible.builtin.apt:
-        update_cache: true
-
-    - name: Install TPM2 Access Broker and Resource Manager on Ubuntu
-      ansible.builtin.apt:
-        name:
-          - tpm2-tools
-          - tpm2-abrmd
-        state: present
-        update_cache: true
-
-- name: Install TPM2 Access Broker and Resource Manager on RedHat
-  when: ansible_distribution == 'RedHat'
-  block:
-    - name: Update packages cache
-      ansible.builtin.dnf:
-        update_cache: true
-
-    - name: Install packages
-      ansible.builtin.dnf:
-        name:
-          - tpm2-tools
-          - tpm2-abrmd
-          - cryptsetup
-        state: present
-        update_cache: true
-
-- name: Check if tpm2-abrmd systemd service is enabled but stopped
-  ansible.builtin.systemd_service:
-    name: tpm2-abrmd
-    enabled: true
-    state: stopped
-    daemon_reload: true
-
 - name: Download Cosmian VM agent
   ansible.builtin.get_url:
     url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm_agent
