@@ -134,7 +134,18 @@ jobs:
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
           # Wait for VM to be ready
-          aws ec2 wait instance-running --instance-ids $AMI
+          aws ec2 wait instance-status-ok --instance-ids $AMI
+
+          # Stop and start instance since it fails regularly
+          ec2_status=$(aws ec2 describe-instance-status --instance-ids $AMI --output text --query 'InstanceStatuses[].InstanceStatus.Details[?Name==`reachability`].Status')
+          if [ "$ec2_status" = "failed" ]; then
+            aws ec2 stop-instances --instance-ids $AMI
+            aws ec2 wait instance-stopped --instance-ids $AMI
+
+            aws ec2 start-instances --instance-ids $AMI
+            aws ec2 wait instance-status-ok --instance-ids $AMI
+          fi
+
           timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 60; done"
 
       - name: Check Cosmian VM
