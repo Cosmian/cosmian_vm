@@ -140,12 +140,13 @@ jobs:
           IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
+          set +e
           # Wait for VM to be ready
           aws ec2 wait instance-status-ok --instance-ids $AMI
+          RET=$?
 
-          # Stop and start instance since it fails regularly
-          ec2_status=$(aws ec2 describe-instance-status --instance-ids $AMI --output text --query 'InstanceStatuses[].InstanceStatus.Details[?Name==`reachability`].Status')
-          if [ "$ec2_status" = "failed" ]; then
+          set -e
+          if [ "$RET" -ne 0 ]; then
             aws ec2 stop-instances --instance-ids $AMI
             aws ec2 wait instance-stopped --instance-ids $AMI
 
