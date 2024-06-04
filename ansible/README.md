@@ -46,11 +46,11 @@ az vm list> azure_list.json
 
 ### GCP images
 
-|                 |           Official image           | OS image | OS version | Cosmian base image                   |
-| :-------------- | :--------------------------------: | :------: | ---------- | ------------------------------------ |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220      |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx          |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240523a |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev          |
-| GCP - AMD SEV   |          rhel-9-v20240515          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev            |
+|                 |           Official image           | OS image | OS version | Cosmian base image          |
+| :-------------- | :--------------------------------: | :------: | ---------- | --------------------------- |
+| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220      |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240523a |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |          rhel-9-v20240515          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
@@ -80,8 +80,8 @@ export USERNAME=cosmian
 export HOST=35.204.83.49
 # Be sure to install deps: `pip install -r python_modules.txt` on your localhost
 cd ansible
-ansible-playbook cosmian-vm-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.0
-ansible-playbook kms-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.0 -e cosmian_kms_version=4.16.0
+ansible-playbook cosmian-vm-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.1
+ansible-playbook kms-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.1 -e cosmian_kms_version=4.16.0
 ```
 
 The machine has been configured

@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2024-06-04
+
+### Features
+
+- Add support for Cosmian AI Runner images ([#117](https://github.com/Cosmian/cosmian_vm/pull/117))
+- Create frozen base image for Ubuntu/RHEL for GCP/Azure/AWS ([#120](https://github.com/Cosmian/cosmian_vm/pull/120))
+
+### Bug Fixes
+
+- On KMS and AI Runner, remove unnecessarily opened ports ([#124](https://github.com/Cosmian/cosmian_vm/pull/124))
+- Freeze packer plugins versions ([#127](https://github.com/Cosmian/cosmian_vm/pull/127))
+- Use tpm2-abrmd as cosmian_vm_agent.service dependency ([#129](https://github.com/Cosmian/cosmian_vm/pull/129))
+
+### Testing
+
+- Merge Ansible roles for checking KMS or AI Runner ([#122](https://github.com/Cosmian/cosmian_vm/pull/122))
+
 ## [1.2.0] - 2024-05-23
 
 ### Features
