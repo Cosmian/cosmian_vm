@@ -966,7 +966,7 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 
 [[package]]
 name = "cosmian_certtool"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "acme-lib",
  "actix-files",
@@ -985,7 +985,7 @@ dependencies = [
 
 [[package]]
 name = "cosmian_vm"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "anyhow",
  "clap 4.5.4",
@@ -1003,7 +1003,7 @@ dependencies = [
 
 [[package]]
 name = "cosmian_vm_agent"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "actix-cors",
  "actix-http",
@@ -1048,7 +1048,7 @@ dependencies = [
 
 [[package]]
 name = "cosmian_vm_client"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "base64 0.22.1",
  "hex",
@@ -1894,7 +1894,7 @@ dependencies = [
 
 [[package]]
 name = "ima"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "bincode",
  "hex",
