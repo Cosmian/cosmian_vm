@@ -53,6 +53,8 @@ jobs:
           SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           TECHNO: ${{ inputs.techno }}
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          AZURE_STORAGE_ACCOUNT_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
         run: |
           set -ex
 
@@ -60,8 +62,10 @@ jobs:
 
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
+            export KEEP_OS_DISK="true"
           else
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+            export KEEP_OS_DISK="false"
           fi
 
           if [[ $COSMIAN_VM_VERSION = *'last_build'* ]]; then
@@ -81,6 +85,15 @@ jobs:
           fi
 
           bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
+
+          # For Azure, create a final VHD from os disk
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            OS_DISK="${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-${AZURE_IMAGE_VERSION}"
+
+            sas=$(az disk grant-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK" --duration-in-seconds 3600 --access-level Read --query accessSas -o tsv)
+
+            az storage blob copy start --destination-blob $OS_DISK.vhd --destination-container packer --account-name "$AZURE_STORAGE_ACCOUNT_NAME" --account-key "$AZURE_STORAGE_ACCOUNT_KEY" --source-uri "$sas"
+          fi
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
@@ -115,16 +128,15 @@ jobs:
         run: |
           set -exo pipefail
 
-          if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-            if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+          IMAGE_VERSION="0.0.0"
+          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+            if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               IMAGE_VERSION="${GITHUB_REF_NAME}"
+            elif [ "${{ inputs.product }}" = "kms" ]; then
+              IMAGE_VERSION="${{ inputs.kms-version }}"
             else
-              IMAGE_VERSION="0.0.0"
+              IMAGE_VERSION="${{ inputs.ai-runner-version }}"
             fi
-          elif [ "${{ inputs.product }}" = "kms" ]; then
-            IMAGE_VERSION="${{ inputs.kms-version }}"
-          else
-            IMAGE_VERSION="${{ inputs.ai-runner-version }}"
           fi
 
           if [ "${{ inputs.techno }}" = "sev" ]; then
