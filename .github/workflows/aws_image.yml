@@ -149,8 +149,26 @@ jobs:
           if [ "$RET" -ne 0 ]; then
             aws ec2 stop-instances --instance-ids $AMI
             aws ec2 wait instance-stopped --instance-ids $AMI
+            aws ec2 terminate-instances --instance-ids $AMI
+            aws ec2 wait instance-terminated --instance-ids $AMI
 
-            aws ec2 start-instances --instance-ids $AMI
+            AMI=$(aws ec2 run-instances \
+              --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$CI_INSTANCE}]" \
+              --image-id ${IMAGE_TO_INSTANTIATE} \
+              --instance-type c6a.2xlarge \
+              --cpu-options AmdSevSnp=enabled \
+              --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+              --key-name packer \
+              --security-groups ${CI_INSTANCE}-ci-sg \
+              --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
+              --region eu-west-1 \
+              --placement AvailabilityZone=eu-west-1c \
+              --query 'Instances[0].InstanceId' --output text)
+
+            IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${CI_INSTANCE}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
+
+            # Wait for VM to be ready
             aws ec2 wait instance-status-ok --instance-ids $AMI
           fi
 
