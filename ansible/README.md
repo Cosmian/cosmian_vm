@@ -4,6 +4,10 @@
 
 ### Changelog
 
+## [0.1.2] - 2024-06-05
+
+- Modify GRUB for Azure security check: add `console=ttyS0 earlyprintk=ttyS0` to GRUB_CMDLINE_LINUX
+
 ## [0.1.1] - 2024-06-03
 
 - Install TPM2 Access Broker & Resource Manager (tpm2-abrmd)

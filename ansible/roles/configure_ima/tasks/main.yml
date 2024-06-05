@@ -9,6 +9,7 @@
   ansible.builtin.stat:
     path: /etc/default/grub
   register: file_check
+  tags: azure_security_check
 
 - name: Create ima folder
   ansible.builtin.file:
@@ -36,12 +37,14 @@
     mode: "0400"
 
 - name: Copy the bash script to the remote host (in order to update the grub conf)
+  when: file_check.stat.exists
+  tags: azure_security_check
   ansible.builtin.copy:
     content: |
       #!/usr/bin/bash
       f=/etc/default/grub
 
-      ## Template policy
+      # Template policy
       if grep -q ima_policy= $f ; then
         # Template policy already set
         sed -i 's/ima_policy=[^ "]\+/ima_policy=tcb/' $f
@@ -50,7 +53,7 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
       fi
 
-      ## Hash method
+      # Hash method
       if grep -q ima_hash= $f ; then
         # Hash method already set
         sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
@@ -59,7 +62,7 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
       fi
 
-      ## Template format
+      # Template format
       if grep -q ima_template= $f ; then
         # Template format already set
         sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
@@ -67,18 +70,34 @@
         # Template format not set
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
       fi
+
+      # Console ttyS0
+      if grep -q console= $f ; then
+        # console already set
+        sed -i 's/console=[^ "]\+/console=ttyS0/' $f
+      else
+        # console not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ console=ttyS0\"/ $f
+      fi
+
+      # earlyprintk
+      if grep -q earlyprintk= $f ; then
+        # earlyprintk already set
+        sed -i 's/earlyprintk=[^ "]\+/earlyprintk=ttyS0/' $f
+      else
+        # earlyprintk not set
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
+      fi
     dest: /tmp/grub.sh
     mode: "0700" # Make the script executable
     remote_src: true
-  when: file_check.stat.exists
 
 - name: Insert/update missing line if default grub does not exist
+  when: not file_check.stat.exists
   ansible.builtin.blockinfile:
     path: /etc/default/grub.d/50-cloudimg-settings.cfg
     block: |
-      GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng"
-  when:
-    - not file_check.stat.exists
+      GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng console=ttyS0 earlyprintk=ttyS0"
   tags: cloudimg
 
 - name: Install packages for Azure
@@ -89,16 +108,17 @@
   when: not file_check.stat.exists
 
 - name: Update the grub configuration
-  ansible.builtin.command: /tmp/grub.sh
   when: file_check.stat.exists
+  ansible.builtin.command: /tmp/grub.sh
   register: cmd_output
   changed_when: cmd_output.rc != 0
+  tags: azure_security_check
 
 - name: Remove the update grub configuration script
+  when: file_check.stat.exists
   ansible.builtin.file:
     path: /tmp/grub.sh
     state: absent
-  when: file_check.stat.exists
 
 # Update grub
 - name: Update grub on Ubuntu

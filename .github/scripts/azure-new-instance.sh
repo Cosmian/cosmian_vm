@@ -32,35 +32,30 @@ if [ "$TECHNO" = "tdx" ]; then
     --data-disk-delete-option delete \
     --ssh-key-values "$SSH_PUB_KEY"
 else
+
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV
-    az vm create -g packer-snp -n "$NAME" \
-      --image "Canonical:0001-com-ubuntu-confidential-vm-jammy:22_04-lts-cvm:latest" \
-      --security-type ConfidentialVM \
-      --os-disk-security-encryption-type VMGuestStateOnly \
-      --size Standard_DC2ads_v5 \
-      --enable-vtpm true \
-      --enable-secure-boot true \
-      --nic-delete-option delete \
-      --os-disk-delete-option delete \
-      --data-disk-delete-option delete \
-      --admin-username azureuser \
-      --ssh-key-values "$SSH_PUB_KEY"
+    IMAGE_NAME="Canonical:0001-com-ubuntu-confidential-vm-jammy:22_04-lts-cvm:latest"
   else
     # Redhat SEV
-    az vm create -g packer-snp -n "$NAME" \
-      --image "redhat:rhel-cvm:9_3_cvm_sev_snp:latest" \
-      --security-type ConfidentialVM \
-      --os-disk-security-encryption-type VMGuestStateOnly \
-      --size Standard_DC2ads_v5 \
-      --enable-vtpm true \
-      --enable-secure-boot true \
-      --nic-delete-option delete \
-      --os-disk-delete-option delete \
-      --data-disk-delete-option delete \
-      --admin-username azureuser \
-      --ssh-key-values "$SSH_PUB_KEY"
+    IMAGE_NAME="redhat:rhel-cvm:9_3_cvm_sev_snp:latest"
   fi
+
+  IMAGE_NAME="/subscriptions/e04f52be-d51f-43fe-95f8-d63a8fc91464/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/cosmian-vm-${DISTRIB}-${TECHNO}/versions/0.0.0"
+
+  az vm create -g packer-snp -n "$NAME" \
+    --image "$IMAGE_NAME" \
+    --security-type ConfidentialVM \
+    --os-disk-security-encryption-type VMGuestStateOnly \
+    --size Standard_DC2ads_v5 \
+    --enable-vtpm true \
+    --enable-secure-boot true \
+    --nic-delete-option delete \
+    --os-disk-delete-option delete \
+    --data-disk-delete-option delete \
+    --admin-username azureuser \
+    --ssh-key-values "$SSH_PUB_KEY"
+
 fi
 
 az vm open-port -g packer-snp -n "$NAME" --priority 100 --port 5555,443,22

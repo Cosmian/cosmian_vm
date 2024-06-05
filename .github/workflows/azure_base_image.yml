@@ -1,5 +1,5 @@
 ---
-name: Build and test image for Azure SEV
+name: Build and test image for Azure
 
 on:
   workflow_call:
@@ -48,6 +48,8 @@ jobs:
         id: env
         run: |
           set -ex
+
+          export KEEP_OS_DISK="false"
 
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"

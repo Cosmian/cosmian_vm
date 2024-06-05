@@ -30,7 +30,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.1
+      base-version: 0.1.2
 
   post-clean-resources:
     if: success() || cancelled()
