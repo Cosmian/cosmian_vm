@@ -9,3 +9,12 @@
     - intel
     - upgrade
     - no_updates
+
+- name: Reboot after GRUB changes, Linux updates and TPM support installation
+  hosts: all
+  become: true
+  tasks:
+    - name: Reboot the system
+      ansible.builtin.reboot:
+        connect_timeout: 3600
+        reboot_timeout: 3600

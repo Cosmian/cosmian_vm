@@ -1,4 +1,6 @@
 ---
+# tasks file for upgrade
+
 - name: Update and upgrade apt packages
   when: ansible_distribution == 'Ubuntu'
   ansible.builtin.apt:
@@ -16,25 +18,22 @@
           - python-firewall
           - firewalld
           - policycoreutils-python-utils
+          - selinux-policy
+          - kernel
+          - kernel-headers
+          - kernel-devel
         state: present
         update_cache: true
 
-- name: Update all packages
-  ansible.builtin.dnf:
-    name: "*"
-    state: latest
-    update_only: true
-    update_cache: true
-  tags: redhat
+    - name: Update all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_only: true
+      tags: redhat
 
-- name: Update security packages
-  ansible.builtin.dnf:
-    security: true
-    state: latest
-    update_only: true
-
-- name: Ensure SELinux policies are up-to-date
-  ansible.builtin.dnf:
-    name: selinux-policy
-    state: latest
-    update_only: true
+    - name: Update security packages
+      ansible.builtin.dnf:
+        security: true
+        state: latest
+        update_only: true
