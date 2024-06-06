@@ -131,6 +131,7 @@
 
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat'
+  tags: azure_security_check
   block:
     - name: Install missing packages
       ansible.builtin.dnf:
@@ -141,7 +142,7 @@
         state: present
 
     - name: Update grub
-      ansible.builtin.command: grub2-mkconfig -o /etc/grub2.cfg
+      ansible.builtin.command: grub2-mkconfig -o /boot/grub2/grub.cfg
       register: cmd_output
       changed_when: cmd_output.rc != 0
 

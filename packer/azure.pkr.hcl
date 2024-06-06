@@ -26,7 +26,7 @@ source "azure-arm" "TEMPLATE_DISTRIBUTION" {
   vtpm_enabled              = true
   security_type             = "ConfidentialVM"
   keep_os_disk              = TEMPLATE_KEEP_OS_DISK
-  temp_os_disk_name         = "TEMPLATE_PRODUCT-TEMPLATE_DISTRIBUTION-TEMPLATE_TECHNO-TEMPLATE_AZURE_IMAGE_VERSION"
+  temp_os_disk_name         = "TEMPLATE_OS_DISK_NAME"
 
   # shared_image_gallery {
   #   subscription         = "TEMPLATE_SUBSCRIPTION_ID"

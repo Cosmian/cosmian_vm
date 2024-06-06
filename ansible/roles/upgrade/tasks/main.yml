@@ -28,3 +28,15 @@
         update_only: true
         update_cache: true
       tags: redhat
+
+    - name: Update security packages
+      ansible.builtin.dnf:
+        security: true
+        state: latest
+        update_only: true
+
+    - name: Ensure SELinux policies are up-to-date
+      ansible.builtin.dnf:
+        name: selinux-policy
+        state: latest
+        update_only: true

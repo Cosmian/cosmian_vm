@@ -4,6 +4,12 @@
 
 ### Changelog
 
+## [0.1.3] - 2024-06-05
+
+- RHEL:
+  * Fix grub2-mkconfig invalid output path
+  * Add RHEL security updates
+
 ## [0.1.2] - 2024-06-05
 
 - Modify GRUB for Azure security check: add `console=ttyS0 earlyprintk=ttyS0` to GRUB_CMDLINE_LINUX
