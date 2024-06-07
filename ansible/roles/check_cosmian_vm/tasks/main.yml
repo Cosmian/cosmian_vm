@@ -230,6 +230,28 @@
         var: verify_cosmian_vm_output
       tags: verify
 
+    - name: Read Cosmian VM agent logs
+      ansible.builtin.command:
+        cmd: |
+          journalctl -u cosmian_vm_agent
+      register: agent_logs
+      changed_when: agent_logs.rc != 0
+      tags: verify
+
+    - name: Display Agent logs
+      ansible.builtin.debug:
+        var: agent_logs
+      tags: verify
+
+    - name: Fail if Cosmian snapshot verification has failed previously
+      ansible.builtin.fail:
+        msg: Cosmian snapshot verification failed with return code {{ verify_cosmian_vm_output }}
+      when:
+        - verify_cosmian_vm_output is defined
+        - verify_cosmian_vm_output.rc is defined
+        - verify_cosmian_vm_output.rc != 0
+      tags: verify
+
 - name: Verify Cosmian VM snapshot - no reboot
   when: not check_cosmian_vm_test_reboot
   block:
@@ -249,27 +271,27 @@
         var: verify_cosmian_vm_output
       tags: verify
 
-- name: Read Cosmian VM agent logs
-  ansible.builtin.command:
-    cmd: |
-      journalctl -u cosmian_vm_agent
-  register: agent_logs
-  changed_when: agent_logs.rc != 0
-  tags: verify
+    - name: Read Cosmian VM agent logs
+      ansible.builtin.command:
+        cmd: |
+          journalctl -u cosmian_vm_agent
+      register: agent_logs
+      changed_when: agent_logs.rc != 0
+      tags: verify
 
-- name: Display Agent logs
-  ansible.builtin.debug:
-    var: agent_logs
-  tags: verify
+    - name: Display Agent logs
+      ansible.builtin.debug:
+        var: agent_logs
+      tags: verify
 
-- name: Fail if Cosmian snapshot verification has failed previously
-  ansible.builtin.fail:
-    msg: Cosmian snapshot verification failed with return code {{ verify_cosmian_vm_output }}
-  when:
-    - verify_cosmian_vm_output is defined
-    - verify_cosmian_vm_output.rc is defined
-    - verify_cosmian_vm_output.rc != 0
-  tags: verify
+    - name: Fail if Cosmian snapshot verification has failed previously
+      ansible.builtin.fail:
+        msg: Cosmian snapshot verification failed with return code {{ verify_cosmian_vm_output }}
+      when:
+        - verify_cosmian_vm_output is defined
+        - verify_cosmian_vm_output.rc is defined
+        - verify_cosmian_vm_output.rc != 0
+      tags: verify
 
 - name: Clean Cosmian VM CLI and snapshot
   ansible.builtin.command:
