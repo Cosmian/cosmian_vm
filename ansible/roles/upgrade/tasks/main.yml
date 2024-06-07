@@ -3,15 +3,51 @@
 
 - name: Update and upgrade apt packages
   when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.apt:
-    update_cache: true
-    only_upgrade: true
-    upgrade: safe
-  tags: ubuntu
+  block:
+    - name: Update and upgrade apt packages
+      ansible.builtin.apt:
+        update_cache: true
+        only_upgrade: true
+        upgrade: safe
+      tags: ubuntu
+
+    # Update grub
+    - name: Update grub
+      ansible.builtin.command: update-grub
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
 
 - name: Upgrade all packages
   when: ansible_distribution == 'RedHat'
   block:
+
+    - name: Install required packages
+      when: ansible_facts['bios_vendor'] == 'Microsoft Corporation'
+      ansible.builtin.dnf:
+        name:
+          - systemd-boot-unsigned
+        state: present
+
+    # # TODO(ecse): /dev/sda should be detected automatically
+    - name: Dracut - Azure
+      when: ansible_facts['bios_vendor'] == 'Microsoft Corporation'
+      tags: dracut
+      ansible.builtin.shell:
+        cmd: |
+          set -exo pipefail
+          KERNEL_VERSION=$(uname -r)
+          dracut --conf /etc/dracut.conf --kver ${KERNEL_VERSION} \
+             --uefi --kernel-image /boot/vmlinuz-${KERNEL_VERSION} \
+             --kernel-cmdline="console=ttyS0 earlyprintk=ttyS0" /tmp/uki.efi
+          efibootmgr -c -d /dev/sda -p 2 -L "NewUKI" -l "\EFI\redhat\shimx64.efi" -u "\EFI\Linux\vmlinuz-${KERNEL_VERSION}.efi"
+      register: dracut_output
+      changed_when: dracut_output.rc != 0 and dracut_output.rc != 1
+
+    - name: Display dracut output command
+      tags: dracut
+      ansible.builtin.debug:
+        var: dracut_output
+
     - name: Install required packages
       ansible.builtin.dnf:
         name:
@@ -37,3 +73,18 @@
         security: true
         state: latest
         update_only: true
+
+    - name: Dracut - Azure
+      when: ansible_facts['bios_vendor'] != 'Microsoft Corporation'
+      tags: dracut
+      ansible.builtin.shell:
+        cmd: |
+          set -exo pipefail
+          dracut -f -v --regenerate-all
+      register: dracut_output
+      changed_when: dracut_output.rc != 0 and dracut_output.rc != 1
+
+    - name: Display dracut output command
+      tags: dracut
+      ansible.builtin.debug:
+        var: dracut_output
