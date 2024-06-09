@@ -20,6 +20,19 @@
 - name: Upgrade all packages
   when: ansible_distribution == 'RedHat'
   block:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name:
+          - python-firewall
+          - firewalld
+          - policycoreutils-python-utils
+          - selinux-policy
+          - kernel
+          - kernel-devel
+          - kernel-headers
+          - kernel-tools
+          - kernel-tools-libs
+        state: present
 
     - name: Install required packages
       when: ansible_facts['bios_vendor'] == 'Microsoft Corporation'
@@ -47,19 +60,6 @@
       tags: dracut
       ansible.builtin.debug:
         var: dracut_output
-
-    - name: Install required packages
-      ansible.builtin.dnf:
-        name:
-          - python-firewall
-          - firewalld
-          - policycoreutils-python-utils
-          - selinux-policy
-          - kernel
-          - kernel-headers
-          - kernel-devel
-        state: present
-        update_cache: true
 
     - name: Update all packages
       ansible.builtin.dnf:

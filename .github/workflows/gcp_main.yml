@@ -23,7 +23,7 @@ jobs:
     needs:
       - clean-resources
     secrets: inherit
-    uses: ./.github/workflows/gcp_image.yml
+    uses: ./.github/workflows/gcp_ansible.yml
     with:
       techno: sev
       distrib: ${{ matrix.distrib }}
@@ -35,7 +35,6 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.2
 
   post-clean-gcp-resources:
     if: success() || cancelled()
