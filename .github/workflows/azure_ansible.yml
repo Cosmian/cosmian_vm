@@ -114,7 +114,7 @@ jobs:
           done
 
       - name: Stop and delete Azure instance
-        if: success() || failure() || cancelled()
+        if: success() || cancelled()
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
         run: |

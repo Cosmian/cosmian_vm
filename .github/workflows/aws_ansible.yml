@@ -118,7 +118,7 @@ jobs:
           done
 
       - name: Stop and delete AWS instance
-        if: success() || failure() || cancelled()
+        if: success() || cancelled()
         env:
           CI_INSTANCE: ${{ steps.env.outputs.ci_instance }}
         run: |

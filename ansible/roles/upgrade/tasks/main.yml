@@ -34,29 +34,75 @@
           - kernel-tools-libs
         state: present
 
-    - name: Install required packages
+    - name: Install systemd-boot-unsigned for Azure
       when: ansible_facts['bios_vendor'] == 'Microsoft Corporation'
       ansible.builtin.dnf:
         name:
           - systemd-boot-unsigned
         state: present
 
-    # # TODO(ecse): /dev/sda should be detected automatically
     - name: Dracut - Azure
       when: ansible_facts['bios_vendor'] == 'Microsoft Corporation'
+      tags: dracut_azure
+      block:
+        # - name: Reboot before updating Unified Kernel Image
+        #   ansible.builtin.reboot:
+        #     connect_timeout: 3600
+        #     reboot_timeout: 3600
+
+        - name: Dracut - Azure
+          ansible.builtin.shell:
+            cmd: |
+              set -exo pipefail
+              KERNEL_VERSION=$(uname -r)
+              dracut -f -v --regenerate-all --kernel-cmdline="console=ttyS0 earlyprintk=ttyS0"
+              efibootmgr -c -d /dev/sda -p 2 -L "NewUKI" -l "\EFI\redhat\shimx64.efi" -u "\EFI\Linux\vmlinuz-${KERNEL_VERSION}.efi"
+          register: dracut_output
+          ignore_errors: true
+          changed_when: dracut_output.rc != 0
+
+        # # TODO(ecse): /dev/sda should be detected automatically
+        # - name: Update Unified Kernel Image
+        #   ansible.builtin.shell:
+        #   cmd: |
+        #     set -exo pipefail
+        #     KERNEL_VERSION=$(uname -r)
+        #     dracut --conf /etc/dracut.conf --kver ${KERNEL_VERSION} \
+        #       --uefi --kernel-image /boot/vmlinuz-${KERNEL_VERSION} \
+        #       --kernel-cmdline="console=ttyS0 earlyprintk=ttyS0" /tmp/uki.efi
+        #     efibootmgr -c -d /dev/sda -p 2 -L "NewUKI" -l "\EFI\redhat\shimx64.efi" -u "\EFI\Linux\vmlinuz-${KERNEL_VERSION}.efi"
+        #   register: dracut_output
+        #   changed_when: dracut_output.rc != 0 and dracut_output.rc != 1
+
+        - name: Display dracut output command
+          tags: dracut
+          ansible.builtin.debug:
+            var: dracut_output
+
+    # - name: Dracut - not Azure
+    #   when: ansible_facts['bios_vendor'] != 'Microsoft Corporation'
+    #   tags: dracut
+    #   ansible.builtin.shell:
+    #     cmd: |
+    #       lsblk
+    #       lssci
+    #       set -exo pipefail
+    #       dracut -f -v --regenerate-all
+    #       efibootmgr -c -d /dev/nvme0n1 -p 2 -L "NewUKI" -l "\EFI\redhat\shimx64.efi" -u "\EFI\Linux\vmlinuz-${KERNEL_VERSION}.efi"
+    #   register: dracut_output
+    #   changed_when: dracut_output.rc != 0
+
+    - name: Dracut - not Azure
+      when: ansible_facts['bios_vendor'] != 'Microsoft Corporation'
       tags: dracut
       ansible.builtin.shell:
         cmd: |
-          set -exo pipefail
-          KERNEL_VERSION=$(uname -r)
-          dracut --conf /etc/dracut.conf --kver ${KERNEL_VERSION} \
-             --uefi --kernel-image /boot/vmlinuz-${KERNEL_VERSION} \
-             --kernel-cmdline="console=ttyS0 earlyprintk=ttyS0" /tmp/uki.efi
-          efibootmgr -c -d /dev/sda -p 2 -L "NewUKI" -l "\EFI\redhat\shimx64.efi" -u "\EFI\Linux\vmlinuz-${KERNEL_VERSION}.efi"
+          dracut --force /usr/lib/modules
       register: dracut_output
-      changed_when: dracut_output.rc != 0 and dracut_output.rc != 1
+      changed_when: dracut_output.rc != 0
 
     - name: Display dracut output command
+      when: ansible_facts['bios_vendor'] != 'Microsoft Corporation'
       tags: dracut
       ansible.builtin.debug:
         var: dracut_output
@@ -73,18 +119,3 @@
         security: true
         state: latest
         update_only: true
-
-    - name: Dracut - Azure
-      when: ansible_facts['bios_vendor'] != 'Microsoft Corporation'
-      tags: dracut
-      ansible.builtin.shell:
-        cmd: |
-          set -exo pipefail
-          dracut -f -v --regenerate-all
-      register: dracut_output
-      changed_when: dracut_output.rc != 0 and dracut_output.rc != 1
-
-    - name: Display dracut output command
-      tags: dracut
-      ansible.builtin.debug:
-        var: dracut_output

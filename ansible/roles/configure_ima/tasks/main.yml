@@ -135,7 +135,7 @@
     - name: Update grub
       ansible.builtin.command:
         cmd: |
-          grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg --update-bls-cmdline
+          grub2-mkconfig -o /boot/grub2/grub.cfg
       register: cmd_output
       changed_when: cmd_output.rc != 0
 
