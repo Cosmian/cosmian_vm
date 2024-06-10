@@ -4,14 +4,12 @@
   become: true
   roles:
     - role: configure_ima
-      tags: role-configure-ima
+      tags: configure_ima
     - tpm
     - instance_configs # GCP only
     - intel
-    - role: upgrade
-      tags: role-upgrade
+    - upgrade
     - no_updates
-    - cosmian_vm_agent
 
 - name: Reboot after GRUB changes, Linux updates and TPM support installation
   hosts: all
@@ -31,8 +29,3 @@
     - name: Display /proc/cmdline
       ansible.builtin.debug:
         var: cmdline
-
-    # - name: Check if command output contains 'earlyprintk'
-    #   ansible.builtin.fail:
-    #     msg: "The command 'cat /proc/cmdline' output does not contain the substring 'earlyprintk'"
-    #   when: "'earlyprintk' not in cmdline.stdout"

@@ -13,9 +13,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [rhel]
+        distrib: [ubuntu, rhel]
         product: [base-image]
-        techno: [sev]
+        techno: [sev, tdx]
         exclude:
           - techno: tdx
             distrib: rhel
@@ -26,4 +26,4 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      base-version: 0.0.3
+      base-version: 0.1.2
