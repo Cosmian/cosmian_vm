@@ -11,6 +11,7 @@
     - role: upgrade
       tags: role-upgrade
     - no_updates
+    - cosmian_vm_agent
 
 - name: Reboot after GRUB changes, Linux updates and TPM support installation
   hosts: all
