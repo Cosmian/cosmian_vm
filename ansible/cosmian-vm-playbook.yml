@@ -5,12 +5,15 @@
   roles:
     - check_cpu
     - cleanup_cosmian_vm_agent
+  tags: cleanup-cosmian-vm-agent
 
 - name: Install base image prerequisites
   ansible.builtin.import_playbook: base-image-packer-playbook.yml
+  tags: playbook-base-image
 
 - name: Install Cosmian VM Agent
   ansible.builtin.import_playbook: cosmian-vm-packer-playbook.yml
+  tags: playbook-cosmian-vm
 
 - name: Check Cosmian VM
   hosts: all

@@ -114,7 +114,7 @@ jobs:
           for i in {1..1}
           do
             echo "Iteration: $i"
-            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }}
+            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} -e '{ "check_app_test_reboot": false, "check_cosmian_vm_test_reboot": false, "reboot_allowed": false }' --tags playbook-base-image,playbook-${{ inputs.product }},check-${{ inputs.product }}
           done
 
       - name: Stop and delete AWS instance

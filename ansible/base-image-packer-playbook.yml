@@ -4,11 +4,12 @@
   become: true
   roles:
     - role: configure_ima
-      tags: configure_ima
+      tags: role-configure-ima
     - tpm
     - instance_configs # GCP only
     - intel
-    - upgrade
+    - role: upgrade
+      tags: role-upgrade
     - no_updates
 
 - name: Reboot after GRUB changes, Linux updates and TPM support installation
@@ -19,6 +20,7 @@
       ansible.builtin.reboot:
         connect_timeout: 3600
         reboot_timeout: 3600
+      when: reboot_allowed
 
     - name: Check /proc/cmdline
       ansible.builtin.command: cat /proc/cmdline
@@ -28,3 +30,8 @@
     - name: Display /proc/cmdline
       ansible.builtin.debug:
         var: cmdline
+
+    # - name: Check if command output contains 'earlyprintk'
+    #   ansible.builtin.fail:
+    #     msg: "The command 'cat /proc/cmdline' output does not contain the substring 'earlyprintk'"
+    #   when: "'earlyprintk' not in cmdline.stdout"

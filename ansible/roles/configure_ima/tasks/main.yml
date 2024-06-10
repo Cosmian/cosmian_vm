@@ -132,6 +132,7 @@
           - shim
         state: present
 
+    # grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg --update-bls-cmdline
     - name: Update grub
       ansible.builtin.command:
         cmd: |
