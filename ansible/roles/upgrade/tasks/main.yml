@@ -25,12 +25,14 @@
           - kernel-devel
           - kernel-headers
         state: present
+        update_cache: true
 
     - name: Update all packages
       ansible.builtin.dnf:
         name: "*"
         state: latest
         update_only: true
+        update_cache: true
       tags: redhat
 
     - name: Update security packages
