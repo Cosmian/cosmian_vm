@@ -4,6 +4,11 @@
 
 ### Changelog
 
+## [0.1.4] - 2024-06-12
+
+- RHEL:
+  - Force security update for shim-x64 package ([#137](https://github.com/Cosmian/cosmian_vm/pull/137))
+
 ## [0.1.3] - 2024-06-11
 
 - RHEL:
@@ -97,8 +102,8 @@ export USERNAME=cosmian
 export HOST=35.204.83.49
 # Be sure to install deps: `pip install -r python_modules.txt` on your localhost
 cd ansible
-ansible-playbook cosmian-vm-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.1
-ansible-playbook kms-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.1 -e cosmian_kms_version=4.16.0
+ansible-playbook cosmian-vm-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.2
+ansible-playbook kms-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.2 -e cosmian_kms_version=4.16.0
 ```
 
 The machine has been configured
