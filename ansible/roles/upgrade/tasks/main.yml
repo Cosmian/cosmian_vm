@@ -3,21 +3,27 @@
 
 - name: Update and upgrade apt packages
   when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.apt:
-    update_cache: true
-    only_upgrade: true
-    upgrade: safe
-  tags: ubuntu
+  block:
+    - name: Update and upgrade apt packages
+      ansible.builtin.apt:
+        update_cache: true
+        only_upgrade: true
+        upgrade: safe
+      tags: ubuntu
 
 - name: Upgrade all packages
   when: ansible_distribution == 'RedHat'
   block:
-    - name: Install packages
+    - name: Install required packages
       ansible.builtin.dnf:
         name:
           - python-firewall
           - firewalld
           - policycoreutils-python-utils
+          - selinux-policy
+          - kernel
+          - kernel-devel
+          - kernel-headers
         state: present
         update_cache: true
 
@@ -28,3 +34,20 @@
         update_only: true
         update_cache: true
       tags: redhat
+
+    - name: Update security packages
+      ansible.builtin.dnf:
+        security: true
+        state: latest
+        update_only: true
+
+    - name: Display security available patches
+      ansible.builtin.shell:
+        cmd: |
+          dnf updateinfo list security
+      register: dnf_security_update
+      changed_when: dnf_security_update.rc != 0
+
+    - name: Display Security updates
+      ansible.builtin.debug:
+        var: dnf_security_update

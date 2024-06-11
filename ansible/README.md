@@ -4,6 +4,16 @@
 
 ### Changelog
 
+## [0.1.3] - 2024-06-11
+
+- RHEL:
+  - Fix grub2-mkconfig invalid output path
+  - Add RHEL security updates
+
+## [0.1.2] - 2024-06-05
+
+- Modify GRUB for Azure security check: add `console=ttyS0 earlyprintk=ttyS0` to GRUB_CMDLINE_LINUX
+
 ## [0.1.1] - 2024-06-03
 
 - Install TPM2 Access Broker & Resource Manager (tpm2-abrmd)
@@ -43,6 +53,13 @@ aws ec2 describe-images --output json > aws_list.json
 ```sh
 az vm list> azure_list.json
 ```
+
+#### Update Unified Kernel Image: UKI
+
+Links:
+
+- <https://www.redhat.com/fr/blog/rhel-confidential-virtual-machines-azure-technical-deep-dive>
+- <https://access.redhat.com/documentation/ml/red_hat_enterprise_linux/9/pdf/deploying_rhel_9_on_microsoft_azure/red_hat_enterprise_linux-9-deploying_rhel_9_on_microsoft_azure-en-us.pdf>
 
 ### GCP images
 

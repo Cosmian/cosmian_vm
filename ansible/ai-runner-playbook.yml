@@ -10,15 +10,6 @@
 - name: Install base image prerequisites
   ansible.builtin.import_playbook: base-image-packer-playbook.yml
 
-- name: Reboot after GRUB changes and TPM support installation
-  hosts: all
-  become: true
-  tasks:
-    - name: Reboot the system
-      ansible.builtin.reboot:
-        connect_timeout: 3600
-        reboot_timeout: 3600
-
 - name: Install AI Runner
   ansible.builtin.import_playbook: ai-runner-packer-playbook.yml
 

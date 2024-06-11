@@ -4,3 +4,4 @@ cosmian_kms_version: 4.16.0
 cosmian_ai_runner_version: 0.3.0
 
 nginx_user: root
+reboot_allowed: true

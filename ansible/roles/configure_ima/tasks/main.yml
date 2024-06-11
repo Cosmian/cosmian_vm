@@ -8,7 +8,8 @@
 - name: Check grub file path
   ansible.builtin.stat:
     path: /etc/default/grub
-  register: file_check
+  register: etc_default_grub
+  tags: update_grub
 
 - name: Create ima folder
   ansible.builtin.file:
@@ -36,12 +37,14 @@
     mode: "0400"
 
 - name: Copy the bash script to the remote host (in order to update the grub conf)
+  when: etc_default_grub.stat.exists
+  tags: update_grub
   ansible.builtin.copy:
     content: |
       #!/usr/bin/bash
       f=/etc/default/grub
 
-      ## Template policy
+      # Template policy
       if grep -q ima_policy= $f ; then
         # Template policy already set
         sed -i 's/ima_policy=[^ "]\+/ima_policy=tcb/' $f
@@ -50,60 +53,73 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
       fi
 
-      ## Hash method
+      # Hash method
       if grep -q ima_hash= $f ; then
-        # Hash method already set
+        echo "Hash method already set"
         sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
       else
-        # Hash method not set
+        echo "Hash method not set"
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
       fi
 
-      ## Template format
+      # Template format
       if grep -q ima_template= $f ; then
-        # Template format already set
+        echo "Template format already set"
         sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
       else
-        # Template format not set
+        echo "Template format not set"
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
+      fi
+
+      # Console ttyS0
+      if grep -q console= $f ; then
+        echo "console already set"
+        sed -i 's/console=[^ "]\+/console=ttyS0/' $f
+      else
+        echo "console not set"
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ console=ttyS0\"/ $f
+      fi
+
+      # earlyprintk
+      if grep -q earlyprintk= $f ; then
+        echo "earlyprintk already set"
+        sed -i 's/earlyprintk=[^ "]\+/earlyprintk=ttyS0/' $f
+      else
+        echo "earlyprintk not set"
+        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
       fi
     dest: /tmp/grub.sh
     mode: "0700" # Make the script executable
     remote_src: true
-  when: file_check.stat.exists
 
 - name: Insert/update missing line if default grub does not exist
+  when: not etc_default_grub.stat.exists
   ansible.builtin.blockinfile:
     path: /etc/default/grub.d/50-cloudimg-settings.cfg
     block: |
-      GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng"
-  when:
-    - not file_check.stat.exists
+      GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng console=ttyS0 earlyprintk=ttyS0"
   tags: cloudimg
 
-- name: Install packages for Azure
-  ansible.builtin.apt:
-    name: grub2-common
-    state: present
-    update_cache: true
-  when: not file_check.stat.exists
-
 - name: Update the grub configuration
+  when: etc_default_grub.stat.exists
+  tags: update_grub
   ansible.builtin.command: /tmp/grub.sh
-  when: file_check.stat.exists
   register: cmd_output
   changed_when: cmd_output.rc != 0
 
 - name: Remove the update grub configuration script
+  when: etc_default_grub.stat.exists
   ansible.builtin.file:
     path: /tmp/grub.sh
     state: absent
-  when: file_check.stat.exists
 
-# Update grub
 - name: Update grub on Ubuntu
   when: ansible_distribution == 'Ubuntu'
   block:
+    - name: Update and upgrade apt packages
+      ansible.builtin.apt:
+        name: grub2-common
+
     - name: Update grub
       ansible.builtin.command: update-grub
       register: cmd_output
@@ -111,6 +127,7 @@
 
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat'
+  tags: update_grub
   block:
     - name: Install missing packages
       ansible.builtin.dnf:
@@ -121,7 +138,9 @@
         state: present
 
     - name: Update grub
-      ansible.builtin.command: grub2-mkconfig -o /etc/grub2.cfg
+      ansible.builtin.command:
+        cmd: |
+          grub2-mkconfig -o /boot/grub2/grub.cfg
       register: cmd_output
       changed_when: cmd_output.rc != 0
 
@@ -130,13 +149,6 @@
       register: cmd_output
       changed_when: cmd_output.rc != 0
       tags: selinux
-
-    - name: Dracut
-      ansible.builtin.command:
-        cmd: |
-          dracut --force /usr/lib/modules
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
 
 - name: Mount a tmpfs volume
   ansible.posix.mount:

@@ -8,12 +8,15 @@ All notable changes to this project will be documented in this file.
 
 - Add support for Cosmian AI Runner images ([#117](https://github.com/Cosmian/cosmian_vm/pull/117))
 - Create frozen base image for Ubuntu/RHEL for GCP/Azure/AWS ([#120](https://github.com/Cosmian/cosmian_vm/pull/120))
+- Modify GRUB for Azure security check: add `console=ttyS0 earlyprintk=ttyS0` to GRUB_CMDLINE_LINUX ([#132](https://github.com/Cosmian/cosmian_vm/pull/132))
 
 ### Bug Fixes
 
 - On KMS and AI Runner, remove unnecessarily opened ports ([#124](https://github.com/Cosmian/cosmian_vm/pull/124))
 - Freeze packer plugins versions ([#127](https://github.com/Cosmian/cosmian_vm/pull/127))
-- Use tpm2-abrmd as cosmian_vm_agent.service dependency ([#129](https://github.com/Cosmian/cosmian_vm/pull/129))
+- Use tpm2-abrmd as cosmian_vm_agent.service dependency to fix PCR Hash digest error ([#129](https://github.com/Cosmian/cosmian_vm/pull/129))
+- Create VHD from OS disk to publish to marketplace ([#130](https://github.com/Cosmian/cosmian_vm/pull/130))
+- AWS spawning retry ([#131](https://github.com/Cosmian/cosmian_vm/pull/131))
 
 ### Testing
 
