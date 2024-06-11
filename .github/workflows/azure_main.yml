@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [rhel]
+        distrib: [ubuntu, rhel]
         product: [cosmian-vm]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:

@@ -8,8 +8,8 @@
 - name: Check grub file path
   ansible.builtin.stat:
     path: /etc/default/grub
-  register: file_check
-  tags: azure_security_check
+  register: etc_default_grub
+  tags: update_grub
 
 - name: Create ima folder
   ansible.builtin.file:
@@ -37,8 +37,8 @@
     mode: "0400"
 
 - name: Copy the bash script to the remote host (in order to update the grub conf)
-  when: file_check.stat.exists
-  tags: azure_security_check
+  when: etc_default_grub.stat.exists
+  tags: update_grub
   ansible.builtin.copy:
     content: |
       #!/usr/bin/bash
@@ -93,40 +93,34 @@
     remote_src: true
 
 - name: Insert/update missing line if default grub does not exist
-  when: not file_check.stat.exists
+  when: not etc_default_grub.stat.exists
   ansible.builtin.blockinfile:
     path: /etc/default/grub.d/50-cloudimg-settings.cfg
     block: |
       GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng console=ttyS0 earlyprintk=ttyS0"
   tags: cloudimg
 
-- name: Install packages for Azure
-  ansible.builtin.apt:
-    name: grub2-common
-    state: present
-    update_cache: true
-  when: not file_check.stat.exists
-
 - name: Update the grub configuration
-  when: file_check.stat.exists
-  tags: azure_security_check
+  when: etc_default_grub.stat.exists
+  tags: update_grub
   ansible.builtin.command: /tmp/grub.sh
   register: cmd_output
   changed_when: cmd_output.rc != 0
 
 - name: Remove the update grub configuration script
-  when: file_check.stat.exists
+  when: etc_default_grub.stat.exists
   ansible.builtin.file:
     path: /tmp/grub.sh
     state: absent
 
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat'
-  tags: azure_security_check
+  tags: update_grub
   block:
     - name: Install missing packages
       ansible.builtin.dnf:
         name:
+          - grub2-common
           - grub2-efi
           - grub2-efi-modules
           - shim
