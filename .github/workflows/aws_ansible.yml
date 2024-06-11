@@ -63,14 +63,14 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export IMAGE_TO_INSTANTIATE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
           else
-            export IMAGE_TO_INSTANTIATE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
           fi
 
           AMI=$(aws ec2 run-instances \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
-            --image-id $IMAGE_TO_INSTANTIATE \
+            --image-id $AMI_BASE \
             --instance-type c6a.2xlarge \
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
