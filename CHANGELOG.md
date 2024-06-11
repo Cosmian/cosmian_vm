@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.1] - 2024-06-04
+## [1.2.2] - 2024-06-13
+
+### Bug Fixes
+
+- Update RHEL image by forcing installation of security update of shim-x64 package - if exists ([#137](https://github.com/Cosmian/cosmian_vm/pull/137))
+
+## [1.2.1] - 2024-06-11
 
 ### Features
 
