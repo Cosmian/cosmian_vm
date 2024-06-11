@@ -80,7 +80,7 @@
         backup: true
       when: __dnf_automatic_conf.stat.exists
 
-    - name: Clean Yum metadata
+    - name: Clean dnf metadata
       ansible.builtin.command: dnf clean all
       register: cmd_output
       changed_when: cmd_output.rc != 0

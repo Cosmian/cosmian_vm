@@ -1,21 +1,15 @@
 #!/bin/bash
 
-set -x
+set -ex
 
 # Assign default values if parameters are not provided
 TECHNO="${1:-sev}"
 DISTRIB="${2:-ubuntu}"
-
 WHO="$(whoami)"
-NAME="$WHO-$TECHNO-$DISTRIB"
+DEFAULT_NAME="$WHO-$TECHNO-$DISTRIB"
+NAME="${3:-$DEFAULT_NAME}"
 
 SSH_PUB_KEY=$(cat ~/.ssh/id_rsa.pub)
-
-az vm delete -g packer-snp -n "$NAME" --yes
-az network public-ip delete -g packer-snp -n "${NAME}PublicIP"
-az network nsg delete --resource-group packer-snp -n "${NAME}NSG"
-
-set -ex
 
 if [ "$TECHNO" = "tdx" ]; then
   # Ubuntu TDX
@@ -54,7 +48,6 @@ else
     --os-disk-delete-option delete \
     --data-disk-delete-option delete \
     --admin-username azureuser \
-    --security-type ConfidentialVM \
     --ssh-key-values "$SSH_PUB_KEY"
 
 fi

@@ -7,8 +7,8 @@
 ## [0.1.3] - 2024-06-05
 
 - RHEL:
-  * Fix grub2-mkconfig invalid output path
-  * Add RHEL security updates
+  - Fix grub2-mkconfig invalid output path
+  - Add RHEL security updates
 
 ## [0.1.2] - 2024-06-05
 

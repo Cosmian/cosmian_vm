@@ -39,7 +39,7 @@
         state: latest
         update_only: true
 
-    - name: Display security patches
+    - name: Display security available patches
       ansible.builtin.shell:
         cmd: |
           dnf updateinfo list security
