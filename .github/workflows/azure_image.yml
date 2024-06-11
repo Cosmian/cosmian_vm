@@ -71,10 +71,13 @@ jobs:
           if [[ $COSMIAN_VM_VERSION = *'last_build'* ]]; then
             export AZURE_IMAGE_VERSION="0.0.0"
           else
+
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               export AZURE_IMAGE_VERSION="$COSMIAN_VM_VERSION"
             elif [ "${{ inputs.product }}" = "ai-runner" ]; then
               export AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
+            elif [ "${{ inputs.product }}" = "kms" ]; then
+              export AZURE_IMAGE_VERSION="$KMS_VERSION"
             elif [ "${{ inputs.product }}" = "base-image" ]; then
               export AZURE_IMAGE_VERSION="$BASE_IMAGE_VERSION"
             else
