@@ -4,7 +4,7 @@
 
 ### Changelog
 
-## [0.1.3] - 2024-06-05
+## [0.1.3] - 2024-06-11
 
 - RHEL:
   - Fix grub2-mkconfig invalid output path
