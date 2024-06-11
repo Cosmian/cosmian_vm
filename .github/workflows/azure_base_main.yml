@@ -21,7 +21,7 @@ jobs:
             distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     secrets: inherit
-    uses: ./.github/workflows/azure_base_image.yml
+    uses: ./.github/workflows/azure_packer_build.yml
     with:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}

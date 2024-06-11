@@ -29,79 +29,14 @@ env:
 
 jobs:
   build-image:
-    name: Packer build - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      id-token: write
-    defaults:
-      run:
-        working-directory: ./packer
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Az CLI login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDS_JSON }}
-
-      - name: Setup packer
-        uses: hashicorp/setup-packer@main
-
-      - name: Packer build image
-        env:
-          KMS_VERSION: ${{ inputs.kms-version }}
-          AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
-          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          TECHNO: ${{ inputs.techno }}
-          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
-          AZURE_STORAGE_ACCOUNT_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
-        run: |
-          set -ex
-
-          export BASE_IMAGE_VERSION="${{ inputs.base-version }}"
-
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
-            export COSMIAN_VM_VERSION="${{ github.ref_name }}"
-            export KEEP_OS_DISK="true"
-          else
-            export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-            export KEEP_OS_DISK="false"
-          fi
-
-          if [[ $COSMIAN_VM_VERSION = *'last_build'* ]]; then
-            export AZURE_IMAGE_VERSION="0.0.0"
-          else
-
-            if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-              export AZURE_IMAGE_VERSION="$COSMIAN_VM_VERSION"
-            elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-              export AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
-            elif [ "${{ inputs.product }}" = "kms" ]; then
-              export AZURE_IMAGE_VERSION="$KMS_VERSION"
-            elif [ "${{ inputs.product }}" = "base-image" ]; then
-              export AZURE_IMAGE_VERSION="$BASE_IMAGE_VERSION"
-            else
-              echo "Unexpected product"
-              exit 1
-            fi
-
-          fi
-
-          bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
-
-          # For Azure, create a final VHD from os disk
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
-            OS_DISK="${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-${AZURE_IMAGE_VERSION}"
-
-            sas=$(az disk grant-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK" --duration-in-seconds 3600 --access-level Read --query accessSas -o tsv)
-
-            az storage blob copy start --destination-blob $OS_DISK.vhd --destination-container packer --account-name "$AZURE_STORAGE_ACCOUNT_NAME" --account-key "$AZURE_STORAGE_ACCOUNT_KEY" --source-uri "$sas"
-          fi
+    name: (AZURE) ${{ inputs.product }} - ${{ inputs.distrib }} - ${{ inputs.techno }}
+    secrets: inherit
+    uses: ./.github/workflows/azure_packer_build.yml
+    with:
+      techno: ${{ inputs.techno }}
+      distrib: ${{ inputs.distrib }}
+      product: ${{ inputs.product }}
+      base-version: ${{ inputs.base-version }}
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
