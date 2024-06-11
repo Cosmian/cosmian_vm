@@ -48,7 +48,6 @@ else
       --region eu-west-1 \
       --placement AvailabilityZone=eu-west-1c \
       --query 'Instances[0].InstanceId' \
-      --tpm-support v2.0 \
       --output text
   )
 

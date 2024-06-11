@@ -11,12 +11,6 @@
         upgrade: safe
       tags: ubuntu
 
-    # Update grub
-    - name: Update grub
-      ansible.builtin.command: update-grub
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
-
 - name: Upgrade all packages
   when: ansible_distribution == 'RedHat'
   block:
@@ -30,8 +24,6 @@
           - kernel
           - kernel-devel
           - kernel-headers
-          - kernel-tools
-          - kernel-tools-libs
         state: present
 
     - name: Update all packages

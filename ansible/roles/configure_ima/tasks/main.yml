@@ -113,6 +113,18 @@
     path: /tmp/grub.sh
     state: absent
 
+- name: Update grub on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  block:
+    - name: Update and upgrade apt packages
+      ansible.builtin.apt:
+        name: grub2-common
+
+    - name: Update grub
+      ansible.builtin.command: update-grub
+      register: cmd_output
+      changed_when: cmd_output.rc != 0
+
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat'
   tags: update_grub
@@ -120,13 +132,11 @@
     - name: Install missing packages
       ansible.builtin.dnf:
         name:
-          - grub2-common
           - grub2-efi
           - grub2-efi-modules
           - shim
         state: present
 
-    # grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg --update-bls-cmdline
     - name: Update grub
       ansible.builtin.command:
         cmd: |
