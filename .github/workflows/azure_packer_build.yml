@@ -58,6 +58,8 @@ jobs:
           BASE_IMAGE_VERSION: ${{ inputs.base-version }}
           KMS_VERSION: ${{ inputs.kms-version }}
           AI_RUNNER_VERSION: ${{ inputs.base-version }}
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          AZURE_STORAGE_ACCOUNT_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
         id: env
         run: |
           set -ex
@@ -102,4 +104,6 @@ jobs:
             sas=$(az disk grant-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK" --duration-in-seconds 3600 --access-level Read --query accessSas -o tsv)
 
             az storage blob copy start --destination-blob $OS_DISK.vhd --destination-container packer --account-name "$AZURE_STORAGE_ACCOUNT_NAME" --account-key "$AZURE_STORAGE_ACCOUNT_KEY" --source-uri "$sas"
+
+            az disk delete -g "$RESOURCE_GROUP" --name "$OS_DISK" --yes
           fi
