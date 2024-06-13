@@ -57,7 +57,7 @@ jobs:
           TECHNO: ${{ inputs.techno }}
           BASE_IMAGE_VERSION: ${{ inputs.base-version }}
           KMS_VERSION: ${{ inputs.kms-version }}
-          AI_RUNNER_VERSION: ${{ inputs.base-version }}
+          AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_ACCOUNT_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
         id: env
