@@ -16,6 +16,12 @@ on:
       base-version:
         required: true
         type: string
+      kms-version:
+        required: true
+        type: string
+      ai-runner-version:
+        required: true
+        type: string
 
 env:
   RESOURCE_GROUP: packer-snp
@@ -50,6 +56,8 @@ jobs:
           CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           TECHNO: ${{ inputs.techno }}
           BASE_IMAGE_VERSION: ${{ inputs.base-version }}
+          KMS_VERSION: ${{ inputs.kms-version }}
+          AI_RUNNER_VERSION: ${{ inputs.base-version }}
         id: env
         run: |
           set -ex
@@ -64,8 +72,6 @@ jobs:
 
           if [ "${{ inputs.product }}" = "base-image" ]; then
               export AZURE_IMAGE_VERSION="$BASE_IMAGE_VERSION"
-              export KMS_VERSION="0.0.0"
-              export AI_RUNNER_VERSION="0.0.0"
           else
 
             if [[ $COSMIAN_VM_VERSION = *'last_build'* ]]; then

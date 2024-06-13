@@ -37,6 +37,8 @@ jobs:
       distrib: ${{ inputs.distrib }}
       product: ${{ inputs.product }}
       base-version: ${{ inputs.base-version }}
+      kms-version: ${{ inputs.kms-version }}
+      ai-runner-version: ${{ inputs.ai-runner-version }}
 
   test-image:
     name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
