@@ -105,6 +105,6 @@ jobs:
 
             az storage blob copy start --destination-blob $OS_DISK.vhd --destination-container packer --account-name "$AZURE_STORAGE_ACCOUNT_NAME" --account-key "$AZURE_STORAGE_ACCOUNT_KEY" --source-uri "$sas"
 
-            az disk revoke-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK"
-            az disk delete -g "$RESOURCE_GROUP" --name "$OS_DISK" --yes
+            # az disk revoke-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK"
+            # az disk delete -g "$RESOURCE_GROUP" --name "$OS_DISK" --yes
           fi
