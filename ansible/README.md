@@ -4,6 +4,10 @@
 
 ### Changelog
 
+## [0.1.5] - 2024-06-15
+
+- RHEL/Ubuntu: clean all authorized_keys ([#139](https://github.com/Cosmian/cosmian_vm/pull/139))
+
 ## [0.1.4] - 2024-06-12
 
 - RHEL:
@@ -102,8 +106,8 @@ export USERNAME=cosmian
 export HOST=35.204.83.49
 # Be sure to install deps: `pip install -r python_modules.txt` on your localhost
 cd ansible
-ansible-playbook cosmian-vm-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.2
-ansible-playbook kms-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.2 -e cosmian_kms_version=4.16.0
+ansible-playbook cosmian-vm-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.3
+ansible-playbook kms-playbook.yml -i ${HOST}, -u $USERNAME -e cosmian_vm_version=1.2.3 -e cosmian_kms_version=4.16.0
 ```
 
 The machine has been configured

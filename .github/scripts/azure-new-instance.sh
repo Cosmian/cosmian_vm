@@ -53,3 +53,6 @@ else
 fi
 
 az vm open-port -g packer-snp -n "$NAME" --priority 100 --port 5555,443,22
+
+HOST=$(az vm show -d -g packer-snp -n "$NAME" --query publicIps -o tsv)
+echo "$HOST"

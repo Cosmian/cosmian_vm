@@ -9,10 +9,18 @@ REGION="eu-west-1"
 instance_ids=$(aws ec2 describe-instances --query 'Reservations[].Instances[].InstanceId' --region "$REGION" --output text)
 # Loop through each instance ID and terminate it
 for instance_id in $instance_ids; do
-  echo "Listing instance: $instance_name ($instance_id)"
   instance_name=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$instance_id" "Name=key,Values=Name" --region "$REGION" --output=text | cut -f5)
+  echo "Listing instance: $instance_name ($instance_id)"
   if [[ $instance_name == *"packer"* ]] || [[ $instance_name == *"gh-ci"* ]]; then
     echo "--> Terminating instance: $instance_name ($instance_id)"
+    aws ec2 terminate-instances --instance-ids "$instance_id" --region "$REGION"
+  fi
+
+   # Get SSH key name
+  ssh_key_name=$(aws ec2 describe-instances --instance-ids "$instance_id" --query 'Reservations[].Instances[].KeyName' --region "$REGION" --output text)
+  echo "Listing SSH key: $ssh_key_name"
+  if [[ $ssh_key_name == *"packer"* ]]; then
+    echo "--> Terminating instance: $ssh_key_name ($instance_id)"
     aws ec2 terminate-instances --instance-ids "$instance_id" --region "$REGION"
   fi
 done

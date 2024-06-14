@@ -55,7 +55,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.4
+      base-version: 0.1.5
 
   ansible:
     if: startsWith(github.ref, 'refs/tags/') != true

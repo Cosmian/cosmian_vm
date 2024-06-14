@@ -3,13 +3,14 @@
   hosts: all
   become: true
   roles:
-    - role: configure_ima
-      tags: configure_ima
+    - role: upgrade
+      tags: role-upgrade
     - tpm
     - instance_configs # GCP only
     - intel
-    - upgrade
     - no_updates
+    - role: configure_ima
+      tags: role-configure-ima
 
 - name: Reboot after GRUB changes, Linux updates and TPM support installation
   hosts: all
@@ -43,3 +44,10 @@
         - name: Display Security updates
           ansible.builtin.debug:
             var: dnf_security_update
+
+- name: Clean base image
+  hosts: all
+  become: true
+  roles:
+    - role: cleanup
+      tags: role-cleanup

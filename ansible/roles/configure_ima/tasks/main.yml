@@ -1,6 +1,9 @@
 ---
 # tasks file for ansible/roles/configure_ima
 
+- name: Gathering facts
+  ansible.builtin.gather_facts:
+
 - name: Check OS distribution
   ansible.builtin.debug:
     var: ansible_distribution
