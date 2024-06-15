@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 
-- Upgrade base image to 0.1.5: clean all authorized_keys ([#139](https://github.com/Cosmian/cosmian_vm/pull/139))
+- Upgrade base image to 0.1.5: clean all authorized_keys and users ([#140](https://github.com/Cosmian/cosmian_vm/pull/140))
 
 ## [1.2.2] - 2024-06-13
 

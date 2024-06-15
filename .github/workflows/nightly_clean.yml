@@ -1,0 +1,21 @@
+---
+name: Nightly clean cloud providers resources
+
+on:
+  schedule:
+    # every day at 0 AM
+    - cron: 00 0 * * *
+  workflow_dispatch:
+
+jobs:
+  azure:
+    uses: ./.github/workflows/azure_clean.yml
+    secrets: inherit
+
+  gcp:
+    uses: ./.github/workflows/gcp_clean.yml
+    secrets: inherit
+
+  aws:
+    uses: ./.github/workflows/aws_clean.yml
+    secrets: inherit

@@ -7,3 +7,5 @@
   become: true
   roles:
     - kms
+    - role: cleanup
+      tags: role-cleanup

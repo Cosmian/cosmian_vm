@@ -6,7 +6,9 @@
 
 ## [0.1.5] - 2024-06-15
 
-- RHEL/Ubuntu: clean all authorized_keys ([#139](https://github.com/Cosmian/cosmian_vm/pull/139))
+- Clean RHEL/Ubuntu after builds: ([#140](https://github.com/Cosmian/cosmian_vm/pull/140))
+  - clean all authorized_keys
+  - clean users
 
 ## [0.1.4] - 2024-06-12
 
