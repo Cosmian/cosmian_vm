@@ -54,6 +54,7 @@ jobs:
 
       - name: Packer build image
         env:
+          PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_TOKEN }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
         run: |
           set -ex

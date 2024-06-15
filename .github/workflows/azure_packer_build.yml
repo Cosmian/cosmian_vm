@@ -50,6 +50,7 @@ jobs:
 
       - name: Packer build image
         env:
+          PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_TOKEN }}
           CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
