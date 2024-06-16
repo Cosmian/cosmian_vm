@@ -17,20 +17,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu]
+        distrib: [ubuntu, rhel]
         product: [cosmian-vm]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
     secrets: inherit
-    uses: ./.github/workflows/aws_image.yml
+    uses: ./.github/workflows/aws_ansible.yml
     with:
       techno: sev
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.5
 
   post-clean-resources:
     if: success() || cancelled()
