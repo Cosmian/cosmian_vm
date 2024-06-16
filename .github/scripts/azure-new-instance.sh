@@ -37,6 +37,8 @@ else
     IMAGE_NAME="redhat:rhel-cvm:9_3_cvm_sev_snp:latest"
   fi
 
+  IMAGE_NAME="/subscriptions/e04f52be-d51f-43fe-95f8-d63a8fc91464/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/base-image-${DISTRIB}-${TECHNO}/versions/0.1.5"
+
   az vm create -g packer-snp -n "$NAME" \
     --image "$IMAGE_NAME" \
     --security-type ConfidentialVM \

@@ -1,0 +1,40 @@
+---
+# tasks file for ansible/roles/cleanup
+
+- name: Find all authorized_keys files
+  ansible.builtin.find:
+    paths:
+      - /home
+      - /root
+    recurse: true
+    patterns: authorized_keys
+  register: authorized_keys
+
+- name: Display authorized_keys
+  ansible.builtin.debug:
+    var: authorized_keys
+
+- name: Remove found authorized_keys files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ authorized_keys.files }}"
+  when: authorized_keys.matched > 0
+
+- name: Find all authorized_keys files
+  ansible.builtin.find:
+    paths:
+      - /home
+      - /root
+    recurse: true
+    patterns: authorized_keys
+  register: authorized_keys
+
+- name: Display authorized_keys authorized_keys
+  ansible.builtin.debug:
+    var: authorized_keys
+
+- name: Fail if authorized_keys files are found
+  ansible.builtin.fail:
+    msg: "authorized_keys files found in the system!"
+  when: authorized_keys.matched > 0
