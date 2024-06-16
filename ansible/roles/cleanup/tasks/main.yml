@@ -38,3 +38,14 @@
   ansible.builtin.fail:
     msg: "authorized_keys files found in the system!"
   when: authorized_keys.matched > 0
+
+- name: List folders in /home
+  ansible.builtin.find:
+    paths: /home
+    file_type: directory
+    recurse: false
+  register: home_folders
+
+- name: Display home directories
+  ansible.builtin.debug:
+    var: home_folders
