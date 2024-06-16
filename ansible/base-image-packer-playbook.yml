@@ -44,10 +44,3 @@
         - name: Display Security updates
           ansible.builtin.debug:
             var: dnf_security_update
-
-- name: Clean base image
-  hosts: all
-  become: true
-  roles:
-    - role: cleanup
-      tags: role-cleanup

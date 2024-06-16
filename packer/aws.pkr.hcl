@@ -12,16 +12,17 @@ packer {
 }
 
 source "amazon-ebssurrogate" "TEMPLATE_DISTRIBUTION" {
-  source_ami              = "TEMPLATE_SOURCE_AMI"
-  region                  = "eu-west-1"
-  ssh_username            = "TEMPLATE_SSH_USERNAME"
-  ami_name                = "TEMPLATE_IMAGE_NAME"
-  instance_type           = "c6a.2xlarge"
-  ssh_timeout             = "5m"
-  ami_virtualization_type = "hvm"
-  ena_support             = true
-  tpm_support             = "TEMPLATE_SUPPORT"
-  boot_mode               = "uefi"
+  ssh_username              = "TEMPLATE_SSH_USERNAME"
+  ssh_timeout               = "5m"
+  ssh_clear_authorized_keys = true
+  source_ami                = "TEMPLATE_SOURCE_AMI"
+  region                    = "eu-west-1"
+  ami_name                  = "TEMPLATE_IMAGE_NAME"
+  instance_type             = "c6a.2xlarge"
+  ami_virtualization_type   = "hvm"
+  ena_support               = true
+  tpm_support               = "TEMPLATE_SUPPORT"
+  boot_mode                 = "uefi"
 
   launch_block_device_mappings {
     volume_type           = "gp3"

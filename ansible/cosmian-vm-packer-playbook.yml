@@ -6,5 +6,3 @@
     - check_cpu
     - role: cosmian_vm_agent
       tags: role_cosmian_vm_agent
-    - role: cleanup
-      tags: role-cleanup
