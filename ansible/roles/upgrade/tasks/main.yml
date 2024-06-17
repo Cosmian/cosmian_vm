@@ -2,6 +2,9 @@
 
 # tasks file for upgrade
 
+- name: Gathering facts
+  ansible.builtin.gather_facts:
+
 - name: Update and upgrade apt packages
   when: ansible_distribution == 'Ubuntu'
   block:

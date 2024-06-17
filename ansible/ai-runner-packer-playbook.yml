@@ -7,3 +7,5 @@
   become: true
   roles:
     - ai_runner
+    - role: cleanup
+      tags: role-cleanup

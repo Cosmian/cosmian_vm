@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
         exclude:
@@ -26,6 +26,8 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
+          - product: ai-runner
+            techno: sev
         include:
           - techno: sev
             machine-type: n2d-standard-2
@@ -55,7 +57,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.16.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.4
+      base-version: 0.1.5
 
   ansible:
     if: startsWith(github.ref, 'refs/tags/') != true
@@ -63,7 +65,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
         exclude:
@@ -71,6 +73,8 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
+          - product: ai-runner
+            techno: sev
         include:
           - techno: sev
             machine-type: n2d-standard-2

@@ -12,19 +12,20 @@ packer {
 }
 
 source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
-  project_id              = "cosmian-dev"
-  source_image            = "TEMPLATE_SOURCE_IMAGE"
-  source_image_family     = "TEMPLATE_SOURCE_FAMILY"
-  zone                    = "europe-west4-a"
-  ssh_username            = "root"
-  ssh_timeout             = "5m"
-  image_name              = "TEMPLATE_IMAGE_NAME"
-  image_guest_os_features = ["TEMPLATE_OS_FEATURES"]
-  network                 = "default"
-  subnetwork              = "default"
-  tags                    = ["ssh"]
-  use_os_login            = true
-  wait_to_add_ssh_keys    = "60s"
+  ssh_username              = "root"
+  ssh_timeout               = "5m"
+  ssh_clear_authorized_keys = true
+  project_id                = "cosmian-dev"
+  source_image              = "TEMPLATE_SOURCE_IMAGE"
+  source_image_family       = "TEMPLATE_SOURCE_FAMILY"
+  zone                      = "europe-west4-a"
+  image_name                = "TEMPLATE_IMAGE_NAME"
+  image_guest_os_features   = ["TEMPLATE_OS_FEATURES"]
+  network                   = "default"
+  subnetwork                = "default"
+  tags                      = ["ssh"]
+  use_os_login              = true
+  wait_to_add_ssh_keys      = "60s"
 }
 
 build {

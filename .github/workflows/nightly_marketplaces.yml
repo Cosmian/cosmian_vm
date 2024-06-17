@@ -8,7 +8,7 @@ on:
       - '**'
   # schedule:
   #   # every day at 0 AM
-  #   - cron: 00 0 * * *
+  #   - cron: 00 1 * * *
   workflow_dispatch:
 
 jobs:
