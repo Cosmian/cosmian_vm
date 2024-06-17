@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
         exclude:
@@ -26,6 +26,8 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
+          - product: ai-runner
+            techno: sev
         include:
           - techno: sev
             machine-type: n2d-standard-2
@@ -63,7 +65,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
         exclude:
@@ -71,6 +73,8 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
+          - product: ai-runner
+            techno: sev
         include:
           - techno: sev
             machine-type: n2d-standard-2

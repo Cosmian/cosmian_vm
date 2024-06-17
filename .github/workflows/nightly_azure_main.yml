@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
         exclude:
@@ -26,6 +26,8 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
+          - product: ai-runner
+            techno: sev
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
@@ -45,7 +47,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
         exclude:
@@ -53,6 +55,8 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
+          - product: ai-runner
+            techno: sev
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
