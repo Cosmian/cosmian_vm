@@ -62,13 +62,4 @@ build {
     use_proxy       = false
     extra_arguments = ["-e", "cosmian_vm_version=TEMPLATE_COSMIAN_VM_VERSION", "-e", "cosmian_kms_version=TEMPLATE_COSMIAN_KMS_VERSION", "-e", "cosmian_ai_runner_version=TEMPLATE_COSMIAN_AI_RUNNER_VERSION"]
   }
-
-  provisioner "shell" {
-    skip_clean = true
-    expect_disconnect = true
-    inline = [
-      "rm -f /etc/sudoers.d/90-cloud-init-users",
-      "/usr/sbin/userdel -r -f packer ",
-    ]
-  }
 }
