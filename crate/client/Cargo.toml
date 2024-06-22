@@ -15,7 +15,7 @@ base64 = "0.22"
 hex = { workspace = true }
 http = "0.2"
 # Important: align the rustls version with reqwest rustls dependency
-reqwest = { version = "0.11.22", features = [
+reqwest = { version = "0.11.27", features = [
   "json",
   "multipart",
   "native-tls",
@@ -27,5 +27,5 @@ serde = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
 tpm_quote = { workspace = true }
-url = "2.2"
+url = "2.5"
 webpki-roots = "0.25"
