@@ -1,6 +1,10 @@
 ---
 # tasks file for ansible/roles/cosmian_vm_agent
 
+- name: Gathering facts
+  tags: install_deb
+  ansible.builtin.gather_facts:
+
 - name: Check OS distribution
   ansible.builtin.debug:
     var: ansible_distribution
@@ -9,102 +13,112 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
-- name: Download Cosmian VM agent
-  ansible.builtin.get_url:
-    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm_agent
-    dest: /usr/sbin/
-    mode: "0500"
-    group: root
-    owner: root
+- name: Check package path
+  ansible.builtin.debug:
+    var: package_path
 
-- name: Download Cosmian VM cert tool
-  ansible.builtin.get_url:
-    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_certtool
-    dest: /usr/sbin/
-    mode: "0500"
-    group: root
-    owner: root
+# - name: Add Intel SGX/TDX APT repository
+#   when: ansible_distribution == 'Ubuntu'
+#   block:
+#     - name: Intel's public key
+#       ansible.builtin.get_url:
+#         url: https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
+#         dest: /usr/share/keyrings/intel-sgx-deb.asc
+#         mode: "0644"
 
-- name: Copy Cosmian VM filesystem tool
-  ansible.builtin.copy:
-    src: templates/cosmian_fstool
-    dest: /usr/sbin/cosmian_fstool
-    owner: root
-    group: root
-    mode: "0500"
+#     - name: Intel's APT repository
+#       ansible.builtin.apt_repository:
+#         repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main"
+#         state: present
 
-- name: Create cosmian_vm directory in /etc
-  ansible.builtin.file:
-    path: /etc/cosmian_vm
-    state: directory
-    owner: root
-    group: root
-    mode: "0500"
+#     - name: Update cache and install libtdx-attest-dev package
+#       ansible.builtin.apt:
+#         name: libtdx-attest-dev
+#         update_cache: true
 
-- name: Copy agent.toml
-  ansible.builtin.template:
-    src: agent.toml.j2
-    dest: /etc/cosmian_vm/agent.toml
-    owner: root
-    group: root
-    mode: "0400"
+# - name: Add Intel SGX/TDX RPM repository
+#   tags: intel_libs
+#   when: ansible_distribution == 'RedHat'
+#   block:
+#     - name: Intel's RPM local repo
+#       ansible.builtin.get_url:
+#         url: https://download.01.org/intel-sgx/latest/dcap-latest/linux/distro/rhel9.2-server/sgx_rpm_local_repo.tgz
+#         dest: /tmp/
+#         mode: "0600"
 
-- name: Create cosmian_vm directory in /var/lib
-  ansible.builtin.file:
-    path: /var/lib/cosmian_vm
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
+#     - name: Extract the tar.gz file
+#       ansible.builtin.unarchive:
+#         src: /tmp/sgx_rpm_local_repo.tgz
+#         dest: /srv/
+#         remote_src: true
+#         mode: "0600"
 
-- name: Mount a tmpfs volume
-  ansible.posix.mount:
-    src: tmpfs
-    path: /var/lib/cosmian_vm/tmp
-    opts: size=512m
-    state: mounted
-    fstype: tmpfs
+#     - name: Set up local RPM repository
+#       ansible.builtin.blockinfile:
+#         path: /etc/yum.repos.d/tdx-attestation.repo
+#         block: |
+#           [tdx-attestation-local]
+#           name=tdx-attestation-local
+#           baseurl=file:///srv/sgx_rpm_local_repo
+#           enabled=1
+#         create: true
+#         mode: "0600"
 
-- name: Add Mount LUKS script
-  ansible.builtin.template:
-    src: mount_luks.sh.j2
-    dest: /root/mount_luks.sh
-    owner: root
-    group: root
-    mode: "0700"
-  tags: mount_luks_service
+#     - name: Update cache and install libtdx-attest-devel package
+#       ansible.builtin.dnf:
+#         name:
+#           - libtdx-attest
+#           - libtdx-attest-devel
+#         state: present
+#         update_cache: true
+#         disable_gpg_check: true
+#       tags: libtdx-attest
 
-- name: Add Mount LUKS systemd service
-  ansible.builtin.template:
-    src: mount_luks.service.j2
-    dest: /etc/systemd/system/mount_luks.service
-    owner: root
-    group: root
-    mode: "0644"
-  tags: mount_luks_service
+#     - name: Remove the update grub configuration script
+#       ansible.builtin.file:
+#         path: |
+#           /tmp/sgx_rpm_local_repo.tgz
+#           /srv/sgx_rpm_local_repo
+#         state: absent
 
-- name: Check if Mount LUKS is enabled but stopped
-  ansible.builtin.systemd_service:
-    name: mount_luks
-    enabled: true
-    state: stopped
-    daemon_reload: true
-  tags: mount_luks_service
+- name: Install Cosmian VM via RPM package
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Uninstall Cosmian VM
+      ansible.builtin.dnf:
+        name: cosmian_vm_agent
+        state: absent
+      tags: install_rpm
 
-- name: Add Cosmian VM systemd service
-  ansible.builtin.template:
-    src: cosmian_vm_agent.service.j2
-    dest: /etc/systemd/system/cosmian_vm_agent.service
-    owner: root
-    group: root
-    mode: "0644"
+    - name: Install Cosmian VM RPM package from package.cosmian.com
+      ansible.builtin.dnf:
+        name: https://package.cosmian.com/cosmian_vm/{{ package_path }}/cosmian_vm_agent-{{ cosmian_vm_version }}-1.x86_64.rpm
+        state: present
+        disable_gpg_check: true
+      tags: install_rpm
 
-- name: Check if Cosmian VM systemd service is enabled but stopped
-  ansible.builtin.systemd_service:
-    name: cosmian_vm_agent
-    enabled: true
-    state: stopped
-    daemon_reload: true
+- name: Install Cosmian VM via Debian package
+  when: ansible_distribution == 'Ubuntu'
+  tags: install_deb
+  block:
+    - name: Install Cosmian VM Debian package from package.cosmian.com
+      ansible.builtin.apt:
+        deb: https://package.cosmian.com/cosmian_vm/{{ package_path }}/cosmian-vm-agent_{{ cosmian_vm_version }}-1_amd64.deb
+
+# - name: Check if Mount LUKS is enabled but stopped
+#   ansible.builtin.systemd_service:
+#     name: mount_luks
+#     enabled: true
+#     state: stopped
+#     daemon_reload: true
+#   tags: mount_luks_service
+
+# - name: Check if Cosmian VM systemd service is enabled but stopped
+#   ansible.builtin.systemd_service:
+#     name: cosmian_vm_agent
+#     enabled: true
+#     state: stopped
+#     daemon_reload: true
 
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'

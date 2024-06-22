@@ -1,6 +1,19 @@
 ---
 # tasks file for cleanup
 
+- name: Remove cosmian-vm-agent on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.apt:
+    name: cosmian-vm-agent
+    state: absent
+
+- name: Remove cosmian-vm-agent on RedHat
+  when: ansible_distribution == 'RedHat'
+  ansible.builtin.dnf:
+    name: cosmian_vm_agent
+    state: absent
+  tags: install_rpm
+
 - name: Make sure Cosmian VM Agent service is down
   ansible.builtin.systemd_service:
     name: cosmian_vm_agent

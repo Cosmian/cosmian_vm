@@ -130,6 +130,9 @@ This is a abstract of the updated file tree:
 │   └── systemd
 │       └── system
 │           └── cosmian_vm_agent.service
+├── root
+│   ├── mount_luks.sh
+│   └── mount_luks.service
 ├── usr
 │   └── sbin
 │       ├── cosmian_certtool

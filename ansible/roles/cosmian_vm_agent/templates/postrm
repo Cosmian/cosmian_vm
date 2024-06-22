@@ -1,0 +1,21 @@
+#!/bin/sh -ex
+
+stop_and_disable_service() {
+    if systemctl is-enabled mount_luks.service >/dev/null; then
+        systemctl stop mount_luks.service
+        systemctl disable mount_luks.service
+    fi
+    if systemctl is-enabled cosmian_vm_agent.service >/dev/null; then
+        systemctl stop cosmian_vm_agent.service
+        systemctl disable cosmian_vm_agent.service
+    fi
+    systemctl daemon-reload
+}
+
+case "$1" in
+configure)
+    stop_and_disable_service
+    ;;
+esac
+
+#DEBHELPER#

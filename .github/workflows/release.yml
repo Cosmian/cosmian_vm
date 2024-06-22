@@ -23,6 +23,8 @@ jobs:
         with:
           files: |
             CHANGELOG.md
+            target/generate-rpm/cosmian_vm_agent-*
+            target/debian/cosmian-vm-agent_*
             target/release/cosmian_vm_agent
             target/release/cosmian_vm
             target/release/cosmian_certtool
