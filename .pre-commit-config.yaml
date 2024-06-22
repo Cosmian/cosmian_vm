@@ -26,7 +26,7 @@ repos:
           - markdown
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.40.0
+    rev: v0.41.0
     hooks:
       - id: markdownlint-fix
         args: [--disable=MD004, --disable=MD013, --disable=MD024, --disable=MD029, --disable=MD033, --disable=MD041, --disable=MD046]
@@ -40,7 +40,7 @@ repos:
       - id: markdown-toc
 
   - repo: https://github.com/tcort/markdown-link-check
-    rev: v3.12.1
+    rev: v3.12.2
     hooks:
       - id: markdown-link-check
         args: [-q]
@@ -60,7 +60,7 @@ repos:
         exclude: .github|.pre-commit-config.yaml|ansible/roles/ai_runner/tasks/main.yml
 
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v24.2.3
+    rev: v24.6.1
     hooks:
       - id: ansible-lint
         additional_dependencies:
@@ -68,7 +68,7 @@ repos:
         exclude: .github
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.21.0
+    rev: v1.22.8
     hooks:
       - id: typos
         exclude: ansible/roles/check_app/tasks/main.yml
@@ -142,7 +142,7 @@ repos:
       - id: cargo-format # in last due to clippy fixes
 
   - repo: https://github.com/EmbarkStudios/cargo-deny
-    rev: 0.14.16 # choose your preferred tag
+    rev: 0.14.24 # choose your preferred tag
     hooks:
       - id: cargo-deny
         args: [--all-features, check]     # optionally modify the arguments for cargo-deny (default arguments shown here)

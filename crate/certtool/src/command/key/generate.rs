@@ -32,8 +32,9 @@ impl KeyArgs {
         let secret: [u8; 32] = secret
             .try_into()
             .map_err(|_| anyhow!("unexpected X25519 secret key"))?;
-        let sk =
-            Scalar::from_canonical_bytes(secret).ok_or(anyhow!("unexpected X25519 secret key"))?;
+        let sk = Scalar::from_canonical_bytes(secret)
+            .into_option()
+            .ok_or(anyhow!("unexpected X25519 secret key"))?;
         let pk = sk * X25519_BASEPOINT;
 
         fs::create_dir_all(&self.output)?;
