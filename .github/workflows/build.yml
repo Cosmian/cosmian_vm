@@ -112,8 +112,7 @@ jobs:
           DESTINATION_DIR=/mnt/package/cosmian_vm/${BRANCH}
           ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
           scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-            target/generate-rpm/cosmian_vm_agent-* \
-            target/generate-rpm/cosmian_vm-* \
+            target/generate-rpm/cosmian_vm* \
             target/debian/cosmian-vm-agent-ubuntu-* \
             target/debian/cosmian-vm-ubuntu-* \
             cosmian@package.cosmian.com:$DESTINATION_DIR/
