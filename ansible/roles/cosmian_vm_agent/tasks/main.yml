@@ -9,6 +9,10 @@
   ansible.builtin.debug:
     var: ansible_distribution
 
+- name: Check OS version
+  ansible.builtin.debug:
+    var: ansible_distribution_version
+
 - name: Check Cosmian VM version
   ansible.builtin.debug:
     var: cosmian_vm_version
@@ -101,9 +105,13 @@
   when: ansible_distribution == 'Ubuntu'
   tags: install_deb
   block:
+    - name: Set a fact (declare a new variable)
+      ansible.builtin.set_fact:
+        package_name: cosmian-vm-agent-{{ ansible_distribution_version }}-_{{ cosmian_vm_version }}-1_amd64.deb
+
     - name: Install Cosmian VM Debian package from package.cosmian.com
       ansible.builtin.apt:
-        deb: https://package.cosmian.com/cosmian_vm/{{ package_path }}/cosmian-vm-agent_{{ cosmian_vm_version }}-1_amd64.deb
+        deb: https://package.cosmian.com/cosmian_vm/{{ package_path }}/{{ package_name }}
 
 # - name: Check if Mount LUKS is enabled but stopped
 #   ansible.builtin.systemd_service:

@@ -75,7 +75,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: cosmian_vm
+          name: cosmian_vm_${{ inputs.distrib }}
           path: |
             CHANGELOG.md
             target/generate-rpm/cosmian_vm_agent-*
@@ -95,7 +95,7 @@ jobs:
       - name: Download binaries
         uses: actions/download-artifact@v4
         with:
-          name: cosmian_vm
+          name: cosmian_vm_${{ inputs.distrib }}
 
       - name: Push latest build to package.cosmian.com
         run: |
