@@ -59,7 +59,7 @@
         group: root
         owner: root
 
-    - name: Install Cosmian VM Debian package
+    - name: Install Cosmian VM Agent Debian package
       ansible.builtin.command:
         cmd: |
           dpkg -i /tmp/{{ package_name }}

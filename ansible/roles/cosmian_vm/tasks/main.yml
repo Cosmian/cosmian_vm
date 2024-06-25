@@ -60,8 +60,7 @@
         owner: root
 
     - name: Install Cosmian VM Debian package
-      ansible.builtin.command:
-        cmd: |
-          dpkg -i /tmp/{{ package_name }}
+      ansible.builtin.apt:
+        deb: /tmp/{{ package_name }}
       register: debian_package
       changed_when: debian_package.rc != 0
