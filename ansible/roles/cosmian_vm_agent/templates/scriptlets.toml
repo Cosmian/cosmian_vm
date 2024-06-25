@@ -6,6 +6,7 @@ systemctl stop mount_luks.service
 
 systemctl enable cosmian_vm_agent.service
 systemctl stop cosmian_vm_agent.service
+
 systemctl daemon-reload
 
 '''
@@ -18,6 +19,7 @@ systemctl disable mount_luks.service
 
 systemctl stop cosmian_vm_agent.service
 systemctl disable cosmian_vm_agent.service
+
 systemctl daemon-reload
 
 '''

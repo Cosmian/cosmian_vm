@@ -1,6 +1,4 @@
 ---
-name: Build Cosmian VM binaries
-
 on:
   workflow_call:
     inputs:
@@ -67,10 +65,10 @@ jobs:
           cargo install cargo-deb cargo-generate-rpm
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
             cargo deb -p cosmian_vm_agent --variant ubuntu-22
+            cargo generate-rpm -p crate/agent --metadata-overwrite=ansible/roles/cosmian_vm_agent/templates/scriptlets.toml
           else
             cargo deb -p cosmian_vm_agent --variant ubuntu-24
           fi
-          cargo generate-rpm -p crate/agent --metadata-overwrite=ansible/roles/cosmian_vm_agent/templates/scriptlets.toml
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -85,7 +83,7 @@ jobs:
 
   push:
     needs: check
-    name: package.cosmian.com
+    name: (${{ inputs.distrib }}) package.cosmian.com
     runs-on: [self-hosted, no-tee]
     container:
       image: cosmian/docker_doc_ci

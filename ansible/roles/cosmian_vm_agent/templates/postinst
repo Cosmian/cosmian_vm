@@ -1,23 +1,13 @@
 #!/bin/sh -ex
 
-enable_and_start_service() {
-    if ! systemctl is-enabled mount_luks.service >/dev/null; then
-        systemctl unmask mount_luks.service
-        systemctl enable mount_luks.service
-        systemctl stop mount_luks.service
-    fi
-    if ! systemctl is-enabled cosmian_vm_agent.service >/dev/null; then
-        systemctl unmask cosmian_vm_agent.service
-        systemctl enable cosmian_vm_agent.service
-        systemctl stop cosmian_vm_agent.service
-    fi
-    systemctl daemon-reload
-}
+systemctl unmask mount_luks.service
+systemctl enable mount_luks.service
+systemctl stop mount_luks.service
 
-case "$1" in
-configure)
-    enable_and_start_service
-    ;;
-esac
+systemctl unmask cosmian_vm_agent.service
+systemctl enable cosmian_vm_agent.service
+systemctl stop cosmian_vm_agent.service
+
+systemctl daemon-reload
 
 #DEBHELPER#

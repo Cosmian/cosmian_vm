@@ -88,15 +88,21 @@
 - name: Install Cosmian VM via RPM package
   when: ansible_distribution == 'RedHat'
   block:
-    - name: Uninstall Cosmian VM
-      ansible.builtin.dnf:
-        name: cosmian_vm_agent
-        state: absent
-      tags: install_rpm
+    - name: Declare package name
+      ansible.builtin.set_fact:
+        package_name: cosmian_vm_agent-{{ cosmian_vm_version }}-1.x86_64.rpm
+
+    - name: Download Debian package from package.cosmian.com
+      ansible.builtin.get_url:
+        url: https://package.cosmian.com/cosmian_vm/{{ package_path }}/{{ package_name }}
+        dest: /tmp
+        mode: "0755"
+        group: root
+        owner: root
 
     - name: Install Cosmian VM RPM package from package.cosmian.com
       ansible.builtin.dnf:
-        name: https://package.cosmian.com/cosmian_vm/{{ package_path }}/cosmian_vm_agent-{{ cosmian_vm_version }}-1.x86_64.rpm
+        name: /tmp/cosmian_vm_agent-{{ cosmian_vm_version }}-1.x86_64.rpm
         state: present
         disable_gpg_check: true
       tags: install_rpm
@@ -105,13 +111,24 @@
   when: ansible_distribution == 'Ubuntu'
   tags: install_deb
   block:
-    - name: Set a fact (declare a new variable)
+    - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian-vm-agent-{{ ansible_distribution_version }}-_{{ cosmian_vm_version }}-1_amd64.deb
+        package_name: cosmian-vm-agent-ubuntu-{{ ansible_distribution_version }}_{{ cosmian_vm_version }}-1_amd64.deb
 
-    - name: Install Cosmian VM Debian package from package.cosmian.com
-      ansible.builtin.apt:
-        deb: https://package.cosmian.com/cosmian_vm/{{ package_path }}/{{ package_name }}
+    - name: Download Debian package from package.cosmian.com
+      ansible.builtin.get_url:
+        url: https://package.cosmian.com/cosmian_vm/{{ package_path }}/{{ package_name }}
+        dest: /tmp
+        mode: "0755"
+        group: root
+        owner: root
+
+    - name: Install Cosmian VM Debian package
+      ansible.builtin.command:
+        cmd: |
+          dpkg -i /tmp/{{ package_name }}
+      register: debian_package
+      changed_when: debian_package.rc != 0
 
 # - name: Check if Mount LUKS is enabled but stopped
 #   ansible.builtin.systemd_service:

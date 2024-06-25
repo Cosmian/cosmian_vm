@@ -125,7 +125,7 @@ name = "cosmian-vm-agent-ubuntu-24.04"
 [package.metadata.generate-rpm]
 license = "BUSL-1.1"
 assets = [
-  { source = "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3", dest = "/lib64/libtdx_attest.so.1", mode = "500" },
+  { source = "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3", dest = "/usr/sbin/libtdx_attest.so.1", mode = "500" },
   { source = "target/release/cosmian_vm_agent", dest = "/usr/sbin/cosmian_vm_agent", mode = "500" },
   { source = "target/release/cosmian_certtool", dest = "/usr/sbin/cosmian_certtool", mode = "500" },
   { source = "../../ansible/roles/cosmian_vm_agent/templates/cosmian_fstool", dest = "/usr/sbin/cosmian_fstool", mode = "500" },

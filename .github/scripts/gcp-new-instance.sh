@@ -65,7 +65,6 @@ else
     --max-run-duration=$DURATION \
     --boot-disk-size=20GB \
     --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
-
 fi
 
 gcloud compute firewall-rules create "$NAME" --network=default --allow=tcp:22,tcp:5555,tcp:443 --target-tags="$NAME-cli"
