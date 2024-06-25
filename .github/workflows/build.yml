@@ -64,9 +64,12 @@ jobs:
         run: |
           cargo install cargo-deb cargo-generate-rpm
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
+            cargo deb -p cosmian_vm --variant ubuntu-22
             cargo deb -p cosmian_vm_agent --variant ubuntu-22
+            cargo generate-rpm -p crate/cli
             cargo generate-rpm -p crate/agent --metadata-overwrite=ansible/roles/cosmian_vm_agent/templates/scriptlets.toml
           else
+            cargo deb -p cosmian_vm --variant ubuntu-24
             cargo deb -p cosmian_vm_agent --variant ubuntu-24
           fi
 
@@ -77,7 +80,9 @@ jobs:
           path: |
             CHANGELOG.md
             target/generate-rpm/cosmian_vm_agent-*
+            target/generate-rpm/cosmian_vm-*
             target/debian/cosmian-vm-agent-ubuntu-*
+            target/debian/cosmian-vm-ubuntu-*
           retention-days: 10
           if-no-files-found: error
 
@@ -108,5 +113,7 @@ jobs:
           ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
           scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
             target/generate-rpm/cosmian_vm_agent-* \
+            target/generate-rpm/cosmian_vm-* \
             target/debian/cosmian-vm-agent-ubuntu-* \
+            target/debian/cosmian-vm-ubuntu-* \
             cosmian@package.cosmian.com:$DESTINATION_DIR/

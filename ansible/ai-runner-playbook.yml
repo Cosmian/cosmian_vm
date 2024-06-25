@@ -19,6 +19,9 @@
   environment:
     RUST_LOG: "cosmian_vm=trace"
   roles:
+    - role: cosmian_vm
+      delegate_to: localhost
+      tags: role-cosmian-vm
     - role: check_cosmian_vm
       tags: check-ai-runner
 

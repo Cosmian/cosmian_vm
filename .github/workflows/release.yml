@@ -24,10 +24,9 @@ jobs:
           files: |
             CHANGELOG.md
             target/generate-rpm/cosmian_vm_agent-*
-            target/debian/cosmian-vm-agent_*
-            target/release/cosmian_vm_agent
-            target/release/cosmian_vm
-            target/release/cosmian_certtool
+            target/generate-rpm/cosmian_vm-*
+            target/debian/cosmian-vm-agent-ubuntu-*
+            target/debian/cosmian-vm-ubuntu-*
 
   cleanup:
     name: Clean Github cache

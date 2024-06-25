@@ -32,3 +32,55 @@ tokio = { version = "1.38", features = ["macros", "rt-multi-thread"] }
 tpm_quote = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# ------------------------------------------------------------------------------
+# START DEBIAN PACKAGING
+[package.metadata.deb]
+maintainer = "Emmanuel Coste <emmanuel.coste@cosmian.com>"
+copyright = "2024, Cosmian Tech SAS <tech@cosmian.com>"
+license-file = ["../../LICENSE", "0"]
+depends = "tpm2-tools"
+changelog = "../../CHANGELOG.md"
+section = "security"
+priority = "optional"
+assets = [
+  [
+    "target/release/cosmian_vm",
+    "usr/sbin/",
+    "555",
+  ],
+  [
+    "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3",
+    "lib/x86_64-linux-gnu/libtdx_attest.so.1",
+    "555",
+  ],
+]
+
+[package.metadata.deb.variants.ubuntu-22]
+name = "cosmian-vm-ubuntu-22.04"
+
+[package.metadata.deb.variants.ubuntu-23]
+name = "cosmian-vm-ubuntu-23.04"
+
+[package.metadata.deb.variants.ubuntu-24]
+name = "cosmian-vm-ubuntu-24.04"
+
+# END DEBIAN PACKAGING
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# START RPM PACKAGING
+[package.metadata.generate-rpm]
+license = "BUSL-1.1"
+assets = [
+  { source = "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3", dest = "/usr/sbin/libtdx_attest.so.1", mode = "555" },
+  { source = "target/release/cosmian_vm", dest = "/usr/sbin/cosmian_vm", mode = "555" },
+]
+auto-req = "no" # do not try to discover .so dependencies
+require-sh = true
+
+[package.metadata.generate-rpm.requires]
+tpm2-tools = "*"
+
+# END RPM PACKAGING
+# ------------------------------------------------------------------------------
