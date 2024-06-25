@@ -100,6 +100,9 @@ jobs:
         with:
           name: cosmian_vm_${{ inputs.distrib }}
 
+      - name: Display artifacts content
+        run: find .
+
       - name: Push latest build to package.cosmian.com
         run: |
           set -x

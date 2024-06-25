@@ -44,6 +44,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Update Ubuntu runner - required for Cosmian VM CLI installation
+        run: sudo apt update
+
       - name: Az CLI login
         uses: azure/login@v2
         with:

@@ -21,10 +21,6 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
-- name: Check package path
-  ansible.builtin.debug:
-    var: package_path
-
 - name: Install Cosmian VM via RPM package
   when: ansible_distribution == 'RedHat'
   block:
