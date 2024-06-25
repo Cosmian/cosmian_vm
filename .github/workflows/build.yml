@@ -10,7 +10,7 @@ on:
 
 jobs:
   check:
-    name: Rust Check
+    name: (${{ inputs.distrib }}) Rust Check
     runs-on: ${{ inputs.distrib }}
 
     steps:
