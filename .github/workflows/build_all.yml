@@ -9,8 +9,9 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu-22.04, ubuntu-24.04]
-    name: ${{ matrix.distrib }}
-    uses: ./.github/workflows/build_all.yml
+    name: Build ${{ matrix.distrib }}
+    secrets: inherit
+    uses: ./.github/workflows/build.yml
     with:
       distrib: ${{ matrix.distrib }}
 
