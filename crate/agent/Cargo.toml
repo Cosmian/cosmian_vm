@@ -111,6 +111,12 @@ systemd-units = [
   { unit-name = "cosmian_vm_agent", unit-scripts = "../../ansible/roles/cosmian_vm_agent/templates", enable = true, start = false, restart-after-upgrade = false },
 ]
 
+[package.metadata.deb.variants.ubuntu-22]
+name = "cosmian-vm-agent-ubuntu-22.04"
+
+[package.metadata.deb.variants.ubuntu-24]
+name = "cosmian-vm-agent-ubuntu-24.04"
+
 # END DEBIAN PACKAGING
 # ------------------------------------------------------------------------------
 
