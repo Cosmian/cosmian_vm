@@ -57,9 +57,11 @@ jobs:
         run: cargo test
 
       - name: Cargo build
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo build --release
 
       - name: Build Debian and RPM packages
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: |
           cargo install cargo-deb cargo-generate-rpm
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
@@ -73,6 +75,7 @@ jobs:
           fi
 
       - name: Upload artifacts
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: cosmian_vm_${{ inputs.distrib }}
@@ -98,9 +101,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: cosmian_vm_${{ inputs.distrib }}
-
-      - name: Display artifacts content
-        run: find .
 
       - name: Push latest build to package.cosmian.com
         run: |
