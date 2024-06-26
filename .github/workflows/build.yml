@@ -24,6 +24,11 @@ jobs:
       - name: Cache dependencies
         id: cargo-cache
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-directories: |
+            - /lib/x86_64-linux-gnu/libtdx_attest.so
+            - /lib/x86_64-linux-gnu/libtdx_attest.so.1
+            - /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
 
       - name: Install Rust toolchain and components
         if: steps.cargo-cache.outputs.cache-hit != 'true'
