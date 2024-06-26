@@ -66,7 +66,7 @@ jobs:
             cargo deb -p cosmian_vm --variant ubuntu-22
             cargo deb -p cosmian_vm_agent --variant ubuntu-22
             cargo generate-rpm -p crate/cli
-            cargo generate-rpm -p crate/agent --metadata-overwrite=ansible/roles/cosmian_vm_agent/templates/scriptlets.toml
+            cargo generate-rpm -p crate/agent --metadata-overwrite=pkg/rpm/scriptlets.toml
           else
             cargo deb -p cosmian_vm --variant ubuntu-24
             cargo deb -p cosmian_vm_agent --variant ubuntu-24
@@ -113,8 +113,17 @@ jobs:
 
           DESTINATION_DIR=/mnt/package/cosmian_vm/${BRANCH}
           ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
-          scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-            target/generate-rpm/cosmian_vm* \
-            target/debian/cosmian-vm-agent-ubuntu-* \
-            target/debian/cosmian-vm-ubuntu-* \
-            cosmian@package.cosmian.com:$DESTINATION_DIR/
+
+          if [[ ${{ inputs.distrib }} = *'22'* ]]; then
+            scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
+              target/generate-rpm/cosmian_vm* \
+              target/generate-rpm/cosmian_vm_agent* \
+              target/debian/cosmian-vm-agent-ubuntu-* \
+              target/debian/cosmian-vm-ubuntu-* \
+              cosmian@package.cosmian.com:$DESTINATION_DIR/
+          else
+            scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
+              target/debian/cosmian-vm-agent-ubuntu-* \
+              target/debian/cosmian-vm-ubuntu-* \
+              cosmian@package.cosmian.com:$DESTINATION_DIR/
+          fi
