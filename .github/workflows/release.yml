@@ -21,13 +21,15 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            CHANGELOG.md
-            target/generate-rpm/cosmian_vm_agent-*
-            target/generate-rpm/cosmian_vm-*
-            target/debian/cosmian-vm-agent-ubuntu-*
-            target/debian/cosmian-vm-ubuntu-*
+            ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm-agent-ubuntu-22.04_1.2.3-1_amd64.deb
+            ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm-ubuntu-22.04_1.2.3-1_amd64.deb
+            ./cosmian_vm_ubuntu-22.04/target/generate-rpm/cosmian_vm-1.2.3-1.x86_64.rpm
+            ./cosmian_vm_ubuntu-22.04/target/generate-rpm/cosmian_vm_agent-1.2.3-1.x86_64.rpm
+            ./cosmian_vm_ubuntu-24.04/target/debian/cosmian-vm-ubuntu-24.04_1.2.3-1_amd64.deb
+            ./cosmian_vm_ubuntu-24.04/target/debian/cosmian-vm-agent-ubuntu-24.04_1.2.3-1_amd64.deb
 
   cleanup:
     name: Clean Github cache
+    if: startsWith(github.ref, 'refs/tags/')
     uses: Cosmian/reusable_workflows/.github/workflows/cleanup_cache.yml@main
     secrets: inherit
