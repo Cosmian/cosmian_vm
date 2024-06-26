@@ -62,7 +62,7 @@ x509-cert = { workspace = true }
 # START DEBIAN PACKAGING
 [package.metadata.deb]
 maintainer = "Emmanuel Coste <emmanuel.coste@cosmian.com>"
-maintainer-scripts = "../../ansible/roles/cosmian_vm_agent/templates/"
+maintainer-scripts = "../../pkg/deb/"
 copyright = "2024, Cosmian Tech SAS <tech@cosmian.com>"
 license-file = ["../../LICENSE", "0"]
 depends = "tpm2-tools, cryptsetup"
@@ -86,7 +86,7 @@ assets = [
     "500",
   ],
   [
-    "../../ansible/roles/cosmian_vm_agent/templates/cosmian_fstool",
+    "../../pkg/cosmian_fstool",
     "usr/sbin/",
     "500",
   ],
@@ -96,19 +96,19 @@ assets = [
     "644",
   ],
   [
-    "../../ansible/roles/cosmian_vm_agent/templates/agent.toml",
+    "../../pkg/agent.toml",
     "etc/cosmian_vm/",
     "400",
   ],
   [
-    "../../ansible/roles/cosmian_vm_agent/templates/mount_luks.sh",
+    "../../pkg/mount_luks.sh",
     "root/",
     "700",
   ],
 ]
 systemd-units = [
-  { unit-name = "mount_luks", unit-scripts = "../../ansible/roles/cosmian_vm_agent/templates", enable = true, start = false, restart-after-upgrade = false },
-  { unit-name = "cosmian_vm_agent", unit-scripts = "../../ansible/roles/cosmian_vm_agent/templates", enable = true, start = false, restart-after-upgrade = false },
+  { unit-name = "mount_luks", unit-scripts = "../../pkg", enable = true, start = false, restart-after-upgrade = false },
+  { unit-name = "cosmian_vm_agent", unit-scripts = "../../pkg", enable = true, start = false, restart-after-upgrade = false },
 ]
 
 [package.metadata.deb.variants.ubuntu-22]
@@ -128,12 +128,12 @@ assets = [
   { source = "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3", dest = "/usr/sbin/libtdx_attest.so.1", mode = "500" },
   { source = "target/release/cosmian_vm_agent", dest = "/usr/sbin/cosmian_vm_agent", mode = "500" },
   { source = "target/release/cosmian_certtool", dest = "/usr/sbin/cosmian_certtool", mode = "500" },
-  { source = "../../ansible/roles/cosmian_vm_agent/templates/cosmian_fstool", dest = "/usr/sbin/cosmian_fstool", mode = "500" },
+  { source = "../../pkg/cosmian_fstool", dest = "/usr/sbin/cosmian_fstool", mode = "500" },
   { source = "../../README.md", dest = "/usr/share/doc/cosmian_vm_agent/README", mode = "644", doc = true },
-  { source = "../../ansible/roles/cosmian_vm_agent/templates/agent.toml", dest = "/etc/cosmian_vm/agent.toml", mode = "400" },
-  { source = "../../ansible/roles/cosmian_vm_agent/templates/mount_luks.sh", dest = "/root/mount_luks.sh", mode = "700" },
-  { source = "../../ansible/roles/cosmian_vm_agent/templates/mount_luks.service", dest = "/lib/systemd/system/mount_luks.service", mode = "644" },
-  { source = "../../ansible/roles/cosmian_vm_agent/templates/cosmian_vm_agent.service", dest = "/lib/systemd/system/cosmian_vm_agent.service", mode = "644" },
+  { source = "../../pkg/agent.toml", dest = "/etc/cosmian_vm/agent.toml", mode = "400" },
+  { source = "../../pkg/mount_luks.sh", dest = "/root/mount_luks.sh", mode = "700" },
+  { source = "../../pkg/mount_luks.service", dest = "/lib/systemd/system/mount_luks.service", mode = "644" },
+  { source = "../../pkg/cosmian_vm_agent.service", dest = "/lib/systemd/system/cosmian_vm_agent.service", mode = "644" },
 ]
 auto-req = "no" # do not try to discover .so dependencies
 require-sh = true

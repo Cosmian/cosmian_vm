@@ -22,11 +22,4 @@ systemctl disable cosmian_vm_agent.service
 
 systemctl daemon-reload
 
-umount /var/lib/cosmian_vm/data
-umount /var/lib/cosmian_vm/tmp
-cryptsetup close /dev/mapper/cosmian_vm_container
-rm -rf /var/lib/cosmian_vm
-rm -rf /etc/cosmian_vm
-rm -f /usr/sbin/cosmian_vm_agent
-
 '''

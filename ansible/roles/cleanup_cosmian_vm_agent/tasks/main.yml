@@ -13,6 +13,55 @@
     name: cosmian_vm_agent
     state: absent
 
+- name: Check if /dev/mapper/cosmian_vm_container exists
+  ansible.builtin.stat:
+    path: /dev/mapper/cosmian_vm_container
+  register: volume_check
+
+- name: Umount Cosmian VM LUKS volume
+  ansible.posix.mount:
+    path: /dev/mapper/cosmian_vm_container
+    state: absent
+  when: volume_check.stat.exists
+
+- name: Force umount of /var/lib/cosmian_vm/data
+  ansible.builtin.command:
+    cmd: |
+      umount /var/lib/cosmian_vm/data
+      cryptsetup close /dev/mapper/cosmian_vm_container
+  register: unmounting
+  failed_when: unmounting.rc !=128 and unmounting.rc !=96 and unmounting.rc !=0
+  tags: umount
+  changed_when: unmounting.rc != 0
+
+- name: Check if /var/lib/cosmian_vm/tmp exists
+  ansible.builtin.stat:
+    path: /var/lib/cosmian_vm/tmp
+  register: tmpfs_volume_check
+
+- name: Umount the tmpfs volume
+  ansible.posix.mount:
+    path: /var/lib/cosmian_vm/tmp
+    state: absent
+  when: tmpfs_volume_check.stat.exists
+
+- name: Wait until the volumes are properly unmounted
+  ansible.builtin.wait_for:
+    path: |
+      /var/lib/cosmian_vm/data
+      /var/lib/cosmian_vm/tmp
+    state: absent
+
+# using native-ansible `file` task does not fail on error
+- name: Clean Cosmian VM existing folders
+  ansible.builtin.command:
+    cmd: |
+      rm -rf /var/lib/cosmian_vm
+      rm -rf /etc/cosmian_vm
+      rm -f /usr/sbin/cosmian_vm_agent
+  register: cmd_output
+  changed_when: cmd_output.rc != 0
+
 - name: Reboot since systemd services have been disabled
   ansible.builtin.reboot:
     connect_timeout: 3600
