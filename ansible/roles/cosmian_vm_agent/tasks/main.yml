@@ -60,11 +60,8 @@
         owner: root
 
     - name: Install Cosmian VM Agent Debian package
-      ansible.builtin.command:
-        cmd: |
-          dpkg -i /tmp/{{ package_name }}
-      register: debian_package
-      changed_when: debian_package.rc != 0
+      ansible.builtin.apt:
+        deb: /tmp/{{ package_name }}
 
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'
