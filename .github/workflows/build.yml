@@ -25,6 +25,7 @@ jobs:
         id: cargo-cache
         uses: Swatinem/rust-cache@v2
         with:
+          prefix-key: ${{ inputs.distrib }}
           cache-directories: |
             - /lib/x86_64-linux-gnu/libtdx_attest.so
             - /lib/x86_64-linux-gnu/libtdx_attest.so.1
