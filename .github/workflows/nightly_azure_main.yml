@@ -26,8 +26,6 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
-          - product: ai-runner
-            techno: sev
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
@@ -55,8 +53,6 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
-          - product: ai-runner
-            techno: sev
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources

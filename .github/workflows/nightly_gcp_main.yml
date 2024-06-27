@@ -26,8 +26,6 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
-          - product: ai-runner
-            techno: sev
         include:
           - techno: sev
             machine-type: n2d-standard-2
@@ -73,8 +71,6 @@ jobs:
             distrib: rhel
           - techno: tdx
             distrib: rhel
-          - product: ai-runner
-            techno: sev
         include:
           - techno: sev
             machine-type: n2d-standard-2
