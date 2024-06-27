@@ -51,7 +51,7 @@ assets = [
   ],
   [
     "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3",
-    "lib/x86_64-linux-gnu/libtdx_attest.so.1",
+    "usr/sbin/libtdx_attest.so.1",
     "555",
   ],
 ]
