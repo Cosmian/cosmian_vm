@@ -28,7 +28,7 @@
       ansible.builtin.set_fact:
         package_name: cosmian_vm_agent-{{ package_version }}-1.x86_64.rpm
 
-    - name: Download RPM package from package.cosmian.com
+    - name: Download RPM Agent package from package.cosmian.com
       ansible.builtin.get_url:
         url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/rhel9/{{ package_name }}
         dest: /tmp
