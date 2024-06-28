@@ -123,7 +123,7 @@ jobs:
           ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR/${{ inputs.distrib }}/
           ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR/rhel9/
 
-          if [[ ${{ inputs.distrib }} = *'22'* ]]; then
+          if [[ "${{ inputs.distrib }}"" = *'ubuntu-22'* ]]; then
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
               ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm-agent_*-1_amd64.deb \
               ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm_*-1_amd64.deb \
