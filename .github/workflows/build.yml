@@ -88,8 +88,8 @@ jobs:
             CHANGELOG.md
             target/generate-rpm/cosmian_vm_agent-*
             target/generate-rpm/cosmian_vm-*
-            target/debian/cosmian-vm-agent-ubuntu-*
-            target/debian/cosmian-vm-ubuntu-*
+            target/debian/cosmian-vm-agent_*
+            target/debian/cosmian-vm_*
           retention-days: 10
           if-no-files-found: error
 
@@ -127,14 +127,25 @@ jobs:
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
               ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm-agent_*-1_amd64.deb \
               ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm_*-1_amd64.deb \
+              target/release/cosmian_vm_agent \
+              target/release/cosmian_vm \
+              target/release/cosmian_certtool \
               cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
               ./cosmian_vm_ubuntu-22.04/target/generate-rpm/cosmian_vm-*-1.x86_64.rpm \
               ./cosmian_vm_ubuntu-22.04/target/generate-rpm/cosmian_vm_agent-*-1.x86_64.rpm \
+              target/release/cosmian_vm_agent \
+              target/release/cosmian_vm \
+              target/release/cosmian_certtool \
               cosmian@package.cosmian.com:$DESTINATION_DIR/rhel9/
           else
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
               ./cosmian_vm_ubuntu-24.04/target/debian/cosmian-vm_*-1_amd64.deb \
               ./cosmian_vm_ubuntu-24.04/target/debian/cosmian-vm-agent_*-1_amd64.deb \
+              target/release/cosmian_vm_agent \
+              target/release/cosmian_vm \
+              target/release/cosmian_certtool \
               cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
           fi
+
+          rm -rf cosmian_vm_ubuntu* target
