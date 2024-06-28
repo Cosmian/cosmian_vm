@@ -123,13 +123,16 @@ jobs:
           ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR/${{ inputs.distrib }}/
           ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR/rhel9/
 
-          if [[ "${{ inputs.distrib }}"" = *'ubuntu-22'* ]]; then
+          if [[ "${{ inputs.distrib }}" = *'ubuntu-22'* ]]; then
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
               ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm-agent_*-1_amd64.deb \
               ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm_*-1_amd64.deb \
               target/release/cosmian_vm_agent \
               target/release/cosmian_vm \
               target/release/cosmian_certtool \
+              /lib/x86_64-linux-gnu/libtdx_attest.so \
+              /lib/x86_64-linux-gnu/libtdx_attest.so.1 \
+              /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3 \
               cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
               ./cosmian_vm_ubuntu-22.04/target/generate-rpm/cosmian_vm-*-1.x86_64.rpm \
@@ -137,6 +140,12 @@ jobs:
               target/release/cosmian_vm_agent \
               target/release/cosmian_vm \
               target/release/cosmian_certtool \
+              target/release/cosmian_vm_agent \
+              target/release/cosmian_vm \
+              target/release/cosmian_certtool \
+              /lib/x86_64-linux-gnu/libtdx_attest.so \
+              /lib/x86_64-linux-gnu/libtdx_attest.so.1 \
+              /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3 \
               cosmian@package.cosmian.com:$DESTINATION_DIR/rhel9/
           else
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
@@ -145,6 +154,12 @@ jobs:
               target/release/cosmian_vm_agent \
               target/release/cosmian_vm \
               target/release/cosmian_certtool \
+              target/release/cosmian_vm_agent \
+              target/release/cosmian_vm \
+              target/release/cosmian_certtool \
+              /lib/x86_64-linux-gnu/libtdx_attest.so \
+              /lib/x86_64-linux-gnu/libtdx_attest.so.1 \
+              /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3 \
               cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
           fi
 
