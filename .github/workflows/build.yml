@@ -107,6 +107,9 @@ jobs:
         with:
           name: cosmian_vm_${{ inputs.distrib }}
 
+      - name: Display artifacts content
+        run: find .
+
       - name: Push latest build to package.cosmian.com
         run: |
           set -x
@@ -122,16 +125,16 @@ jobs:
 
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-              target/debian/cosmian-vm-agent-ubuntu-* \
-              target/debian/cosmian-vm-ubuntu-* \
+              ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm-agent_*-1_amd64.deb \
+              ./cosmian_vm_ubuntu-22.04/target/debian/cosmian-vm_*-1_amd64.deb \
               cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-              target/generate-rpm/cosmian_vm* \
-              target/generate-rpm/cosmian_vm_agent* \
+              ./cosmian_vm_ubuntu-22.04/target/generate-rpm/cosmian_vm-*-1.x86_64.rpm \
+              ./cosmian_vm_ubuntu-22.04/target/generate-rpm/cosmian_vm_agent-*-1.x86_64.rpm \
               cosmian@package.cosmian.com:$DESTINATION_DIR/rhel9/
           else
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-              target/debian/cosmian-vm-agent-ubuntu-* \
-              target/debian/cosmian-vm-ubuntu-* \
+              ./cosmian_vm_ubuntu-24.04/target/debian/cosmian-vm_*-1_amd64.deb \
+              ./cosmian_vm_ubuntu-24.04/target/debian/cosmian-vm-agent_*-1_amd64.deb \
               cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
           fi
