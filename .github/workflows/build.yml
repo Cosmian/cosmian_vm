@@ -71,13 +71,13 @@ jobs:
           rm -rf target/generate-rpm
           cargo install cargo-deb cargo-generate-rpm
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
-            cargo deb -p cosmian_vm --variant ubuntu-22
-            cargo deb -p cosmian_vm_agent --variant ubuntu-22
+            cargo deb -p cosmian_vm
+            cargo deb -p cosmian_vm_agent
             cargo generate-rpm -p crate/cli
             cargo generate-rpm -p crate/agent --metadata-overwrite=pkg/rpm/scriptlets.toml
           else
-            cargo deb -p cosmian_vm --variant ubuntu-24
-            cargo deb -p cosmian_vm_agent --variant ubuntu-24
+            cargo deb -p cosmian_vm
+            cargo deb -p cosmian_vm_agent
           fi
 
       - name: Upload artifacts
@@ -117,18 +117,21 @@ jobs:
           fi
 
           DESTINATION_DIR=/mnt/package/cosmian_vm/${BRANCH}
-          ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR
+          ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR/${{ inputs.distrib }}/
+          ssh -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa cosmian@package.cosmian.com mkdir -p $DESTINATION_DIR/rhel9/
 
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-              target/generate-rpm/cosmian_vm* \
-              target/generate-rpm/cosmian_vm_agent* \
               target/debian/cosmian-vm-agent-ubuntu-* \
               target/debian/cosmian-vm-ubuntu-* \
-              cosmian@package.cosmian.com:$DESTINATION_DIR/
+              cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
+            scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
+              target/generate-rpm/cosmian_vm* \
+              target/generate-rpm/cosmian_vm_agent* \
+              cosmian@package.cosmian.com:$DESTINATION_DIR/rhel9/
           else
             scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
               target/debian/cosmian-vm-agent-ubuntu-* \
               target/debian/cosmian-vm-ubuntu-* \
-              cosmian@package.cosmian.com:$DESTINATION_DIR/
+              cosmian@package.cosmian.com:$DESTINATION_DIR/${{ inputs.distrib }}/
           fi

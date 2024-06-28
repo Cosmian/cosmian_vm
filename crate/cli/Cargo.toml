@@ -56,15 +56,6 @@ assets = [
   ],
 ]
 
-[package.metadata.deb.variants.ubuntu-22]
-name = "cosmian-vm-ubuntu-22.04"
-
-[package.metadata.deb.variants.ubuntu-23]
-name = "cosmian-vm-ubuntu-23.04"
-
-[package.metadata.deb.variants.ubuntu-24]
-name = "cosmian-vm-ubuntu-24.04"
-
 # END DEBIAN PACKAGING
 # ------------------------------------------------------------------------------
 

@@ -49,11 +49,11 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian-vm-ubuntu-{{ ansible_distribution_version }}_{{ package_version }}-1_amd64.deb
+        package_name: cosmian-vm_{{ package_version }}-1_amd64.deb
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/{{ package_name }}
+        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/ubuntu-{{ ansible_distribution_version }}/{{ package_name }}
         dest: /tmp
         mode: "0755"
         group: root

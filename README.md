@@ -56,7 +56,7 @@ Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crat
   * [Handle Cosmian VM status](#handle-cosmian-vm-status)
   * [Usage](#usage)
   * [Provide secrets without SSH access](#provide-secrets-without-ssh-access)
-- [Other Cosmian Products based on Cosmian VM](#other-cosmian-products-based-on-cosmian-vm)
+- [Versions correspondence](#versions-correspondence)
 
 <!-- tocstop -->
 
@@ -327,10 +327,11 @@ The `restart` subcommand can restart the application identified in `service_name
 cosmian_vm --url https://my_app.dev app restart
 ```
 
-## Other Cosmian Products based on Cosmian VM
+## Versions correspondence
 
 | Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ---------- | ----------- | ----------------- |
+| 0.1.5      | 1.2.4      | 4.16.0      | 0.3.0             |
 | 0.1.5      | 1.2.3      | 4.16.0      | 0.3.0             |
 | 0.1.4      | 1.2.2      | 4.16.0      | 0.3.0             |
 | 0.1.3      | 1.2.1      | 4.16.0      | 0.3.0             |
