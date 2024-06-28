@@ -2,6 +2,8 @@
 
 set -ex
 
+VERSION=1.2.4
+
 set -x
 if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
   export BRANCH="${GITHUB_REF_NAME}"
@@ -27,18 +29,18 @@ scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
 
 if [[ "${DISTRIB}" = *'ubuntu-22'* ]]; then
   scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm-agent_*-1_amd64.deb" \
-    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm_*-1_amd64.deb" \
+    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm-agent_$VERSION-1_amd64.deb" \
+    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm_$VERSION-1_amd64.deb" \
     cosmian@package.cosmian.com:"$DESTINATION_DIR/${DISTRIB}/"
   scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-    "./$ARTIFACT_FOLDER/target/generate-rpm/cosmian_vm-*-1.x86_64.rpm" \
-    "./$ARTIFACT_FOLDER/target/generate-rpm/cosmian_vm_agent-*-1.x86_64.rpm" \
+    "./$ARTIFACT_FOLDER/target/generate-rpm/cosmian_vm-$VERSION-1.x86_64.rpm" \
+    "./$ARTIFACT_FOLDER/target/generate-rpm/cosmian_vm_agent-$VERSION-1.x86_64.rpm" \
     cosmian@package.cosmian.com:"$DESTINATION_DIR/rhel9/"
 else
   scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
-    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm_*-1_amd64.deb" \
-    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm-agent_*-1_amd64.deb" \
+    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm_$VERSION-1_amd64.deb" \
+    "./$ARTIFACT_FOLDER/target/debian/cosmian-vm-agent_$VERSION-1_amd64.deb" \
     cosmian@package.cosmian.com:"$DESTINATION_DIR/${DISTRIB}/"
 fi
 
-rm -rf cosmian_vm_ubuntu* target
+rm -rf cosmian_vm_ubuntu*
