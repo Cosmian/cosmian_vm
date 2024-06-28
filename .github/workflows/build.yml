@@ -67,6 +67,8 @@ jobs:
 
       - name: Build Debian and RPM packages
         run: |
+          rm -rf target/debian
+          rm -rf target/generate-rpm
           cargo install cargo-deb cargo-generate-rpm
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
             cargo deb -p cosmian_vm --variant ubuntu-22
