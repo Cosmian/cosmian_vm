@@ -28,23 +28,6 @@
   ansible.builtin.debug:
     var: cosmian_vm_version
 
-- name: Clean potential existing Cosmian VM CLI
-  ansible.builtin.command:
-    cmd: |
-      rm -f ./cosmian_vm
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
-  delegate_to: localhost
-  become: false
-
-- name: Download Cosmian VM CLI
-  ansible.builtin.get_url:
-    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
-    dest: .
-    mode: "u+x"
-  delegate_to: localhost
-  become: false
-
 - name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
   ansible.builtin.wait_for:
     path: /var/lib/cosmian_vm/data/cert.pem
@@ -74,7 +57,7 @@
 - name: App initialization - sending configuration {{ check_app_configuration_path }}
   ansible.builtin.command:
     cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app init -c {{ check_app_configuration_path }}
+      cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app init -c {{ check_app_configuration_path }}
   register: cosmian_vm_app_init
   tags: app_init
   ignore_errors: true
@@ -112,7 +95,7 @@
 - name: App restart
   ansible.builtin.command:
     cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app restart
+      cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app restart
   register: cosmian_vm_app_restart
   tags: app_restart
   delegate_to: localhost

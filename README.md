@@ -46,13 +46,17 @@ Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crat
 - [Snapshot of the system](#snapshot-of-the-system)
 - [Verification of the remote instance](#verification-of-the-remote-instance)
 - [Cloud providers support](#cloud-providers-support)
+  * [AWS images](#aws-images)
+  * [Azure images](#azure-images)
+    + [Update Unified Kernel Image: UKI](#update-unified-kernel-image-uki)
+  * [GCP images](#gcp-images)
   * [Marketplace Image content](#marketplace-image-content)
   * [Configuration file](#configuration-file)
   * [First Cosmian VM launch](#first-cosmian-vm-launch)
   * [Handle Cosmian VM status](#handle-cosmian-vm-status)
   * [Usage](#usage)
   * [Provide secrets without SSH access](#provide-secrets-without-ssh-access)
-- [Other Cosmian Products based on Cosmian VM](#other-cosmian-products-based-on-cosmian-vm)
+- [Versions correspondence](#versions-correspondence)
 
 <!-- tocstop -->
 
@@ -88,14 +92,55 @@ Verification process of the Cosmian VM is performed using client CLI [cosmian_vm
 
 ## Cloud providers support
 
-_Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on the cloud provider.
+_Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on the cloud provider. Cosmian base images are build from the following cloud provider images:
 
-Here is a list of compatibility as of March 2024:
+Replace `X.Y.Z` in the 3 following tables by the last _Cosmian base image_ [version](CHANGELOG_BASE_IMAGES.md).
 
-|           |           GCP           |          Azure          |      AWS      |
-| :-------- | :---------------------: | :---------------------: | :-----------: |
-| Intel TDX |      Ubuntu 22.04       |      Ubuntu 22.04       | Not available |
-| AMD SEV   | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04<br/>RHEL 9 | Ubuntu 22.04  |
+### AWS images
+
+|               |                            Official image                            | OS image | OS version | Cosmian base image          |
+| :------------ | :------------------------------------------------------------------: | :------: | ---------- | --------------------------- |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1 |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV |            RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3             |  Redhat  | 9.3        | base-image-X-Y-Z-ubuntu-sev |
+
+If needed:
+
+```sh
+aws ec2 describe-images --output json > aws_list.json
+```
+
+### Azure images
+
+|                   |                        Official image                         | OS image | OS version      | Cosmian base image    | Version |
+| :---------------- | :-----------------------------------------------------------: | :------: | --------------- | --------------------- | ------- |
+| Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-tdx | X.Y.Z   |
+| Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | base-image-rhel-sev   | X.Y.Z   |
+
+```sh
+az vm list> azure_list.json
+```
+
+#### Update Unified Kernel Image: UKI
+
+Links:
+
+- <https://www.redhat.com/fr/blog/rhel-confidential-virtual-machines-azure-technical-deep-dive>
+- <https://access.redhat.com/documentation/ml/red_hat_enterprise_linux/9/pdf/deploying_rhel_9_on_microsoft_azure/red_hat_enterprise_linux-9-deploying_rhel_9_on_microsoft_azure-en-us.pdf>
+
+### GCP images
+
+|                 |           Official image           | OS image | OS version | Cosmian base image          |
+| :-------------- | :--------------------------------: | :------: | ---------- | --------------------------- |
+| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220      |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240523a |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |          rhel-9-v20240515          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
+
+```sh
+gcloud compute images list > gcloud_list.json
+gcloud beta compute images list --filter="guestOsFeatures[].type=SEV_SNP_CAPABLE" --format=json > gcloud_images_SEV_SNP_CAPABLE.json
+gcloud beta compute images list --filter="guestOsFeatures[].type=TDX_CAPABLE" --format=json > gcloud_images_TDX.json
+```
 
 ### Marketplace Image content
 
@@ -129,7 +174,10 @@ This is a abstract of the updated file tree:
 │   │   └── ima-policy
 │   └── systemd
 │       └── system
-│           └── cosmian_vm_agent.service
+│           ├── cosmian_vm_agent.service
+│           └── mount_luks.service
+├── root
+│   ├── mount_luks.sh
 ├── usr
 │   └── sbin
 │       ├── cosmian_certtool
@@ -279,10 +327,11 @@ The `restart` subcommand can restart the application identified in `service_name
 cosmian_vm --url https://my_app.dev app restart
 ```
 
-## Other Cosmian Products based on Cosmian VM
+## Versions correspondence
 
 | Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ---------- | ----------- | ----------------- |
+| 0.1.5      | 1.2.4      | 4.16.0      | 0.3.0             |
 | 0.1.5      | 1.2.3      | 4.16.0      | 0.3.0             |
 | 0.1.4      | 1.2.2      | 4.16.0      | 0.3.0             |
 | 0.1.3      | 1.2.1      | 4.16.0      | 0.3.0             |

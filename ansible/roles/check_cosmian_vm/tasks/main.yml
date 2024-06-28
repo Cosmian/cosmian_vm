@@ -120,7 +120,6 @@
 - name: Clean potential existing Cosmian VM CLI and snapshot
   ansible.builtin.command:
     cmd: |
-      rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
       rm -f ./cosmian_vm.new_snapshot
   delegate_to: localhost
@@ -128,30 +127,10 @@
   register: cmd_output
   changed_when: cmd_output.rc != 0
 
-- name: Download Cosmian VM CLI
-  ansible.builtin.get_url:
-    url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/cosmian_vm
-    dest: .
-    mode: "u+x"
-  delegate_to: localhost
-  become: false
-
-- name: Compute cosmian_vm hash
-  ansible.builtin.stat:
-    path: ./cosmian_vm
-    checksum_algorithm: sha256
-  delegate_to: localhost
-  become: false
-  register: cosmian_vm_hash
-
-- name: Check Cosmian VM hash
-  ansible.builtin.debug:
-    var: cosmian_vm_hash
-
 - name: Cosmian VM snapshot
   ansible.builtin.command:
     cmd: |
-      ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls snapshot
+      cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls snapshot
   register: cosmian_vm_output
   delegate_to: localhost
   become: false
@@ -217,7 +196,7 @@
     - name: Verify Cosmian VM snapshot
       ansible.builtin.command:
         cmd: |
-          ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.new_snapshot
+          cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.new_snapshot
       register: verify_cosmian_vm_output
       delegate_to: localhost
       become: false
@@ -258,7 +237,7 @@
     - name: Verify Cosmian VM snapshot -no reboot
       ansible.builtin.command:
         cmd: |
-          ./cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
+          cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
       register: verify_cosmian_vm_output
       delegate_to: localhost
       become: false
@@ -296,7 +275,6 @@
 - name: Clean Cosmian VM CLI and snapshot
   ansible.builtin.command:
     cmd: |
-      rm -f ./cosmian_vm
       rm -f ./cosmian_vm.snapshot
       rm -f ./cosmian_vm.new_snapshot
   delegate_to: localhost

@@ -26,9 +26,9 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian_vm_agent-{{ package_version }}-1.x86_64.rpm
+        package_name: cosmian_vm-{{ package_version }}-1.x86_64.rpm
 
-    - name: Download RPM Agent package from package.cosmian.com
+    - name: Download RPM package from package.cosmian.com
       ansible.builtin.get_url:
         url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/rhel9/{{ package_name }}
         dest: /tmp
@@ -49,7 +49,7 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian-vm-agent_{{ package_version }}-1_amd64.deb
+        package_name: cosmian-vm_{{ package_version }}-1_amd64.deb
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
@@ -59,26 +59,6 @@
         group: root
         owner: root
 
-    - name: Install Cosmian VM Agent Debian package
+    - name: Install Cosmian VM Debian package
       ansible.builtin.apt:
         deb: /tmp/{{ package_name }}
-
-- name: Open ports on RHEL
-  when: ansible_distribution == 'RedHat'
-  block:
-    - name: Start firewalld service
-      ansible.builtin.service:
-        name: firewalld
-        state: started
-
-    - name: Open port 5555
-      ansible.posix.firewalld:
-        zone: public
-        port: 5555/tcp
-        permanent: true
-        state: enabled
-
-    - name: Always reload firewalld
-      ansible.builtin.service:
-        name: firewalld
-        state: reloaded

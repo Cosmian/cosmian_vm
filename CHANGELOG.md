@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] - 2024-06-28
+
+### 🐛 Bug Fixes
+
+- Timing variability in curve25519-dalek's Scalar29::sub/Scalar52::sub ([#141](https://github.com/Cosmian/cosmian_vm/pull/141))
+
+### 📚 Documentation
+
+- Move cloud providers images info in main README.md
+- Create dedicated CHANGELOG for Cosmian base image
+
+### ⚙️ Miscellaneous Tasks
+
+- Create Debian and RPM packages for Ubuntu 22.04/24.04 and RedHat 9 ([#112](https://github.com/Cosmian/cosmian_vm/pull/112))
+- Add bash script for VM image definition creation
+
 ## [1.2.3] - 2024-06-15
 
 ### Bug Fixes

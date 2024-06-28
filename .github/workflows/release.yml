@@ -10,24 +10,26 @@ jobs:
     runs-on: [self-hosted, no-tee]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Download binaries
         uses: actions/download-artifact@v4
-        with:
-          name: cosmian_vm
+
+      - name: Display artifacts content
+        run: find .
 
       - name: Release on tags, attach asset on release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            CHANGELOG.md
-            target/release/cosmian_vm_agent
-            target/release/cosmian_vm
-            target/release/cosmian_certtool
+            ./cosmian_vm_ubuntu-22.04/home/runner/work/cosmian_vm/cosmian_vm/target/debian/cosmian-vm-agent_*-1_amd64.deb
+            ./cosmian_vm_ubuntu-22.04/home/runner/work/cosmian_vm/cosmian_vm/target/debian/cosmian-vm_*-1_amd64.deb
+            ./cosmian_vm_ubuntu-22.04/home/runner/work/cosmian_vm/cosmian_vm/target/generate-rpm/cosmian_vm-*-1.x86_64.rpm
+            ./cosmian_vm_ubuntu-22.04/home/runner/work/cosmian_vm/cosmian_vm/target/generate-rpm/cosmian_vm_agent-*-1.x86_64.rpm
+            ./cosmian_vm_ubuntu-24.04/home/runner/work/cosmian_vm/cosmian_vm/target/debian/cosmian-vm_*-1_amd64.deb
+            ./cosmian_vm_ubuntu-24.04/home/runner/work/cosmian_vm/cosmian_vm/target/debian/cosmian-vm-agent_*-1_amd64.deb
 
   cleanup:
     name: Clean Github cache
+    if: startsWith(github.ref, 'refs/tags/')
     uses: Cosmian/reusable_workflows/.github/workflows/cleanup_cache.yml@main
     secrets: inherit

@@ -8,7 +8,7 @@ name: Cloud providers
 jobs:
   build-cosmian-vm-binaries:
     name: Build binaries
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build_all.yml
 
   azure:
     needs: build-cosmian-vm-binaries
@@ -27,7 +27,6 @@ jobs:
 
   release:
     name: Release
-    if: startsWith(github.ref, 'refs/tags/')
     needs:
       - azure
       - gcp

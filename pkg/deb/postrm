@@ -1,0 +1,13 @@
+#!/bin/sh -ex
+
+systemctl daemon-reload
+
+systemctl stop mount_luks.service
+systemctl disable mount_luks.service
+
+systemctl stop cosmian_vm_agent.service
+systemctl disable cosmian_vm_agent.service
+
+systemctl daemon-reload
+
+#DEBHELPER#

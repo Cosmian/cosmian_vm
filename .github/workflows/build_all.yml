@@ -1,0 +1,39 @@
+---
+name: Build Cosmian VM binaries
+
+on: workflow_call
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        distrib: [ubuntu-22.04, ubuntu-24.04]
+    name: Build ${{ matrix.distrib }}
+    secrets: inherit
+    uses: ./.github/workflows/build.yml
+    with:
+      distrib: ${{ matrix.distrib }}
+
+  cargo-deny:
+    name: Security Audit
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: EmbarkStudios/cargo-deny-action@v1
+
+  ansible-lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ansible
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install ansible prerequisites
+        run: |
+          python3 -m pip install -r python_modules.txt
+          python3 -m pip install ansible-lint
+
+      - name: Run ansible-lint
+        run: ansible-lint
