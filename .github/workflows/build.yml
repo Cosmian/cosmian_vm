@@ -63,6 +63,7 @@ jobs:
         run: cargo test
 
       - name: Cargo build
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo build --release
 
       - name: Build Debian and RPM packages
@@ -93,8 +94,7 @@ jobs:
             lib/x86_64-linux-gnu/libtdx_attest.so
             lib/x86_64-linux-gnu/libtdx_attest.so.1
             lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
-
-          retention-days: 10
+          retention-days: 1
           if-no-files-found: error
 
   push:
@@ -107,12 +107,13 @@ jobs:
         - /home/cosmian/.ssh/id_rsa:/root/.ssh/id_rsa
     steps:
       - name: Clean runner
-        run: rm -rf cosmian_vm_ubuntu* target
+        run: rm -rf cosmian_vm_ubuntu* target home .git .ansible .crate .resources
+
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Download binaries
         uses: actions/download-artifact@v4
-        with:
-          name: cosmian_vm_${{ inputs.distrib }}
 
       - name: Display artifacts content
         run: find .
