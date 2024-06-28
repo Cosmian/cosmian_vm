@@ -63,7 +63,6 @@ jobs:
         run: cargo test
 
       - name: Cargo build
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo build --release
 
       - name: Build Debian and RPM packages
@@ -91,9 +90,12 @@ jobs:
             target/generate-rpm/cosmian_vm-*
             target/debian/cosmian-vm-agent_*
             target/debian/cosmian-vm_*
-            lib/x86_64-linux-gnu/libtdx_attest.so
-            lib/x86_64-linux-gnu/libtdx_attest.so.1
-            lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
+            target/release/cosmian_vm
+            target/release/cosmian_vm_agent
+            target/release/cosmian_certtool
+            /lib/x86_64-linux-gnu/libtdx_attest.so
+            /lib/x86_64-linux-gnu/libtdx_attest.so.1
+            /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
           retention-days: 1
           if-no-files-found: error
 
