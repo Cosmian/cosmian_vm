@@ -133,8 +133,6 @@ jobs:
           cd ansible
           python3 -m pip install -r python_modules.txt
 
-          COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --tags check-${{ inputs.product }}
 
