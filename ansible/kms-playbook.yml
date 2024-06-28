@@ -21,7 +21,9 @@
   roles:
     - role: cosmian_vm
       delegate_to: localhost
-      tags: role-cosmian-vm
+      tags:
+        - role-cosmian-vm
+        - check-kms
     - role: check_cosmian_vm
       tags: check-kms
 

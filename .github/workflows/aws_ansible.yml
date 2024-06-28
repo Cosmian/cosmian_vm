@@ -35,9 +35,6 @@ jobs:
           echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_OUTPUT"
           echo "CI_INSTANCE=gh-ci-ansible-$TIMESTAMP-${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}" >> "$GITHUB_OUTPUT"
 
-      - name: Update Ubuntu runner - required for Cosmian VM CLI installation
-        run: sudo apt update
-
       - name: Checkout
         uses: actions/checkout@v4
 

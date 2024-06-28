@@ -96,9 +96,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - name: Update Ubuntu runner - required for Cosmian VM CLI installation
-        run: sudo apt update
-
       - name: Checkout
         uses: actions/checkout@v4
 
