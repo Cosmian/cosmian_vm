@@ -96,12 +96,13 @@ jobs:
 
           fi
 
+          OS_DISK="${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-${AZURE_IMAGE_VERSION}-vm-${COSMIAN_VM_VERSION}"
+          az disk delete -g "$RESOURCE_GROUP" --name "$OS_DISK" --yes
+
           bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
 
           # For Azure, create a final VHD from os disk
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
-            OS_DISK="${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-${AZURE_IMAGE_VERSION}-vm-${COSMIAN_VM_VERSION}"
-
             sas=$(az disk grant-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK" --duration-in-seconds 3600 --access-level Read --query accessSas -o tsv)
 
             az storage blob copy start --destination-blob $OS_DISK.vhd --destination-container packer --account-name "$AZURE_STORAGE_ACCOUNT_NAME" --account-key "$AZURE_STORAGE_ACCOUNT_KEY" --source-uri "$sas"
