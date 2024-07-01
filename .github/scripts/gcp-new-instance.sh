@@ -43,12 +43,18 @@ else
     # Cosmian Ubuntu SEV
     IMAGE="base-image-0-1-5-ubuntu-sev"
     IMAGE_PROJECT="cosmian-dev"
+    # Cosmian KMS Ubuntu SEV
+    IMAGE="cosmian-vm-1-2-4-kms-4-16-0-sev-ubuntu"
+    IMAGE_PROJECT="cosmian-dev"
   else
     # RHEL SEV
     IMAGE="rhel-9-v20240515"
     IMAGE_PROJECT="rhel-cloud"
     # Cosmian Ubuntu SEV
     IMAGE="base-image-0-1-5-rhel-sev"
+    IMAGE_PROJECT="cosmian-dev"
+    # Cosmian Ubuntu SEV
+    IMAGE="cosmian-vm-1-2-4-kms-4-16-0-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
   fi
   gcloud beta compute instances create "$NAME" \

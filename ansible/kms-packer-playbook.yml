@@ -6,6 +6,7 @@
   hosts: all
   become: true
   roles:
-    - kms
+    - role: kms
+      tags: role-kms
     - role: cleanup
       tags: role-cleanup
