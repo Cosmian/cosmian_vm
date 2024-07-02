@@ -33,6 +33,12 @@ else
   sed -i "s#  temp_os_disk_name         = \"TEMPLATE_OS_DISK_NAME\"##g" "$PACKER_FILE"
 fi
 
+if [ ! "$PRODUCT" = "kms-fips" ]; then
+  FIPS="-kms"
+  sed -i "s#TEMPLATE_FIPS#$FIPS#g" "$PACKER_FILE"
+  PRODUCT=kms
+fi
+
 sed -i "s#TEMPLATE_PRODUCT#$PRODUCT#g" "$PACKER_FILE"
 
 sed -i "s#TEMPLATE_CLIENT_ID#$CLIENT_ID#g" "$PACKER_FILE"

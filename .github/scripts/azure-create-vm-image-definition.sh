@@ -5,7 +5,7 @@ set +e
 #!/bin/bash
 
 # Define the lists
-products=("base-image" "cosmian-vm" "kms" "ai-runner")
+products=("base-image" "cosmian-vm" "kms" "kms-fips" "ai-runner")
 distribs=("rhel" "ubuntu")
 technos=("sev" "tdx")
 

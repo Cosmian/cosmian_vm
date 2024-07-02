@@ -6,7 +6,7 @@ After=multi-user.target mount_luks.service cosmian_vm_agent.service
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/local/sbin/cosmian_kms
+ExecStart=/usr/sbin/cosmian_kms
 Restart=on-failure
 RestartSec=3s
 Environment="COSMIAN_KMS_CONF=/var/lib/cosmian_vm/data/app/app.conf"

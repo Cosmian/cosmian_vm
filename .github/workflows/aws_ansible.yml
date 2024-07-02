@@ -56,11 +56,7 @@ jobs:
           aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
-          if [ "${{ inputs.product }}" = "kms" ]; then
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-          fi
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)

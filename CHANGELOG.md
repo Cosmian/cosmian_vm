@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.5] - 2024-XX-XX
+
+### 🚀 Features
+
+- *(Azure)* Add KMS FIPS image. Bump KMS version to 4.17.0 ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+- Bump KMS version to 4.17.0 ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+
+### 🐛 Bug Fixes
+
+- Fix uninstall of DEB/RPM packages ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+
+### ⚙️ Miscellaneous Tasks
+
+- *(Azure)* Clean OS disk if exist on packer build
+
 ## [1.2.4] - 2024-06-28
 
 ### 🐛 Bug Fixes

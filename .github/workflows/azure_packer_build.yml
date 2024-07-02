@@ -85,7 +85,7 @@ jobs:
                 export AZURE_IMAGE_VERSION="$COSMIAN_VM_VERSION"
               elif [ "${{ inputs.product }}" = "ai-runner" ]; then
                 export AZURE_IMAGE_VERSION="$AI_RUNNER_VERSION"
-              elif [ "${{ inputs.product }}" = "kms" ]; then
+              elif [ "${{ inputs.product }}" = "kms" ] || [ "${{ inputs.product }}" = "kms-fips" ]; then
                 export AZURE_IMAGE_VERSION="$KMS_VERSION"
               else
                 echo "Unexpected product"

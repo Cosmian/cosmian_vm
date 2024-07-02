@@ -12,14 +12,38 @@ systemctl daemon-reload
 '''
 
 post_uninstall_script = '''
-#!/bin/bash -ex
-
-systemctl stop mount_luks.service
-systemctl disable mount_luks.service
-
-systemctl stop cosmian_vm_agent.service
-systemctl disable cosmian_vm_agent.service
+#!/bin/bash
 
 systemctl daemon-reload
 
+stop_and_disable() {
+  SERVICE=$1
+  # Check if the service is active (running)
+  if systemctl is-active --quiet "$SERVICE".service; then
+    echo "Service $SERVICE is running. Stopping the service..."
+    systemctl stop "$SERVICE".service
+
+    # Verify if the service was stopped
+    if systemctl is-active --quiet "$SERVICE".service; then
+      echo "Failed to stop the service."
+    else
+      echo "Service $SERVICE stopped successfully. Disabling it"
+      if systemctl list-unit-files | grep -q "^$SERVICE.service"; then
+        echo "Service exists. Disabling the service..."
+        systemctl disable "$SERVICE".service
+      fi
+    fi
+  else
+    echo "Service $SERVICE is not running."
+    if systemctl list-unit-files | grep -q "^$SERVICE.service"; then
+      echo "Service $SERVICE exists. Disabling the service..."
+      systemctl disable "$SERVICE".service
+    fi
+  fi
+}
+
+stop_and_disable mount_luks
+stop_and_disable cosmian_vm_agent
+
+systemctl daemon-reload
 '''

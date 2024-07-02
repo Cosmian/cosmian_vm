@@ -165,11 +165,6 @@ jobs:
               --network=default \
               --allow=tcp:22,tcp:5555 \
               --target-tags=$CI_INSTANCE-fw
-          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
-              --network=default \
-              --allow=tcp:22,tcp:443,tcp:5555 \
-              --target-tags=$CI_INSTANCE-fw
           else
             gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
               --network=default \
@@ -253,7 +248,7 @@ jobs:
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             else
               LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
-              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             fi
           else
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
@@ -263,7 +258,7 @@ jobs:
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             else
               LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
-              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             fi
           fi
 

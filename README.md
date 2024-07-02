@@ -4,7 +4,7 @@
 ![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/nightly_marketplaces.yml/badge.svg?branch=main)
 
 _Cosmian VM_ are Linux-based system images preconfigured to verify Confidential VM trustworthiness and integrity at anytime.
-The images are based either on Ubuntu 22.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
+The images are based either on Ubuntu 22.04/24.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
 
 _Cosmian VM_ image provides the following features:
 
@@ -331,6 +331,7 @@ cosmian_vm --url https://my_app.dev app restart
 
 | Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ---------- | ----------- | ----------------- |
+| 0.1.5      | 1.2.5      | 4.17.0      | 0.3.0             |
 | 0.1.5      | 1.2.4      | 4.16.0      | 0.3.0             |
 | 0.1.5      | 1.2.3      | 4.16.0      | 0.3.0             |
 | 0.1.4      | 1.2.2      | 4.16.0      | 0.3.0             |

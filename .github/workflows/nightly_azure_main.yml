@@ -19,12 +19,14 @@ jobs:
       max-parallel: 3
       matrix:
         distrib: [rhel, ubuntu]
-        product: [cosmian-vm, kms, ai-runner]
+        product: [cosmian-vm, kms, kms-fips, ai-runner]
         techno: [sev, tdx]
         exclude:
           - product: ai-runner
             distrib: rhel
           - techno: tdx
+            distrib: rhel
+          - product: kms-fips
             distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
@@ -35,7 +37,7 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.16.0
+      kms-version: 4.17.0
       ai-runner-version: 0.3.0
       base-version: 0.1.5
 
@@ -62,7 +64,7 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.16.0
+      kms-version: 4.17.0
       ai-runner-version: 0.3.0
 
   post-clean-resources:
