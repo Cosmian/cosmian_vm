@@ -96,9 +96,6 @@ jobs:
 
           fi
 
-          # TO REMOVE
-          KMS_VERSION="last_build/develop"
-
           OS_DISK="${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-${AZURE_IMAGE_VERSION}-vm-${COSMIAN_VM_VERSION}"
           az disk delete -g "$RESOURCE_GROUP" --name "$OS_DISK" --yes
 

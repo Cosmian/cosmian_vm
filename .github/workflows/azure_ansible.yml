@@ -84,8 +84,6 @@ jobs:
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
             az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555
-          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,443
           else
             az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,443
           fi
@@ -105,8 +103,6 @@ jobs:
           python3 -m pip install -r python_modules.txt
 
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          # TO REMOVE
-          KMS_VERSION="last_build/develop"
 
           FIPS=""
           PLAYBOOK="${{ inputs.product }}-playbook.yml"
@@ -125,7 +121,6 @@ jobs:
               -e kms_fips="${FIPS}" \
               -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} \
               --skip-tags role-cleanup
-            # ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --skip-tags role-cleanup
           done
 
       - name: Stop and delete Azure instance

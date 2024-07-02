@@ -120,11 +120,6 @@ jobs:
               --network=default \
               --allow=tcp:22,tcp:5555 \
               --target-tags=$CI_INSTANCE-fw
-          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
-              --network=default \
-              --allow=tcp:22,tcp:443,tcp:5555 \
-              --target-tags=$CI_INSTANCE-fw
           else
             gcloud compute firewall-rules create ${CI_INSTANCE}-allow-ports-cli \
               --network=default \

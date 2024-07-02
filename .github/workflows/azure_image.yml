@@ -77,10 +77,10 @@ jobs:
           if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               IMAGE_VERSION="${GITHUB_REF_NAME}"
-            elif [ "${{ inputs.product }}" = "kms" ]; then
-              IMAGE_VERSION="${{ inputs.kms-version }}"
-            else
+            elif [ "${{ inputs.product }}" = "ai-runner" ]; then
               IMAGE_VERSION="${{ inputs.ai-runner-version }}"
+            else
+              IMAGE_VERSION="${{ inputs.kms-version }}"
             fi
           fi
 
@@ -108,8 +108,6 @@ jobs:
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
             az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555
-          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,443
           else
             az vm open-port -g $RESOURCE_GROUP -n $CI_INSTANCE --priority 100 --port 5555,443
           fi
@@ -130,11 +128,23 @@ jobs:
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           fi
 
+          FIPS=""
+          PLAYBOOK="${{ inputs.product }}-playbook.yml"
+          if [ "${{ inputs.product }}" = "kms-fips" ]; then
+            FIPS="-fips"
+            PLAYBOOK="kms-playbook.yml"
+          fi
+
           cd ansible
           python3 -m pip install -r python_modules.txt
 
           export ANSIBLE_HOST_KEY_CHECKING=False
-          ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --tags check-${{ inputs.product }}
+          ansible-playbook $PLAYBOOK -i ${IP_ADDR}, -u cosmian \
+            -e cosmian_vm_version=$COSMIAN_VM_VERSION \
+            -e cosmian_kms_version=${{ inputs.kms-version }} \
+            -e kms_fips="${FIPS}" \
+            -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} \
+            --tags check-${{ inputs.product }}
 
       - name: Stop and delete Azure instance
         if: success() || cancelled()
