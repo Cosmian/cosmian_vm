@@ -31,6 +31,14 @@ In addition, _Cosmian VM_ image contains the following software:
 
 - `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
 - `cosmian_certtool` to ease the generation of **Let's Encrypt** certificates if needed
+
+```bash
+sudo certbot certonly --manual --preferred-challenges dns -d <my_dns_name> -m <admin@email.com> --agree-tos
+sudo cp /etc/letsencrypt/live/my_dns_name/fullchain.pem /var/lib/cosmian_vm/data/cert.pem
+sudo cp /etc/letsencrypt/live/my_dns_name/privkey.pem /var/lib/cosmian_vm/data/key.pem
+sudo service nginx restart
+```
+
 - `cosmian_fstool` to ease the generation of LUKS container with secret key stored in the TPM/vTPM
 
 Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli) can be used to interact with `cosmian_vm_agent` and verify the trustworthiness of a specific instance launched with _Cosmian VM_ as base image.
