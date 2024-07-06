@@ -1,0 +1,36 @@
+---
+- name: Clean previous install of Cosmian VM Agent
+  hosts: all
+  become: true
+  roles:
+    - check_cpu
+    - cleanup_kms
+    - cleanup_cosmian_vm_agent
+
+- name: Install base image prerequisites
+  ansible.builtin.import_playbook: base-image-packer-playbook.yml
+
+- name: Install KMS
+  ansible.builtin.import_playbook: kms-fips-packer-playbook.yml
+
+- name: Start and check KMS
+  hosts: all
+  become: true
+  environment:
+    RUST_LOG: "cosmian_vm=trace"
+  roles:
+    - role: cosmian_vm
+      delegate_to: localhost
+      tags:
+        - role-cosmian-vm
+        - check-kms-fips
+    - role: check_cosmian_vm
+      tags: check-kms-fips
+
+    - role: check_app
+      check_app_name: KMS
+      check_app_systemd_name: cosmian_kms
+      check_app_endpoint:
+        - version
+      check_app_configuration_path: roles/kms/templates/kms.toml.j2
+      tags: check-kms-fips

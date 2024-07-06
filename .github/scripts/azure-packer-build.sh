@@ -27,18 +27,9 @@ fi
 PACKER_FILE="azure.pkr.hcl"
 
 if [ "$KEEP_OS_DISK" = "true" ]; then
-  OS_DISK_NAME="TEMPLATE_PRODUCT-TEMPLATE_DISTRIBUTION-TEMPLATE_TECHNO-TEMPLATE_AZURE_IMAGE_VERSION-vm-TEMPLATE_COSMIAN_VM_VERSION"
   sed -i "s#TEMPLATE_OS_DISK_NAME#$OS_DISK_NAME#g" "$PACKER_FILE"
 else
   sed -i "s#  temp_os_disk_name         = \"TEMPLATE_OS_DISK_NAME\"##g" "$PACKER_FILE"
-fi
-
-if [ "$PRODUCT" = "kms-fips" ]; then
-  FIPS="-kms"
-  sed -i "s#TEMPLATE_FIPS#$FIPS#g" "$PACKER_FILE"
-  PRODUCT=kms
-else
-  sed -i "s#TEMPLATE_FIPS##g" "$PACKER_FILE"
 fi
 
 sed -i "s#TEMPLATE_PRODUCT#$PRODUCT#g" "$PACKER_FILE"

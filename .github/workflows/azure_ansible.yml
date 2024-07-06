@@ -104,12 +104,7 @@ jobs:
 
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
 
-          FIPS=""
           PLAYBOOK="${{ inputs.product }}-playbook.yml"
-          if [ "${{ inputs.product }}" = "kms-fips" ]; then
-            FIPS="-fips"
-            PLAYBOOK="kms-playbook.yml"
-          fi
 
           export ANSIBLE_HOST_KEY_CHECKING=False
           for i in {1..1}
@@ -118,7 +113,6 @@ jobs:
             ansible-playbook $PLAYBOOK -i ${IP_ADDR}, -u cosmian \
               -e cosmian_vm_version=$COSMIAN_VM_VERSION \
               -e cosmian_kms_version=${{ inputs.kms-version }} \
-              -e kms_fips="${FIPS}" \
               -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} \
               --skip-tags role-cleanup
           done

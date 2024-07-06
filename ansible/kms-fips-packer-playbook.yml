@@ -1,0 +1,5 @@
+---
+- name: Install Cosmian KMS FIPS
+  ansible.builtin.import_playbook: kms-packer-playbook.yml
+  vars:
+    kms_fips: "-fips"
