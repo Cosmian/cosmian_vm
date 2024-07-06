@@ -21,49 +21,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache dependencies
-        id: cargo-cache
-        uses: Swatinem/rust-cache@v2
-        with:
-          prefix-key: ${{ inputs.distrib }}
-          cache-directories: |
-            - /lib/x86_64-linux-gnu/libtdx_attest.so
-            - /lib/x86_64-linux-gnu/libtdx_attest.so.1
-            - /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
-
       - name: Install Rust toolchain and components
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt, clippy
 
-      - name: Cargo install cargo-machete
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: cargo install cargo-machete
-
-      - name: Cargo fmt
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: cargo fmt --all -- --check
-
-      - name: Cargo check
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: cargo check
-
-      - name: Clippy
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: cargo clippy -- -D warnings
-
-      - name: Machete (deps checker)
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: cargo machete
-
-      - name: Cargo test
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: cargo test
-
-      - name: Cargo build
-        run: cargo build --release
+      - name: Build and test
+        run: |
+          set -ex
+          cargo install cargo-machete
+          cargo fmt --all -- --check
+          cargo check
+          cargo clippy -- -D warnings
+          cargo machete
+          cargo build --release
+          cargo test
 
       - name: Build Debian and RPM packages
         run: |

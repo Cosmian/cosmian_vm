@@ -117,7 +117,7 @@ jobs:
             echo "Iteration: $i"
             ansible-playbook $PLAYBOOK -i ${IP_ADDR}, -u cosmian \
               -e cosmian_vm_version=$COSMIAN_VM_VERSION \
-              -e cosmian_kms_version=${KMS_VERSION} \
+              -e cosmian_kms_version=${{ inputs.kms-version }} \
               -e kms_fips="${FIPS}" \
               -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} \
               --skip-tags role-cleanup
