@@ -96,7 +96,7 @@ jobs:
 
           fi
 
-          OS_DISK_NAME="${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-${AZURE_IMAGE_VERSION}-vm-${COSMIAN_VM_VERSION}"
+          export OS_DISK_NAME="${{ inputs.product }}-${{ inputs.distrib }}-${{ inputs.techno }}-${AZURE_IMAGE_VERSION}-vm-${COSMIAN_VM_VERSION}"
           az disk delete -g "$RESOURCE_GROUP" --name "$OS_DISK_NAME" --yes
 
           bash ../.github/scripts/azure-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}"
