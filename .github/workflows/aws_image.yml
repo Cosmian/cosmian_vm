@@ -119,11 +119,7 @@ jobs:
           aws ec2 create-security-group --group-name ${CI_INSTANCE}-ci-sg --description "Security group for image test"
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
-          if [ "${{ inputs.product }}" = "kms" ]; then
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
-          fi
+          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ci-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
 
           AMI=$(aws ec2 run-instances \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$CI_INSTANCE}]" \
@@ -268,7 +264,7 @@ jobs:
           elif [ "${{ inputs.product }}" = "ai-runner" ]; then
             NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
           else
-            NEW_IMAGE_NAME=cosmian-vm-${VERSION}-kms-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+            NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
           fi
 
           AMI=$(aws ec2 describe-images --filters "Name=name,Values=$IMAGE_NAME" --query 'Images[].ImageId' --output text)

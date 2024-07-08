@@ -12,14 +12,12 @@ jobs:
     runs-on: ${{ inputs.distrib }}
 
     steps:
-      - name: Install dependencies
-        run: |
-          sudo curl -fsSLo /usr/share/keyrings/intel-sgx-deb.asc https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/intel-sgx.list
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev libtdx-attest-dev
-
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Fix permissions
+        run: |
+          sudo chown -R $USER /lib/x86_64-linux-gnu/
 
       - name: Cache dependencies
         id: cargo-cache
@@ -30,6 +28,13 @@ jobs:
             - /lib/x86_64-linux-gnu/libtdx_attest.so
             - /lib/x86_64-linux-gnu/libtdx_attest.so.1
             - /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
+
+      - name: Install dependencies
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo curl -fsSLo /usr/share/keyrings/intel-sgx-deb.asc https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/intel-sgx.list
+          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev libtdx-attest-dev
 
       - name: Install Rust toolchain and components
         if: steps.cargo-cache.outputs.cache-hit != 'true'
@@ -63,9 +68,11 @@ jobs:
         run: cargo test
 
       - name: Cargo build
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: cargo build --release
 
       - name: Build Debian and RPM packages
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         run: |
           rm -rf target/debian
           rm -rf target/generate-rpm
@@ -81,6 +88,7 @@ jobs:
           fi
 
       - name: Upload artifacts
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: cosmian_vm_${{ inputs.distrib }}
@@ -99,8 +107,12 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
+    outputs:
+      cache-hit: ${{ steps.cargo-cache.outputs.cache-hit }}
+
   push:
     needs: check
+    if: needs.check.outputs.cache-hit != 'true'
     name: (${{ inputs.distrib }}) package.cosmian.com
     runs-on: [self-hosted, no-tee]
     container:

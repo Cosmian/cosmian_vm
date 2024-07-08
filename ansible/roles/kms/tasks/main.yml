@@ -5,57 +5,72 @@
   ansible.builtin.debug:
     var: ansible_distribution
 
+- name: Check OS version
+  ansible.builtin.debug:
+    var: ansible_distribution_version
+
 - name: Check Cosmian KMS version
   ansible.builtin.debug:
     var: cosmian_kms_version
+
+- name: Check Cosmian KMS package version
+  ansible.builtin.debug:
+    var: kms_package_version
+
+- name: Check FIPS
+  ansible.builtin.debug:
+    var: kms_fips
 
 - name: Install prerequisites packages
   ansible.builtin.package:
     name:
       - nginx
-      - unzip
       - redis
     state: present
 
-- name: Create the directory /usr/local/sbin
-  ansible.builtin.file:
-    path: /usr/local/sbin
-    state: directory
-    mode: "0755"
-    owner: root
-    group: root
+- name: Install Cosmian VM via RPM package
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Declare package name
+      ansible.builtin.set_fact:
+        package_name: cosmian_kms_server-{{ kms_package_version }}-1.x86_64.rpm
 
-- name: Download KMS
-  ansible.builtin.get_url:
-    url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu_22_04.zip
-    dest: /tmp
-    mode: "0755"
-    group: root
-    owner: root
+    - name: Download RPM Cosmian KMS Server package from package.cosmian.com
+      ansible.builtin.get_url:
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rhel9/{{ package_name }}
+        dest: /tmp
+        mode: "0755"
+        group: root
+        owner: root
 
-- name: Unarchive binaries
-  ansible.builtin.unarchive:
-    src: /tmp/ubuntu_22_04.zip
-    dest: /tmp
-    remote_src: true
+    - name: Install Cosmian KMS Server RPM package from package.cosmian.com
+      ansible.builtin.dnf:
+        name: /tmp/{{ package_name }}
+        state: present
+        disable_gpg_check: true
+      tags: install_rpm
 
-- name: Copy KMS executable
-  ansible.builtin.copy:
-    src: /tmp/ubuntu_22_04/cosmian_kms_server
-    dest: /usr/local/sbin/cosmian_kms
-    remote_src: true
-    owner: root
-    group: root
-    mode: "0500"
+- name: Install Cosmian KMS Server via Debian package
+  when: ansible_distribution == 'Ubuntu'
+  tags: install_deb
+  block:
+    - name: Declare package name
+      ansible.builtin.set_fact:
+        package_name: cosmian-kms-server{{ kms_fips }}_{{ kms_package_version }}-1_amd64.deb
 
-- name: Remove temporary files
-  ansible.builtin.file:
-    path:
-      - /tmp/ubuntu_22_04
-      - /tmp/ubuntu_22_04.zip
-    state: absent
+    - name: Download Debian package from package.cosmian.com
+      ansible.builtin.get_url:
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu-{{ ansible_distribution_version }}/{{ package_name }}
+        dest: /tmp
+        mode: "0755"
+        group: root
+        owner: root
 
-- name: Add Cosmian KMS systemd service
+    - name: Install Cosmian KMS Debian package
+      ansible.builtin.apt:
+        deb: /tmp/{{ package_name }}
+
+- name: Override Cosmian KMS systemd service
   ansible.builtin.template:
     src: cosmian_kms.service.j2
     dest: /etc/systemd/system/cosmian_kms.service
@@ -113,13 +128,6 @@
 - name: Enable systemd Redis service
   ansible.builtin.systemd_service:
     name: redis
-    enabled: true
-    state: stopped
-    daemon_reload: true
-
-- name: Enable systemd Cosmian KMS service
-  ansible.builtin.systemd_service:
-    name: cosmian_kms
     enabled: true
     state: stopped
     daemon_reload: true

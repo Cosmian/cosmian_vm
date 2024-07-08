@@ -4,7 +4,7 @@
 ![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/nightly_marketplaces.yml/badge.svg?branch=main)
 
 _Cosmian VM_ are Linux-based system images preconfigured to verify Confidential VM trustworthiness and integrity at anytime.
-The images are based either on Ubuntu 22.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
+The images are based either on Ubuntu 22.04/24.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
 
 _Cosmian VM_ image provides the following features:
 
@@ -31,6 +31,14 @@ In addition, _Cosmian VM_ image contains the following software:
 
 - `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
 - `cosmian_certtool` to ease the generation of **Let's Encrypt** certificates if needed
+
+```bash
+sudo certbot certonly --manual --preferred-challenges dns -d <my_dns_name> -m <admin@email.com> --agree-tos
+sudo cp /etc/letsencrypt/live/my_dns_name/fullchain.pem /var/lib/cosmian_vm/data/cert.pem
+sudo cp /etc/letsencrypt/live/my_dns_name/privkey.pem /var/lib/cosmian_vm/data/key.pem
+sudo service nginx restart
+```
+
 - `cosmian_fstool` to ease the generation of LUKS container with secret key stored in the TPM/vTPM
 
 Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli) can be used to interact with `cosmian_vm_agent` and verify the trustworthiness of a specific instance launched with _Cosmian VM_ as base image.
@@ -331,6 +339,7 @@ cosmian_vm --url https://my_app.dev app restart
 
 | Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ---------- | ----------- | ----------------- |
+| 0.1.5      | 1.2.5      | 4.17.0      | 0.3.0             |
 | 0.1.5      | 1.2.4      | 4.16.0      | 0.3.0             |
 | 0.1.5      | 1.2.3      | 4.16.0      | 0.3.0             |
 | 0.1.4      | 1.2.2      | 4.16.0      | 0.3.0             |

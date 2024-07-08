@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.5] - 2024-07-08
+
+### 🚀 Features
+
+- *(Azure)* Add KMS FIPS image. ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+- Bump KMS version to 4.17.0 ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+
+### 🐛 Bug Fixes
+
+- Fix uninstall of DEB/RPM packages ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+
+### ⚙️ Miscellaneous Tasks
+
+- *(Azure)* Clean OS disk if exist on packer build
+
 ## [1.2.4] - 2024-06-28
 
 ### 🐛 Bug Fixes
@@ -20,25 +35,25 @@ All notable changes to this project will be documented in this file.
 
 ## [1.2.3] - 2024-06-15
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Upgrade base image to 0.1.5: clean all authorized_keys and users ([#140](https://github.com/Cosmian/cosmian_vm/pull/140))
 
 ## [1.2.2] - 2024-06-13
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Update RHEL image by forcing installation of security update of shim-x64 package - if exists ([#137](https://github.com/Cosmian/cosmian_vm/pull/137))
 
 ## [1.2.1] - 2024-06-11
 
-### Features
+### 🚀 Features
 
 - Add support for Cosmian AI Runner images ([#117](https://github.com/Cosmian/cosmian_vm/pull/117))
 - Create frozen base image for Ubuntu/RHEL for GCP/Azure/AWS ([#120](https://github.com/Cosmian/cosmian_vm/pull/120))
 - Modify GRUB for Azure security check: add `console=ttyS0 earlyprintk=ttyS0` to GRUB_CMDLINE_LINUX ([#132](https://github.com/Cosmian/cosmian_vm/pull/132))
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - On KMS and AI Runner, remove unnecessarily opened ports ([#124](https://github.com/Cosmian/cosmian_vm/pull/124))
 - Freeze packer plugins versions ([#127](https://github.com/Cosmian/cosmian_vm/pull/127))
@@ -52,21 +67,21 @@ All notable changes to this project will be documented in this file.
 
 ## [1.2.0] - 2024-05-23
 
-### Features
+### 🚀 Features
 
 - Support Intel TDX on GCP and Azure ([#102](https://github.com/Cosmian/cosmian_vm/pull/102))
 - Support Ubuntu/RHEL image on AWS
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Handle error in Ansible command
 - Fix rust test `test_ratls_get_server_certificate`
 
-### Documentation
+### 📚 Documentation
 
 - Sync with public doc
 
-### Miscellaneous Tasks
+### ⚙️ Miscellaneous Tasks
 
 - Bump KMS version to 4.16.0
 
@@ -78,18 +93,18 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.2] - 2024-05-06
 
-### Features
+### 🚀 Features
 
 - Move to systemd service for Cosmian VM and Cosmian KMS ([#100](https://github.com/Cosmian/cosmian_vm/pull/100))
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Add/remove privilege escalation on local tasks ([#97](https://github.com/Cosmian/cosmian_vm/pull/97))
 - Create GCP firewall rule on test instances ([#101](https://github.com/Cosmian/cosmian_vm/pull/101))
 - Fix RUSTSEC-2024-0336 ([#103](https://github.com/Cosmian/cosmian_vm/pull/103))
 - Fetch TPM quote just after IMA event log to prevent side effects ([#104](https://github.com/Cosmian/cosmian_vm/pull/104))
 
-### Miscellaneous Tasks
+### ⚙️ Miscellaneous Tasks
 
 - Run KMS playbook on a raw VM ([#104](https://github.com/Cosmian/cosmian_vm/pull/104))
 
@@ -99,14 +114,14 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.1] - 2024-04-16
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - [Ansible] Automate reboot right after dracut IMA-relative ([#95](https://github.com/Cosmian/cosmian_vm/pull/95))
 - [Rust] Generate TPM keys before generate encrypted FS ([#95](https://github.com/Cosmian/cosmian_vm/pull/95))
 
 ## [1.1.0] - 2024-04-12
 
-### Features
+### 🚀 Features
 
 - For GCP (SEV) ([#94](https://github.com/Cosmian/cosmian_vm/pull/94)):
   - Deploy Cosmian VM/KMS images based on `ubuntu-2204-jammy-v20240319` and `rhel-9-v20240312`. Images deployment on tags only.
@@ -116,52 +131,52 @@ All notable changes to this project will be documented in this file.
 - For Azure (SEV):
   - Add Ansible Cosmian VM/KMS installation
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Fix reboot problem on RHEL ([#84](https://github.com/Cosmian/cosmian_vm/pull/84))
 
 ## [1.1.0-rc.4] - 2024-04-05
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Deployment on Azure via ansible ([#78](https://github.com/Cosmian/cosmian_vm/pull/78))
 - App init trouble + add KMS playbook ([#83](https://github.com/Cosmian/cosmian_vm/pull/83))
 
 ## [1.1.0-rc.3] - 2024-03-28
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Support for RHEL 9 on AMD SEV-SNP and Ubuntu 22.04 on Intel TDX is temporarily suspended because of some issues with `systemd-cryptenroll` when the instance reboot
 - Create application storage folder if it does not exist
 - Removed PCR-7 from systemd-cryptenroll for now because of failure at reboot (see <https://github.com/systemd/systemd/issues/24906>)
 - `/var/tmp` is now a `tmpfs` filesystem to allow `dracut` temp files
 
-### Features
+### 🚀 Features
 
 - Base images for GCP have been updated: `ubuntu-2204-jammy-v20240319` and `rhel-9-v20240312`
 
 ## [1.1.0-rc.2] - 2024-03-14
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Save LUKS password inside itself and write it even if the file does not exist
 - Update rhel license
 
-### Features
+### 🚀 Features
 
 - Add Azure SEV quote (bump tee-tools dependency to 1.3.1)
 - Add more context when cert and key files are not found (#70)
 - Cloud provider detection to avoid verifying REPORT_DATA
 - Adapt ansible script for ubuntu image on azure
 
-### Miscellaneous Tasks
+### ⚙️ Miscellaneous Tasks
 
 - Add business license for RHEL/Ubuntu Cosmian VM images
 - Disable cargo-audit: du to mbox 0.6.0 yanked
 
 ## [1.1.0-rc.1] - 2024-03-14
 
-### Bug Fixes
+### 🐛 Bug Fixes
 
 - Fix: try to use tmpfs for startup scripts
 - Fix: remove PCR-8 to decrypt LUKS container
@@ -178,7 +193,7 @@ All notable changes to this project will be documented in this file.
   - Don't start and autostart supervisord but enable service
 - Remove auto GH release on tag in order to add release candidates tags
 
-### Miscellaneous Tasks
+### ⚙️ Miscellaneous Tasks
 
 - Bump version of all crates to 1.1.0
 - Check agent on SEV/TDX runners (#49)
