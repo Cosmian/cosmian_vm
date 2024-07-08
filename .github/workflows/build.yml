@@ -23,7 +23,7 @@ jobs:
         id: cargo-cache
         uses: Swatinem/rust-cache@v2
         with:
-          prefix-key: ${{ inputs.distrib }}
+          key: ${{ inputs.distrib }}-${{ github.ref_name }}
           cache-directories: |
             - /lib/x86_64-linux-gnu/libtdx_attest.so
             - /lib/x86_64-linux-gnu/libtdx_attest.so.1
@@ -76,7 +76,8 @@ jobs:
         run: |
           rm -rf target/debian
           rm -rf target/generate-rpm
-          cargo install cargo-deb cargo-generate-rpm
+          cargo install --version 0.14.1 cargo-generate-rpm --force
+          cargo install --version 2.4.0 cargo-deb --force
           if [[ ${{ inputs.distrib }} = *'22'* ]]; then
             cargo deb -p cosmian_vm
             cargo deb -p cosmian_vm_agent
