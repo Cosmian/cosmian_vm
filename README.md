@@ -325,7 +325,8 @@ where `app.json` is the configuration file that the application expects. A JSON 
 
 It will be send to the `cosmian_vm_agent` and stored in the LUKS container in `/var/lib/cosmian_vm/data/app/app.conf`.
 
-> [!NOTE] > `data/app/` subpath is provided as `app_storage` variable by `agent.toml` configuration.
+> [!NOTE]
+> Subpath `data/app/` is provided as `app_storage` variable by `agent.toml` configuration.
 
 If you call again `init` the previous configuration file is overwritten.
 
