@@ -40,6 +40,7 @@
     delay: 5
     timeout: 60
     msg: Timeout waiting for 5555 to respond
+  delegate_to: localhost
 
 - name: Before anything - read logs of {{ check_app_name }}
   ansible.builtin.command:
