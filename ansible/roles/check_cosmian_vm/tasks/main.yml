@@ -82,7 +82,7 @@
     - listening
     - listening_cosmian_vm
 
-- name: Check Cosmian VM Agent is OK
+- name: Check if Cosmian VM Agent is OK
   ansible.builtin.uri:
     url: https://localhost:5555/ima/ascii
     validate_certs: false
@@ -177,6 +177,15 @@
       ansible.builtin.wait_for:
         path: /var/lib/cosmian_vm/data/cert.pem
         state: present
+
+    - name: Check if port 5555 is listening
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 5555
+        delay: 5
+        timeout: 60
+        msg: Timeout waiting for 5555 to respond
+      delegate_to: localhost
 
     - name: Read current reset count from snapshot
       ansible.builtin.shell:
