@@ -56,18 +56,7 @@ jobs:
         env:
           PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_TOKEN }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
+          PRODUCT: ${{ inputs.product }}
+          DISTRIBUTION: ${{ inputs.distrib }}
         run: |
-          set -ex
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
-            export COSMIAN_VM_VERSION="${{ github.ref_name }}"
-          else
-            export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          fi
-
-          if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
-          else
-            export AMI=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
-          fi
-
-          bash ../.github/scripts/aws-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
+          bash ../.github/scripts/aws-packer-build.sh

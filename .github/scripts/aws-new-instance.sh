@@ -5,9 +5,10 @@ set -x
 # Assign default values if parameters are not provided
 TECHNO="${1:-sev}"
 DISTRIB="${2:-ubuntu}"
+PREFIX="${3:-$(whoami)}"
+PREFIX=$(echo "$PREFIX" | sed 's/\./-/g; s/_/-/g; s/+/-/g')
 
-WHO="$(whoami)"
-NAME="$WHO-$TECHNO-$DISTRIB"
+NAME="$PREFIX-$TECHNO-$DISTRIB"
 
 CI_INSTANCES=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${NAME}" --query 'Reservations[].Instances[].[InstanceId]' --output text)
 for instance in $CI_INSTANCES; do
