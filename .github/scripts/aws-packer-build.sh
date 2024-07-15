@@ -1,10 +1,35 @@
-#!/bin/sh
+#!/bin/bash
+
+# Only for testing, DO NOT UNCOMMENT
+# DISTRIBUTION=rhel
+# PRODUCT=cosmian-vm
+# VERSION=0.1.5 # Optional
+# KMS_VERSION=4.17.0 # Provided by Github workflow
+# AI_RUNNER_VERSION=0.3.0 # Provided by Github workflow
+# GITHUB_REF=refs/tags/1.2.5 # Provided by Github Actions
+# GITHUB_REF_NAME=1.2.5 # Provided by Github Actions
+# IMAGE_NAME="cosmian-vm-${GITHUB_REF_NAME}-sev-${DISTRIBUTION}" # Only for testing
 
 set -ex
 
-PRODUCT=$1
-DISTRIBUTION=$2
-SOURCE_AMI=$3
+if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+  export COSMIAN_VM_VERSION="$GITHUB_REF_NAME"
+else
+  export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+fi
+
+if [ -n "${VERSION+x}" ]; then
+  BASE_VERSION=$(echo "$VERSION" | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+  BASE_IMAGE_NAME="base-image-${BASE_VERSION}-${DISTRIBUTION}-sev"
+else
+  if [ "$DISTRIBUTION" = "ubuntu" ]; then
+    BASE_IMAGE_NAME="ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1"
+  else
+    BASE_IMAGE_NAME="RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3"
+  fi
+fi
+
+SOURCE_AMI=$(aws ec2 describe-images --filters "Name=name,Values=${BASE_IMAGE_NAME}" --query "Images[*].{ID:ImageId}" --output text)
 
 VOLUME_SIZE=20
 
