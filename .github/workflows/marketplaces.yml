@@ -20,16 +20,16 @@ jobs:
     uses: ./.github/workflows/gcp_main.yml
     secrets: inherit
 
-  # aws:
-  #   needs: build-cosmian-vm-binaries
-  #   uses: ./.github/workflows/aws_main.yml
-  #   secrets: inherit
+  aws:
+    needs: build-cosmian-vm-binaries
+    uses: ./.github/workflows/aws_main.yml
+    secrets: inherit
 
   release:
     name: Release
     needs:
       - azure
       - gcp
-      # - aws
+      - aws
     secrets: inherit
     uses: ./.github/workflows/release.yml
