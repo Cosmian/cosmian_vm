@@ -260,3 +260,9 @@ jobs:
             --name $NEW_IMAGE_NAME \
             --source-region eu-west-1 \
             --source-image-id ${AMI}
+
+          aws ec2 copy-image \
+            --name $NEW_IMAGE_NAME \
+            --source-region eu-west-1 \
+            --source-image-id ${AMI} \
+            --region us-east-1
