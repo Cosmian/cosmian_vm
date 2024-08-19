@@ -10,7 +10,7 @@
 exclude: crate/agent/data|resources|crate/client/src/client.rs
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.2.0
+    rev: v3.4.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -60,7 +60,7 @@ repos:
         exclude: .github|.pre-commit-config.yaml|ansible/roles/ai_runner/tasks/main.yml
 
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v24.6.1
+    rev: v24.7.0
     hooks:
       - id: ansible-lint
         additional_dependencies:
@@ -68,13 +68,13 @@ repos:
         exclude: .github
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.22.8
+    rev: v1.23.6
     hooks:
       - id: typos
         exclude: ansible/roles/check_app/tasks/main.yml
 
   - repo: https://github.com/sirosen/texthooks
-    rev: 0.6.6
+    rev: 0.6.7
     hooks:
       - id: fix-smartquotes
       - id: fix-ligatures
@@ -119,14 +119,14 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 24.8.0
     hooks:
       - id: black
         # avoid clash with `double-quote-string-fixer`
         args: [--skip-string-normalization]
 
   - repo: https://github.com/Cosmian/git-hooks.git
-    rev: v1.0.25
+    rev: v1.0.27
     hooks:
       - id: cargo-format
       # - id: dprint-toml-fix
@@ -142,7 +142,7 @@ repos:
       - id: cargo-format # in last due to clippy fixes
 
   - repo: https://github.com/EmbarkStudios/cargo-deny
-    rev: 0.14.24 # choose your preferred tag
+    rev: 0.16.1 # choose your preferred tag
     hooks:
       - id: cargo-deny
         args: [--all-features, check]     # optionally modify the arguments for cargo-deny (default arguments shown here)
