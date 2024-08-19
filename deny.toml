@@ -72,6 +72,8 @@ feature-depth = 1
 ignore = [
     "RUSTSEC-2020-0071", # time du to certtool->acme-lib dependency
     "RUSTSEC-2023-0071", # rsa marving attack and no fixed upgrade
+    "RUSTSEC-2021-0145", # waiting for tdx-attest-rs to be upgraded: atty unmaintained
+    "RUSTSEC-2021-0139", # waiting for tdx-attest-rs to be upgraded: ansi_term unmaintained
     #"RUSTSEC-0000-0000",
     #{ id = "RUSTSEC-0000-0000", reason = "you can specify a reason the advisory is ignored" },
     #"a-crate-that-is-yanked@0.1.1", # you can also ignore yanked crate versions if you wish
