@@ -30,6 +30,6 @@ jobs:
     needs:
       - azure
       - gcp
-      - aws
+      # - aws
     secrets: inherit
     uses: ./.github/workflows/release.yml
