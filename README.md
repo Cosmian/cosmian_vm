@@ -58,6 +58,7 @@ Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crat
   * [Azure images](#azure-images)
     + [Update Unified Kernel Image: UKI](#update-unified-kernel-image-uki)
   * [GCP images](#gcp-images)
+    + [Note](#note)
   * [Marketplace Image content](#marketplace-image-content)
   * [Configuration file](#configuration-file)
   * [First Cosmian VM launch](#first-cosmian-vm-launch)
@@ -141,14 +142,22 @@ Links:
 |                 |           Official image           | OS image | OS version | Cosmian base image          |
 | :-------------- | :--------------------------------: | :------: | ---------- | --------------------------- |
 | GCP - Intel TDX |     ubuntu-2204-tdx-v20240220      |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240523a |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |          rhel-9-v20240515          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |          rhel-9-v20240815          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
 gcloud beta compute images list --filter="guestOsFeatures[].type=SEV_SNP_CAPABLE" --format=json > gcloud_images_SEV_SNP_CAPABLE.json
 gcloud beta compute images list --filter="guestOsFeatures[].type=TDX_CAPABLE" --format=json > gcloud_images_TDX.json
 ```
+
+#### Note
+
+Official images have been updated to ubuntu-2404-noble-amd64-v20240830 and rhel-9-v20240815 to fix the CVE-2024-6387:
+
+- <https://ubuntu.com/security/CVE-2024-6387>
+- <https://www.cert.ssi.gouv.fr/alerte/CERTFR-2024-ALE-009/>
+- and eventually <https://ubuntu.com/blog/ubuntu-regresshion-security-fix>
 
 ### Marketplace Image content
 
@@ -340,6 +349,7 @@ cosmian_vm --url https://my_app.dev app restart
 
 | Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ---------- | ----------- | ----------------- |
+| 0.1.6      | 1.2.6      | 4.17.0      | 0.3.0             |
 | 0.1.5      | 1.2.5      | 4.17.0      | 0.3.0             |
 | 0.1.5      | 1.2.4      | 4.16.0      | 0.3.0             |
 | 0.1.5      | 1.2.3      | 4.16.0      | 0.3.0             |

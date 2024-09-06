@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.6] - 2024-09-06
+
+### 🚀 Features
+
+- Make KMS/AI images usable even if KMS/AI softs have not been configured ([#148](https://github.com/Cosmian/cosmian_vm/pull/148))
+
+### 🐛 Bug Fixes
+
+- Upgrade GCP official images to last versions ([#149](https://github.com/Cosmian/cosmian_vm/pull/149)) and use Cosmian base image 0.1.6:
+  - ubuntu-2404-noble-amd64-v20240523a -> ubuntu-2404-noble-amd64-v20240830
+  - rhel-9-v20240515 -> rhel-9-v20240815
+
+### 🧪 CI
+
+- Wait for agent to be ready before verifying snapshot ([#144](https://github.com/Cosmian/cosmian_vm/pull/144))
+- *AWS*: Make aws-packer-build.sh standalone ([#145](https://github.com/Cosmian/cosmian_vm/pull/145))
+
+### ⚙️ Miscellaneous Tasks
+
+- Copy AWS images from eu to us for marketplace ([#146](https://github.com/Cosmian/cosmian_vm/pull/146))
+- Update crates versions for security reasons verified via `cargo deny` ([#147](https://github.com/Cosmian/cosmian_vm/pull/147))
+
 ## [1.2.5] - 2024-07-08
 
 ### 🚀 Features

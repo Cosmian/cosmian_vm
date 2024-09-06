@@ -111,7 +111,7 @@ mod tests {
             config,
             CosmianVmAgent {
                 agent: Agent {
-                    host: "127.0.0.1".to_string(),
+                    host: "127.0.0.1".to_owned(),
                     port: 5555,
                     ssl_certificate: PathBuf::from("data/cert.pem"),
                     ssl_private_key: PathBuf::from("data/key.pem"),
@@ -119,7 +119,7 @@ mod tests {
                 },
                 app: Some(App {
                     service_type: ServiceType::Supervisor,
-                    service_name: "cosmian_kms".to_string(),
+                    service_name: "cosmian_kms".to_owned(),
                     app_storage: PathBuf::from("data/app"),
                 })
             }
@@ -140,7 +140,7 @@ mod tests {
 
         let config = CosmianVmAgent {
             agent: Agent {
-                host: "127.0.0.1".to_string(),
+                host: "127.0.0.1".to_owned(),
                 port: 5555,
                 ssl_certificate: PathBuf::from(".")
                     .canonicalize()

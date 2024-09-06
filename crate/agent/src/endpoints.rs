@@ -26,7 +26,7 @@ use tss_esapi::Context;
 ///
 /// Note: require root privileges
 #[get("/ima/ascii")]
-pub async fn get_ima_ascii() -> ResponseWithError<Json<String>> {
+pub(crate) async fn get_ima_ascii() -> ResponseWithError<Json<String>> {
     Ok(Json(read_ima_ascii()?))
 }
 
@@ -34,7 +34,7 @@ pub async fn get_ima_ascii() -> ResponseWithError<Json<String>> {
 ///
 /// Note: require root privileges
 #[get("/ima/binary")]
-pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
+pub(crate) async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
     Ok(Json(read_ima_binary()?))
 }
 
@@ -45,7 +45,9 @@ pub async fn get_ima_binary() -> ResponseWithError<Json<Vec<u8>>> {
 ///
 /// Note: require root privileges
 #[get("/snapshot")]
-pub async fn get_snapshot(snapshot_worker: Data<Snapshot>) -> ResponseWithError<HttpResponse> {
+pub(crate) async fn get_snapshot(
+    snapshot_worker: Data<Snapshot>,
+) -> ResponseWithError<HttpResponse> {
     match snapshot::get_snapshot(&snapshot_worker) {
         Ok(Some(snapshot)) => Ok(HttpResponse::Ok().json(Some(snapshot))),
         Ok(None) => {
@@ -61,21 +63,23 @@ pub async fn get_snapshot(snapshot_worker: Data<Snapshot>) -> ResponseWithError<
 
 /// Remove the previously computed snapshot.
 #[delete("/snapshot")]
-pub async fn delete_snapshot(snapshot_worker: Data<Snapshot>) -> ResponseWithError<Json<()>> {
+pub(crate) async fn delete_snapshot(
+    snapshot_worker: Data<Snapshot>,
+) -> ResponseWithError<Json<()>> {
     reset_snapshot(&snapshot_worker)?;
     Ok(Json(()))
 }
 
 /// Return the TEE quote
 #[get("/quote/tee")]
-pub async fn get_tee_quote(
+pub(crate) async fn get_tee_quote(
     data: Query<QuoteParam>,
     certificate: Data<Vec<u8>>,
 ) -> ResponseWithError<Json<Vec<u8>>> {
     let data = data.into_inner();
     let report_data = forge_report_data_with_nonce(
         &data.nonce.try_into().map_err(|_| {
-            Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_string())
+            Error::BadRequest("Nonce should be a 32 bytes string (hex encoded)".to_owned())
         })?,
         &certificate,
     )?;
@@ -85,7 +89,7 @@ pub async fn get_tee_quote(
 
 /// Return the TPM quote
 #[get("/quote/tpm")]
-pub async fn get_tpm_quote(
+pub(crate) async fn get_tpm_quote(
     quote_param: Query<QuoteParam>,
     tpm_context: Data<Mutex<Option<Context>>>,
 ) -> ResponseWithError<Json<TpmQuoteResponse>> {
@@ -94,7 +98,7 @@ pub async fn get_tpm_quote(
         .map_err(|_| Error::Unexpected("TPM already in use".to_owned()))?;
 
     let tpm_context = tpm_context.as_mut().ok_or_else(|| {
-        Error::Unexpected("The agent is not configured to support TPM".to_string())
+        Error::Unexpected("The agent is not configured to support TPM".to_owned())
     })?;
 
     let quote_param = quote_param.into_inner();
@@ -129,7 +133,7 @@ pub async fn get_tpm_quote(
 
 /// Write the app configuration and starts the app
 #[post("/app/init")]
-pub async fn init_app(
+pub(crate) async fn init_app(
     data: Json<AppConf>,
     conf: Data<CosmianVmAgent>,
 ) -> ResponseWithError<Json<()>> {
@@ -138,7 +142,7 @@ pub async fn init_app(
     let Some(app_conf_agent) = &conf.app else {
         // No app configuration provided
         return Err(Error::BadRequest(
-            "No app section provided in Cosmian VM Agent configuration file".to_string(),
+            "No app section provided in Cosmian VM Agent configuration file".to_owned(),
         ));
     };
 
@@ -169,11 +173,11 @@ pub async fn init_app(
 ///
 /// Stop the service, decrypt and copy app conf, start the service.
 #[post("/app/restart")]
-pub async fn restart_app(conf: Data<CosmianVmAgent>) -> ResponseWithError<Json<()>> {
+pub(crate) async fn restart_app(conf: Data<CosmianVmAgent>) -> ResponseWithError<Json<()>> {
     let Some(app_conf_agent) = &conf.app else {
         // No app configuration provided
         return Err(Error::BadRequest(
-            "No app section provided in Cosmian VM Agent configuration file".to_string(),
+            "No app section provided in Cosmian VM Agent configuration file".to_owned(),
         ));
     };
 

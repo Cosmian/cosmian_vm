@@ -37,24 +37,30 @@ if [ "$TECHNO" = "tdx" ]; then
     --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
-    # Cosmian Ubuntu SEV
+    # Base Ubuntu SEV
     IMAGE="base-image-0-1-5-ubuntu-sev"
+    IMAGE_PROJECT="cosmian-dev"
+    # Cosmian Ubuntu SEV
+    IMAGE="cosmian-vm-1-2-5-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian KMS Ubuntu SEV
     IMAGE="cosmian-vm-1-2-5-kms-4-17-0-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
-    IMAGE="ubuntu-2404-noble-amd64-v20240523a"
+    IMAGE="ubuntu-2404-noble-amd64-v20240830"
     IMAGE_PROJECT="ubuntu-os-cloud"
   else
-    # Cosmian Ubuntu SEV
+    # Base Ubuntu SEV
     IMAGE="base-image-0-1-5-rhel-sev"
+    IMAGE_PROJECT="cosmian-dev"
+    # Cosmian Ubuntu SEV
+    IMAGE="cosmian-vm-1-2-5-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian Ubuntu SEV
     IMAGE="cosmian-vm-1-2-5-kms-4-17-0-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rhel-9-v20240515"
+    IMAGE="rhel-9-v20240815"
     IMAGE_PROJECT="rhel-cloud"
   fi
   gcloud beta compute instances create "$NAME" \

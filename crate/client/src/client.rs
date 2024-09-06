@@ -115,7 +115,7 @@ impl CosmianVmClient {
         cli_version: &str,
         accept_invalid_certs: bool,
     ) -> Result<Self, Error> {
-        let agent_url = agent_url.strip_suffix('/').unwrap_or(agent_url).to_string();
+        let agent_url = agent_url.strip_suffix('/').unwrap_or(agent_url).to_owned();
 
         let mut headers = HeaderMap::new();
         headers.insert("Connection", HeaderValue::from_static("keep-alive"));
@@ -234,8 +234,8 @@ async fn handle_error(response: Response) -> Result<String, Error> {
         Ok(text)
     } else {
         Ok(match status {
-            StatusCode::NOT_FOUND => "Endpoint does not exist".to_string(),
-            StatusCode::UNAUTHORIZED => "Bad authorization token".to_string(),
+            StatusCode::NOT_FOUND => "Endpoint does not exist".to_owned(),
+            StatusCode::UNAUTHORIZED => "Bad authorization token".to_owned(),
             _ => format!("{status} {text}"),
         })
     }
@@ -244,7 +244,7 @@ async fn handle_error(response: Response) -> Result<String, Error> {
 /// Build a `TLSClient` to use with a Cosmian VM Agent running inside a tee
 /// The TLS verification is the basic one but also include the verification of the leaf certificate
 /// The TLS socket is mounted since the leaf certificate is exactly the same than the expected one.
-pub fn build_tls_client_tee(
+pub(crate) fn build_tls_client_tee(
     leaf_cert: &Certificate,
     accept_invalid_certs: bool,
 ) -> Result<ClientBuilder, Error> {
@@ -282,7 +282,7 @@ pub fn get_server_certificate_from_url(url: &str) -> Result<Vec<u8>, Error> {
     let agent_url_parsed: Url = Url::parse(url)?;
     let host = agent_url_parsed
         .host_str()
-        .ok_or_else(|| Error::Default("Host not found in agent url".to_string()))?;
+        .ok_or_else(|| Error::Default("Host not found in agent url".to_owned()))?;
     let port = agent_url_parsed.port().unwrap_or(443);
 
     get_server_certificate(host, port)
