@@ -6,7 +6,7 @@ use tss_esapi::{Context, TctiNameConf};
 
 pub(crate) fn call(exe: &str, args: &[&str], background: bool) -> Result<Option<String>, Error> {
     if background {
-        let _ = Command::new(exe).args(args).spawn()?;
+        Command::new(exe).args(args).spawn()?;
         return Ok(None);
     }
 

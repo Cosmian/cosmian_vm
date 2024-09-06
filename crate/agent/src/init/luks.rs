@@ -29,7 +29,7 @@ pub(crate) fn generate_encrypted_fs() -> Result<(), Error> {
         .collect();
 
     let output = call(
-        &std::env::var("COSMIAN_VM_FSTOOL").unwrap_or(FSTOOL_PATH.to_string()),
+        &std::env::var("COSMIAN_VM_FSTOOL").unwrap_or(FSTOOL_PATH.to_owned()),
         &[
             "--size",
             FSTOOL_DEFAULT_SIZE,

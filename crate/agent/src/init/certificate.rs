@@ -94,7 +94,7 @@ fn _generate_self_signed_cert(
             .map(|san| match san.parse::<Ipv4Addr>() {
                 Ok(ip) => GeneralName::from(IpAddr::V4(ip)),
                 Err(_) => GeneralName::DnsName(
-                    Ia5String::try_from((*san).to_string())
+                    Ia5String::try_from((*san).to_owned())
                         .expect("SAN contains non-ascii characters"),
                 ),
             })

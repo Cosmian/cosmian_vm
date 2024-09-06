@@ -6,7 +6,7 @@ use rustls::{
 };
 
 /// A TLS verifier adding the ability to match the leaf certificate with a trusted one.
-pub struct LeafCertificateVerifier {
+pub(crate) struct LeafCertificateVerifier {
     // The certificate we expect to see in the TLS connection
     expected_cert: Certificate,
     // A default verifier to run anyway
@@ -14,7 +14,10 @@ pub struct LeafCertificateVerifier {
 }
 
 impl LeafCertificateVerifier {
-    pub fn new(expected_cert: &Certificate, default_verifier: Arc<dyn ServerCertVerifier>) -> Self {
+    pub(crate) fn new(
+        expected_cert: &Certificate,
+        default_verifier: Arc<dyn ServerCertVerifier>,
+    ) -> Self {
         Self {
             expected_cert: expected_cert.clone(),
             default_verifier,
@@ -35,7 +38,7 @@ impl ServerCertVerifier for LeafCertificateVerifier {
         // Verify the leaf certificate
         if !end_entity.eq(&self.expected_cert) {
             return Err(RustTLSError::General(
-                "Leaf certificate doesn't match the expected one".to_string(),
+                "Leaf certificate doesn't match the expected one".to_owned(),
             ));
         }
 
@@ -52,7 +55,7 @@ impl ServerCertVerifier for LeafCertificateVerifier {
 }
 
 /// Remove all verifications
-pub struct NoVerifier;
+pub(crate) struct NoVerifier;
 
 impl ServerCertVerifier for NoVerifier {
     fn verify_server_cert(

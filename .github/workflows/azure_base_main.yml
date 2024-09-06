@@ -26,6 +26,6 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      base-version: 0.1.5
+      base-version: 0.1.6
       kms-version: 0.0.0
       ai-runner-version: 0.0.0

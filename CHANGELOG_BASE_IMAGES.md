@@ -1,5 +1,11 @@
 # Cosmian Base Image Changelog
 
+## [0.1.6] - 2024-09-06
+
+- Upgrade GCP official images to last versions: ([#149](https://github.com/Cosmian/cosmian_vm/pull/149))
+  - ubuntu-2404-noble-amd64-v20240523a -> ubuntu-2404-noble-amd64-v20240830
+  - rhel-9-v20240515 -> rhel-9-v20240815
+
 ## [0.1.5] - 2024-06-15
 
 - Clean RHEL/Ubuntu after builds: ([#140](https://github.com/Cosmian/cosmian_vm/pull/140))

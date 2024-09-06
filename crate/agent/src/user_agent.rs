@@ -46,7 +46,7 @@ fn _check_user_agent(user_agent: &str, minimum_version: Version) -> Result<(), E
             let version = Version::parse(version_as_string);
 
             if let Some(mut version) = version {
-                // We want to analyse the version 0.6a1 as 0.6 to compare below.
+                // We want to analyze the version 0.6a1 as 0.6 to compare below.
                 version.pre = None;
                 version.post = None;
                 version.dev = None;
@@ -81,7 +81,7 @@ mod tests {
 
     use super::_check_user_agent;
 
-    pub fn minimum_version() -> Version {
+    fn minimum_version() -> Version {
         Version {
             epoch: 0,
             release: vec![1, 2],

@@ -35,7 +35,7 @@ jobs:
       product: ${{ matrix.product }}
       kms-version: 4.17.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.5
+      base-version: 0.1.6
 
   # Too many failures when rebooting EC2
   # ansible:
