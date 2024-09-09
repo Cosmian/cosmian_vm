@@ -162,10 +162,11 @@ jobs:
         env:
           IP_ADDR: ${{ steps.run-aws-instance.outputs.IP_ADDR }}
           SSH_KEY: ${{ secrets.PACKER_AWS_SSH_PRIVATE_KEY }}
+        shell: bash
         run: |
           set -ex
 
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+          if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"

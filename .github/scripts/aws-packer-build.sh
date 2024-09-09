@@ -12,7 +12,7 @@
 
 set -ex
 
-if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
   export COSMIAN_VM_VERSION="$GITHUB_REF_NAME"
 else
   export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"

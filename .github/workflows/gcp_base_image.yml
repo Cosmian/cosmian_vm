@@ -59,9 +59,10 @@ jobs:
           PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_TOKEN }}
           IMAGE_NAME: ${{ steps.env.outputs.IMAGE_NAME }}
           TECHNO: ${{ inputs.techno }}
+        shell: bash
         run: |
           set -ex
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+          if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"

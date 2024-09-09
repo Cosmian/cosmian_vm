@@ -5,7 +5,7 @@ set -ex
 VERSION=1.2.6
 
 set -x
-if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
   export BRANCH="${GITHUB_REF_NAME}"
 else
   export BRANCH="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
