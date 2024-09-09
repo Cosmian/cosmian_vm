@@ -86,12 +86,13 @@ jobs:
           AI_RUNNER_VERSION: ${{ inputs.ai-runner-version }}
           TECHNO: ${{ inputs.techno }}
           VERSION: ${{ inputs.base-version }}
+        shell: bash
         run: |
           set -ex
 
           BASE_VERSION=$(echo $VERSION | sed 's/\./-/g; s/_/-/g; s/+/-/g')
 
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+          if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             export COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             export COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
@@ -177,12 +178,13 @@ jobs:
       - name: Check Cosmian VM
         env:
           IP_ADDR: ${{ steps.run-gcp-instance.outputs.IP_ADDR }}
+        shell: bash
         run: |
           set -ex
           cd ansible
           python3 -m pip install -r python_modules.txt
 
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+          if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"

@@ -70,11 +70,12 @@ jobs:
         id: run-azure-instance
         env:
           CI_INSTANCE: ${{ steps.env.outputs.CI_INSTANCE }}
+        shell: bash
         run: |
           set -exo pipefail
 
           IMAGE_VERSION="0.0.0"
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+          if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               IMAGE_VERSION="${GITHUB_REF_NAME}"
             elif [ "${{ inputs.product }}" = "ai-runner" ]; then
@@ -119,10 +120,11 @@ jobs:
       - name: Check Cosmian VM
         env:
           IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
+        shell: bash
         run: |
           set -ex
 
-          if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
+          if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             COSMIAN_VM_VERSION="${{ github.ref_name }}"
           else
             COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
