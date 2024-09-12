@@ -1,8 +1,12 @@
 # Cosmian Base Image Changelog
 
+## [0.1.7] - 2024-09-12
+
+- Du to Azure certification process, remove all old linux kernels on Redhat images ([#152](https://github.com/Cosmian/cosmian_vm/pull/152))
+
 ## [0.1.6] - 2024-09-06
 
-- Upgrade GCP official images to last versions: ([#149](https://github.com/Cosmian/cosmian_vm/pull/149))
+- Du to [CVE-2024-6387](https://ubuntu.com/security/CVE-2024-6387), upgrade GCP official images to last versions: ([#149](https://github.com/Cosmian/cosmian_vm/pull/149))
   - ubuntu-2404-noble-amd64-v20240523a -> ubuntu-2404-noble-amd64-v20240830
   - rhel-9-v20240515 -> rhel-9-v20240815
 

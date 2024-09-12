@@ -2,7 +2,7 @@
 
 set -ex
 
-VERSION=1.2.6
+VERSION=1.2.7
 
 set -x
 if [[ ${GITHUB_REF} = *'refs/tags/'* ]]; then
