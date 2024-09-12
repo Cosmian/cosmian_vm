@@ -83,13 +83,6 @@
       with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
       when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
 
-    - name: Remove old installed kernel-uki-virt versions
-      ansible.builtin.dnf:
-        name: "{{ item.name }}-{{ item.version }}-{{ item.release }}"
-        state: absent
-      with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-uki-virt'] }}"
-      when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
-
     - name: Get installed versions of all packages after cleanup
       ansible.builtin.package_facts:
         manager: auto
