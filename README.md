@@ -127,7 +127,7 @@ aws ec2 describe-images --output json > aws_list.json
 | Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
-az vm list> azure_list.json
+az vm image list --all > azure_list.json
 ```
 
 #### Update Unified Kernel Image: UKI
@@ -139,11 +139,11 @@ Links:
 
 ### GCP images
 
-|                 |           Official image           | OS image | OS version | Cosmian base image          |
-| :-------------- | :--------------------------------: | :------: | ---------- | --------------------------- |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220      |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx |
+|                 |          Official image           | OS image | OS version | Cosmian base image          |
+| :-------------- | :-------------------------------: | :------: | ---------- | --------------------------- |
+| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx |
 | GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |          rhel-9-v20240815          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
+| GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
