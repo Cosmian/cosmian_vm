@@ -33,7 +33,7 @@ jobs:
       min-cpu-platform: AMD Milan
       mode: beta
       product: ${{ matrix.product }}
-      kms-version: last_build/fix/windows_build
+      kms-version: 4.18.0
       ai-runner-version: 0.3.0
 
   post-clean-gcp-resources:

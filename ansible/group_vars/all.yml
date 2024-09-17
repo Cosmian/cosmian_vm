@@ -2,7 +2,7 @@
 cosmian_vm_version: 1.2.7
 package_version: 1.2.7
 cosmian_kms_version: 4.18.0
-kms_package_version: 4.17.0
+kms_package_version: 4.18.0
 cosmian_ai_runner_version: 0.3.0
 
 nginx_user: root

@@ -18,11 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm, kms, kms-fips]
-        exclude:
-          - product: kms-fips
-            distrib: rhel
-
+        product: [cosmian-vm]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -32,7 +28,7 @@ jobs:
       techno: sev
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: last_build/fix/windows_build
+      kms-version: 4.18.0
       ai-runner-version: 0.3.0
 
   post-clean-resources:
