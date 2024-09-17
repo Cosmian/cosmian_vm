@@ -28,7 +28,7 @@ jobs:
       techno: sev
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.18.0
+      kms-version: last_build/fix/windows_build
       ai-runner-version: 0.3.0
 
   post-clean-resources:
