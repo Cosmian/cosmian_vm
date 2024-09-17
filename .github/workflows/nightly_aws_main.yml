@@ -33,9 +33,9 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.17.0
+      kms-version: 4.18.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.6
+      base-version: 0.1.7
 
   # Too many failures when rebooting EC2
   # ansible:
@@ -60,7 +60,7 @@ jobs:
   #     techno: sev
   #     distrib: ${{ matrix.distrib }}
   #     product: ${{ matrix.product }}
-  #     kms-version: 4.17.0
+  #     kms-version: 4.18.0
   #     ai-runner-version: 0.3.0
 
   post-clean-resources:

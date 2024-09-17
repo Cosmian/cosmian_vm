@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.7] - 2024-09-12
+
+### 🐛 Bug Fixes
+
+- Cleanup old RedHat kernels for Azure certification process ([#150](https://github.com/Cosmian/cosmian_vm/pull/150))
+
+### 🧪 CI
+
+- Bump KMS version to 4.18.0
+- Small fix about tags detection in Bash ([#152](https://github.com/Cosmian/cosmian_vm/pull/152))
+
 ## [1.2.6] - 2024-09-06
 
 ### 🚀 Features
@@ -10,7 +21,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- Upgrade GCP official images to last versions ([#149](https://github.com/Cosmian/cosmian_vm/pull/149)) and use Cosmian base image 0.1.6:
+- Du to [CVE-2024-6387](https://ubuntu.com/security/CVE-2024-6387), upgrade GCP official images to last versions ([#149](https://github.com/Cosmian/cosmian_vm/pull/149)) and use Cosmian base image 0.1.6:
   - ubuntu-2404-noble-amd64-v20240523a -> ubuntu-2404-noble-amd64-v20240830
   - rhel-9-v20240515 -> rhel-9-v20240815
 
