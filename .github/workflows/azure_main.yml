@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [rhel]
         product: [cosmian-vm]
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
@@ -32,7 +32,7 @@ jobs:
       ai-runner-version: 0.3.0
 
   post-clean-resources:
-    if: success() || cancelled() || failure()
+    if: success() || cancelled() 
     needs:
       - sev-image
     uses: ./.github/workflows/azure_clean.yml
