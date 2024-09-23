@@ -50,46 +50,46 @@
   ansible.builtin.debug:
     var: home_folders
 
-- name: Clean old kernel images
-  tags: clean_old_kernels
-  when: ansible_distribution == 'RedHat'
-  block:
-    - name: Get installed versions of all packages
-      ansible.builtin.package_facts:
-        manager: auto
-      register: installed_packages
+# - name: Clean old kernel images
+#   tags: clean_old_kernels
+#   when: ansible_distribution == 'RedHat'
+#   block:
+#     - name: Get installed versions of all packages
+#       ansible.builtin.package_facts:
+#         manager: auto
+#       register: installed_packages
 
-    - name: Display kernel version
-      ansible.builtin.debug:
-        msg: "echo {{ ansible_kernel }}"
+#     - name: Display kernel version
+#       ansible.builtin.debug:
+#         msg: "echo {{ ansible_kernel }}"
 
-    - name: Extract version from ansible_kernel
-      ansible.builtin.set_fact:
-        kernel_release: "{{ ansible_kernel | regex_search('([0-9]+\\.[0-9]+\\.[0-9]+\\.[a-zA-Z0-9_]+)') }}"
+#     - name: Extract version from ansible_kernel
+#       ansible.builtin.set_fact:
+#         kernel_release: "{{ ansible_kernel | regex_search('([0-9]+\\.[0-9]+\\.[0-9]+\\.[a-zA-Z0-9_]+)') }}"
 
-    - name: Extract main kernel version (X.Y.Z)
-      ansible.builtin.set_fact:
-        kernel_main_version: "{{ ansible_kernel | regex_search('^[0-9]+\\.[0-9]+\\.[0-9]+') }}"
+#     - name: Extract main kernel version (X.Y.Z)
+#       ansible.builtin.set_fact:
+#         kernel_main_version: "{{ ansible_kernel | regex_search('^[0-9]+\\.[0-9]+\\.[0-9]+') }}"
 
-    - name: Show extracted kernel info
-      ansible.builtin.debug:
-        msg: "Extracted kernel version: {{ kernel_main_version }} and {{ kernel_release }}"
-      tags: clean_old_kernels
+#     - name: Show extracted kernel info
+#       ansible.builtin.debug:
+#         msg: "Extracted kernel version: {{ kernel_main_version }} and {{ kernel_release }}"
+#       tags: clean_old_kernels
 
-    - name: Remove old installed kernel-modules-core versions
-      ansible.builtin.dnf:
-        name: "{{ item.name }}-{{ item.version }}-{{ item.release }}"
-        state: absent
-      with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
-      when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
+#     - name: Remove old installed kernel-modules-core versions
+#       ansible.builtin.dnf:
+#         name: "{{ item.name }}-{{ item.version }}-{{ item.release }}"
+#         state: absent
+#       with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
+#       when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
 
-    - name: Get installed versions of all packages after cleanup
-      ansible.builtin.package_facts:
-        manager: auto
-      register: installed_packages
+#     - name: Get installed versions of all packages after cleanup
+#       ansible.builtin.package_facts:
+#         manager: auto
+#       register: installed_packages
 
-    - name: Fail if old kernel-modules-core versions are found
-      ansible.builtin.fail:
-        name: Old version found {{ item.name }}-{{ item.version }}-{{ item.release }}
-      with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
-      when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
+#     - name: Fail if old kernel-modules-core versions are found
+#       ansible.builtin.fail:
+#         name: Old version found {{ item.name }}-{{ item.version }}-{{ item.release }}
+#       with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
+#       when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
