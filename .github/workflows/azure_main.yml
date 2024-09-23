@@ -32,7 +32,7 @@ jobs:
       ai-runner-version: 0.3.0
 
   post-clean-resources:
-    if: success() || cancelled()
+    if: success() || cancelled() || failure()
     needs:
       - sev-image
     uses: ./.github/workflows/azure_clean.yml
