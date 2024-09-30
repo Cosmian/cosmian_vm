@@ -1,5 +1,9 @@
 # Cosmian Base Image Changelog
 
+## [0.1.8] - 2024-09-30
+
+- Du to Azure certification process, use the last RedHat kernel on Redhat images ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))
+
 ## [0.1.7] - 2024-09-12
 
 - Du to Azure certification process, remove all old linux kernels on Redhat images ([#152](https://github.com/Cosmian/cosmian_vm/pull/152))

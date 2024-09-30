@@ -50,7 +50,7 @@ assets = [
     "555",
   ],
   [
-    "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3",
+    "/lib/x86_64-linux-gnu/libtdx_attest.so.1.22.100.3",
     "usr/sbin/libtdx_attest.so.1",
     "555",
   ],
@@ -64,7 +64,7 @@ assets = [
 [package.metadata.generate-rpm]
 license = "BUSL-1.1"
 assets = [
-  { source = "/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3", dest = "/usr/sbin/libtdx_attest.so.1", mode = "555" },
+  { source = "/lib/x86_64-linux-gnu/libtdx_attest.so.1.22.100.3", dest = "/usr/sbin/libtdx_attest.so.1", mode = "555" },
   { source = "target/release/cosmian_vm", dest = "/usr/sbin/cosmian_vm", mode = "555" },
 ]
 auto-req = "no" # do not try to discover .so dependencies

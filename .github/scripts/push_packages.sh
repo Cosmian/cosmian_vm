@@ -2,7 +2,7 @@
 
 set -ex
 
-VERSION=1.2.7
+VERSION=1.2.8
 
 set -x
 if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
@@ -24,7 +24,7 @@ scp -o 'StrictHostKeyChecking no' -i /root/.ssh/id_rsa \
   "./$ARTIFACT_FOLDER/target/release/cosmian_certtool" \
   "./$ARTIFACT_NAME/lib/x86_64-linux-gnu/libtdx_attest.so" \
   "./$ARTIFACT_NAME/lib/x86_64-linux-gnu/libtdx_attest.so.1" \
-  "./$ARTIFACT_NAME/lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3" \
+  "./$ARTIFACT_NAME/lib/x86_64-linux-gnu/libtdx_attest.so.1.22.100.3" \
   cosmian@package.cosmian.com:"$DESTINATION_DIR/${DISTRIB}/"
 
 if [[ "${DISTRIB}" = *'ubuntu-22'* ]]; then

@@ -3,11 +3,11 @@
 # Only for testing, DO NOT UNCOMMENT
 # DISTRIBUTION=rhel
 # PRODUCT=cosmian-vm
-# VERSION=0.1.7 # Optional
+# VERSION=0.1.8 # Optional
 # KMS_VERSION=4.18.0 # Provided by Github workflow
 # AI_RUNNER_VERSION=0.3.0 # Provided by Github workflow
-# GITHUB_REF=refs/tags/1.2.7 # Provided by Github Actions
-# GITHUB_REF_NAME=1.2.7 # Provided by Github Actions
+# GITHUB_REF=refs/tags/1.2.8 # Provided by Github Actions
+# GITHUB_REF_NAME=1.2.8 # Provided by Github Actions
 # IMAGE_NAME="cosmian-vm-${GITHUB_REF_NAME}-sev-${DISTRIBUTION}" # Only for testing
 
 set -ex

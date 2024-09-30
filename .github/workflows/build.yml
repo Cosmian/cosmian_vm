@@ -27,7 +27,7 @@ jobs:
           cache-directories: |
             - /lib/x86_64-linux-gnu/libtdx_attest.so
             - /lib/x86_64-linux-gnu/libtdx_attest.so.1
-            - /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
+            - /lib/x86_64-linux-gnu/libtdx_attest.so.1.22.100.3
 
       - name: Install dependencies
         if: steps.cargo-cache.outputs.cache-hit != 'true'
@@ -104,7 +104,7 @@ jobs:
             target/release/cosmian_certtool
             /lib/x86_64-linux-gnu/libtdx_attest.so
             /lib/x86_64-linux-gnu/libtdx_attest.so.1
-            /lib/x86_64-linux-gnu/libtdx_attest.so.1.21.100.3
+            /lib/x86_64-linux-gnu/libtdx_attest.so.1.22.100.3
           retention-days: 1
           if-no-files-found: error
 
