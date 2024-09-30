@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Du to Azure certification process, use the last RedHat kernel on Redhat images ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))
 
+### ⚙️ Miscellaneous Tasks
+
+- Bump libtdx_attest.so from 1.21.100.3 to 1.22.100.3 ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))
+
 ## [1.2.7] - 2024-09-12
 
 ### 🐛 Bug Fixes
