@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.8] - 2024-09-30
+
+### 🧪 CI
+
+- Du to Azure certification process, use the last RedHat kernel on Redhat images ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))
+
 ## [1.2.7] - 2024-09-12
 
 ### 🐛 Bug Fixes

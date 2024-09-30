@@ -48,26 +48,24 @@ Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crat
 
 ## Table of contents
 
-<!-- toc -->
-
-- [Setup flow](#setup-flow)
-- [Snapshot of the system](#snapshot-of-the-system)
-- [Verification of the remote instance](#verification-of-the-remote-instance)
-- [Cloud providers support](#cloud-providers-support)
-  * [AWS images](#aws-images)
-  * [Azure images](#azure-images)
-    + [Update Unified Kernel Image: UKI](#update-unified-kernel-image-uki)
-  * [GCP images](#gcp-images)
-    + [Note](#note)
-  * [Marketplace Image content](#marketplace-image-content)
-  * [Configuration file](#configuration-file)
-  * [First Cosmian VM launch](#first-cosmian-vm-launch)
-  * [Handle Cosmian VM status](#handle-cosmian-vm-status)
-  * [Usage](#usage)
-  * [Provide secrets without SSH access](#provide-secrets-without-ssh-access)
-- [Versions correspondence](#versions-correspondence)
-
-<!-- tocstop -->
+- [Cosmian VM](#cosmian-vm)
+  - [Table of contents](#table-of-contents)
+  - [Setup flow](#setup-flow)
+  - [Snapshot of the system](#snapshot-of-the-system)
+  - [Verification of the remote instance](#verification-of-the-remote-instance)
+  - [Cloud providers support](#cloud-providers-support)
+    - [AWS images](#aws-images)
+    - [Azure images](#azure-images)
+      - [Update Unified Kernel Image: UKI](#update-unified-kernel-image-uki)
+    - [GCP images](#gcp-images)
+      - [Note](#note)
+    - [Marketplace Image content](#marketplace-image-content)
+    - [Configuration file](#configuration-file)
+    - [First Cosmian VM launch](#first-cosmian-vm-launch)
+    - [Handle Cosmian VM status](#handle-cosmian-vm-status)
+    - [Usage](#usage)
+    - [Provide secrets without SSH access](#provide-secrets-without-ssh-access)
+  - [Versions correspondence](#versions-correspondence)
 
 ## Setup flow
 
@@ -120,11 +118,11 @@ aws ec2 describe-images --output json > aws_list.json
 
 ### Azure images
 
-|                   |                        Official image                         | OS image | OS version      | Cosmian base image    | Version |
-| :---------------- | :-----------------------------------------------------------: | :------: | --------------- | --------------------- | ------- |
-| Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-tdx | X.Y.Z   |
-| Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | base-image-rhel-sev   | X.Y.Z   |
+|                   |                        Official image                         | OS image | OS version      | Kernel version   | Cosmian base image    | Version |
+| :---------------- | :-----------------------------------------------------------: | :------: | --------------- | ---------------- | --------------------- | ------- |
+| Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure | base-image-ubuntu-tdx | X.Y.Z   |
+| Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  |                  | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
 az vm image list --all > azure_list.json
