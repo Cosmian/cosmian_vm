@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### 🧪 CI
 
 - Du to Azure certification process, use the last RedHat kernel on Redhat images ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))
+  - Cosmian VM, KMS and AI runner images are now based on Cosmian Base Image version 0.1.8
 
 ### ⚙️ Miscellaneous Tasks
 
