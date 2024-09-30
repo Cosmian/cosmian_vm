@@ -118,11 +118,11 @@ aws ec2 describe-images --output json > aws_list.json
 
 ### Azure images
 
-|                   |                        Official image                         | OS image | OS version      | Kernel version   | Cosmian base image    | Version |
-| :---------------- | :-----------------------------------------------------------: | :------: | --------------- | ---------------- | --------------------- | ------- |
-| Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure | base-image-ubuntu-tdx | X.Y.Z   |
-| Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  |                  | base-image-rhel-sev   | X.Y.Z   |
+|                   |                        Official image                         | OS image | OS version      | Kernel version               | Cosmian base image    | Version |
+| :---------------- | :-----------------------------------------------------------: | :------: | --------------- | ---------------------------- | --------------------- | ------- |
+| Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-tdx | X.Y.Z   |
+| Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
 az vm image list --all > azure_list.json
