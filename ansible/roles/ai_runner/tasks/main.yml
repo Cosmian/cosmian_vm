@@ -23,7 +23,6 @@
   ansible.builtin.package:
     name:
       - nginx
-      - virtualenv
       - pip
     state: present
 
@@ -38,7 +37,8 @@
 - name: Install Cosmian AI Runner WHL
   ansible.builtin.pip:
     name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
-    virtualenv: /src/cosmian-ai-runner
+    virtualenv_command: python3 -m venv
+    virtualenv: /opt/venv/cosmian-ai-runner
 
 - name: Add Cosmian AI Runner systemd service
   ansible.builtin.template:
