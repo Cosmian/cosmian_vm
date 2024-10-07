@@ -6,15 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### 🚀 Features
 
-- *RHEL*: Use custom SELinux module to enforce IMA on any files Add KMS FIPS image. ([#151](https://github.com/Cosmian/cosmian_vm/pull/151))
+- *RHEL*:
+  - Use custom SELinux module to enforce IMA on any files Add KMS FIPS image. ([#151](https://github.com/Cosmian/cosmian_vm/pull/151))
+  - Build VM/KMS/AI Runner images also for TDX on RHEL ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
 
-### 🐛 Bug Fixes
+### 🧪 CI
 
-- Fix uninstall of DEB/RPM packages ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+- Make CI non-blocking a tags even if tests fail ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
 
 ### ⚙️ Miscellaneous Tasks
 
-- 
+- *Azure: RHEL*: Replace old image `9_3_cvm_sev_snp` by `9_4_cvm` ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
 
 ## [1.2.8] - 2024-09-30
 
