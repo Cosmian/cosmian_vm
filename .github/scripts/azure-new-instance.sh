@@ -35,7 +35,7 @@ else
     IMAGE_NAME="Canonical:0001-com-ubuntu-confidential-vm-jammy:22_04-lts-cvm:latest"
   else
     # Redhat SEV
-    IMAGE_NAME="redhat:rhel-cvm:9_3_cvm_sev_snp:latest"
+    IMAGE_NAME="redhat:rhel-cvm:9_4_cvm:latest"
   fi
 
   az vm create -g packer-snp -n "$NAME" \

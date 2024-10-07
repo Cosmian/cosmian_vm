@@ -19,7 +19,7 @@ To proceed a new release, please follow the steps below:
    - Edit the [CHANGELOG.md](CHANGELOG.md) file to add a new line describing the `Cosmian Base Image` changes.
    - Replace all old version numbers of the Cosmian Base VM image in:
      - `aws_base_image.yml`, `azure_base_image.yml` and `gcp_base_image.yml`
-     - `nightly_aws_main.yml`, `nightly_azure_main.yml` and `nightly_gcp_main.yml`
+     - `release_aws_main.yml`, `release_azure_main.yml` and `release_gcp_main.yml`
    - Commit the changes: `git commit -am "chore: create new Cosmian Base Image version" && git push`
    - Eventually discard the pipelines related to the last commit.
    - Run manually the workflow [Manual base images recreation](https://github.com/Cosmian/cosmian_vm/actions/workflows/base_images_marketplaces.yml)

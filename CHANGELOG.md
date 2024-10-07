@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2024-XX-XX
+
+### 🚀 Features
+
+- *RHEL*: Use custom SELinux module to enforce IMA on any files Add KMS FIPS image. ([#151](https://github.com/Cosmian/cosmian_vm/pull/151))
+
+### 🐛 Bug Fixes
+
+- Fix uninstall of DEB/RPM packages ([#142](https://github.com/Cosmian/cosmian_vm/pull/142))
+
+### ⚙️ Miscellaneous Tasks
+
+- 
+
 ## [1.2.8] - 2024-09-30
 
 ### 🧪 CI

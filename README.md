@@ -1,7 +1,7 @@
 # Cosmian VM
 
 ![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/ci.yml/badge.svg?branch=main)
-![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/nightly_marketplaces.yml/badge.svg?branch=main)
+![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/release_marketplaces.yml/badge.svg?branch=main)
 
 _Cosmian VM_ are Linux-based system images preconfigured to verify Confidential VM trustworthiness and integrity at anytime.
 The images are based either on Ubuntu 22.04/24.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
@@ -122,7 +122,7 @@ aws ec2 describe-images --output json > aws_list.json
 | :---------------- | :-----------------------------------------------------------: | :------: | --------------- | ---------------------------- | --------------------- | ------- |
 | Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-tdx | X.Y.Z   |
 | Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
+| Azure - AMD SEV   |                    Redhat-rhel-cvm-9_4_cvm                    |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
 az vm image list --all > azure_list.json

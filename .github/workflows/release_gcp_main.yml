@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_gcp
 
-name: Nightly GCP images build
+name: Release GCP images
 
 jobs:
   clean-resources:
@@ -21,11 +21,6 @@ jobs:
         distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
-        exclude:
-          - product: ai-runner
-            distrib: rhel
-          - techno: tdx
-            distrib: rhel
         include:
           - techno: sev
             machine-type: n2d-standard-2
@@ -66,11 +61,6 @@ jobs:
         distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
-        exclude:
-          - product: ai-runner
-            distrib: rhel
-          - techno: tdx
-            distrib: rhel
         include:
           - techno: sev
             machine-type: n2d-standard-2

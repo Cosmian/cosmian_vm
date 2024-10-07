@@ -16,9 +16,6 @@ jobs:
         distrib: [ubuntu, rhel]
         product: [base-image]
         techno: [sev, tdx]
-        exclude:
-          - techno: tdx
-            distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     secrets: inherit
     uses: ./.github/workflows/azure_packer_build.yml

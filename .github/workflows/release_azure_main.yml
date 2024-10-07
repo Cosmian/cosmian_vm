@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_azure
 
-name: Nightly Azure images build
+name: Release Azure images
 
 jobs:
   clean-resources:
@@ -22,10 +22,6 @@ jobs:
         product: [cosmian-vm, kms, kms-fips, ai-runner]
         techno: [sev, tdx]
         exclude:
-          - product: ai-runner
-            distrib: rhel
-          - techno: tdx
-            distrib: rhel
           - product: kms-fips
             distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
@@ -50,11 +46,6 @@ jobs:
         distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
-        exclude:
-          - product: ai-runner
-            distrib: rhel
-          - techno: tdx
-            distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources

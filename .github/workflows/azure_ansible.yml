@@ -59,7 +59,7 @@ jobs:
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             IMAGE_TO_INSTANTIATE="Canonical:0001-com-ubuntu-confidential-vm-jammy:22_04-lts-cvm:latest"
           else
-            IMAGE_TO_INSTANTIATE="redhat:rhel-cvm:9_3_cvm_sev_snp:latest"
+            IMAGE_TO_INSTANTIATE="redhat:rhel-cvm:9_4_cvm:latest"
           fi
 
           if [ "${{ inputs.techno }}" = "sev" ]; then
