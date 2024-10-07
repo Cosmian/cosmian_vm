@@ -3,12 +3,18 @@
   hosts: all
   become: true
   roles:
+    - role: check_cpu
+      tags: role-check-cpu
     - role: upgrade
       tags: role-upgrade
-    - tpm
-    - instance_configs # GCP only
-    - intel
-    - no_updates
+    - role: tpm
+      tags: role-tpm
+    - role: instance_configs # GCP only
+      tags: role-instance-configs
+    - role: intel
+      tags: role-intel
+    - role: no_updates
+      tags: role-no-updates
     - role: configure_ima
       tags: role-configure-ima
 
