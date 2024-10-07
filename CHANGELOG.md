@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ### 🧪 CI
 
 - Make CI non-blocking a tags even if tests fail ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
+- Display kernel version ([#155](htts://github.com/Cosmian/cosmian_vm/pull/155))
 
 ### ⚙️ Miscellaneous Tasks
 

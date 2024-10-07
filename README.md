@@ -137,11 +137,11 @@ Links:
 
 ### GCP images
 
-|                 |          Official image           | OS image | OS version | Cosmian base image          |
-| :-------------- | :-------------------------------: | :------: | ---------- | --------------------------- |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
+|                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
+| :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
+| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      |                              | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      |                              | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
