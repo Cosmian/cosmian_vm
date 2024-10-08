@@ -21,6 +21,9 @@ jobs:
         distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
+        exclude:
+          - techno: tdx
+            distrib: rhel
         include:
           - techno: sev
             machine-type: n2d-standard-2
@@ -61,6 +64,9 @@ jobs:
         distrib: [rhel, ubuntu]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
+        exclude:
+          - techno: tdx
+            distrib: rhel
         include:
           - techno: sev
             machine-type: n2d-standard-2
