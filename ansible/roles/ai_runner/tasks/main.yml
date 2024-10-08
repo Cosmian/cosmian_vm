@@ -11,8 +11,16 @@
 
 - name: Update apt cache
   when: ansible_distribution == 'Ubuntu'
-  ansible.builtin.apt:
-    update_cache: true
+  block:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install virtual env prerequisites
+      ansible.builtin.package:
+        name:
+          - python3-venv
+        state: present
 
 - name: Update dnf cache
   when: ansible_distribution == 'RedHat'
