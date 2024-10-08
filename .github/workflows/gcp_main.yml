@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm]
+        product: [cosmian-vm, ai-runner]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
