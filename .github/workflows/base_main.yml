@@ -11,15 +11,21 @@ jobs:
 
   azure:
     needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/azure_base_main.yml
+    uses: ./.github/workflows/base_azure_main.yml
+    with:
+      base-version: 0.1.9
     secrets: inherit
 
   gcp:
     needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/gcp_base_main.yml
+    uses: ./.github/workflows/base_gcp_main.yml
+    with:
+      base-version: 0.1.9
     secrets: inherit
 
   aws:
     needs: build-cosmian-vm-binaries
-    uses: ./.github/workflows/aws_base_main.yml
+    uses: ./.github/workflows/base_aws_main.yml
+    with:
+      base-version: 0.1.9
     secrets: inherit

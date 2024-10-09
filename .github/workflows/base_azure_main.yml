@@ -1,7 +1,16 @@
 ---
 on:
   workflow_call:
+    inputs:
+      base-version:
+        required: true
+        type: string
   workflow_dispatch:
+    inputs:
+      base-version:
+        required: true
+        type: string
+        description: Cosmian Base Image version
 
 concurrency:
   group: marketplace_azure
@@ -26,6 +35,6 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      base-version: 0.1.9
+      base-version: ${{ inputs.base-version }}
       kms-version: 0.0.0
       ai-runner-version: 0.0.0
