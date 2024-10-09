@@ -22,7 +22,7 @@
 - name: Clean AI Runner existing folders
   ansible.builtin.command:
     cmd: |
-      rm -rf /src/cosmian_ai_runner
+      rm -rf /opt/venv/cosmian_ai_runner
       rm -rf /var/lib/cosmian_vm/data/app
   register: cmd_output
   changed_when: cmd_output.rc != 0

@@ -1,5 +1,9 @@
 # Cosmian Base Image Changelog
 
+## [0.1.9] - 2024-10-09
+
+- *Azure: RHEL*: update `9_3_cvm_sev_snp` à `9_4_cvm` ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))
+
 ## [0.1.8] - 2024-09-30
 
 - Du to Azure certification process, use the last RedHat kernel on Redhat images ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))

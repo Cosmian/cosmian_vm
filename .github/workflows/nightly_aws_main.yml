@@ -6,7 +6,7 @@ on:
 concurrency:
   group: marketplace_aws
 
-name: Nightly AWS images build
+name: Release AWS images
 
 jobs:
   clean-resources:
@@ -21,9 +21,6 @@ jobs:
         distrib: [ubuntu, rhel]
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev]
-        exclude:
-          - product: ai-runner
-            distrib: rhel
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
@@ -33,9 +30,9 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.18.0
+      kms-version: 4.19.0
       ai-runner-version: 0.3.0
-      base-version: 0.1.8
+      base-version: 0.1.9
 
   # Too many failures when rebooting EC2
   # ansible:
@@ -47,9 +44,6 @@ jobs:
   #       distrib: [ubuntu, rhel]
   #       product: [cosmian-vm, kms, ai-runner]
   #       techno: [sev]
-  #       exclude:
-  #         - product: ai-runner
-  #           distrib: rhel
   #   name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
   #   needs:
   #     - clean-resources
@@ -60,7 +54,7 @@ jobs:
   #     techno: sev
   #     distrib: ${{ matrix.distrib }}
   #     product: ${{ matrix.product }}
-  #     kms-version: 4.18.0
+  #     kms-version: 4.19.0
   #     ai-runner-version: 0.3.0
 
   post-clean-resources:

@@ -5,6 +5,10 @@
   tags: install_deb
   ansible.builtin.gather_facts:
 
+- name: Display kernel version
+  ansible.builtin.debug:
+    msg: "echo {{ ansible_kernel }}"
+
 - name: Check OS distribution
   ansible.builtin.debug:
     var: ansible_distribution

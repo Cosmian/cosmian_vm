@@ -22,7 +22,7 @@ on:
 
 jobs:
   test-ansible:
-    name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    name: Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -51,7 +51,6 @@ jobs:
           CI_INSTANCE: ${{ steps.env.outputs.ci_instance }}
         run: |
           set -ex
-
 
           aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0

@@ -50,6 +50,10 @@
   ansible.builtin.debug:
     var: home_folders
 
+- name: Display kernel version
+  ansible.builtin.debug:
+    msg: "echo {{ ansible_kernel }}"
+
 - name: Clean old kernel images
   tags: clean_old_kernels
   when: ansible_distribution == 'RedHat'
@@ -58,10 +62,6 @@
       ansible.builtin.package_facts:
         manager: auto
       register: installed_packages
-
-    - name: Display kernel version
-      ansible.builtin.debug:
-        msg: "echo {{ ansible_kernel }}"
 
     - name: Extract version from ansible_kernel
       ansible.builtin.set_fact:

@@ -1,7 +1,7 @@
 # Cosmian VM
 
 ![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/ci.yml/badge.svg?branch=main)
-![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/nightly_marketplaces.yml/badge.svg?branch=main)
+![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/release_marketplaces.yml/badge.svg?branch=main)
 
 _Cosmian VM_ are Linux-based system images preconfigured to verify Confidential VM trustworthiness and integrity at anytime.
 The images are based either on Ubuntu 22.04/24.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
@@ -122,7 +122,7 @@ aws ec2 describe-images --output json > aws_list.json
 | :---------------- | :-----------------------------------------------------------: | :------: | --------------- | ---------------------------- | --------------------- | ------- |
 | Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-tdx | X.Y.Z   |
 | Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - AMD SEV   |                Redhat-rhel-cvm-9_3_cvm_sev_snp                |  Redhat  | 9.3.2023111017  | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
+| Azure - AMD SEV   |                    Redhat-rhel-cvm-9_4_cvm                    |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
 az vm image list --all > azure_list.json
@@ -137,11 +137,11 @@ Links:
 
 ### GCP images
 
-|                 |          Official image           | OS image | OS version | Cosmian base image          |
-| :-------------- | :-------------------------------: | :------: | ---------- | --------------------------- |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.3        | base-image-X-Y-Z-rhel-sev   |
+|                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
+| :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
+| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      |                              | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      |                              | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
@@ -347,6 +347,7 @@ cosmian_vm --url https://my_app.dev app restart
 
 | Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ---------- | ----------- | ----------------- |
+| 0.1.9      | 1.2.9      | 4.19.0      | 0.3.0             |
 | 0.1.8      | 1.2.8      | 4.18.0      | 0.3.0             |
 | 0.1.7      | 1.2.7      | 4.18.0      | 0.3.0             |
 | 0.1.6      | 1.2.6      | 4.17.0      | 0.3.0             |

@@ -24,7 +24,7 @@ for product in "${products[@]}"; do
         sku=22_04-lts-cvm
       else
         offer=rhel-cvm
-        sku=9_3_cvm_sev_snp
+        sku=9_4_cvm
       fi
 
       # Create the image definition

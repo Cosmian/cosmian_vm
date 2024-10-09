@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.9] - 2024-10-09
+
+### 🚀 Features
+
+- *RHEL*:
+  - Build AI Runner images also on RHEL ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
+
+### 🧪 CI
+
+- Bump Cosmian Base image to 0.1.9:
+  - *Azure: RHEL*: update `9_3_cvm_sev_snp` à `9_4_cvm` ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
+- Make CI non-blocking a tags even if tests fail ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
+- Display kernel version ([#155](htts://github.com/Cosmian/cosmian_vm/pull/155))
+- Bump KMS version to 4.19.0
+
+### ⚙️ Miscellaneous Tasks
+
+- *AI Runner*: Change installation folder from `/src/` to `/opt/` where SELinux label are `usr_t`
+
 ## [1.2.8] - 2024-09-30
 
 ### 🧪 CI
