@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm, ai-runner]
+        product: [ai-runner]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
@@ -33,7 +33,7 @@ jobs:
       min-cpu-platform: AMD Milan
       mode: beta
       product: ${{ matrix.product }}
-      kms-version: 4.18.0
+      kms-version: 4.19.0
       ai-runner-version: 0.3.0
 
   post-clean-gcp-resources:

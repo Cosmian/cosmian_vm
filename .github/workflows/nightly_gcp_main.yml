@@ -51,7 +51,7 @@ jobs:
       min-cpu-platform: ${{ matrix.min-cpu-platform }}
       mode: ${{ matrix.mode }}
       product: ${{ matrix.product }}
-      kms-version: 4.18.0
+      kms-version: 4.19.0
       ai-runner-version: 0.3.0
       base-version: 0.1.8
 
@@ -94,7 +94,7 @@ jobs:
       min-cpu-platform: ${{ matrix.min-cpu-platform }}
       mode: ${{ matrix.mode }}
       product: ${{ matrix.product }}
-      kms-version: 4.18.0
+      kms-version: 4.19.0
       ai-runner-version: 0.3.0
 
   post-clean-gcp-resources:

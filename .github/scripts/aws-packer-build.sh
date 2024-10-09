@@ -4,7 +4,7 @@
 # DISTRIBUTION=rhel
 # PRODUCT=cosmian-vm
 # VERSION=0.1.8 # Optional
-# KMS_VERSION=4.18.0 # Provided by Github workflow
+# KMS_VERSION=4.19.0 # Provided by Github workflow
 # AI_RUNNER_VERSION=0.3.0 # Provided by Github workflow
 # GITHUB_REF=refs/tags/1.2.8 # Provided by Github Actions
 # GITHUB_REF_NAME=1.2.8 # Provided by Github Actions
