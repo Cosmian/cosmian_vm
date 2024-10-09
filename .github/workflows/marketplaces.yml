@@ -10,10 +10,10 @@ jobs:
     name: Build binaries
     uses: ./.github/workflows/build_all.yml
 
-  # azure:
-  #   needs: build-cosmian-vm-binaries
-  #   uses: ./.github/workflows/azure_main.yml
-  #   secrets: inherit
+  azure:
+    needs: build-cosmian-vm-binaries
+    uses: ./.github/workflows/azure_main.yml
+    secrets: inherit
 
   gcp:
     needs: build-cosmian-vm-binaries
@@ -28,7 +28,7 @@ jobs:
   release:
     name: Release
     needs:
-      # - azure
+      - azure
       - gcp
       # - aws
     secrets: inherit
