@@ -76,7 +76,7 @@ jobs:
           bash ../.github/scripts/aws-packer-build.sh
 
   test-image:
-    name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    name: Image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:

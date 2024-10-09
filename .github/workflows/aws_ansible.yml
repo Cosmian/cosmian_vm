@@ -22,7 +22,7 @@ on:
 
 jobs:
   test-ansible:
-    name: Test Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    name: Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
     permissions:
       contents: read

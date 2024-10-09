@@ -111,7 +111,7 @@ jobs:
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
 
   test-image:
-    name: Test image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
+    name: Image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
     runs-on: ubuntu-22.04
     needs: build-image
     permissions:
