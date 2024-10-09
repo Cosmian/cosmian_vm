@@ -117,11 +117,6 @@ jobs:
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
           timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 60; done"
 
-      - name: Kernel version
-        run: |
-          set -ex
-          uname -r
-
       - name: Check Cosmian VM
         env:
           IP_ADDR: ${{ steps.run-azure-instance.outputs.IP_ADDR }}
