@@ -12,14 +12,13 @@ All notable changes to this project will be documented in this file.
 ### 🧪 CI
 
 - Bump Cosmian Base image to 0.1.9:
-  - *Azure: RHEL*: update `9_3_cvm_sev_snp` à `9_4_cvm` ([#154](https://github.com/Cosmian/cosmian_vm/pull/154))
+  - *Azure: RHEL*: update `9_3_cvm_sev_snp` à `9_4_cvm` ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
 - Make CI non-blocking a tags even if tests fail ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
 - Display kernel version ([#155](htts://github.com/Cosmian/cosmian_vm/pull/155))
 - Bump KMS version to 4.19.0
 
 ### ⚙️ Miscellaneous Tasks
 
-- *Azure: RHEL*: Replace old image `9_3_cvm_sev_snp` by `9_4_cvm` ([#155](https://github.com/Cosmian/cosmian_vm/pull/155))
 - *AI Runner*: Change installation folder from `/src/` to `/opt/` where SELinux label are `usr_t`
 
 ## [1.2.8] - 2024-09-30
