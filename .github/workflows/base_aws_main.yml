@@ -1,8 +1,16 @@
 ---
 on:
   workflow_call:
+    inputs:
+      base-version:
+        required: true
+        type: string
   workflow_dispatch:
-
+    inputs:
+      base-version:
+        required: true
+        type: string
+        description: Cosmian Base Image version
 concurrency:
   group: marketplace_aws
 
@@ -17,9 +25,9 @@ jobs:
         product: [base-image]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     secrets: inherit
-    uses: ./.github/workflows/aws_base_image.yml
+    uses: ./.github/workflows/base_aws_image.yml
     with:
       techno: sev
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      base-version: 0.1.9
+      base-version: ${{ inputs.base-version }}

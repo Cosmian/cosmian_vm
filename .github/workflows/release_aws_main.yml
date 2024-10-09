@@ -1,7 +1,30 @@
 ---
 on:
   workflow_call:
+    inputs:
+      base-version:
+        required: true
+        type: string
+      kms-version:
+        required: true
+        type: string
+      ai-runner-version:
+        required: true
+        type: string
   workflow_dispatch:
+    inputs:
+      base-version:
+        required: true
+        type: string
+        description: Cosmian Base Image version
+      kms-version:
+        required: true
+        type: string
+        description: KMS server version
+      ai-runner-version:
+        required: true
+        type: string
+        description: AI Runner version
 
 concurrency:
   group: marketplace_aws
@@ -30,9 +53,9 @@ jobs:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      kms-version: 4.19.0
-      ai-runner-version: 0.3.0
-      base-version: 0.1.9
+      kms-version: ${{ inputs.kms-version }}
+      ai-runner-version: ${{ inputs.ai-runner-version }}
+      base-version: ${{ inputs.base-version }}
 
   # Too many failures when rebooting EC2
   # ansible:
@@ -54,11 +77,11 @@ jobs:
   #     techno: sev
   #     distrib: ${{ matrix.distrib }}
   #     product: ${{ matrix.product }}
-  #     kms-version: 4.19.0
-  #     ai-runner-version: 0.3.0
+  #     kms-version: ${{ inputs.kms-version }}
+  #     ai-runner-version: ${{ inputs.ai-runner-version }}
 
   post-clean-resources:
-    if: success() || cancelled()
+    if: success() || cancelled() || failure()
     needs:
       - image
       # - ansible

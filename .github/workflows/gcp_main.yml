@@ -1,7 +1,23 @@
 ---
 on:
   workflow_call:
+    inputs:
+      kms-version:
+        required: true
+        type: string
+      ai-runner-version:
+        required: true
+        type: string
   workflow_dispatch:
+    inputs:
+      kms-version:
+        required: true
+        type: string
+        description: KMS server version
+      ai-runner-version:
+        required: true
+        type: string
+        description: AI Runner version
 
 concurrency:
   group: marketplace_gcp
@@ -33,8 +49,8 @@ jobs:
       min-cpu-platform: AMD Milan
       mode: beta
       product: ${{ matrix.product }}
-      kms-version: 4.19.0
-      ai-runner-version: 0.3.0
+      kms-version: ${{ inputs.kms-version }}
+      ai-runner-version: ${{ inputs.ai-runner-version }}
 
   post-clean-gcp-resources:
     if: success() || cancelled()

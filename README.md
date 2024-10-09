@@ -1,7 +1,7 @@
 # Cosmian VM
 
 ![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/ci.yml/badge.svg?branch=main)
-![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/release_marketplaces.yml/badge.svg?branch=main)
+![Build status](https://github.com/Cosmian/cosmian_vm/actions/workflows/release_main.yml/badge.svg?branch=main)
 
 _Cosmian VM_ are Linux-based system images preconfigured to verify Confidential VM trustworthiness and integrity at anytime.
 The images are based either on Ubuntu 22.04/24.04 or RHEL 9, and can then be used as regular Linux distribution on most cloud providers such as Google Cloud Platform (GCP), Microsoft Azure and Amazon Web Services (AWS).
@@ -105,10 +105,10 @@ Replace `X.Y.Z` in the 3 following tables by the last _Cosmian base image_ [vers
 
 ### AWS images
 
-|               |                            Official image                            | OS image | OS version | Cosmian base image          |
-| :------------ | :------------------------------------------------------------------: | :------: | ---------- | --------------------------- |
-| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1 |  Ubuntu  | 24.04      | base-image-X-Y-Z-ubuntu-sev |
-| AWS - AMD SEV |            RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3             |  Redhat  | 9.3        | base-image-X-Y-Z-ubuntu-sev |
+|               |                            Official image                            | OS image | OS version | Kernel version               | Cosmian base image          |
+| :------------ | :------------------------------------------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1 |  Ubuntu  | 24.04      | 6.8.0-1016-aws               | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV |            RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3             |  Redhat  | 9.3        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
 
 If needed:
 
@@ -139,8 +139,8 @@ Links:
 
 |                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      |                              | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      |                              | base-image-X-Y-Z-ubuntu-sev |
+| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      | 6.5.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
 | GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
 
 ```sh

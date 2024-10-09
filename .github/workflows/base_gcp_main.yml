@@ -1,8 +1,16 @@
 ---
 on:
   workflow_call:
+    inputs:
+      base-version:
+        required: true
+        type: string
   workflow_dispatch:
-
+    inputs:
+      base-version:
+        required: true
+        type: string
+        description: Cosmian Base Image version
 concurrency:
   group: marketplace_gcp
 
@@ -21,9 +29,9 @@ jobs:
             distrib: rhel
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     secrets: inherit
-    uses: ./.github/workflows/gcp_base_image.yml
+    uses: ./.github/workflows/base_gcp_image.yml
     with:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
-      base-version: 0.1.9
+      base-version: ${{ inputs.base-version }}
