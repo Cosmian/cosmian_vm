@@ -80,7 +80,7 @@ jobs:
             if [ "${{ inputs.techno }}" = "sev" ]; then
               IMAGE_NAME="ubuntu-2204-jammy-v20240501"
             else
-              IMAGE_NAME="ubuntu-2204-tdx-v20240220"
+              IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
               IMAGE_OPTIONS=""
             fi
           else

@@ -139,9 +139,9 @@ Links:
 
 |                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      | 6.5.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
+| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
@@ -151,11 +151,7 @@ gcloud beta compute images list --filter="guestOsFeatures[].type=TDX_CAPABLE" --
 
 #### Note
 
-Official images have been updated to ubuntu-2404-noble-amd64-v20240830 and rhel-9-v20240815 to fix the CVE-2024-6387:
-
-- <https://ubuntu.com/security/CVE-2024-6387>
-- <https://www.cert.ssi.gouv.fr/alerte/CERTFR-2024-ALE-009/>
-- and eventually <https://ubuntu.com/blog/ubuntu-regresshion-security-fix>
+- On GCP, both `ubuntu-2404-noble-amd64-v20241004` and `rhel-9-v20241009` images are SEV and TDX capable.
 
 ### Marketplace Image content
 
