@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2024-XX-XX
+
+### 🚀 Features
+
+- RHEL TDX on GCP ([#158](https://github.com/Cosmian/cosmian_vm/pull/158))
+  - Ubuntu and RedHat *GCP* images upgraded -> using now Cosmian Base Image version 0.1.10
+
 ## [1.2.9] - 2024-10-09
 
 ### 🚀 Features
