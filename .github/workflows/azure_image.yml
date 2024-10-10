@@ -1,5 +1,5 @@
 ---
-name: Build and test image for Azure SEV
+name: Internal build/test image for Azure
 
 on:
   workflow_call:

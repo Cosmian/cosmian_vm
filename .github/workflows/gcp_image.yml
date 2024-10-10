@@ -1,5 +1,5 @@
 ---
-name: Build and test image for GCP SEV and TDX
+name: Internal build/test image for GCP
 
 on:
   workflow_call:
