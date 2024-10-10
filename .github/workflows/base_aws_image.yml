@@ -1,5 +1,5 @@
 ---
-name: Build base image for AWS SEV
+name: Base Internal build/test image for AWS
 
 on:
   workflow_call:

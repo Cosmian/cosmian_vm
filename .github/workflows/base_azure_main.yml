@@ -1,4 +1,6 @@
 ---
+name: Base images Azure
+
 on:
   workflow_call:
     inputs:
@@ -14,8 +16,6 @@ on:
 
 concurrency:
   group: marketplace_azure
-
-name: Base images Azure
 
 jobs:
   image:

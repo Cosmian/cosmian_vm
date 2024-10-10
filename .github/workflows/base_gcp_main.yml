@@ -1,4 +1,6 @@
 ---
+name: Base images GCP
+
 on:
   workflow_call:
     inputs:
@@ -13,8 +15,6 @@ on:
         description: Cosmian Base Image version
 concurrency:
   group: marketplace_gcp
-
-name: Base images GCP
 
 jobs:
   image:

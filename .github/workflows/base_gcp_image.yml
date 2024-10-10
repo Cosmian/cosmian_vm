@@ -1,5 +1,5 @@
 ---
-name: Internal build/test image for GCP
+name: Base Internal build/test image for GCP
 
 on:
   workflow_call:
