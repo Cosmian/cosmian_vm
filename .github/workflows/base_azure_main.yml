@@ -15,7 +15,7 @@ on:
 concurrency:
   group: marketplace_azure
 
-name: Azure base images build
+name: Base images Azure
 
 jobs:
   image:

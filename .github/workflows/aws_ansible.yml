@@ -1,5 +1,5 @@
 ---
-name: Test Ansible script on AWS instance
+name: Ansible script on AWS instance
 
 on:
   workflow_call:

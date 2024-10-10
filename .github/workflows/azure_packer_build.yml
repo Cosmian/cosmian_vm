@@ -1,5 +1,5 @@
 ---
-name: Build and test image for Azure
+name: Packer for Azure
 
 on:
   workflow_call:
