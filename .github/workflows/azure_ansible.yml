@@ -1,5 +1,5 @@
 ---
-name: Test Ansible script for Azure
+name: Ansible script for Azure
 
 on:
   workflow_call:

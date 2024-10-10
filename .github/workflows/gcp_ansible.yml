@@ -1,5 +1,5 @@
 ---
-name: Test Ansible script GCP SEV and TDX
+name: Ansible script GCP SEV and TDX
 
 on:
   workflow_call:

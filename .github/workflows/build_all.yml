@@ -1,5 +1,5 @@
 ---
-name: Build Cosmian VM binaries
+name: Cargo build all
 
 on: workflow_call
 

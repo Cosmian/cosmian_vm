@@ -34,7 +34,7 @@ on:
 concurrency:
   group: marketplace_aws
 
-name: AWS images build
+name: AWS images
 
 jobs:
   clean-resources:

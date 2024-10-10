@@ -1,4 +1,6 @@
 ---
+name: Cargo build and check
+
 on:
   workflow_call:
     inputs:

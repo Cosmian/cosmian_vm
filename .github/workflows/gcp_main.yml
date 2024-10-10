@@ -34,7 +34,7 @@ on:
 concurrency:
   group: marketplace_gcp
 
-name: GCP images build
+name: GCP images
 
 jobs:
   clean-resources:

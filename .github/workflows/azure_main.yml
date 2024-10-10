@@ -35,7 +35,7 @@ on:
 concurrency:
   group: marketplace_azure
 
-name: Azure images build
+name: Azure images
 
 jobs:
   clean-resources:

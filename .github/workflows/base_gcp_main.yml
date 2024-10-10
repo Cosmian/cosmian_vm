@@ -14,7 +14,7 @@ on:
 concurrency:
   group: marketplace_gcp
 
-name: GCP base images build
+name: Base images GCP
 
 jobs:
   image:

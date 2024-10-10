@@ -3,7 +3,7 @@ on:
   # Run only on pull requests
   pull_request:
 
-name: Cloud providers
+name: Pull request
 
 jobs:
   build-cosmian-vm-binaries:

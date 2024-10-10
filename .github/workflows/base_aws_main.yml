@@ -14,7 +14,7 @@ on:
 concurrency:
   group: marketplace_aws
 
-name: AWS base images build
+name: Base images AWS
 
 jobs:
   sev-base-image:
