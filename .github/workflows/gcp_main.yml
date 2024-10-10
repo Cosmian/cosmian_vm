@@ -2,6 +2,10 @@
 on:
   workflow_call:
     inputs:
+      product:
+        required: true
+        type: string
+        default: cosmian-vm
       kms-version:
         required: true
         type: string
@@ -10,6 +14,14 @@ on:
         type: string
   workflow_dispatch:
     inputs:
+      product:
+        description: Cosmian product
+        required: true
+        type: choice
+        options:
+          - cosmian-vm
+          - kms
+          - ai-runner
       kms-version:
         required: true
         type: string
@@ -34,7 +46,8 @@ jobs:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
-        product: [cosmian-vm]
+        product:
+          - ${{ inputs.product }}
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
