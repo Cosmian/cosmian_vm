@@ -12,6 +12,10 @@ on:
       ai-runner-version:
         required: true
         type: string
+      techno:
+        required: true
+        type: string
+        default: sev
   workflow_dispatch:
     inputs:
       product:
@@ -31,6 +35,13 @@ on:
         required: true
         type: string
         description: AI Runner version
+      techno:
+        required: true
+        type: choice
+        description: CPU Technology
+        options:
+          - sev
+          - tdx
 
 concurrency:
   group: marketplace_azure
@@ -49,13 +60,15 @@ jobs:
         distrib: [ubuntu, rhel]
         product:
           - ${{ inputs.product }}
-    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno:
+          - ${{ inputs.techno }}
+    name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
     secrets: inherit
     uses: ./.github/workflows/azure_ansible.yml
     with:
-      techno: sev
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: ${{ inputs.kms-version }}

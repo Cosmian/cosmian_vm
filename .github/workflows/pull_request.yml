@@ -17,6 +17,7 @@ jobs:
       product: cosmian-vm
       kms-version: 4.19.0
       ai-runner-version: 0.3.0
+      techno: sev
     secrets: inherit
 
   gcp:
@@ -26,6 +27,7 @@ jobs:
       product: cosmian-vm
       kms-version: 4.19.0
       ai-runner-version: 0.3.0
+      techno: sev
     secrets: inherit
 
   # aws:
@@ -35,6 +37,7 @@ jobs:
   #     product: cosmian-vm
   #     kms-version: 4.19.0
   #     ai-runner-version: 0.3.0
+  #     techno: sev
   #   secrets: inherit
 
   release:

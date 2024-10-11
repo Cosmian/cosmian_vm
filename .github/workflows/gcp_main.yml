@@ -12,6 +12,10 @@ on:
       ai-runner-version:
         required: true
         type: string
+      techno:
+        required: true
+        type: string
+        default: sev
   workflow_dispatch:
     inputs:
       product:
@@ -30,6 +34,13 @@ on:
         required: true
         type: string
         description: AI Runner version
+      techno:
+        required: true
+        type: choice
+        description: CPU Technology
+        options:
+          - sev
+          - tdx
 
 concurrency:
   group: marketplace_gcp
@@ -41,22 +52,30 @@ jobs:
     uses: ./.github/workflows/gcp_clean.yml
     secrets: inherit
 
-  sev-image:
+  image:
     strategy:
       fail-fast: false
       matrix:
         distrib: [ubuntu, rhel]
         product:
           - ${{ inputs.product }}
-    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+        techno:
+          - ${{ inputs.techno }}
+        include:
+          - techno: sev
+            mode: beta
+          - techno: tdx
+            mode: alpha
+
+    name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
     secrets: inherit
     uses: ./.github/workflows/gcp_ansible.yml
     with:
-      techno: sev
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
-      mode: beta
+      mode: ${{ matrix.mode }}
       product: ${{ matrix.product }}
       kms-version: ${{ inputs.kms-version }}
       ai-runner-version: ${{ inputs.ai-runner-version }}
@@ -64,6 +83,6 @@ jobs:
   post-clean-gcp-resources:
     if: success() || cancelled()
     needs:
-      - sev-image
+      - image
     uses: ./.github/workflows/gcp_clean.yml
     secrets: inherit

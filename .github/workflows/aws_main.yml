@@ -12,6 +12,10 @@ on:
       ai-runner-version:
         required: true
         type: string
+      techno:
+        required: true
+        type: string
+        default: sev
   workflow_dispatch:
     inputs:
       product:
@@ -30,6 +34,12 @@ on:
         required: true
         type: string
         description: AI Runner version
+      techno:
+        required: true
+        type: choice
+        description: CPU Technology
+        options:
+          - sev
 
 concurrency:
   group: marketplace_aws
@@ -48,13 +58,15 @@ jobs:
         distrib: [ubuntu, rhel]
         product:
           - ${{ inputs.product }}
+        techno:
+          - ${{ inputs.techno }}
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
     needs:
       - clean-resources
     secrets: inherit
     uses: ./.github/workflows/aws_ansible.yml
     with:
-      techno: sev
+      techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
       product: ${{ matrix.product }}
       kms-version: ${{ inputs.kms-version }}
