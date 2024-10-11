@@ -45,8 +45,6 @@ jobs:
         product: [cosmian-vm, kms, kms-fips, ai-runner]
         techno: [sev, tdx]
         exclude:
-          - techno: tdx
-            distrib: rhel
           - product: kms-fips
             distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
@@ -72,8 +70,6 @@ jobs:
         product: [cosmian-vm, kms, ai-runner]
         techno: [sev, tdx]
         exclude:
-          - techno: tdx
-            distrib: rhel
           - product: kms-fips
             distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}

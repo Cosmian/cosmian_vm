@@ -2,9 +2,10 @@
 
 ## [0.1.10] - 2024-10-10
 
-- *GCP*:
-  - *Ubuntu SEV/TDX capable*: update from `ubuntu-2204-tdx-v20240220` and `ubuntu-2404-noble-amd64-v20240830` to `ubuntu-2404-noble-amd64-v20241004` ([#158](https://github.com/Cosmian/cosmian_vm/pull/158))
-  - *RedHat SEV/TDX capable*: update from `rhel-9-v20240815` to `rhel-9-v20241009` ([#158](https://github.com/Cosmian/cosmian_vm/pull/158))
+- *GCP*: ([#158](https://github.com/Cosmian/cosmian_vm/pull/158))
+  - *Ubuntu SEV/TDX capable*: update from `ubuntu-2204-tdx-v20240220` and `ubuntu-2404-noble-amd64-v20240830` to `ubuntu-2404-noble-amd64-v20241004`
+  - *RedHat SEV/TDX capable*: update from `rhel-9-v20240815` to `rhel-9-v20241009`
+- *Azure*: build images on RHEL + TDX ([#158](https://github.com/Cosmian/cosmian_vm/pull/158))
 
 ## [0.1.9] - 2024-10-09
 

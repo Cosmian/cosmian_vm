@@ -51,7 +51,7 @@ jobs:
     uses: ./.github/workflows/aws_clean.yml
     secrets: inherit
 
-  sev-image:
+  image:
     strategy:
       fail-fast: false
       matrix:
@@ -60,7 +60,7 @@ jobs:
           - ${{ inputs.product }}
         techno:
           - ${{ inputs.techno }}
-    name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - SEV
+    name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ inputs.techno }}
     needs:
       - clean-resources
     secrets: inherit
@@ -75,6 +75,6 @@ jobs:
   post-clean-resources:
     if: success() || cancelled()
     needs:
-      - sev-image
+      - image
     uses: ./.github/workflows/aws_clean.yml
     secrets: inherit

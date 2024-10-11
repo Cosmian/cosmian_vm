@@ -122,6 +122,7 @@ aws ec2 describe-images --output json > aws_list.json
 | :---------------- | :-----------------------------------------------------------: | :------: | --------------- | ---------------------------- | --------------------- | ------- |
 | Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-tdx | X.Y.Z   |
 | Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - Intel TDX |                    Redhat-rhel-cvm-9_4_cvm                    |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
 | Azure - AMD SEV   |                    Redhat-rhel-cvm-9_4_cvm                    |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
@@ -142,6 +143,7 @@ Links:
 | GCP - Intel TDX | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
 | GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
 | GCP - AMD SEV   |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
+| GCP - Intel TDX |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 
 ```sh
 gcloud compute images list > gcloud_list.json

@@ -90,7 +90,11 @@ jobs:
               export AMI="base-image-${BASE_VERSION}-ubuntu-tdx"
             fi
           else
-            export AMI="base-image-${BASE_VERSION}-rhel-sev"
+            if [ "${{ inputs.techno }}" = "sev" ]; then
+              export AMI="base-image-${BASE_VERSION}-rhel-sev"
+            else
+              export AMI="base-image-${BASE_VERSION}-rhel-tdx"
+            fi
           fi
 
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"

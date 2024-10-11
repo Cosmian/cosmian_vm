@@ -30,6 +30,7 @@ jobs:
       techno: sev
     secrets: inherit
 
+  # Too many failures when rebooting EC2
   # aws:
   #   needs: build-cosmian-vm-binaries
   #   uses: ./.github/workflows/aws_main.yml
