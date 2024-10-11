@@ -17,6 +17,7 @@ jobs:
       product: cosmian-vm
       kms-version: 4.19.0
       ai-runner-version: 0.3.0
+      techno: sev
     secrets: inherit
 
   gcp:
@@ -26,8 +27,10 @@ jobs:
       product: cosmian-vm
       kms-version: 4.19.0
       ai-runner-version: 0.3.0
+      techno: sev
     secrets: inherit
 
+  # Too many failures when rebooting EC2
   # aws:
   #   needs: build-cosmian-vm-binaries
   #   uses: ./.github/workflows/aws_main.yml
@@ -35,6 +38,7 @@ jobs:
   #     product: cosmian-vm
   #     kms-version: 4.19.0
   #     ai-runner-version: 0.3.0
+  #     techno: sev
   #   secrets: inherit
 
   release:

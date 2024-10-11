@@ -14,20 +14,20 @@ DURATION=240m
 SSH_PUB_KEY=$(cat ~/.ssh/id_rsa.pub)
 
 gcloud compute firewall-rules delete "$NAME" --quiet
-gcloud beta compute instances delete --quiet "$NAME" --zone "us-central1-a" --project cosmian-dev
-gcloud beta compute instances delete --quiet "$NAME" --zone "europe-west4-a" --project cosmian-dev
+gcloud compute instances delete --quiet "$NAME" --zone "us-central1-a" --project cosmian-dev
+gcloud compute instances delete --quiet "$NAME" --zone "europe-west4-a" --project cosmian-dev
 
 set -ex
 
 if [ "$TECHNO" = "tdx" ]; then
   # Ubuntu TDX
-  gcloud alpha compute instances create "$NAME" \
+  gcloud compute instances create "$NAME" \
     --machine-type c3-standard-4 \
     --zone us-central1-a \
     --min-cpu-platform=AUTOMATIC \
     --confidential-compute-type=TDX \
     --shielded-secure-boot \
-    --image=ubuntu-2204-tdx-v20240220 \
+    --image=ubuntu-2404-noble-amd64-v20241004 \
     --project cosmian-dev \
     --tags "$NAME-cli" \
     --maintenance-policy=TERMINATE \
@@ -47,7 +47,7 @@ else
     IMAGE="cosmian-vm-1-2-6-kms-4-17-0-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
-    IMAGE="ubuntu-2404-noble-amd64-v20240830"
+    IMAGE="ubuntu-2404-noble-amd64-v20241004"
     IMAGE_PROJECT="ubuntu-os-cloud"
   else
     # Base Ubuntu SEV
@@ -60,10 +60,10 @@ else
     IMAGE="cosmian-vm-1-2-6-kms-4-17-0-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rhel-9-v20240815"
+    IMAGE="rhel-9-v20241009"
     IMAGE_PROJECT="rhel-cloud"
   fi
-  gcloud beta compute instances create "$NAME" \
+  gcloud compute instances create "$NAME" \
     --machine-type n2d-standard-2 \
     --zone europe-west4-a \
     --min-cpu-platform='AMD Milan' \

@@ -122,6 +122,7 @@ aws ec2 describe-images --output json > aws_list.json
 | :---------------- | :-----------------------------------------------------------: | :------: | --------------- | ---------------------------- | --------------------- | ------- |
 | Azure - Intel TDX | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-tdx | X.Y.Z   |
 | Azure - AMD SEV   | Canonical-0001-com-ubuntu-confidential-vm-jammy-22_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.5.0-1025-azure             | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - Intel TDX |                    Redhat-rhel-cvm-9_4_cvm                    |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
 | Azure - AMD SEV   |                    Redhat-rhel-cvm-9_4_cvm                    |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
@@ -139,23 +140,20 @@ Links:
 
 |                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| GCP - Intel TDX |     ubuntu-2204-tdx-v20240220     |  Ubuntu  | 22.04      | 6.5.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20240830 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20240815          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
+| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
+| GCP - Intel TDX |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
-gcloud beta compute images list --filter="guestOsFeatures[].type=SEV_SNP_CAPABLE" --format=json > gcloud_images_SEV_SNP_CAPABLE.json
-gcloud beta compute images list --filter="guestOsFeatures[].type=TDX_CAPABLE" --format=json > gcloud_images_TDX.json
+gcloud compute images list --filter="guestOsFeatures[].type=SEV_SNP_CAPABLE" --format=json > gcloud_images_SEV_SNP_CAPABLE.json
+gcloud compute images list --filter="guestOsFeatures[].type=TDX_CAPABLE" --format=json > gcloud_images_TDX.json
 ```
 
 #### Note
 
-Official images have been updated to ubuntu-2404-noble-amd64-v20240830 and rhel-9-v20240815 to fix the CVE-2024-6387:
-
-- <https://ubuntu.com/security/CVE-2024-6387>
-- <https://www.cert.ssi.gouv.fr/alerte/CERTFR-2024-ALE-009/>
-- and eventually <https://ubuntu.com/blog/ubuntu-regresshion-security-fix>
+- On GCP, both `ubuntu-2404-noble-amd64-v20241004` and `rhel-9-v20241009` images are SEV and TDX capable.
 
 ### Marketplace Image content
 
@@ -347,6 +345,7 @@ cosmian_vm --url https://my_app.dev app restart
 
 | Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ---------- | ----------- | ----------------- |
+| 0.1.10     | 1.3.0      | 4.19.0      | 0.3.0             |
 | 0.1.9      | 1.2.9      | 4.19.0      | 0.3.0             |
 | 0.1.8      | 1.2.8      | 4.18.0      | 0.3.0             |
 | 0.1.7      | 1.2.7      | 4.18.0      | 0.3.0             |
