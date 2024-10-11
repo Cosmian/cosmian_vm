@@ -5,26 +5,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-cosmian-vm-binaries:
-    name: Build binaries
-    uses: ./.github/workflows/build_all.yml
-
   azure:
-    needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/base_azure_main.yml
     with:
       base-version: 0.1.10
     secrets: inherit
 
   gcp:
-    needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/base_gcp_main.yml
     with:
       base-version: 0.1.10
     secrets: inherit
 
   aws:
-    needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/base_aws_main.yml
     with:
       base-version: 0.1.10
