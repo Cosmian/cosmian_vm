@@ -56,10 +56,6 @@ jobs:
     with:
       techno: sev
       distrib: ${{ matrix.distrib }}
-      machine-type: n2d-standard-2
-      zone: europe-west4-a
-      confidential-compute-type: SEV_SNP
-      min-cpu-platform: AMD Milan
       mode: beta
       product: ${{ matrix.product }}
       kms-version: ${{ inputs.kms-version }}

@@ -7,19 +7,7 @@ on:
       distrib:
         required: true
         type: string
-      machine-type:
-        required: true
-        type: string
-      zone:
-        required: true
-        type: string
-      confidential-compute-type:
-        required: true
-        type: string
       techno:
-        required: true
-        type: string
-      min-cpu-platform:
         required: true
         type: string
       mode:
@@ -143,22 +131,36 @@ jobs:
           ssh-keygen -t rsa -b 4096 -C "$CI_INSTANCE@example.com" -f $HOME/.ssh/id_rsa -q -N ""
           PUBKEY=$(cat $HOME/.ssh/id_rsa.pub)
 
-          gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE \
-            --machine-type ${{ inputs.machine-type }} \
-            --zone ${{ inputs.zone }} \
-            --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
-            --confidential-compute-type=${{ inputs.confidential-compute-type }} \
+          if [ "${{ inputs.techno }}" = "sev" ]; then
+            MACHINE_TYPE="n2d-standard-2"
+            ZONE="europe-west4-a"
+            CONFIDENTIAL_COMPUTE_TYPE="SEV_SNP"
+            MIN_CPU_PLATFORM="AMD Milan"
+            MODE="beta"
+          else
+            MACHINE_TYPE="c3-standard-4"
+            ZONE="us-central1-a"
+            CONFIDENTIAL_COMPUTE_TYPE="TDX"
+            MIN_CPU_PLATFORM="AUTOMATIC"
+            MODE="alpha"
+          fi
+
+          gcloud "$MODE" compute instances create $CI_INSTANCE \
+            --machine-type "$MACHINE_TYPE" \
+            --zone "$ZONE" \
+            --min-cpu-platform="$MIN_CPU_PLATFORM" \
+            --confidential-compute-type="$CONFIDENTIAL_COMPUTE_TYPE" \
             --shielded-secure-boot \
             --image="$IMAGE_NAME" \
-            --image-project=$GCP_DEV_PROJECT \
-            --project $GCP_DEV_PROJECT \
-            --tags $CI_INSTANCE-fw \
+            --image-project="$GCP_DEV_PROJECT" \
+            --project "$GCP_DEV_PROJECT" \
+            --tags "$CI_INSTANCE-fw" \
             --maintenance-policy=TERMINATE \
             --max-run-duration=120m \
             --instance-termination-action=DELETE \
             --boot-disk-size=20GB \
             --metadata=ssh-keys="cosmian:$PUBKEY"
-          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
+          IP_ADDR=$(gcloud $MODE compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=$ZONE)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then

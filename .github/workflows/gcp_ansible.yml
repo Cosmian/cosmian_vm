@@ -7,19 +7,7 @@ on:
       distrib:
         required: true
         type: string
-      machine-type:
-        required: true
-        type: string
-      zone:
-        required: true
-        type: string
-      confidential-compute-type:
-        required: true
-        type: string
       techno:
-        required: true
-        type: string
-      min-cpu-platform:
         required: true
         type: string
       mode:
@@ -75,37 +63,51 @@ jobs:
         run: |
           set -ex
 
+          if [ "${{ inputs.techno }}" = "sev" ]; then
+            MACHINE_TYPE="n2d-standard-2"
+            ZONE="europe-west4-a"
+            CONFIDENTIAL_COMPUTE_TYPE="SEV_SNP"
+            MIN_CPU_PLATFORM="AMD Milan"
+            MODE="beta"
+          else
+            MACHINE_TYPE="c3-standard-4"
+            ZONE="us-central1-a"
+            CONFIDENTIAL_COMPUTE_TYPE="TDX"
+            MIN_CPU_PLATFORM="AUTOMATIC"
+            MODE="alpha"
+          fi
+
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             IMAGE_OPTIONS="--image-project=ubuntu-os-cloud --project $GCP_DEV_PROJECT"
             if [ "${{ inputs.techno }}" = "sev" ]; then
-              IMAGE_NAME="ubuntu-2204-jammy-v20240501"
+              IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
             else
               IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
               IMAGE_OPTIONS=""
             fi
           else
             IMAGE_OPTIONS="--image-project=rhel-cloud --project $GCP_DEV_PROJECT"
-            IMAGE_NAME="rhel-9-v20240415"
+            IMAGE_NAME="rhel-9-v20241009"
           fi
 
           ssh-keygen -t rsa -b 4096 -C "$CI_INSTANCE@example.com" -f $HOME/.ssh/id_rsa -q -N ""
           PUBKEY=$(cat $HOME/.ssh/id_rsa.pub)
 
-          gcloud ${{ inputs.mode }} compute instances create $CI_INSTANCE \
-            --machine-type ${{ inputs.machine-type }} \
-            --zone ${{ inputs.zone }} \
-            --min-cpu-platform="${{ inputs.min-cpu-platform }}" \
-            --confidential-compute-type=${{ inputs.confidential-compute-type }} \
+          gcloud "$MODE" compute instances create $CI_INSTANCE \
+            --machine-type "$MACHINE_TYPE" \
+            --zone "$ZONE" \
+            --min-cpu-platform="$MIN_CPU_PLATFORM" \
+            --confidential-compute-type="$CONFIDENTIAL_COMPUTE_TYPE" \
             --shielded-secure-boot \
             --image="$IMAGE_NAME" \
             $IMAGE_OPTIONS \
-            --tags $CI_INSTANCE-fw \
+            --tags "$CI_INSTANCE-fw" \
             --maintenance-policy=TERMINATE \
             --max-run-duration=120m \
             --instance-termination-action=DELETE \
             --boot-disk-size=20GB \
             --metadata=ssh-keys="cosmian:$PUBKEY"
-          IP_ADDR=$(gcloud ${{ inputs.mode }} compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=${{ inputs.zone }})
+          IP_ADDR=$(gcloud $MODE compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=$ZONE)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
           # Wait for VM to be ready
