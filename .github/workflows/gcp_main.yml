@@ -61,12 +61,6 @@ jobs:
           - ${{ inputs.product }}
         techno:
           - ${{ inputs.techno }}
-        include:
-          - techno: sev
-            mode: beta
-          - techno: tdx
-            mode: alpha
-
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
@@ -75,7 +69,6 @@ jobs:
     with:
       techno: ${{ matrix.techno }}
       distrib: ${{ matrix.distrib }}
-      mode: ${{ matrix.mode }}
       product: ${{ matrix.product }}
       kms-version: ${{ inputs.kms-version }}
       ai-runner-version: ${{ inputs.ai-runner-version }}

@@ -10,9 +10,6 @@ on:
       techno:
         required: true
         type: string
-      mode:
-        required: true
-        type: string
       product:
         required: true
         type: string
@@ -54,7 +51,6 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
         with:
           version: latest
-          install_components: ${{ inputs.mode }}
 
       - name: Launch GCP instance
         id: run-gcp-instance
@@ -68,13 +64,11 @@ jobs:
             ZONE="europe-west4-a"
             CONFIDENTIAL_COMPUTE_TYPE="SEV_SNP"
             MIN_CPU_PLATFORM="AMD Milan"
-            MODE="beta"
           else
             MACHINE_TYPE="c3-standard-4"
             ZONE="us-central1-a"
             CONFIDENTIAL_COMPUTE_TYPE="TDX"
             MIN_CPU_PLATFORM="AUTOMATIC"
-            MODE="alpha"
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
@@ -93,7 +87,7 @@ jobs:
           ssh-keygen -t rsa -b 4096 -C "$CI_INSTANCE@example.com" -f $HOME/.ssh/id_rsa -q -N ""
           PUBKEY=$(cat $HOME/.ssh/id_rsa.pub)
 
-          gcloud "$MODE" compute instances create $CI_INSTANCE \
+          gcloud compute instances create $CI_INSTANCE \
             --machine-type "$MACHINE_TYPE" \
             --zone "$ZONE" \
             --min-cpu-platform="$MIN_CPU_PLATFORM" \
@@ -107,7 +101,7 @@ jobs:
             --instance-termination-action=DELETE \
             --boot-disk-size=20GB \
             --metadata=ssh-keys="cosmian:$PUBKEY"
-          IP_ADDR=$(gcloud $MODE compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=$ZONE)
+          IP_ADDR=$(gcloud compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=$ZONE)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
           # Wait for VM to be ready
@@ -152,6 +146,14 @@ jobs:
           CI_INSTANCE: ${{ steps.env.outputs.ci_instance }}
         run: |
           set +e
-          gcloud ${{ inputs.mode }} compute instances delete --quiet $CI_INSTANCE --zone ${{ inputs.zone }} --project $GCP_DEV_PROJECT
+
+          if [ "${{ inputs.techno }}" = "sev" ]; then
+            ZONE="europe-west4-a"
+          else
+            ZONE="us-central1-a"
+          fi
+
+          gcloud compute instances delete --quiet $CI_INSTANCE --zone "$ZONE" --project $GCP_DEV_PROJECT
           gcloud compute firewall-rules delete ${CI_INSTANCE}-allow-ports-cli --quiet
+
           set -e

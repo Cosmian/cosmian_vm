@@ -14,14 +14,14 @@ DURATION=240m
 SSH_PUB_KEY=$(cat ~/.ssh/id_rsa.pub)
 
 gcloud compute firewall-rules delete "$NAME" --quiet
-gcloud beta compute instances delete --quiet "$NAME" --zone "us-central1-a" --project cosmian-dev
-gcloud beta compute instances delete --quiet "$NAME" --zone "europe-west4-a" --project cosmian-dev
+gcloud compute instances delete --quiet "$NAME" --zone "us-central1-a" --project cosmian-dev
+gcloud compute instances delete --quiet "$NAME" --zone "europe-west4-a" --project cosmian-dev
 
 set -ex
 
 if [ "$TECHNO" = "tdx" ]; then
   # Ubuntu TDX
-  gcloud alpha compute instances create "$NAME" \
+  gcloud compute instances create "$NAME" \
     --machine-type c3-standard-4 \
     --zone us-central1-a \
     --min-cpu-platform=AUTOMATIC \
@@ -63,7 +63,7 @@ else
     IMAGE="rhel-9-v20241009"
     IMAGE_PROJECT="rhel-cloud"
   fi
-  gcloud beta compute instances create "$NAME" \
+  gcloud compute instances create "$NAME" \
     --machine-type n2d-standard-2 \
     --zone europe-west4-a \
     --min-cpu-platform='AMD Milan' \
