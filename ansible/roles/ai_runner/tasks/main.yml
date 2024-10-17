@@ -95,6 +95,17 @@
   changed_when: cmd_output.rc != 0
   tags: selinux
 
+- name: Add SELinux context for AI runner
+  when: ansible_distribution == 'RedHat'
+  ansible.builtin.shell: |
+    set -exo pipefail
+    semanage fcontext -a -t cosmiand_script_t '/opt/venv/cosmian-ai-runner/lib/python3.9/site-packages/cosmian_ai_runner(/.*\.py)?'
+    restorecon -R -v /opt/venv/cosmian-ai-runner/lib/python3.9/site-packages/cosmian_ai_runner
+  args:
+    executable: /bin/bash
+  become: true
+  changed_when: true
+
 - name: Add Nginx configuration
   ansible.builtin.template:
     src: nginx.j2

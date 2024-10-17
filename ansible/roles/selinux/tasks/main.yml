@@ -1,0 +1,26 @@
+---
+# tasks file for ansible/roles/selinux
+
+- name: Custom SELinux module cosmiand
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Install policycoreutils
+      ansible.builtin.dnf:
+        name: policycoreutils
+        state: present
+        update_cache: true
+
+    - name: Download SELinux module from package.cosmian.com
+      ansible.builtin.get_url:
+        url: https://package.cosmian.com/selinux-module/1.1.0/cosmiand.pp
+        dest: /tmp
+        mode: "0755"
+        group: root
+        owner: root
+
+    - name: Install cosmiand SELinux module
+      ansible.builtin.command: semodule -i cosmiand.pp
+      become: true
+      changed_when: true
+      args:
+        chdir: /tmp
