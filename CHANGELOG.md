@@ -2,13 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.3.0] - 2024-XX-XX
+## [1.3.0] - 2024-10-18
 
 ### 🚀 Features
 
+- *RHEL*: Add `cosmiand` SELinux module on RHEL to protect scripts and configuration through IMA measurements ([#151](https://github.com/Cosmian/cosmian_vm/pull/151))
+  - Bump Base Image to 0.1.10
+  - Add SELinux documentation on [#96](https://github.com/Cosmian/public_documentation/pull/96)
 - RHEL TDX on GCP ([#158](https://github.com/Cosmian/cosmian_vm/pull/158))
   - Note: Ubuntu and RedHat *GCP* images upgraded -> using now Cosmian Base Image version 0.1.10 for all images
-- Bump KMS version to 4.19.1
+- Bump KMS version to 4.19.1 ([#160](https://github.com/Cosmian/cosmian_vm/pull/160))
+
+### 🧪 CI
+
+- Make products testable individually in Github CI ([#159](https://github.com/Cosmian/cosmian_vm/pull/159))
+- Simplify versions bump ([#157](https://github.com/Cosmian/cosmian_vm/pull/157))
+- Remove symbolic links from `libtdx_attest.so` ([#156](https://github.com/Cosmian/cosmian_vm/pull/156))
 
 ## [1.2.9] - 2024-10-09
 
