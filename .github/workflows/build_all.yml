@@ -25,15 +25,11 @@ jobs:
   ansible-lint:
     name: Ansible Lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./ansible
     steps:
       - uses: actions/checkout@v3
-      - name: Install ansible prerequisites
-        run: |
-          python3 -m pip install -r python_modules.txt
-          python3 -m pip install ansible-lint
-
       - name: Run ansible-lint
-        run: ansible-lint
+        uses: ansible/ansible-lint@main
+        with:
+          setup_python: "true"
+          working_directory: "./ansible"
+          requirements_file: "requirements.yml"

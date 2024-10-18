@@ -117,6 +117,19 @@
   changed_when: cmd_output.rc != 0
   tags: selinux
 
+- name: Add SELinux context for KMS
+  when: ansible_distribution == 'RedHat'
+  ansible.builtin.shell: |
+    set -exo pipefail
+    semanage fcontext -a -t cosmiand_exec_t /usr/sbin/cosmian_kms
+    restorecon -v /usr/sbin/cosmian_kms
+    semanage fcontext -a -t cosmiand_conf_t /etc/cosmian_kms/kms.toml
+    restorecon -v /etc/cosmian_kms/kms.toml
+  args:
+    executable: /bin/bash
+  become: true
+  changed_when: true
+
 - name: Add Nginx configuration
   ansible.builtin.template:
     src: nginx.j2
