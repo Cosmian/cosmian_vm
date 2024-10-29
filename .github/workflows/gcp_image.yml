@@ -247,7 +247,7 @@ jobs:
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           KMS_VERSION=$(echo $KMS | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           AI_RUNNER_VERSION=$(echo $AI_RUNNER | sed 's/\./-/g; s/_/-/g; s/+/-/g')
-          NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
+          NEW_IMAGE_NAME="cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}"
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
@@ -258,20 +258,20 @@ jobs:
               fi
             elif [ "${{ inputs.product }}" = "ai-runner" ]; then
               if [ "${{ inputs.techno }}" = "tdx" ]; then
-                LICENSE=${{ secrets.GCP_AI_RUNNER_UBUNTU_TDX_LICENSE }}
+                LICENSE="${{ secrets.GCP_AI_RUNNER_UBUNTU_TDX_LICENSE }}"
               else
-                LICENSE=${{ secrets.GCP_AI_RUNNER_UBUNTU_LICENSE }}
+                LICENSE="${{ secrets.GCP_AI_RUNNER_UBUNTU_LICENSE }}"
               fi
-              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+              NEW_IMAGE_NAME="cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}"
             else
               if [ "${{ inputs.techno }}" = "tdx" ]; then
-                LICENSE=${{ secrets.GCP_KMS_UBUNTU_TDX_LICENSE }}
+                LICENSE="${{ secrets.GCP_KMS_UBUNTU_TDX_LICENSE }}"
               else
-                LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
+                LICENSE="${{ secrets.GCP_KMS_UBUNTU_LICENSE }}"
               fi
-              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+              NEW_IMAGE_NAME="cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}"
             fi
-          else
+          else  # Gestion pour RHEL uniquement
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               if [ "${{ inputs.techno }}" = "tdx" ]; then
                 LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_TDX_LICENCE }}"
@@ -280,20 +280,21 @@ jobs:
               fi
             elif [ "${{ inputs.product }}" = "ai-runner" ]; then
               if [ "${{ inputs.techno }}" = "tdx" ]; then
-                LICENSE=${{ secrets.GCP_AI_RUNNER_RHEL_TDX_LICENSE }}
+                LICENSE="${{ secrets.GCP_AI_RUNNER_RHEL_TDX_LICENSE }}"
               else
-                LICENSE=${{ secrets.GCP_AI_RUNNER_RHEL_LICENSE }}
+                LICENSE="${{ secrets.GCP_AI_RUNNER_RHEL_LICENSE }}"
               fi
-              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+              NEW_IMAGE_NAME="cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}"
             else
               if [ "${{ inputs.techno }}" = "tdx" ]; then
-                LICENSE=${{ secrets.GCP_KMS_RHEL_TDX_LICENSE }}
+                LICENSE="${{ secrets.GCP_KMS_RHEL_TDX_LICENSE }}"
               else
-                LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
+                LICENSE="${{ secrets.GCP_KMS_RHEL_LICENSE }}"
               fi
-              NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+              NEW_IMAGE_NAME="cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}"
             fi
           fi
+
 
           gcloud compute --project=$GCP_DEV_PROJECT images create $NEW_IMAGE_NAME \
             --source-image=$IMAGE_NAME \
