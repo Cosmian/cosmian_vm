@@ -261,9 +261,17 @@ jobs:
             fi
           else
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-              LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}"
+              if [ "${{ inputs.techno }}" = "tdx" ]; then
+                LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_TDX_LICENCE }}"
+              else
+                LICENSE="${{ secrets.GCP_COSMIAN_VM_RHEL_LICENCE }}"
+              fi
             elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-              LICENSE=${{ secrets.GCP_AI_RUNNER_RHEL_LICENSE }}
+              if [ "${{ inputs.techno }}" = "tdx" ]; then
+                LICENSE=${{ secrets.GCP_AI_RUNNER_RHEL_TDX_LICENSE }}
+              else
+                LICENSE=${{ secrets.GCP_AI_RUNNER_RHEL_LICENSE }}
+              fi
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             else
               LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
