@@ -251,12 +251,24 @@ jobs:
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
-              LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
+              if [ "${{ inputs.techno }}" = "tdx" ]; then
+                LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_TDX_LICENCE }}"
+              else
+                LICENSE="${{ secrets.GCP_COSMIAN_VM_UBUNTU_LICENCE }}"
+              fi
             elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-              LICENSE=${{ secrets.GCP_AI_RUNNER_UBUNTU_LICENSE }}
+              if [ "${{ inputs.techno }}" = "tdx" ]; then
+                LICENSE=${{ secrets.GCP_AI_RUNNER_UBUNTU_TDX_LICENSE }}
+              else
+                LICENSE=${{ secrets.GCP_AI_RUNNER_UBUNTU_LICENSE }}
+              fi
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             else
-              LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
+              if [ "${{ inputs.techno }}" = "tdx" ]; then
+                LICENSE=${{ secrets.GCP_KMS_UBUNTU_TDX_LICENSE }}
+              else
+                LICENSE=${{ secrets.GCP_KMS_UBUNTU_LICENSE }}
+              fi
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             fi
           else
@@ -274,7 +286,11 @@ jobs:
               fi
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             else
-              LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
+              if [ "${{ inputs.techno }}" = "tdx" ]; then
+                LICENSE=${{ secrets.GCP_KMS_RHEL_TDX_LICENSE }}
+              else
+                LICENSE=${{ secrets.GCP_KMS_RHEL_LICENSE }}
+              fi
               NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
             fi
           fi
