@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2024-10-30
+
+### 🚀 Features
+
+- Add TDX GCP license ([#164](https://github.com/Cosmian/cosmian_vm/pull/164))
+- Bump KMS version to 4.19.3 ([#165](https://github.com/Cosmian/cosmian_vm/pull/165))
+
 ## [1.3.0] - 2024-10-18
 
 ### 🚀 Features
