@@ -5,18 +5,18 @@
   roles:
     - role: check_cpu
       tags: role-check-cpu
-    - role: upgrade
-      tags: role-upgrade
-    - role: tpm
-      tags: role-tpm
-    - role: instance_configs # GCP only
-      tags: role-instance-configs
-    - role: intel
-      tags: role-intel
-    - role: no_updates
-      tags: role-no-updates
-    - role: selinux
-      tags: role-selinux
+    # - role: upgrade
+    #   tags: role-upgrade
+    # - role: tpm
+    #   tags: role-tpm
+    # - role: instance_configs # GCP only
+    #   tags: role-instance-configs
+    # - role: intel
+    #   tags: role-intel
+    # - role: no_updates
+    #   tags: role-no-updates
+    # - role: selinux
+    #   tags: role-selinux
     - role: configure_ima
       tags: role-configure-ima
 
@@ -53,9 +53,9 @@
           ansible.builtin.debug:
             var: dnf_security_update
 
-- name: Clean base image
-  hosts: all
-  become: true
-  roles:
-    - role: cleanup
-      tags: role-cleanup
+# - name: Clean base image
+#   hosts: all
+#   become: true
+#   roles:
+#     - role: cleanup
+#       tags: role-cleanup

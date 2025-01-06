@@ -14,30 +14,30 @@
   register: etc_default_grub
   tags: update_grub
 
-- name: Create ima folder
-  ansible.builtin.file:
-    path: /etc/ima
-    state: directory
-    owner: root
-    group: root
-    mode: "0500"
+# - name: Create ima folder
+#   ansible.builtin.file:
+#     path: /etc/ima
+#     state: directory
+#     owner: root
+#     group: root
+#     mode: "0500"
 
-- name: Copy ima policy
-  ansible.builtin.template:
-    src: ima-policy.j2
-    dest: /etc/ima/ima-policy
-    owner: root
-    group: root
-    mode: "0400"
+# - name: Copy ima policy
+#   ansible.builtin.template:
+#     src: ima-policy.j2
+#     dest: /etc/ima/ima-policy
+#     owner: root
+#     group: root
+#     mode: "0400"
 
-- name: Override ima policy for RedHat
-  when: ansible_distribution == 'RedHat'
-  ansible.builtin.template:
-    src: ima-policy-selinux.j2
-    dest: /etc/ima/ima-policy
-    owner: root
-    group: root
-    mode: "0400"
+# - name: Override ima policy for RedHat
+#   when: ansible_distribution == 'RedHat'
+#   ansible.builtin.template:
+#     src: ima-policy-selinux.j2
+#     dest: /etc/ima/ima-policy
+#     owner: root
+#     group: root
+#     mode: "0400"
 
 - name: Copy the bash script to the remote host (in order to update the grub conf)
   when: etc_default_grub.stat.exists
@@ -56,41 +56,41 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
       fi
 
-      # Hash method
-      if grep -q ima_hash= $f ; then
-        echo "Hash method already set"
-        sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
-      else
-        echo "Hash method not set"
-        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
-      fi
+      # # Hash method
+      # if grep -q ima_hash= $f ; then
+      #   echo "Hash method already set"
+      #   sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
+      # else
+      #   echo "Hash method not set"
+      #   sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
+      # fi
 
-      # Template format
-      if grep -q ima_template= $f ; then
-        echo "Template format already set"
-        sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
-      else
-        echo "Template format not set"
-        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
-      fi
+      # # Template format
+      # if grep -q ima_template= $f ; then
+      #   echo "Template format already set"
+      #   sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
+      # else
+      #   echo "Template format not set"
+      #   sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
+      # fi
 
-      # Console ttyS0
-      if grep -q console= $f ; then
-        echo "console already set"
-        sed -i 's/console=[^ "]\+/console=ttyS0/' $f
-      else
-        echo "console not set"
-        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ console=ttyS0\"/ $f
-      fi
+      # # Console ttyS0
+      # if grep -q console= $f ; then
+      #   echo "console already set"
+      #   sed -i 's/console=[^ "]\+/console=ttyS0/' $f
+      # else
+      #   echo "console not set"
+      #   sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ console=ttyS0\"/ $f
+      # fi
 
-      # earlyprintk
-      if grep -q earlyprintk= $f ; then
-        echo "earlyprintk already set"
-        sed -i 's/earlyprintk=[^ "]\+/earlyprintk=ttyS0/' $f
-      else
-        echo "earlyprintk not set"
-        sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
-      fi
+      # # earlyprintk
+      # if grep -q earlyprintk= $f ; then
+      #   echo "earlyprintk already set"
+      #   sed -i 's/earlyprintk=[^ "]\+/earlyprintk=ttyS0/' $f
+      # else
+      #   echo "earlyprintk not set"
+      #   sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
+      # fi
     dest: /tmp/grub.sh
     mode: "0700" # Make the script executable
     remote_src: true
@@ -106,7 +106,7 @@
 - name: Update the grub configuration
   when: etc_default_grub.stat.exists
   tags: update_grub
-  ansible.builtin.command: /tmp/grub.sh
+  ansible.builtin.command: bash /tmp/grub.sh
   register: cmd_output
   changed_when: cmd_output.rc != 0
 
@@ -138,6 +138,7 @@
           - grub2-efi
           - grub2-efi-modules
           - shim
+          # - kernel-core-5.14.0-427.13.1.el9_4.x86_64
         state: present
 
     - name: Update grub
@@ -146,6 +147,13 @@
           grub2-mkconfig -o /boot/grub2/grub.cfg
       register: cmd_output
       changed_when: cmd_output.rc != 0
+
+    - name: Update journald storage setting
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/journald.conf
+        regexp: "^#Storage=auto"
+        line: "Storage=persistent"
+        state: present
 
     - name: Selinux - allow https
       ansible.builtin.command: setsebool -P httpd_can_network_connect 1

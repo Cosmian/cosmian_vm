@@ -41,18 +41,21 @@ else
   az vm create -g packer-snp -n "$NAME" \
     --image "$IMAGE_NAME" \
     --security-type ConfidentialVM \
-    --os-disk-security-encryption-type VMGuestStateOnly \
     --size Standard_DC2ads_v5 \
     --enable-vtpm true \
     --enable-secure-boot true \
-    --nic-delete-option delete \
+    --authentication-type ssh \
+    --ssh-key-value ~/.ssh/id_rsa.pub \
+    --os-disk-security-encryption-type VMGuestStateOnly \
     --os-disk-delete-option delete \
+    --public-ip-sku Standard \
+    --nic-delete-option delete \
     --data-disk-delete-option delete \
     --admin-username azureuser \
     --ssh-key-values "$SSH_PUB_KEY"
-
 fi
 
+az vm boot-diagnostics enable -g packer-snp -n "$NAME"
 az vm open-port -g packer-snp -n "$NAME" --priority 100 --port 5555,443,22
 
 HOST=$(az vm show -d -g packer-snp -n "$NAME" --query publicIps -o tsv)
