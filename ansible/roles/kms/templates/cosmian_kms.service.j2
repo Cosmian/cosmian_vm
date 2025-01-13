@@ -1,6 +1,6 @@
 [Unit]
 Description=Cosmian KMS
-Requires=multi-user.target
+Requires=multi-user.target mount_luks.service cosmian_vm_agent.service
 After=multi-user.target mount_luks.service cosmian_vm_agent.service
 
 [Service]
@@ -10,6 +10,7 @@ ExecStart=/usr/sbin/cosmian_kms
 Restart=on-failure
 RestartSec=3s
 Environment="COSMIAN_KMS_CONF=/var/lib/cosmian_vm/data/app/app.conf"
+StandardOutput=syslog+console
 
 [Install]
 WantedBy=multi-user.target

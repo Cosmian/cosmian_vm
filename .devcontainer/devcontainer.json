@@ -1,0 +1,12 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": ["rust-lang.rust-analyzer", "serayuzgur.crates"]
+    }
+  },
+  "remoteUser": "root"
+}
