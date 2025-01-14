@@ -14,10 +14,8 @@ jobs:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/azure_main.yml
     with:
-      # product: cosmian-vm
-      product: kms
-      # kms-version: 4.21.0
-      kms-version: last_build/feat/server_configuration_paths
+      product: cosmian-vm
+      kms-version: 4.21.0
       ai-runner-version: 0.3.0
       techno: sev
     secrets: inherit
