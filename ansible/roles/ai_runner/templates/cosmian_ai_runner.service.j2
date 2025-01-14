@@ -1,6 +1,6 @@
 [Unit]
 Description=Cosmian AI Runner
-Requires=multi-user.target
+Requires=multi-user.target mount_luks.service cosmian_vm_agent.service
 After=multi-user.target mount_luks.service cosmian_vm_agent.service
 
 [Service]
