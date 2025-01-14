@@ -5,8 +5,7 @@ on:
       product:
         required: true
         type: string
-        # default: cosmian-vm
-        default: kms
+        default: cosmian-vm
       kms-version:
         required: true
         type: string
