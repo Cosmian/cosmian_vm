@@ -5,7 +5,7 @@
   ansible.builtin.reboot:
     connect_timeout: 3600
     reboot_timeout: 3600
-  when: check_app_test_reboot
+  when: check_app_test_reboot # equals to false when AWS (too many instability trouble)
 
 - name: Start systemd services - {{ check_app_name }}
   when: not check_app_test_reboot
@@ -54,6 +54,19 @@
   ansible.builtin.debug:
     var: app_logs
   tags: launch
+
+- name: After first reboot, check HTTPS connection - {{ check_app_name }}
+  ansible.builtin.uri:
+    url: https://{{ inventory_hostname }}/{{ check_app_endpoint[0] }}
+    validate_certs: false
+  delegate_to: localhost
+  become: false
+  register: result
+  retries: 30
+  delay: 10
+  until: result.status == 200
+  tags: after_first_reboot
+  when: (check_app_name == "AI Runner") or (check_app_name == "KMS")
 
 - name: App initialization - sending configuration {{ check_app_configuration_path }}
   ansible.builtin.command:
