@@ -102,6 +102,12 @@
     group: root
     mode: "0644"
 
+- name: Replace 9998 by 8080 in /etc/cosmian_kms/kms.toml
+  ansible.builtin.replace:
+    path: /etc/cosmian_kms/kms.toml
+    regexp: "9998"
+    replace: "8080"
+
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
     path: /var/www/html
