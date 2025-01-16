@@ -16,7 +16,7 @@ services:
       # Shell history persistence
       # - ~/.zsh_history:/root/.zsh_history
       # Git config
-      - .gitconfig:/root/.gitconfig
+      - $HOME/.gitconfig:/root/.gitconfig
     environment:
       - TZ=
     entrypoint: bash -c "while sleep 1000; do :; done"
