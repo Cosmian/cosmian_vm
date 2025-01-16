@@ -4,7 +4,7 @@ Requires=multi-user.target
 After=multi-user.target
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=/bin/bash /root/mount_luks.sh
 Restart=on-failure
 RestartSec=10s
