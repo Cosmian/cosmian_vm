@@ -1,10 +1,10 @@
 [Unit]
 Description=open and mount the encrypted /var/lib/cosmian_vm/container to /var/lib/cosmian_vm/data
-Requires=multi-user.target
-After=multi-user.target
+Requires=multi-user.target dev-tpm0.device
+After=multi-user.target dev-tpm0.device
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=/bin/bash /root/mount_luks.sh
 Restart=on-failure
 RestartSec=10s
