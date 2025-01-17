@@ -73,9 +73,7 @@ jobs:
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             IMAGE_OPTIONS="--image-project=ubuntu-os-cloud --project $GCP_DEV_PROJECT"
-            IMAGE_OPTIONS="--image-project=cosmian-dev --project $GCP_DEV_PROJECT"
             IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
-            IMAGE_NAME="base-image-0-1-10-ubuntu-sev"
           else
             IMAGE_OPTIONS="--image-project=rhel-cloud --project $GCP_DEV_PROJECT"
             IMAGE_NAME="rhel-9-v20241009"
