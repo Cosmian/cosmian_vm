@@ -66,7 +66,7 @@
   delay: 10
   until: result.status == 200
   tags: after_first_reboot
-  when: (check_app_name == "AI Runner") or (check_app_name == "KMS")
+  when: check_app_name == "KMS" # should be also handled for AI Runner
 
 - name: App initialization - sending configuration {{ check_app_configuration_path }}
   ansible.builtin.command:
