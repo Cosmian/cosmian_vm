@@ -1,6 +1,6 @@
 [Unit]
 Description=Cosmian VM Agent
-Requires=multi-user.target mount_luks.service
+Requires=multi-user.target
 After=multi-user.target mount_luks.service dev-tpm0.device
 
 [Service]
