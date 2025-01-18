@@ -2,6 +2,9 @@
   "ignorePatterns": [
     {
       "pattern": "packercosmian"
+    },
+    {
+      "pattern": "public_documentation"
     }
   ]
 }

@@ -27,14 +27,18 @@ To proceed a new release, please follow the steps below:
 
 3. Release the Cosmian VM images.
 
-- Increase the version number in the [CHANGELOG.md](CHANGELOG.md) file.
-- Increase the version number in the [README.md](README.md) file, Section `Versions correspondence`.
-- Increase the version number in the [cargo.toml root file](Cargo.toml).
-- Do a cargo build a the root of the project to update the Cargo.lock file. In particular, in these 2 files:
-  - `pull_request.yml`
-  - `release_main.yml`
-- Replace everywhere old version numbers of the Cosmian VM image.
-- Once the CI pipeline is green, merge it into the `main` branch.
-- Next, create a final tag to launch the release pipeline which will publish the Cosmian VM images on the marketplaces:
-  - `git tag X.Y.Z -m "fix: this is why we did a new version"`
-  - `git push --tags`
+   - Increase the version number in the [CHANGELOG.md](CHANGELOG.md) file.
+   - Increase the version number in the [README.md](README.md) file, Section `Versions correspondence`.
+   - Increase the version number in the [cargo.toml root file](Cargo.toml).
+   - Do a cargo build a the root of the project to update the Cargo.lock file. In particular, in these 2 files:
+     - `pull_request.yml`
+     - `release_main.yml`
+   - Replace everywhere old version numbers of the Cosmian VM image.
+   - Once the CI pipeline is green, merge it into the `main` branch.
+   - Next, create a final tag to launch the release pipeline which will publish the Cosmian VM images on the marketplaces:
+     - `git tag X.Y.Z -m "fix: this is why we did a new version"`
+     - `git push --tags`
+
+4. Edit and update Github release description:
+
+   - Copy the CHANGELOG.md new entry in the [GitHub release](https://github.com/Cosmian/cosmian_vm/releases) page.
