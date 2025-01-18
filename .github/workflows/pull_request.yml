@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/azure_main.yml
     with:
       product: cosmian-vm
-      kms-version: 4.19.3
+      kms-version: 4.21.1
       ai-runner-version: 0.3.0
       techno: sev
     secrets: inherit
@@ -25,7 +25,7 @@ jobs:
     uses: ./.github/workflows/gcp_main.yml
     with:
       product: cosmian-vm
-      kms-version: 4.19.3
+      kms-version: 4.21.1
       ai-runner-version: 0.3.0
       techno: sev
     secrets: inherit
@@ -36,7 +36,7 @@ jobs:
   #   uses: ./.github/workflows/aws_main.yml
   #   with:
   #     product: cosmian-vm
-  #     kms-version: 4.19.3
+  #     kms-version: 4.21.1
   #     ai-runner-version: 0.3.0
   #     techno: sev
   #   secrets: inherit

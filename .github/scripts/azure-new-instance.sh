@@ -28,7 +28,8 @@ if [ "$TECHNO" = "tdx" ]; then
     --ssh-key-values "$SSH_PUB_KEY"
 else
   IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/base-image-${DISTRIB}-${TECHNO}/versions/0.1.10"
-  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/cosmian-vm-${DISTRIB}-${TECHNO}/versions/1.3.1"
+  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/cosmian-vm-${DISTRIB}-${TECHNO}/versions/1.3.2"
+  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/kms-${DISTRIB}-${TECHNO}/versions/4.21.1"
 
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV

@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2025-01-18
+
+### 🚀 Features
+
+- Bump KMS from 4.19.3 to 4.21.1 ([#167](https://github.com/Cosmian/cosmian_vm/pull/167))
+
+### 🐛 Bug Fixes
+
+- List of bug fixes in ([#167](https://github.com/Cosmian/cosmian_vm/pull/167)):
+  - About KMS systemd service:
+    - service must wait for mount_luks service but using `Requires` argument
+    - Also `StandardOutput` to `syslog+console` to display `stdout`
+  - Make `9998` the default local `Nginx` port for KMS. No extra conf to do anymore on `cosmian` CLI side
+  - Fix CVE of `idna` crate by upgrading it from `0.5.0` to `1.0.3`.
+
+### 🧪 Testing
+
+- Test in Ansible if KMS service is up:
+  - after first boot, first reboot and after a `cosmian_vm app init` configuration
+- Display TPM PCR-7 before and after first reboot
+
+### ⚙️ Miscellaneous Tasks
+
+- Add `dev-container` files for VSCode
+
 ## [1.3.1] - 2024-10-30
 
 ### 🚀 Features
