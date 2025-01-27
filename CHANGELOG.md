@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - Revert changes on AI runner systemd service file ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+- *GCP RHEL*: Do not upgrade all RHEL packages - just refresh cache ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+- For releases, clean Github cache before anything
 
 ## [1.3.2] - 2025-01-18
 

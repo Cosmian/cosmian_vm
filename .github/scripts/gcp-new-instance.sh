@@ -38,25 +38,25 @@ if [ "$TECHNO" = "tdx" ]; then
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Base Ubuntu SEV
-    IMAGE="base-image-0-1-6-ubuntu-sev"
+    IMAGE="base-image-0-1-11-ubuntu-sev"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian Ubuntu SEV
-    IMAGE="cosmian-vm-1-2-6-sev-ubuntu"
+    IMAGE="cosmian-vm-1-3-3-sev-ubuntu"
+    IMAGE_PROJECT="cosmian-dev"
     # Cosmian KMS Ubuntu SEV
     IMAGE="cosmian-vm-1-3-3-kms-4-21-2-sev-ubuntu"
-    IMAGE_PROJECT="cosmian-dev"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
     IMAGE="ubuntu-2404-noble-amd64-v20241004"
     IMAGE_PROJECT="ubuntu-os-cloud"
   else
-    # Base Ubuntu SEV
-    IMAGE="base-image-0-1-6-rhel-sev"
+    # Base RHEL SEV
+    IMAGE="base-image-0-1-11-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
-    # Cosmian Ubuntu SEV
-    IMAGE="cosmian-vm-1-2-6-rhel-sev"
+    # Cosmian RHEL SEV
+    IMAGE="cosmian-vm-1-3-3-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
-    # Cosmian Ubuntu SEV
+    # Cosmian RHEL SEV
     IMAGE="cosmian-vm-1-2-6-kms-4-17-0-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
