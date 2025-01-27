@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade the Cosmian base image v0.1.11 to upgrade Azure Ubuntu 22.04 to 24.04 ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
 - Regenerate all images with the new base image v0.1.11 ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
 - Bump KMS version from 4.21.1 to 4.21.2
+- *AWS RHEL*: Bump version to 9.4 (RHEL-9.4.0_HVM-20241210-x86_64-0-Hourly2-GP3)
 
 ### 🐛 Bug Fixes
 
