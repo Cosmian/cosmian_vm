@@ -18,7 +18,7 @@ if [ "$TECHNO" = "tdx" ]; then
     --name "$NAME" \
     --size Standard_DC2es_v5 \
     --enable-secure-boot true \
-    --image "Canonical:0001-com-ubuntu-confidential-vm-jammy:22_04-lts-cvm:latest" \
+    --image "Canonical:ubuntu-24_04-lts:cvm:latest" \
     --public-ip-sku Standard \
     --admin-username azureuser \
     --os-disk-delete-option delete \
@@ -27,13 +27,13 @@ if [ "$TECHNO" = "tdx" ]; then
     --security-type ConfidentialVM \
     --ssh-key-values "$SSH_PUB_KEY"
 else
-  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/base-image-${DISTRIB}-${TECHNO}/versions/0.1.10"
-  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/cosmian-vm-${DISTRIB}-${TECHNO}/versions/1.3.2"
-  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/kms-${DISTRIB}-${TECHNO}/versions/4.21.1"
+  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/kms-${DISTRIB}-${TECHNO}/versions/4.21.2"
+  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/cosmian-vm-${DISTRIB}-${TECHNO}/versions/1.3.3"
+  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/base-image-${DISTRIB}-${TECHNO}/versions/0.1.11"
 
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV
-    IMAGE_NAME="Canonical:0001-com-ubuntu-confidential-vm-jammy:22_04-lts-cvm:latest"
+    IMAGE_NAME="Canonical:ubuntu-24_04-lts:cvm:latest"
   else
     # Redhat SEV
     IMAGE_NAME="redhat:rhel-cvm:9_4_cvm:latest"

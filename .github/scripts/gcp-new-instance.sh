@@ -42,9 +42,9 @@ else
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian Ubuntu SEV
     IMAGE="cosmian-vm-1-2-6-sev-ubuntu"
-    IMAGE_PROJECT="cosmian-dev"
     # Cosmian KMS Ubuntu SEV
-    IMAGE="cosmian-vm-1-2-6-kms-4-17-0-sev-ubuntu"
+    IMAGE="cosmian-vm-1-3-3-kms-4-21-2-sev-ubuntu"
+    IMAGE_PROJECT="cosmian-dev"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
     IMAGE="ubuntu-2404-noble-amd64-v20241004"

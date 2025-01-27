@@ -9,8 +9,8 @@ set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
   IMAGE_PUBLISHER="canonical"
-  IMAGE_OFFER="0001-com-ubuntu-confidential-vm-jammy"
-  IMAGE_SKU="22_04-lts-cvm"
+  IMAGE_OFFER="ubuntu-24_04-lts"
+  IMAGE_SKU="cvm"
 else
   IMAGE_PUBLISHER="redhat"
   IMAGE_OFFER="rhel-cvm"
