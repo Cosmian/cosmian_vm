@@ -6,7 +6,13 @@ on:
 name: Pull request
 
 jobs:
+  cleanup: # we remove the Github cache to avoid any conflict
+    name: Clean Github cache
+    uses: Cosmian/reusable_workflows/.github/workflows/cleanup_cache.yml@main
+    secrets: inherit
+
   build-cosmian-vm-binaries:
+    needs: cleanup
     name: Build binaries
     uses: ./.github/workflows/build_all.yml
 

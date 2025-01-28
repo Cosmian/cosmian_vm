@@ -32,6 +32,7 @@
   ansible.builtin.wait_for:
     path: /var/lib/cosmian_vm/data/cert.pem
     state: present
+    timeout: 600 # default is 300
 
 - name: Check if port 5555 is listening
   ansible.builtin.wait_for:
