@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2025-01-27
+
+### 🚀 Features
+
+- Upgrade the Cosmian base image v0.1.11 to upgrade Azure Ubuntu 22.04 to 24.04 ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+- Regenerate all images with the new base image v0.1.11 ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+- Bump KMS version from 4.21.1 to 4.21.2
+- *AWS RHEL*: Bump version to 9.4 (RHEL-9.4.0_HVM-20241210-x86_64-0-Hourly2-GP3)
+
+### 🐛 Bug Fixes
+
+- Revert changes on AI runner systemd service file ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+- *GCP RHEL*: Do not upgrade all RHEL packages - just refresh cache ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+- For releases, clean Github cache before anything
+
 ## [1.3.2] - 2025-01-18
 
 ### 🚀 Features

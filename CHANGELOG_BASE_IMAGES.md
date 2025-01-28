@@ -1,5 +1,10 @@
 # Cosmian Base Image Changelog
 
+## [0.1.11] - 2025-01-27
+
+- *Azure*: ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+  - Upgrade Ubuntu 22.04 to 24.04:
+
 ## [0.1.10] - 2024-10-10
 
 - *GCP*: ([#158](https://github.com/Cosmian/cosmian_vm/pull/158))

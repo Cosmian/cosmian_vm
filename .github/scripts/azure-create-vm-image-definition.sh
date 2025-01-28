@@ -20,8 +20,8 @@ for product in "${products[@]}"; do
       name="${product}-${distrib}-${techno}"
 
       if [ "${distrib}" = "ubuntu" ]; then
-        offer=0001-com-ubuntu-confidential-vm-jammy
-        sku=22_04-lts-cvm
+        offer=ubuntu-24_04-lts
+        sku=cvm
       else
         offer=rhel-cvm
         sku=9_4_cvm

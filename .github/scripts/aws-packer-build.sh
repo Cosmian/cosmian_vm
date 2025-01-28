@@ -3,11 +3,11 @@
 # Only for testing, DO NOT UNCOMMENT
 # DISTRIBUTION=rhel
 # PRODUCT=cosmian-vm
-# VERSION=0.1.10 # Optional
-# KMS_VERSION=4.21.1 # Provided by Github workflow
+# VERSION=0.1.11 # Optional
+# KMS_VERSION=4.21.2 # Provided by Github workflow
 # AI_RUNNER_VERSION=0.3.0 # Provided by Github workflow
-# GITHUB_REF=refs/tags/1.3.2 # Provided by Github Actions
-# GITHUB_REF_NAME=1.3.2 # Provided by Github Actions
+# GITHUB_REF=refs/tags/1.3.3 # Provided by Github Actions
+# GITHUB_REF_NAME=1.3.3 # Provided by Github Actions
 # IMAGE_NAME="cosmian-vm-${GITHUB_REF_NAME}-sev-${DISTRIBUTION}" # Only for testing
 
 set -ex
@@ -25,7 +25,7 @@ else
   if [ "$DISTRIBUTION" = "ubuntu" ]; then
     BASE_IMAGE_NAME="ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1"
   else
-    BASE_IMAGE_NAME="RHEL-9.3.0_HVM-20240117-x86_64-49-Hourly2-GP3"
+    BASE_IMAGE_NAME="RHEL-9.4.0_HVM-20241210-x86_64-0-Hourly2-GP3"
   fi
 fi
 
