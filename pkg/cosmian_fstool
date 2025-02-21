@@ -124,6 +124,9 @@ echo "Mounting the container at $CONTAINER_MOUNT_PATH..."
 mkdir -p "$CONTAINER_MOUNT_PATH"
 mount "$CONTAINER_MAPPING_PATH" "$CONTAINER_MOUNT_PATH"
 
+UUID=$(blkid -s UUID -o value "$CONTAINER_MAPPING_PATH")
+LUKS_UUID=$(crypsetup luksUUID "$CONTAINER_PATH")
+
 # Determine the block device
 BLOCK_DEVICE=$(losetup -ln --raw -O NAME,BACK-FILE | grep "$CONTAINER_PATH" | cut -f1 -d" ")
 
@@ -137,7 +140,7 @@ fi
 echo "Enrolling the TPM for this container on block device $BLOCK_DEVICE..."
 
 set +e
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7 --wipe-slot=tpm2 "$BLOCK_DEVICE"
 if [ $? -ne 0 ]; then
     # Need to clean container after failure
     rm -f "$CONTAINER_PATH"
@@ -146,7 +149,19 @@ fi
 
 # Display debug information
 set -x
-cryptsetup luksDump $CONTAINER_PATH
+cryptsetup luksDump "$CONTAINER_PATH"
 set +x
+
+# Remove previous entry from the fstab and crypttab (create a .bak file to ease the rollback)
+echo "Removing previous obsolete auto mounting rules..."
+sed -i.bak "/$CONTAINER_MAPPING_NAME/d" /etc/crypttab
+sed -i.bak "/$CONTAINER_MAPPING_NAME/d" /etc/fstab
+
+# # Auto decrypt & auto mount the luks when rebooting (if not already done)
+echo "Enabling auto mounting when rebooting..."
+echo "$CONTAINER_MAPPING_NAME UUID=$LUKS_UUID - tpm2-device=auto,headless=true" >>/etc/crypttab
+echo "UUID=$UUID $CONTAINER_MOUNT_PATH ext4 defaults 0 0" >>/etc/fstab
+
+dracut -fv --regenerate-all
 
 echo "Process completed with success!"

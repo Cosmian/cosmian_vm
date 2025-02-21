@@ -187,10 +187,7 @@ This is a abstract of the updated file tree:
 │   │   └── ima-policy
 │   └── systemd
 │       └── system
-│           ├── cosmian_vm_agent.service
-│           └── mount_luks.service
-├── root
-│   ├── mount_luks.sh
+│           └── cosmian_vm_agent.service
 ├── usr
 │   └── sbin
 │       ├── cosmian_certtool

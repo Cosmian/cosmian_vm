@@ -76,19 +76,6 @@
 - name: Before any check - Read Cosmian VM agent logs
   ansible.builtin.command:
     cmd: |
-      journalctl -u mount_luks
-  register: mount_luks_service_logs
-  changed_when: mount_luks_service_logs.rc != 0
-  tags: mount_luks_service_logs
-
-- name: Before any check - Display Mount LUKS service logs
-  ansible.builtin.debug:
-    var: mount_luks_service_logs
-  tags: mount_luks_service_logs
-
-- name: Before any check - Read Cosmian VM agent logs
-  ansible.builtin.command:
-    cmd: |
       journalctl -u cosmian_vm_agent
   register: agent_logs
   changed_when: agent_logs.rc != 0

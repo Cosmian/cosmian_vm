@@ -28,7 +28,6 @@ stop_and_disable() {
   fi
 }
 
-stop_and_disable mount_luks
 stop_and_disable cosmian_vm_agent
 
 systemctl daemon-reload
