@@ -8,6 +8,7 @@ Type=oneshot
 Restart=on-failure
 RestartSec=10s
 ExecStart=/bin/bash /root/mount_luks.sh
+RemainAfterExit=yes
 
 [Install]
 WantedBy=default.target
