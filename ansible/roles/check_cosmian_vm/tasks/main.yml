@@ -9,18 +9,18 @@
   delegate_to: localhost
   become: true
 
-- name: Read PCR7 before reboot
+- name: Read PCR-7 and PCR-10 before reboot
   ansible.builtin.shell:
     cmd: |
       set -x
-      tpm2_pcrread sha256:7
-  register: pcr7_before
-  changed_when: pcr7_before.rc != 0
-  tags: pcr7_before_command
+      tpm2_pcrread sha256:7,10
+  register: pcr_before
+  changed_when: pcr_before.rc != 0
+  tags: pcr_before_command
 
-- name: Display PCR7 before reboot
+- name: Display PCR-7 and PCR-10 before reboot
   ansible.builtin.debug:
-    var: pcr7_before
+    var: pcr_before
 
 - name: Reboot before anything to test boot of systemd services
   ansible.builtin.reboot:
@@ -28,18 +28,18 @@
     reboot_timeout: 3600
   when: check_cosmian_vm_test_reboot
 
-- name: Read PCR7 after reboot
+- name: Read PCR-7 and PCR-10 after reboot
   ansible.builtin.shell:
     cmd: |
       set -x
-      tpm2_pcrread sha256:7
-  register: pcr7_after
-  changed_when: pcr7_after.rc != 0
-  tags: pcr7_after_command
+      tpm2_pcrread sha256:7,10
+  register: pcr_after
+  changed_when: pcr_after.rc != 0
+  tags: pcr_after_command
 
-- name: Display PCR7 after reboot
+- name: Display PCR-7 and PCR-10 after reboot
   ansible.builtin.debug:
-    var: pcr7_after
+    var: pcr_after
 
 - name: Start Cosmian VM agent
   ansible.builtin.systemd_service:
