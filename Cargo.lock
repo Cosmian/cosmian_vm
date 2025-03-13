@@ -989,7 +989,7 @@ dependencies = [
  "pem-rfc7468",
  "ratls",
  "tee_attestation",
- "thiserror 1.0.61",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -1043,7 +1043,7 @@ dependencies = [
  "spki",
  "sysinfo",
  "tee_attestation",
- "thiserror 1.0.61",
+ "thiserror 2.0.12",
  "tokio",
  "tokio-util",
  "toml",
@@ -1066,7 +1066,7 @@ dependencies = [
  "rustls 0.21.12",
  "serde",
  "tee_attestation",
- "thiserror 1.0.61",
+ "thiserror 2.0.12",
  "tpm_quote",
  "url",
  "webpki-roots 0.25.4",
@@ -2117,7 +2117,7 @@ dependencies = [
  "serde",
  "sha1",
  "sha2",
- "thiserror 1.0.61",
+ "thiserror 2.0.12",
  "tpm_quote",
 ]
 
