@@ -12,10 +12,9 @@ description = "Cosmian agent running in the confidential VM to forward attestati
 doctest = false
 
 [dependencies]
-actix-cors = "0.6"
+actix-cors = "0.7"
 actix-http = "3"
 actix-web = { workspace = true, features = ["http2"] }
-actix-web-lab = "0.20"
 anyhow = { workspace = true }
 awc = "3.5"
 const_format = "0.2"
@@ -24,7 +23,7 @@ der = { workspace = true }
 ecdsa = { workspace = true }
 env_logger = "0.11"
 futures = "0.3"
-gethostname = "0.4"
+gethostname = "1.0"
 hex = { workspace = true }
 ima = { path = "../ima" }
 num_cpus = "1.16"
@@ -40,7 +39,7 @@ serde_json = { workspace = true }
 sha1 = { workspace = true }
 sha2 = { workspace = true }
 spki = { workspace = true }
-sysinfo = "0.29"
+sysinfo = "0.33"
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
 tokio = { version = "1.38.0", features = [

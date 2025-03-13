@@ -4,9 +4,9 @@ use actix_cors::Cors;
 use actix_http::Method;
 use actix_web::{
     dev::Service as _,
+    middleware::from_fn,
     web::{scope, Data, PayloadConfig, ServiceConfig},
 };
-use actix_web_lab::middleware::from_fn;
 use std::sync::Mutex;
 
 use conf::CosmianVmAgent;

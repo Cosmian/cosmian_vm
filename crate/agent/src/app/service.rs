@@ -1,6 +1,6 @@
 use crate::{error::Error, utils::call};
 use serde::Deserialize;
-use sysinfo::{ProcessExt, System, SystemExt};
+use sysinfo::System;
 
 pub trait UnixService {
     const NAME: &'static str;
@@ -55,7 +55,7 @@ impl UnixService for Standalone {
     fn stop(app_name: &str) -> Result<Option<String>, Error> {
         let s = System::new_all();
 
-        for process in s.processes_by_exact_name(app_name) {
+        for process in s.processes_by_exact_name(app_name.as_ref()) {
             process.kill();
         }
 

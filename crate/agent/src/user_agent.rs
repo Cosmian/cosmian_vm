@@ -1,9 +1,9 @@
 use actix_http::body::MessageBody;
 use actix_web::{
     dev::{ServiceRequest, ServiceResponse},
+    middleware::Next,
     Error as ActixError,
 };
-use actix_web_lab::middleware::Next;
 use pep440::Version;
 
 use crate::error::Error;

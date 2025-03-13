@@ -33,7 +33,7 @@ incremental = false
 opt-level = 0
 
 [workspace.dependencies]
-actix-web = { version = "4.8", features = [
+actix-web = { version = "4.10", features = [
   "rustls-0_22",
   "macros",
 ], default-features = false }
@@ -54,5 +54,5 @@ tpm_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.5.0" }
 thiserror = "2.0"
 tracing = "0.1"
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.117"
+serde_json = "1.0"
 x509-cert = { version = "0.2", features = ["builder", "hazmat"] }
