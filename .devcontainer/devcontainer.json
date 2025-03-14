@@ -5,7 +5,7 @@
   "customizations": {
     "vscode": {
       "settings": {},
-      "extensions": ["rust-lang.rust-analyzer", "serayuzgur.crates"]
+      "extensions": ["rust-lang.rust-analyzer", "fill-labs.dependi"]
     }
   },
   "remoteUser": "root"
