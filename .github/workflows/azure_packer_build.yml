@@ -104,7 +104,7 @@ jobs:
 
           # For Azure, create a final VHD from os disk
           if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
-            sas=$(az disk grant-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK_NAME" --duration-in-seconds 3600 --access-level Read --query accessSas -o tsv)
+            sas=$(az disk grant-access --resource-group "$RESOURCE_GROUP" --name "$OS_DISK_NAME" --duration-in-seconds 3600 --access-level Read -o tsv)
 
             az storage blob copy start --destination-blob $OS_DISK_NAME.vhd --destination-container packer --account-name "$AZURE_STORAGE_ACCOUNT_NAME" --account-key "$AZURE_STORAGE_ACCOUNT_KEY" --source-uri "$sas"
 
