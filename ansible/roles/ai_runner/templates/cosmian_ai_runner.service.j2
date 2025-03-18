@@ -6,7 +6,7 @@ After=multi-user.target cosmian_vm_agent.service
 [Service]
 Type=simple
 User=root
-ExecStart=/opt/venv/cosmian-ai-runner/bin/python3 /opt/venv/cosmian-ai-runner/bin/cosmian_ai_runner -p 5001
+ExecStart=/opt/venv/cosmian-ai-runner/bin/python3 -B /opt/venv/cosmian-ai-runner/bin/cosmian_ai_runner -p 5001
 WorkingDirectory=/opt/venv/cosmian-ai-runner/
 Restart=on-failure
 RestartSec=3s
