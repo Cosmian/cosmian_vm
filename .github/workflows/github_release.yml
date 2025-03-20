@@ -25,8 +25,6 @@ jobs:
             ./cosmian_vm_ubuntu-22.04/home/runner/work/cosmian_vm/cosmian_vm/target/debian/cosmian-vm_*-1_amd64.deb
             ./cosmian_vm_ubuntu-22.04/home/runner/work/cosmian_vm/cosmian_vm/target/generate-rpm/cosmian_vm-*-1.x86_64.rpm
             ./cosmian_vm_ubuntu-22.04/home/runner/work/cosmian_vm/cosmian_vm/target/generate-rpm/cosmian_vm_agent-*-1.x86_64.rpm
-            ./cosmian_vm_ubuntu-24.04/home/runner/work/cosmian_vm/cosmian_vm/target/debian/cosmian-vm_*-1_amd64.deb
-            ./cosmian_vm_ubuntu-24.04/home/runner/work/cosmian_vm/cosmian_vm/target/debian/cosmian-vm-agent_*-1_amd64.deb
 
   cleanup:
     name: Clean Github cache
