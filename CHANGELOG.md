@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.4] - 2025-03-20
+
+### 🐛 Bug Fixes
+
+- Fix failure in systemd unit `mount_luks.service`  when using restart on failure
+
+### ⚙️ Miscellaneous Tasks
+
+- Bump `tee-tools` to [1.5.0](https://github.com/Cosmian/tee-tools/tree/1.5.0)
+- Bump Rust crates of `cosmian_vm` as up-to-date as possible
+
 ## [1.3.3] - 2025-01-27
 
 ### 🚀 Features
