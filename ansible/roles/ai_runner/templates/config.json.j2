@@ -1,17 +1,23 @@
 {
-    "summary": {
-        "default":  {
-            "model_name": "facebook/bart-large-cnn",
-            "generation_config": {
-                "max_length": 140,
-                "min_length": 30
-            }
-        }
+    "hf_token": "hf_token",
+    "documentary_bases": [
+    {
+      "name": "Litterature",
+      "persist_path": "rag_store_litterature",
+      "model": "google/flan-t5-large",
+      "task": "text2text-generation",
+      "kwargs": {
+        "max_new_tokens": 500
+      }
     },
-    "translation": {
-        "model_name": "facebook/nllb-200-distilled-600M",
-        "generation_config": {
-            "max_length": 200
-        }
+    {
+      "name": "Science",
+      "persist_path": "rag_store_science",
+      "model": "google/flan-t5-large",
+      "task": "text2text-generation",
+      "kwargs": {
+        "max_new_tokens": 500
+      }
     }
+  ]
 }
