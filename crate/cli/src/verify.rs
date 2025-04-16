@@ -71,19 +71,6 @@ impl VerifyArgs {
                 let ima_binary: &[u8] = ima_binary.as_ref();
                 let ima_entries = ima::ima::Ima::try_from(ima_binary)?;
 
-                tpm_verify_quote(
-                    &tpm_quote_response.quote,
-                    &tpm_quote_response.signature,
-                    &tpm_quote_response.public_key,
-                    Some(&nonce),
-                    &ima_entries.pcr_value(tpm_quote_response.pcr_value_hash_method)?,
-                    &snapshot
-                        .tpm_policy
-                        .ok_or_else(|| anyhow::anyhow!("TPM policy is missing in the snapshot"))?,
-                )?;
-
-                println!("[ OK ] Verifying TPM attestation");
-
                 let failures = ima_entries.compare(&filehashes.0);
                 if !failures.entries.is_empty() {
                     failures.entries.iter().for_each(|entry| {
@@ -101,6 +88,19 @@ impl VerifyArgs {
                         filehashes.0.len()
                     );
                 }
+
+                tpm_verify_quote(
+                    &tpm_quote_response.quote,
+                    &tpm_quote_response.signature,
+                    &tpm_quote_response.public_key,
+                    Some(&nonce),
+                    &ima_entries.pcr_value(tpm_quote_response.pcr_value_hash_method)?,
+                    &snapshot
+                        .tpm_policy
+                        .ok_or_else(|| anyhow::anyhow!("TPM policy is missing in the snapshot"))?,
+                )?;
+
+                println!("[ OK ] Verifying TPM attestation");
             }
         };
 
