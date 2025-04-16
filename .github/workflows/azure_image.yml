@@ -132,6 +132,9 @@ jobs:
 
           PLAYBOOK="${{ inputs.product }}-playbook.yml"
 
+          # Set secret for Ansible to access
+          echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> $GITHUB_ENV
+
           cd ansible
           python3 -m pip install -r python_modules.txt
 

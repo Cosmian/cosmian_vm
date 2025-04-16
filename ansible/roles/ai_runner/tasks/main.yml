@@ -79,6 +79,8 @@
     owner: root
     group: root
     mode: "0644"
+  vars:
+    hf_token: "{{ lookup('env', 'HF_TOKEN') }}"
 
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
