@@ -118,12 +118,12 @@ aws ec2 describe-images --output json > aws_list.json
 
 ### Azure images
 
-|                   |         Official image         | OS image | OS version      | Kernel version               | Cosmian base image    | Version |
-| :---------------- | :----------------------------: | :------: | --------------- | ---------------------------- | --------------------- | ------- |
-| Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
-| Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - Intel TDX |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
-| Azure - AMD SEV   |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
+|                   |         Official image         | OS image | OS version | Kernel version               | Cosmian base image    | Version |
+| :---------------- | :----------------------------: | :------: | ---------- | ---------------------------- | --------------------- | ------- |
+| Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
+| Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - Intel TDX |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
+| Azure - AMD SEV   |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
 az vm image list --all > azure_list.json
@@ -343,20 +343,21 @@ cosmian_vm --url https://my_app.dev app restart
 
 ## Versions correspondence
 
-| Base image | Cosmian VM | Cosmian KMS | Cosmian AI Runner |
-| ---------- | ---------- | ----------- | ----------------- |
-| 0.1.11     | 1.3.3      | 4.21.2      | 0.3.0             |
-| 0.1.10     | 1.3.2      | 4.21.1      | 0.3.0             |
-| 0.1.10     | 1.3.1      | 4.19.3      | 0.3.0             |
-| 0.1.10     | 1.3.0      | 4.19.1      | 0.3.0             |
-| 0.1.9      | 1.2.9      | 4.19.0      | 0.3.0             |
-| 0.1.8      | 1.2.8      | 4.18.0      | 0.3.0             |
-| 0.1.7      | 1.2.7      | 4.18.0      | 0.3.0             |
-| 0.1.6      | 1.2.6      | 4.17.0      | 0.3.0             |
-| 0.1.5      | 1.2.5      | 4.17.0      | 0.3.0             |
-| 0.1.5      | 1.2.4      | 4.16.0      | 0.3.0             |
-| 0.1.5      | 1.2.3      | 4.16.0      | 0.3.0             |
-| 0.1.4      | 1.2.2      | 4.16.0      | 0.3.0             |
-| 0.1.3      | 1.2.1      | 4.16.0      | 0.3.0             |
-|            | 1.2.0      | 4.16.0      | -                 |
-|            | 1.1.2      | 4.15.0      | -                 |
+| Base image | Cosmian VM  | Cosmian KMS | Cosmian AI Runner |
+| ---------- | ----------- | ----------- | ----------------- |
+| 0.1.11     | 1.3.5       | 4.23.0      | 1.0.0             |
+| 0.1.11     | 1.3.3,1.3.4 | 4.21.2      | 0.3.0             |
+| 0.1.10     | 1.3.2       | 4.21.1      | 0.3.0             |
+| 0.1.10     | 1.3.1       | 4.19.3      | 0.3.0             |
+| 0.1.10     | 1.3.0       | 4.19.1      | 0.3.0             |
+| 0.1.9      | 1.2.9       | 4.19.0      | 0.3.0             |
+| 0.1.8      | 1.2.8       | 4.18.0      | 0.3.0             |
+| 0.1.7      | 1.2.7       | 4.18.0      | 0.3.0             |
+| 0.1.6      | 1.2.6       | 4.17.0      | 0.3.0             |
+| 0.1.5      | 1.2.5       | 4.17.0      | 0.3.0             |
+| 0.1.5      | 1.2.4       | 4.16.0      | 0.3.0             |
+| 0.1.5      | 1.2.3       | 4.16.0      | 0.3.0             |
+| 0.1.4      | 1.2.2       | 4.16.0      | 0.3.0             |
+| 0.1.3      | 1.2.1       | 4.16.0      | 0.3.0             |
+|            | 1.2.0       | 4.16.0      | -                 |
+|            | 1.1.2       | 4.15.0      | -                 |
