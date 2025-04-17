@@ -177,7 +177,7 @@
   become: false
   register: result
   retries: 5
-  delay: 120
+  delay: 600
   until: result.status == 200
   tags: listening,listening_app
   when: (check_app_name == "AI Runner") or (check_app_name == "KMS")
