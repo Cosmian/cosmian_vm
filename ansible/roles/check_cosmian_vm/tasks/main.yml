@@ -183,6 +183,26 @@
     var: agent_logs
   tags: snapshot
 
+- name: Read IMA
+  ansible.builtin.command:
+    cmd: |
+      cat /sys/kernel/security/ima/ascii_runtime_measurements
+  register: ima_before_reboot
+  become: true
+  become_user: root
+  become_method: ansible.builtin.sudo
+  changed_when: false
+  tags: snapshot
+
+- name: Print IMA to console
+  ansible.builtin.debug:
+    msg: "{{ ima_before_reboot.stdout }}"
+  become: true
+  become_user: root
+  become_method: ansible.builtin.sudo
+  changed_when: false
+  tags: snapshot
+
 - name: Fail if Cosmian snapshot has failed previously
   ansible.builtin.fail:
     msg: Cosmian snapshot failed with return code {{ cosmian_vm_output }}
@@ -257,6 +277,30 @@
     - name: Display Agent logs
       ansible.builtin.debug:
         var: agent_logs
+      tags: verify
+
+    - name: Read IMA if verification failed
+      ansible.builtin.command:
+        cmd: |
+          cat /sys/kernel/security/ima/ascii_runtime_measurements
+      register: ima_after_reboot
+      become: true
+      become_user: root
+      become_method: ansible.builtin.sudo
+      changed_when: false
+      tags: verify
+
+    - name: Print IMA to console
+      ansible.builtin.debug:
+        msg: "{{ ima_after_reboot.stdout }}"
+      become: true
+      become_user: root
+      become_method: ansible.builtin.sudo
+      when:
+        - verify_cosmian_vm_output is defined
+        - verify_cosmian_vm_output.rc is defined
+        - verify_cosmian_vm_output.rc != 0
+      changed_when: false
       tags: verify
 
     - name: Fail if Cosmian snapshot verification has failed previously
