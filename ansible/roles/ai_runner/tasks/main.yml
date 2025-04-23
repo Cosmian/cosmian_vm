@@ -97,6 +97,19 @@
   changed_when: cmd_output.rc != 0
   tags: selinux
 
+- name: Run app without config - pulling deps if required
+  ansible.builtin.command: |
+    /opt/venv/cosmian-ai-runner/bin/python3 -B /opt/venv/cosmian-ai-runner/bin/cosmian_ai_runner
+    curl http://localhost:5001/health
+    killall cosmian_ai_runner
+    killall python3
+  environment:
+    CONFIG_PATH: /var/lib/cosmian_vm/data/app/app.conf
+  register: ai_init
+  changed_when: ai_init.rc != 0
+  tags: ai_init
+  ignore_errors: true
+
 - name: Add SELinux context for AI runner
   when: ansible_distribution == 'RedHat'
   ansible.builtin.shell: |
