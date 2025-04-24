@@ -29,9 +29,18 @@
       ansible.builtin.dnf:
         update_cache: true
 
+    - name: Install build dependencies
+      ansible.builtin.dnf:
+        name:
+          - gcc
+          - make
+          - wget
+          - tar
+        state: present
+
     - name: Build and install sqlite3 from source
-      ansible.builtin.command: |
-        dnf install -y gcc make wget tar
+      ansible.builtin.shell: |
+        set -exo pipefail
         cd /tmp
         wget https://www.sqlite.org/2024/sqlite-autoconf-3450100.tar.gz
         tar xzf sqlite-autoconf-3450100.tar.gz
