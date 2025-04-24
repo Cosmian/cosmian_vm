@@ -510,8 +510,8 @@ dependencies = [
 
 [[package]]
 name = "azure_cvm"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "base64 0.22.1",
  "bincode",
@@ -607,15 +607,15 @@ checksum = "ed79c2a8151273c70956b5e3cdfdc1ff6c1a8b9779ba59c6807d281b32ee2f86"
 
 [[package]]
 name = "bitfield"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46afbd2983a5d5a7bd740ccb198caf5b82f45c40c09c0eed36052d91cb92e719"
-
-[[package]]
-name = "bitfield"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2d7e60934ceec538daadb9d8432424ed043a904d8e0243f3c6446bce549a46ac"
+
+[[package]]
+name = "bitfield"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c821a6e124197eb56d907ccc2188eab1038fb919c914f47976e64dd8dbc855d1"
 
 [[package]]
 name = "bitflags"
@@ -2268,7 +2268,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc2f4eb4bc735547cfed7c0a4922cbd04a4655978c09b54f1f7b228750664c34"
 dependencies = [
  "cfg-if",
- "windows-targets 0.48.5",
+ "windows-targets 0.52.6",
 ]
 
 [[package]]
@@ -2340,8 +2340,8 @@ checksum = "30bde2b3dc3671ae49d8e2e9f044c7c005836e7a023ee57cffa25ab82764bb9e"
 
 [[package]]
 name = "maa_client"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "base64 0.22.1",
  "hex",
@@ -2736,8 +2736,8 @@ dependencies = [
 
 [[package]]
 name = "pccs_client"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "hex",
  "reqwest 0.12.14",
@@ -3031,8 +3031,8 @@ dependencies = [
 
 [[package]]
 name = "ratls"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "const-oid",
  "der",
@@ -3618,11 +3618,12 @@ dependencies = [
 
 [[package]]
 name = "sev"
-version = "2.0.2"
-source = "git+https://github.com/virtee/sev?rev=6a176a5f6068d30ac629fe59c13634a55076e7ae#6a176a5f6068d30ac629fe59c13634a55076e7ae"
+version = "5.0.0"
+source = "git+https://github.com/virtee/sev?tag=v5.0.0#2e9935a1cf034b66e785bc06a0fbd90de7b70af3"
 dependencies = [
+ "base64 0.22.1",
  "bincode",
- "bitfield 0.13.2",
+ "bitfield 0.15.0",
  "bitflags 1.3.2",
  "byteorder",
  "codicon",
@@ -3631,18 +3632,21 @@ dependencies = [
  "iocuddle",
  "lazy_static",
  "libc",
- "openssl",
+ "p384",
+ "rsa",
  "serde",
  "serde-big-array",
  "serde_bytes",
+ "sha2",
  "static_assertions",
  "uuid",
+ "x509-cert",
 ]
 
 [[package]]
 name = "sev_quote"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "asn1-rs",
  "bincode",
@@ -3661,8 +3665,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_pck_extension"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -3672,8 +3676,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_quote"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "chrono",
  "hex",
@@ -3931,8 +3935,8 @@ dependencies = [
 
 [[package]]
 name = "tdx_quote"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "hex",
  "log",
@@ -3950,8 +3954,8 @@ dependencies = [
 
 [[package]]
 name = "tee_attestation"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "azure_cvm",
  "hex",
@@ -4280,8 +4284,8 @@ checksum = "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3"
 
 [[package]]
 name = "tpm_quote"
-version = "1.5.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=1.5.0#141f2346ebefe35f2650973aa639a3e72f0498be"
+version = "1.6.1"
+source = "git+https://github.com/Cosmian/tee-tools?tag=1.6.1#6d07f94f476ea27e37d1663a02c4e594d3b6c16c"
 dependencies = [
  "hex",
  "p256",
@@ -4481,9 +4485,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
 name = "uuid"
-version = "1.15.1"
+version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0f540e3240398cce6128b64ba83fdbdd86129c16a3aa1a3a252efd66eb3d587"
+checksum = "458f7a779bf54acc9f347480ac654f68407d3aab21269a6e3c9f922acd9e2da9"
 dependencies = [
  "getrandom 0.3.1",
  "serde",
