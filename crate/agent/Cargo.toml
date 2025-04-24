@@ -53,7 +53,7 @@ toml = "0.8"
 tpm_quote = { workspace = true }
 tracing = { workspace = true }
 tss-esapi = "7.6"
-uuid = { version = "1.8", features = ["serde", "v4"] }
+uuid = { version = "1.16", features = ["serde", "v4"] }
 walkdir = "2.5"
 x509-cert = { workspace = true }
 
