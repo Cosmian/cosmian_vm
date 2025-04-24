@@ -24,8 +24,6 @@
       tags:
         - role-cosmian-vm
         - check-ai-runner
-    - role: check_cosmian_vm
-      tags: check-ai-runner
 
     - role: check_app
       check_app_name: AI Runner
@@ -35,4 +33,7 @@
         - summarize
         - translate
       check_app_configuration_path: roles/ai_runner/templates/config.json.j2
+      tags: check-ai-runner
+
+    - role: check_cosmian_vm
       tags: check-ai-runner

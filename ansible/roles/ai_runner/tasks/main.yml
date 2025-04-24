@@ -29,24 +29,19 @@
       ansible.builtin.dnf:
         update_cache: true
 
-    - name: Upgrade sqlite3
+    - name: Build and install sqlite3 from source
       ansible.builtin.command: |
-        # 1. Install prerequisites
-        sudo dnf install -y gcc make wget tar
-
-        # 2. Download the latest SQLite source (adjust version if needed)
+        dnf install -y gcc make wget tar
+        cd /tmp
         wget https://www.sqlite.org/2024/sqlite-autoconf-3450100.tar.gz
-
-        # 3. Extract and enter directory
         tar xzf sqlite-autoconf-3450100.tar.gz
         cd sqlite-autoconf-3450100
-
-        # 4. Build and install
         ./configure --prefix=/usr/local
         make
-        sudo make install
+        make install
       register: sqlite3_output
       changed_when: sqlite3_output.rc != 0
+      become: true
 
 - name: Install prerequisites packages
   ansible.builtin.package:
@@ -117,19 +112,6 @@
   register: cmd_output
   changed_when: cmd_output.rc != 0
   tags: selinux
-
-- name: Run app without config - pulling deps if required
-  ansible.builtin.command: |
-    /opt/venv/cosmian-ai-runner/bin/python3 -B /opt/venv/cosmian-ai-runner/bin/cosmian_ai_runner
-    curl http://localhost:5001/health
-    killall cosmian_ai_runner
-    killall python3
-  environment:
-    CONFIG_PATH: /var/lib/cosmian_vm/data/app/app.conf
-  register: ai_init
-  changed_when: ai_init.rc != 0
-  tags: ai_init
-  ignore_errors: true
 
 - name: Add SELinux context for AI runner
   when: ansible_distribution == 'RedHat'

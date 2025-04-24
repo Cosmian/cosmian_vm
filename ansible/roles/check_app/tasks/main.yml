@@ -100,7 +100,7 @@
 
 - name: Fail if Cosmian app init has failed previously
   ansible.builtin.fail:
-    msg: Cosmian snapshot failed with return code {{ cosmian_vm_app_init }}
+    msg: Cosmian app init failed with return code {{ cosmian_vm_app_init }}
   when:
     - cosmian_vm_app_init is defined
     - cosmian_vm_app_init.rc is defined
@@ -138,7 +138,7 @@
 
 - name: Fail if Cosmian app restart has failed previously
   ansible.builtin.fail:
-    msg: Cosmian snapshot failed with return code {{ cosmian_vm_app_restart }}
+    msg: Cosmian app restart failed with return code {{ cosmian_vm_app_restart }}
   when:
     - cosmian_vm_app_restart is defined
     - cosmian_vm_app_restart.rc is defined
