@@ -22,7 +22,7 @@ jobs:
     with:
       # product: cosmian-vm # to be reverted
       product: ai-runner
-      kms-version: 4.23.0
+      kms-version: 4.24.0
       ai-runner-version: 1.0.0
       techno: sev
     secrets: inherit
@@ -33,7 +33,7 @@ jobs:
     with:
       # product: cosmian-vm # to be reverted
       product: ai-runner
-      kms-version: 4.23.0
+      kms-version: 4.24.0
       ai-runner-version: 1.0.0
       techno: sev
     secrets: inherit
@@ -44,7 +44,7 @@ jobs:
   #   uses: ./.github/workflows/aws_main.yml
   #   with:
   #     product: cosmian-vm
-  #     kms-version: 4.23.0
+  #     kms-version: 4.24.0
   #     ai-runner-version: 1.0.0
   #     techno: sev
   #   secrets: inherit

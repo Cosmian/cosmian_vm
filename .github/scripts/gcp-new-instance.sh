@@ -44,7 +44,7 @@ else
     IMAGE="cosmian-vm-1-3-4-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian KMS Ubuntu SEV
-    IMAGE="cosmian-vm-1-3-4-kms-4-21-2-sev-ubuntu"
+    IMAGE="cosmian-vm-1-3-4-kms-4-24-0-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
     IMAGE="ubuntu-2404-noble-amd64-v20241004"

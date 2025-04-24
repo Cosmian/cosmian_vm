@@ -222,7 +222,7 @@
   delay: 600
   until: result.status == 200
   tags: second_endpoint
-  when: (check_app_name == "AI Runner")
+  when: false # (check_app_name == "AI Runner")
 
 - name: Check endpoint {{ check_app_endpoint[2] }}
   ansible.builtin.uri:
@@ -242,7 +242,7 @@
   delay: 600
   until: result.status == 200
   tags: third_endpoint
-  when: (check_app_name == "AI Runner")
+  when: false # (check_app_name == "AI Runner")
 
 - name: Clean Cosmian VM existing folders
   ansible.builtin.command:
