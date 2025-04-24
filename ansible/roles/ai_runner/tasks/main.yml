@@ -24,8 +24,29 @@
 
 - name: Update dnf cache
   when: ansible_distribution == 'RedHat'
-  ansible.builtin.dnf:
-    update_cache: true
+  block:
+    - name: Update dnf cache
+      ansible.builtin.dnf:
+        update_cache: true
+
+    - name: Upgrade sqlite3
+      ansible.builtin.command: |
+        # 1. Install prerequisites
+        sudo dnf install -y gcc make wget tar
+
+        # 2. Download the latest SQLite source (adjust version if needed)
+        wget https://www.sqlite.org/2024/sqlite-autoconf-3450100.tar.gz
+
+        # 3. Extract and enter directory
+        tar xzf sqlite-autoconf-3450100.tar.gz
+        cd sqlite-autoconf-3450100
+
+        # 4. Build and install
+        ./configure --prefix=/usr/local
+        make
+        sudo make install
+      register: sqlite3_output
+      changed_when: sqlite3_output.rc != 0
 
 - name: Install prerequisites packages
   ansible.builtin.package:
