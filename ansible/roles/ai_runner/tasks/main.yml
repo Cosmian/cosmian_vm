@@ -36,7 +36,18 @@
           - make
           - wget
           - tar
+          - python3.12
         state: present
+
+    - name: Configure Python alternatives
+      ansible.builtin.shell: |
+        alternatives --install /usr/bin/python python /usr/bin/python3.12 1
+        alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+        alternatives --set python /usr/bin/python3.12
+        alternatives --set python3 /usr/bin/python3.12
+      register: new_python_version
+      changed_when: new_python_version.rc != 0
+      become: true
 
     - name: Build and install sqlite3 from source
       ansible.builtin.shell: |
@@ -126,8 +137,8 @@
   when: ansible_distribution == 'RedHat'
   ansible.builtin.shell: |
     set -exo pipefail
-    semanage fcontext -a -t cosmiand_script_t '/opt/venv/cosmian-ai-runner/lib/python3.9/site-packages/cosmian_ai_runner(/.*\.py)?'
-    restorecon -R -v /opt/venv/cosmian-ai-runner/lib/python3.9/site-packages/cosmian_ai_runner
+    semanage fcontext -a -t cosmiand_script_t '/opt/venv/cosmian-ai-runner/lib/python3.12/site-packages/cosmian_ai_runner(/.*\.py)?'
+    restorecon -R -v /opt/venv/cosmian-ai-runner/lib/python3.12/site-packages/cosmian_ai_runner
   args:
     executable: /bin/bash
   become: true

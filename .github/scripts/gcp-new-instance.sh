@@ -57,7 +57,7 @@ else
     IMAGE="cosmian-vm-1-3-4-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian RHEL SEV
-    IMAGE="cosmian-vm-1-2-6-kms-4-17-0-sev-rhel"
+    IMAGE="cosmian-vm-1-3-4-kms-4-24-0-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
     IMAGE="rhel-9-v20241009"
