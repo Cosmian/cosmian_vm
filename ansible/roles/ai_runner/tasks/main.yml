@@ -39,15 +39,15 @@
           - python3.12
         state: present
 
-    - name: Configure Python alternatives
-      ansible.builtin.shell: |
-        alternatives --install /usr/bin/python python /usr/bin/python3.12 1
-        alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
-        alternatives --set python /usr/bin/python3.12
-        alternatives --set python3 /usr/bin/python3.12
-      register: new_python_version
-      changed_when: new_python_version.rc != 0
-      become: true
+    # - name: Configure Python alternatives
+    #   ansible.builtin.shell: |
+    #     alternatives --install /usr/bin/python python /usr/bin/python3.12 1
+    #     alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+    #     alternatives --set python /usr/bin/python3.12
+    #     alternatives --set python3 /usr/bin/python3.12
+    #   register: new_python_version
+    #   changed_when: new_python_version.rc != 0
+    #   become: true
 
     - name: Build and install sqlite3 from source
       ansible.builtin.shell: |
@@ -81,7 +81,7 @@
 - name: Install Cosmian AI Runner WHL
   ansible.builtin.pip:
     name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
-    virtualenv_command: python3 -m venv
+    virtualenv_command: /usr/bin/python3.12 -m venv
     virtualenv: /opt/venv/cosmian-ai-runner
 
 - name: Add Cosmian AI Runner systemd service
