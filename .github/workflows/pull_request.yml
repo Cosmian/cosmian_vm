@@ -20,8 +20,7 @@ jobs:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/azure_main.yml
     with:
-      # product: cosmian-vm # to be reverted
-      product: ai-runner
+      product: cosmian-vm
       kms-version: 4.24.0
       ai-runner-version: 1.0.0
       techno: sev
@@ -31,8 +30,7 @@ jobs:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/gcp_main.yml
     with:
-      # product: cosmian-vm # to be reverted
-      product: ai-runner
+      product: cosmian-vm
       kms-version: 4.24.0
       ai-runner-version: 1.0.0
       techno: sev
