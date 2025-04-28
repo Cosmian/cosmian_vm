@@ -41,10 +41,10 @@ else
     IMAGE="base-image-0-1-11-ubuntu-sev"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian Ubuntu SEV
-    IMAGE="cosmian-vm-1-3-4-sev-ubuntu"
+    IMAGE="cosmian-vm-1-3-5-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian KMS Ubuntu SEV
-    IMAGE="cosmian-vm-1-3-4-kms-4-24-0-sev-ubuntu"
+    IMAGE="cosmian-vm-1-3-5-kms-4-24-0-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
     IMAGE="ubuntu-2404-noble-amd64-v20241004"
@@ -54,10 +54,10 @@ else
     IMAGE="base-image-0-1-11-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian RHEL SEV
-    IMAGE="cosmian-vm-1-3-4-rhel-sev"
+    IMAGE="cosmian-vm-1-3-5-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian RHEL SEV
-    IMAGE="cosmian-vm-1-3-4-kms-4-24-0-sev-rhel"
+    IMAGE="cosmian-vm-1-3-5-kms-4-24-0-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
     IMAGE="rhel-9-v20241009"
