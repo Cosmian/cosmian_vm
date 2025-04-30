@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set +e
+set +x
 
 # Set your GCP project ID
 PROJECT_ID="cosmian-dev"
@@ -56,6 +56,8 @@ for image_name in $image_names; do
   fi
 done
 
+# This code does not work when run by the service account itself.
+# Must be run by a human user who owned this role `roles/iam.serviceAccountTokenCreator`.
 for i in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
   echo "$i";
   gcloud compute os-login ssh-keys remove --key "$i" || true;
