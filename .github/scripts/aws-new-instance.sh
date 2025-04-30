@@ -43,7 +43,7 @@ else
       --instance-type c6a.2xlarge \
       --cpu-options AmdSevSnp=enabled \
       --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
-      --key-name packer \
+      --key-name test-amd-sev \
       --security-groups "$NAME-sg" \
       --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
       --region eu-west-1 \
