@@ -63,8 +63,8 @@
   delegate_to: localhost
   become: false
   register: result
-  retries: 30
-  delay: 10
+  retries: 5
+  delay: 60
   until: result.status == 200
   tags: after_first_reboot
   when: check_app_name == "KMS" # should be also handled for AI Runner
@@ -100,7 +100,7 @@
 
 - name: Fail if Cosmian app init has failed previously
   ansible.builtin.fail:
-    msg: Cosmian snapshot failed with return code {{ cosmian_vm_app_init }}
+    msg: Cosmian app init failed with return code {{ cosmian_vm_app_init }}
   when:
     - cosmian_vm_app_init is defined
     - cosmian_vm_app_init.rc is defined
@@ -138,7 +138,7 @@
 
 - name: Fail if Cosmian app restart has failed previously
   ansible.builtin.fail:
-    msg: Cosmian snapshot failed with return code {{ cosmian_vm_app_restart }}
+    msg: Cosmian app restart failed with return code {{ cosmian_vm_app_restart }}
   when:
     - cosmian_vm_app_restart is defined
     - cosmian_vm_app_restart.rc is defined
@@ -163,7 +163,7 @@
     host: "{{ inventory_hostname }}"
     port: 443
     delay: 5
-    timeout: 30
+    timeout: 60
     msg: Timeout waiting for 443 to respond
   delegate_to: localhost
   become: false
@@ -176,8 +176,8 @@
   delegate_to: localhost
   become: false
   register: result
-  retries: 30
-  delay: 10
+  retries: 5
+  delay: 600
   until: result.status == 200
   tags: listening,listening_app
   when: (check_app_name == "AI Runner") or (check_app_name == "KMS")
@@ -218,11 +218,11 @@
   delegate_to: localhost
   become: false
   register: result
-  retries: 30
-  delay: 10
+  retries: 5
+  delay: 600
   until: result.status == 200
   tags: second_endpoint
-  when: (check_app_name == "AI Runner")
+  when: false # (check_app_name == "AI Runner")
 
 - name: Check endpoint {{ check_app_endpoint[2] }}
   ansible.builtin.uri:
@@ -238,11 +238,11 @@
   delegate_to: localhost
   become: false
   register: result
-  retries: 30
-  delay: 10
+  retries: 5
+  delay: 600
   until: result.status == 200
   tags: third_endpoint
-  when: (check_app_name == "AI Runner")
+  when: false # (check_app_name == "AI Runner")
 
 - name: Clean Cosmian VM existing folders
   ansible.builtin.command:

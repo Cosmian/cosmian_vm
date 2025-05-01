@@ -53,6 +53,6 @@ else
   )
 
   aws ec2 wait instance-status-ok --instance-ids "$AMI"
-  IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${NAME}" --query 'Reservations[*].instances[*].PublicIpAddress' --output text)
+  IP_ADDR=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${NAME}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
   echo "$IP_ADDR"
 fi

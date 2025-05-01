@@ -184,6 +184,9 @@ jobs:
             SSH_USER="ec2-user"
           fi
 
+          # Set secret for Ansible to access
+          echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> $GITHUB_ENV
+
           export ANSIBLE_HOST_KEY_CHECKING=False
           # Ansible script
           ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, -u $SSH_USER --private-key="$HOME/packer.pem" -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --tags check-${{ inputs.product }} -e '{ "check_app_test_reboot": false, "check_cosmian_vm_test_reboot": false }'

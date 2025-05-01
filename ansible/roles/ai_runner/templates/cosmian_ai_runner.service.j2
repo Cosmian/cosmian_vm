@@ -11,6 +11,7 @@ WorkingDirectory=/opt/venv/cosmian-ai-runner/
 Restart=on-failure
 RestartSec=3s
 Environment="CONFIG_PATH=/var/lib/cosmian_vm/data/app/app.conf"
+Environment="LD_LIBRARY_PATH=/usr/local/lib"
 
 [Install]
 WantedBy=multi-user.target

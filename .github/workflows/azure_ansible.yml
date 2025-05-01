@@ -106,6 +106,9 @@ jobs:
 
           PLAYBOOK="${{ inputs.product }}-playbook.yml"
 
+          # Set secret for Ansible to access
+          echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> $GITHUB_ENV
+
           export ANSIBLE_HOST_KEY_CHECKING=False
           for i in {1..1}
           do

@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.5] - 2025-04-28
+
+### 🚀 Features
+
+- Upgrade Cosmian AI runner v1.0.0 ([#174](https://github.com/Cosmian/cosmian_vm/pull/174))
+- Upgrade Cosmian KMS v4.24.0 ([#174](https://github.com/Cosmian/cosmian_vm/pull/174))
+- Snapshot integrity verification issue on AI runner:
+  - Fetch IMA again when PCRs hash digest does not match the one in TPM quote
+
+### 🐛 Bug Fixes
+
+- Fix attestation verification on AWS with AMD SEV-SNP via `tee-tools` ([#44](https://github.com/Cosmian/tee-tools/pull/44))
+- AI Runner fixes
+  - Only check health endpoint for AI runner
+  - Increase timeout for AI runner HTTPS test connection
+  - RHEL:
+    - Upgrade sqlite3>=3.35.0 for `chromadb` requirement
+    - Make Python 3.12 default
+    - Use absolute path for python3.12
+- Update tokio and openssl due to RUSTSEC-2025-0023 and RUSTSEC-2025-0022
+
+### 📚 Documentation
+
+- Add playbook example
+
+### 🧪 Testing
+
+- Run app wo config
+
+### ⚙️ Miscellaneous Tasks
+
+- Bump KMS to 4.24
+  - Update KMS configuration path du to new KMS packaging
+
 ## [1.3.4] - 2025-03-20
 
 ### 🐛 Bug Fixes

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set +e
+set +x
 
 # Set your AWS region
 REGION="eu-west-1"

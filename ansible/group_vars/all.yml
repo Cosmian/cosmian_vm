@@ -1,9 +1,9 @@
 ---
-cosmian_vm_version: 1.3.4
-package_version: 1.3.4
-cosmian_kms_version: 4.21.2
-kms_package_version: 4.21.2
-cosmian_ai_runner_version: 0.3.0
+cosmian_vm_version: 1.3.5
+package_version: 1.3.5
+cosmian_kms_version: 4.24.0
+kms_package_version: 4.24.0
+cosmian_ai_runner_version: 1.0.0
 
 nginx_user: root
 reboot_allowed: true

@@ -27,6 +27,7 @@
       - nginx
       - redis
     state: present
+    update_cache: true
 
 - name: Install Cosmian VM via RPM package
   when: ansible_distribution == 'RedHat'
@@ -37,7 +38,7 @@
 
     - name: Download RPM Cosmian KMS Server package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rhel9/{{ package_name }}
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rockylinux9/{{ package_name }}
         dest: /tmp
         mode: "0755"
         group: root
@@ -123,8 +124,8 @@
     set -exo pipefail
     semanage fcontext -a -t cosmiand_exec_t /usr/sbin/cosmian_kms
     restorecon -v /usr/sbin/cosmian_kms
-    semanage fcontext -a -t cosmiand_conf_t /etc/cosmian_kms/kms.toml
-    restorecon -v /etc/cosmian_kms/kms.toml
+    semanage fcontext -a -t cosmiand_conf_t /etc/cosmian/kms.toml
+    restorecon -v /etc/cosmian/kms.toml
   args:
     executable: /bin/bash
   become: true

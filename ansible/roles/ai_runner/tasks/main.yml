@@ -24,8 +24,34 @@
 
 - name: Update dnf cache
   when: ansible_distribution == 'RedHat'
-  ansible.builtin.dnf:
-    update_cache: true
+  block:
+    - name: Update dnf cache
+      ansible.builtin.dnf:
+        update_cache: true
+
+    - name: Install build dependencies
+      ansible.builtin.dnf:
+        name:
+          - gcc
+          - make
+          - wget
+          - tar
+          - python3.12
+        state: present
+
+    - name: Build and install sqlite3 from source
+      ansible.builtin.shell: |
+        set -exo pipefail
+        cd /tmp
+        wget https://www.sqlite.org/2024/sqlite-autoconf-3450100.tar.gz
+        tar xzf sqlite-autoconf-3450100.tar.gz
+        cd sqlite-autoconf-3450100
+        ./configure --prefix=/usr/local
+        make
+        make install
+      register: sqlite3_output
+      changed_when: sqlite3_output.rc != 0
+      become: true
 
 - name: Install prerequisites packages
   ansible.builtin.package:
@@ -45,7 +71,7 @@
 - name: Install Cosmian AI Runner WHL
   ansible.builtin.pip:
     name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
-    virtualenv_command: python3 -m venv
+    virtualenv_command: /usr/bin/python3.12 -m venv
     virtualenv: /opt/venv/cosmian-ai-runner
 
 - name: Add Cosmian AI Runner systemd service
@@ -79,6 +105,8 @@
     owner: root
     group: root
     mode: "0644"
+  vars:
+    hf_token: "{{ lookup('env', 'HF_TOKEN') }}"
 
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
@@ -99,8 +127,8 @@
   when: ansible_distribution == 'RedHat'
   ansible.builtin.shell: |
     set -exo pipefail
-    semanage fcontext -a -t cosmiand_script_t '/opt/venv/cosmian-ai-runner/lib/python3.9/site-packages/cosmian_ai_runner(/.*\.py)?'
-    restorecon -R -v /opt/venv/cosmian-ai-runner/lib/python3.9/site-packages/cosmian_ai_runner
+    semanage fcontext -a -t cosmiand_script_t '/opt/venv/cosmian-ai-runner/lib/python3.12/site-packages/cosmian_ai_runner(/.*\.py)?'
+    restorecon -R -v /opt/venv/cosmian-ai-runner/lib/python3.12/site-packages/cosmian_ai_runner
   args:
     executable: /bin/bash
   become: true

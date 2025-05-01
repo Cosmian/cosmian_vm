@@ -104,6 +104,9 @@ jobs:
             SSH_USER="ec2-user"
           fi
 
+          # Set secret for Ansible to access
+          echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> $GITHUB_ENV
+
           export ANSIBLE_HOST_KEY_CHECKING=False
           # Ansible script
           for i in {1..1}
