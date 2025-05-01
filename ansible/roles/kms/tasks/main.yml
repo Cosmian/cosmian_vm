@@ -27,6 +27,7 @@
       - nginx
       - redis
     state: present
+    update_cache: true
 
 - name: Install Cosmian VM via RPM package
   when: ansible_distribution == 'RedHat'
