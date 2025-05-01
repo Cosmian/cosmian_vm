@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- KMS configuration path du to new KMS packaging
+- Fix attestation verification on AWS with AMD SEV-SNP via `tee-tools` ([#44](https://github.com/Cosmian/tee-tools/pull/44))
 - AI Runner fixes
   - Only check health endpoint for AI runner
   - Increase timeout for AI runner HTTPS test connection
@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file.
 ### ⚙️ Miscellaneous Tasks
 
 - Bump KMS to 4.24
+  - Update KMS configuration path du to new KMS packaging
 
 ## [1.3.4] - 2025-03-20
 

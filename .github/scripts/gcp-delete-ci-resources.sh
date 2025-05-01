@@ -58,6 +58,7 @@ done
 
 # This code does not work when run by the service account itself.
 # Must be run by a human user who owned this role `roles/iam.serviceAccountTokenCreator`.
+# gcloud config set auth/impersonate_service_account packer@cosmian-dev.iam.gserviceaccount.com
 for i in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
   echo "$i";
   gcloud compute os-login ssh-keys remove --key "$i" || true;
