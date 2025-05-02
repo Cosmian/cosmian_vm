@@ -1,5 +1,5 @@
 ---
-name: Internal build/test image for Azure
+name: AZURE create, test and release image
 
 on:
   workflow_call:
@@ -22,6 +22,42 @@ on:
       base-version:
         required: true
         type: string
+  workflow_dispatch:
+    inputs:
+      distrib:
+        required: true
+        type: choice
+        description: ubuntu or rhel
+        options:
+          - ubuntu
+          - rhel
+      techno:
+        required: true
+        type: choice
+        description: CPU Technology
+        options:
+          - sev
+          - tdx
+      product:
+        description: Cosmian product
+        required: true
+        type: choice
+        options:
+          - cosmian-vm
+          - kms
+          - ai-runner
+      kms-version:
+        required: true
+        type: string
+        description: KMS server version
+      ai-runner-version:
+        required: true
+        type: string
+        description: AI Runner version
+      base-version:
+        required: true
+        type: string
+        description: Cosmian Base Image version X.Y.Z
 
 env:
   RESOURCE_GROUP: packer-snp
