@@ -45,7 +45,7 @@ on:
 concurrency:
   group: marketplace_gcp
 
-name: GCP images
+name: GCP images on RHEL and Ubuntu
 
 jobs:
   clean-resources:

@@ -1,5 +1,5 @@
 ---
-name: AWS create, test and release image
+name: AWS create single image, test it and release it
 
 on:
   workflow_call:
@@ -37,7 +37,6 @@ on:
         description: CPU Technology
         options:
           - sev
-          - tdx
       product:
         description: Cosmian product
         required: true

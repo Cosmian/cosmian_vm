@@ -1,5 +1,5 @@
 ---
-name: GCP create, test and release image
+name: GCP create single image, test it and release it
 
 on:
   workflow_call:

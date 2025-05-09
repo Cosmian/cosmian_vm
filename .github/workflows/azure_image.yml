@@ -1,5 +1,5 @@
 ---
-name: AZURE create, test and release image
+name: AZURE create single image, test it and release it
 
 on:
   workflow_call:
@@ -45,6 +45,7 @@ on:
         options:
           - cosmian-vm
           - kms
+          - kms-fips
           - ai-runner
       kms-version:
         required: true

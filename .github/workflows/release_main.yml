@@ -27,7 +27,7 @@ jobs:
     uses: ./.github/workflows/release_azure_main.yml
     with:
       base-version: 0.1.11
-      kms-version: 4.24.0
+      kms-version: 5.0.0
       ai-runner-version: 1.0.0
     secrets: inherit
 
@@ -36,7 +36,7 @@ jobs:
     uses: ./.github/workflows/release_gcp_main.yml
     with:
       base-version: 0.1.11
-      kms-version: 4.24.0
+      kms-version: 5.0.0
       ai-runner-version: 1.0.0
     secrets: inherit
 
@@ -45,7 +45,7 @@ jobs:
     uses: ./.github/workflows/release_aws_main.yml
     with:
       base-version: 0.1.11
-      kms-version: 4.24.0
+      kms-version: 5.0.0
       ai-runner-version: 1.0.0
     secrets: inherit
 

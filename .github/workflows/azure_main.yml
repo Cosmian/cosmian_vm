@@ -46,7 +46,7 @@ on:
 concurrency:
   group: marketplace_azure
 
-name: Azure images
+name: Azure images on RHEL and Ubuntu
 
 jobs:
   clean-resources:

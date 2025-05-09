@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.6] - 2025-05-09
+
+### 🚀 Features
+
+- Upgrade Cosmian KMS from v4.24.0 to v5.0.0 ([#178](https://github.com/Cosmian/cosmian_vm/pull/178))
+
+### ⚙️ Miscellaneous Tasks
+
+- Make GH workflows xxx_image.yml callable individually
+- Fix use packer SSH key for EC2 AWS instance ([#177](https://github.com/Cosmian/cosmian_vm/pull/177))
+
 ## [1.3.5] - 2025-04-28
 
 ### 🚀 Features
