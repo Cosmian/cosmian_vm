@@ -44,7 +44,7 @@ on:
 concurrency:
   group: marketplace_aws
 
-name: AWS images
+name: AWS images on RHEL and Ubuntu
 
 jobs:
   clean-resources:
