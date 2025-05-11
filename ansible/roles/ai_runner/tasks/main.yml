@@ -73,6 +73,8 @@
     name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
     virtualenv_command: /usr/bin/python3.12 -m venv
     virtualenv: /opt/venv/cosmian-ai-runner
+  async: 1800  # 30 minutes timeout
+  poll: 30     # Check status every 30 seconds
 
 - name: Add Cosmian AI Runner systemd service
   ansible.builtin.template:
