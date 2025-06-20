@@ -140,10 +140,10 @@ Links:
 
 |                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
-| GCP - Intel TDX |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
+| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20250606 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20250606 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |         rhel-9-v20250611          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
+| GCP - Intel TDX |         rhel-9-v20250611         |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
@@ -153,7 +153,7 @@ gcloud compute images list --filter="guestOsFeatures[].type=TDX_CAPABLE" --forma
 
 #### Note
 
-- On GCP, both `ubuntu-2404-noble-amd64-v20241004` and `rhel-9-v20241009` images are SEV and TDX capable.
+- On GCP, both `ubuntu-2404-noble-amd64-v20250606` and `rhel-9-v20250611` images are SEV and TDX capable.
 
 ### Marketplace Image content
 

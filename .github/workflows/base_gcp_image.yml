@@ -69,9 +69,9 @@ jobs:
           fi
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI="ubuntu-2404-noble-amd64-v20241004"
+            export AMI="ubuntu-2404-noble-amd64-v20250606"
           else
-            export AMI="rhel-9-v20241009"
+            export AMI="rhel-9-v20250611"
           fi
 
           bash ../.github/scripts/gcp-packer-build.sh "${{ inputs.product }}" "${{ inputs.distrib }}" "$AMI"
