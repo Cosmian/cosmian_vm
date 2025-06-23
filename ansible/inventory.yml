@@ -1,8 +1,0 @@
-[kms-test]
-20.86.128.166
-
-[kms-test:vars]
-ansible_user=remy
-ansible_become=true
-ansible_become_method=sudo
-ansible_become_pass=cosmian
