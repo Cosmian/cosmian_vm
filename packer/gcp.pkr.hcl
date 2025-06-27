@@ -1,11 +1,11 @@
 packer {
   required_plugins {
     googlecompute = {
-      version = "= 1.1.4"
+      version = "= 1.2.1"
       source  = "github.com/hashicorp/packer-plugin-googlecompute"
     }
     ansible = {
-      version = "= 1.1.1"
+      version = "= 1.1.3"
       source  = "github.com/hashicorp/packer-plugin-ansible"
     }
   }
