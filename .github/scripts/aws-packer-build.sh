@@ -3,7 +3,7 @@
 # Only for testing, DO NOT UNCOMMENT
 # DISTRIBUTION=rhel
 # PRODUCT=cosmian-vm
-# VERSION=0.1.11 # Optional
+# VERSION=0.1.12 # Optional
 # KMS_VERSION=5.0.0 # Provided by Github workflow
 # AI_RUNNER_VERSION=1.0.0 # Provided by Github workflow
 # GITHUB_REF=refs/tags/1.3.7 # Provided by Github Actions

@@ -29,7 +29,7 @@ if [ "$TECHNO" = "tdx" ]; then
 else
   IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/kms-${DISTRIB}-${TECHNO}/versions/5.0.0"
   IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/cosmian-vm-${DISTRIB}-${TECHNO}/versions/1.3.7"
-  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/base-image-${DISTRIB}-${TECHNO}/versions/0.1.11"
+  IMAGE_NAME="/subscriptions/bc07f5de-3498-43b8-94aa-34b4a34a89b8/resourceGroups/packer-snp/providers/Microsoft.Compute/galleries/cosmian_packer/images/base-image-${DISTRIB}-${TECHNO}/versions/0.1.12"
 
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV

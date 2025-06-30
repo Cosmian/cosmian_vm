@@ -1,5 +1,11 @@
 # Cosmian Base Image Changelog
 
+## [0.1.12] - 2025-06-30
+
+- *GCP*: ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+  - *Ubuntu SEV/TDX capable*: update from `ubuntu-2404-noble-amd64-v20241004`to `ubuntu-2404-noble-amd64-v20250606`
+  - *RedHat SEV/TDX capable*: update from `rhel-9-v20241009` to `rhel-9-v20250611`
+
 ## [0.1.11] - 2025-01-27
 
 - *Azure*: ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
