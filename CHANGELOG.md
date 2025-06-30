@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.7] - 2025-06-30
+
+### 🐛 Bug Fixes
+
+- Upgrade base image to 0.1.12 ([#179](https://github.com/Cosmian/cosmian_vm/pull/179)
+
 ## [1.3.6] - 2025-05-09
 
 ### 🚀 Features
