@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- Upgrade base image to 0.1.12 ([#179](https://github.com/Cosmian/cosmian_vm/pull/179)
+- Upgrade GCP and AWS base image to 0.1.12 ([#179](https://github.com/Cosmian/cosmian_vm/pull/179)
 
 ## [1.3.6] - 2025-05-09
 
