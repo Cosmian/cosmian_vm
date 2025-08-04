@@ -61,7 +61,7 @@
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu-{{ ansible_distribution_version }}/{{ package_name }}
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu-{{ ansible_distribution_version }}/{{ kms_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
