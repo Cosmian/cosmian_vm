@@ -242,7 +242,7 @@
           RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)
           NEW_RESET_COUNT=$((RESET_COUNT + 1))
           jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot >cosmian_vm.new_snapshot
-          jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | check_cosmian_vm_sponge cosmian_vm.new_snapshot
+          jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | sponge cosmian_vm.new_snapshot
         executable: /bin/bash
       delegate_to: localhost
       become: false
