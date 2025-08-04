@@ -62,7 +62,7 @@
     - name: Check if automatic.conf exists
       ansible.builtin.stat:
         path: /etc/dnf/automatic.conf
-      register: __dnf_automatic_conf
+      register: no_updates__dnf_automatic_conf
 
     - name: Update automatic.conf to disable automatic updates download
       ansible.builtin.lineinfile:
@@ -70,7 +70,7 @@
         regexp: "download_updates = yes"
         line: "download_updates = no"
         backup: true
-      when: __dnf_automatic_conf.stat.exists
+      when: no_updates__dnf_automatic_conf.stat.exists
 
     - name: Update automatic.conf to disable automatic updates apply
       ansible.builtin.lineinfile:
@@ -78,12 +78,12 @@
         regexp: "apply_updates = yes"
         line: "apply_updates = no"
         backup: true
-      when: __dnf_automatic_conf.stat.exists
+      when: no_updates__dnf_automatic_conf.stat.exists
 
     - name: Clean DNF metadata
       ansible.builtin.command: dnf clean all
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
+      register: no_updates_cmd_output
+      changed_when: no_updates_cmd_output.rc != 0
 
     - name: Update DNF cache
       ansible.builtin.dnf:

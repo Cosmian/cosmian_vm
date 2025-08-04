@@ -14,13 +14,13 @@
     cmd: |
       set -x
       tpm2_pcrread sha256:7,10
-  register: pcr_before
-  changed_when: pcr_before.rc != 0
+  register: check_cosmian_vm_pcr_before
+  changed_when: check_cosmian_vm_pcr_before.rc != 0
   tags: pcr_before_command
 
 - name: Display PCR-7 and PCR-10 before reboot
   ansible.builtin.debug:
-    var: pcr_before
+    var: check_cosmian_vm_pcr_before
 
 - name: Reboot before anything to test boot of systemd services
   ansible.builtin.reboot:
@@ -33,13 +33,13 @@
     cmd: |
       set -x
       tpm2_pcrread sha256:7,10
-  register: pcr_after
-  changed_when: pcr_after.rc != 0
+  register: check_cosmian_vm_pcr_after
+  changed_when: check_cosmian_vm_pcr_after.rc != 0
   tags: pcr_after_command
 
 - name: Display PCR-7 and PCR-10 after reboot
   ansible.builtin.debug:
-    var: pcr_after
+    var: check_cosmian_vm_pcr_after
 
 - name: Start Cosmian VM agent
   ansible.builtin.systemd_service:
@@ -65,38 +65,38 @@
   ansible.builtin.command:
     cmd: |
       cryptsetup luksDump /var/lib/cosmian_vm/container
-  register: cryptsetup_luks_dump
-  changed_when: cryptsetup_luks_dump.rc != 0
-  tags: cryptsetup_luks_dump
+  register: check_cosmian_vm_cryptsetup_luks_dump
+  changed_when: check_cosmian_vm_cryptsetup_luks_dump.rc != 0
+  tags: check_cosmian_vm_cryptsetup_luks_dump
 
 - name: Display LUKS dump
   ansible.builtin.debug:
-    var: cryptsetup_luks_dump
+    var: check_cosmian_vm_cryptsetup_luks_dump
 
 - name: Before any check - Read Cosmian VM agent logs
   ansible.builtin.command:
     cmd: |
       journalctl -u mount_luks
-  register: mount_luks_service_logs
-  changed_when: mount_luks_service_logs.rc != 0
-  tags: mount_luks_service_logs
+  register: check_cosmian_vm_mount_luks_service_logs
+  changed_when: check_cosmian_vm_mount_luks_service_logs.rc != 0
+  tags: check_cosmian_vm_mount_luks_service_logs
 
 - name: Before any check - Display Mount LUKS service logs
   ansible.builtin.debug:
-    var: mount_luks_service_logs
-  tags: mount_luks_service_logs
+    var: check_cosmian_vm_mount_luks_service_logs
+  tags: check_cosmian_vm_mount_luks_service_logs
 
 - name: Before any check - Read Cosmian VM agent logs
   ansible.builtin.command:
     cmd: |
       journalctl -u cosmian_vm_agent
-  register: agent_logs
-  changed_when: agent_logs.rc != 0
+  register: check_cosmian_vm_agent_logs
+  changed_when: check_cosmian_vm_agent_logs.rc != 0
   tags: snapshot
 
 - name: Before any check - Display Agent logs
   ansible.builtin.debug:
-    var: agent_logs
+    var: check_cosmian_vm_agent_logs
   tags: snapshot
 
 - name: Check if port 5555 is listening
@@ -117,17 +117,17 @@
 
 - name: Wait for LUKS password generation
   ansible.builtin.wait_for:
-    path: /var/lib/cosmian_vm/data/luks_password
+    path: /var/lib/cosmian_vm/data/check_cosmian_vm_luks_password
     state: present
 
 - name: Read LUKS password
   ansible.builtin.slurp:
-    src: /var/lib/cosmian_vm/data/luks_password
-  register: luks_password
+    src: /var/lib/cosmian_vm/data/check_cosmian_vm_luks_password
+  register: check_cosmian_vm_luks_password
 
 - name: Display LUKS password
   ansible.builtin.debug:
-    var: "{{ luks_password['content'] | b64decode }}"
+    var: "{{ check_cosmian_vm_luks_password['content'] | b64decode }}"
 
 - name: Check if port 5555 is locally listening on {{ inventory_hostname }}
   ansible.builtin.wait_for:
@@ -151,43 +151,43 @@
       rm -f ./cosmian_vm.new_snapshot
   delegate_to: localhost
   become: false
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: check_cosmian_vm_cmd_output
+  changed_when: check_cosmian_vm_cmd_output.rc != 0
 
 - name: Cosmian VM snapshot
   ansible.builtin.command:
     cmd: |
       cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls snapshot
-  register: cosmian_vm_output
+  register: check_cosmian_vm_cosmian_vm_output
   delegate_to: localhost
   become: false
   ignore_errors: true
-  changed_when: cosmian_vm_output.rc != 0
+  changed_when: check_cosmian_vm_cosmian_vm_output.rc != 0
   tags: snapshot
 
 - name: Display CLI logs after snapshot
   ansible.builtin.debug:
-    var: cosmian_vm_output
+    var: check_cosmian_vm_cosmian_vm_output
   tags: snapshot
 
 - name: Read Cosmian VM agent logs
   ansible.builtin.command:
     cmd: |
       journalctl -u cosmian_vm_agent
-  register: agent_logs
-  changed_when: agent_logs.rc != 0
+  register: check_cosmian_vm_agent_logs
+  changed_when: check_cosmian_vm_agent_logs.rc != 0
   tags: snapshot
 
 - name: Display Agent logs
   ansible.builtin.debug:
-    var: agent_logs
+    var: check_cosmian_vm_agent_logs
   tags: snapshot
 
 - name: Read IMA
   ansible.builtin.command:
     cmd: |
       cat /sys/kernel/security/ima/ascii_runtime_measurements
-  register: ima_before_reboot
+  register: check_cosmian_vm_ima_before_reboot
   become: true
   become_user: root
   become_method: ansible.builtin.sudo
@@ -196,7 +196,7 @@
 
 - name: Print IMA to console
   ansible.builtin.debug:
-    msg: "{{ ima_before_reboot.stdout }}"
+    msg: "{{ check_cosmian_vm_ima_before_reboot.stdout }}"
   become: true
   become_user: root
   become_method: ansible.builtin.sudo
@@ -205,11 +205,11 @@
 
 - name: Fail if Cosmian snapshot has failed previously
   ansible.builtin.fail:
-    msg: Cosmian snapshot failed with return code {{ cosmian_vm_output }}
+    msg: Cosmian snapshot failed with return code {{ check_cosmian_vm_cosmian_vm_output }}
   when:
-    - cosmian_vm_output is defined
-    - cosmian_vm_output.rc is defined
-    - cosmian_vm_output.rc != 0
+    - check_cosmian_vm_cosmian_vm_output is defined
+    - check_cosmian_vm_cosmian_vm_output.rc is defined
+    - check_cosmian_vm_cosmian_vm_output.rc != 0
   tags: snapshot
 
 - name: Reboot after snapshot
@@ -242,48 +242,48 @@
           RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)
           NEW_RESET_COUNT=$((RESET_COUNT + 1))
           jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot >cosmian_vm.new_snapshot
-          jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | sponge cosmian_vm.new_snapshot
+          jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | check_cosmian_vm_sponge cosmian_vm.new_snapshot
         executable: /bin/bash
       delegate_to: localhost
       become: false
-      register: sponge
-      changed_when: sponge.rc != 0
-      tags: sponge
+      register: check_cosmian_vm_sponge
+      changed_when: check_cosmian_vm_sponge.rc != 0
+      tags: check_cosmian_vm_sponge
 
     - name: Verify Cosmian VM snapshot
       ansible.builtin.command:
         cmd: |
           cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.new_snapshot
-      register: verify_cosmian_vm_output
+      register: check_cosmian_vm_verify_cosmian_vm_output
       delegate_to: localhost
       become: false
       ignore_errors: true
       tags: verify
-      changed_when: verify_cosmian_vm_output.rc != 0
+      changed_when: check_cosmian_vm_verify_cosmian_vm_output.rc != 0
 
     - name: Display CLI logs after verify snapshot
       ansible.builtin.debug:
-        var: verify_cosmian_vm_output
+        var: check_cosmian_vm_verify_cosmian_vm_output
       tags: verify
 
     - name: Read Cosmian VM agent logs
       ansible.builtin.command:
         cmd: |
           journalctl -u cosmian_vm_agent
-      register: agent_logs
-      changed_when: agent_logs.rc != 0
+      register: check_cosmian_vm_agent_logs
+      changed_when: check_cosmian_vm_agent_logs.rc != 0
       tags: verify
 
     - name: Display Agent logs
       ansible.builtin.debug:
-        var: agent_logs
+        var: check_cosmian_vm_agent_logs
       tags: verify
 
     - name: Read IMA if verification failed
       ansible.builtin.command:
         cmd: |
           cat /sys/kernel/security/ima/ascii_runtime_measurements
-      register: ima_after_reboot
+      register: check_cosmian_vm_ima_after_reboot
       become: true
       become_user: root
       become_method: ansible.builtin.sudo
@@ -292,24 +292,24 @@
 
     - name: Print IMA to console
       ansible.builtin.debug:
-        msg: "{{ ima_after_reboot.stdout }}"
+        msg: "{{ check_cosmian_vm_ima_after_reboot.stdout }}"
       become: true
       become_user: root
       become_method: ansible.builtin.sudo
       when:
-        - verify_cosmian_vm_output is defined
-        - verify_cosmian_vm_output.rc is defined
-        - verify_cosmian_vm_output.rc != 0
+        - check_cosmian_vm_verify_cosmian_vm_output is defined
+        - check_cosmian_vm_verify_cosmian_vm_output.rc is defined
+        - check_cosmian_vm_verify_cosmian_vm_output.rc != 0
       changed_when: false
       tags: verify
 
     - name: Fail if Cosmian snapshot verification has failed previously
       ansible.builtin.fail:
-        msg: Cosmian snapshot verification failed with return code {{ verify_cosmian_vm_output }}
+        msg: Cosmian snapshot verification failed with return code {{ check_cosmian_vm_verify_cosmian_vm_output }}
       when:
-        - verify_cosmian_vm_output is defined
-        - verify_cosmian_vm_output.rc is defined
-        - verify_cosmian_vm_output.rc != 0
+        - check_cosmian_vm_verify_cosmian_vm_output is defined
+        - check_cosmian_vm_verify_cosmian_vm_output.rc is defined
+        - check_cosmian_vm_verify_cosmian_vm_output.rc != 0
       tags: verify
 
 - name: Verify Cosmian VM snapshot - no reboot
@@ -319,38 +319,38 @@
       ansible.builtin.command:
         cmd: |
           cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.snapshot
-      register: verify_cosmian_vm_output
+      register: check_cosmian_vm_verify_cosmian_vm_output
       delegate_to: localhost
       become: false
       ignore_errors: true
       tags: verify
-      changed_when: verify_cosmian_vm_output.rc != 0
+      changed_when: check_cosmian_vm_verify_cosmian_vm_output.rc != 0
 
     - name: Display CLI logs after verify snapshot
       ansible.builtin.debug:
-        var: verify_cosmian_vm_output
+        var: check_cosmian_vm_verify_cosmian_vm_output
       tags: verify
 
     - name: Read Cosmian VM agent logs
       ansible.builtin.command:
         cmd: |
           journalctl -u cosmian_vm_agent
-      register: agent_logs
-      changed_when: agent_logs.rc != 0
+      register: check_cosmian_vm_agent_logs
+      changed_when: check_cosmian_vm_agent_logs.rc != 0
       tags: verify
 
     - name: Display Agent logs
       ansible.builtin.debug:
-        var: agent_logs
+        var: check_cosmian_vm_agent_logs
       tags: verify
 
     - name: Fail if Cosmian snapshot verification has failed previously
       ansible.builtin.fail:
-        msg: Cosmian snapshot verification failed with return code {{ verify_cosmian_vm_output }}
+        msg: Cosmian snapshot verification failed with return code {{ check_cosmian_vm_verify_cosmian_vm_output }}
       when:
-        - verify_cosmian_vm_output is defined
-        - verify_cosmian_vm_output.rc is defined
-        - verify_cosmian_vm_output.rc != 0
+        - check_cosmian_vm_verify_cosmian_vm_output is defined
+        - check_cosmian_vm_verify_cosmian_vm_output.rc is defined
+        - check_cosmian_vm_verify_cosmian_vm_output.rc != 0
       tags: verify
 
 - name: Clean Cosmian VM CLI and snapshot
@@ -360,5 +360,5 @@
       rm -f ./cosmian_vm.new_snapshot
   delegate_to: localhost
   become: false
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: check_cosmian_vm_cmd_output
+  changed_when: check_cosmian_vm_cmd_output.rc != 0

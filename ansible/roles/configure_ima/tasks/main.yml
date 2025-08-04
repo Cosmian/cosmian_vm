@@ -11,7 +11,7 @@
 - name: Check grub file path
   ansible.builtin.stat:
     path: /etc/default/grub
-  register: etc_default_grub
+  register: configure_ima_etc_default_grub
   tags: update_grub
 
 - name: Create ima folder
@@ -40,7 +40,7 @@
     mode: "0400"
 
 - name: Copy the bash script to the remote host (in order to update the grub conf)
-  when: etc_default_grub.stat.exists
+  when: configure_ima_etc_default_grub.stat.exists
   tags: update_grub
   ansible.builtin.copy:
     content: |
@@ -96,7 +96,7 @@
     remote_src: true
 
 - name: Insert/update missing line if default grub does not exist
-  when: not etc_default_grub.stat.exists
+  when: not configure_ima_etc_default_grub.stat.exists
   ansible.builtin.blockinfile:
     path: /etc/default/grub.d/50-cloudimg-settings.cfg
     block: |
@@ -104,14 +104,14 @@
   tags: cloudimg
 
 - name: Update the grub configuration
-  when: etc_default_grub.stat.exists
+  when: configure_ima_etc_default_grub.stat.exists
   tags: update_grub
   ansible.builtin.command: /tmp/grub.sh
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: configure_ima_cmd_output
+  changed_when: configure_ima_cmd_output.rc != 0
 
 - name: Remove the update grub configuration script
-  when: etc_default_grub.stat.exists
+  when: configure_ima_etc_default_grub.stat.exists
   ansible.builtin.file:
     path: /tmp/grub.sh
     state: absent
@@ -125,8 +125,8 @@
 
     - name: Update grub
       ansible.builtin.command: update-grub
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
+      register: configure_ima_cmd_output
+      changed_when: configure_ima_cmd_output.rc != 0
 
 - name: Update grub on RedHat
   when: ansible_distribution == 'RedHat'
@@ -144,13 +144,13 @@
       ansible.builtin.command:
         cmd: |
           grub2-mkconfig -o /boot/grub2/grub.cfg
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
+      register: configure_ima_cmd_output
+      changed_when: configure_ima_cmd_output.rc != 0
 
     - name: Selinux - allow https
       ansible.builtin.command: setsebool -P httpd_can_network_connect 1
-      register: cmd_output
-      changed_when: cmd_output.rc != 0
+      register: configure_ima_cmd_output
+      changed_when: configure_ima_cmd_output.rc != 0
       tags: selinux
 
 - name: Mount a tmpfs volume

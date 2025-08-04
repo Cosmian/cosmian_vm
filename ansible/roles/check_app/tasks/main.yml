@@ -47,13 +47,13 @@
   ansible.builtin.command:
     cmd: |
       journalctl -u {{ check_app_systemd_name }}
-  register: app_logs
+  register: check_app_app_logs
   tags: launch
-  changed_when: app_logs.rc != 0
+  changed_when: check_app_app_logs.rc != 0
 
 - name: Display logs of {{ check_app_name }}
   ansible.builtin.debug:
-    var: app_logs
+    var: check_app_app_logs
   tags: launch
 
 - name: After first reboot, check HTTPS connection - {{ check_app_name }}
@@ -62,10 +62,10 @@
     validate_certs: false
   delegate_to: localhost
   become: false
-  register: result
+  register: check_app_result
   retries: 5
   delay: 60
-  until: result.status == 200
+  until: check_app_result.status == 200
   tags: after_first_reboot
   when: check_app_name == "KMS" # should be also handled for AI Runner
 
@@ -73,89 +73,89 @@
   ansible.builtin.command:
     cmd: |
       cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app init -c {{ check_app_configuration_path }}
-  register: cosmian_vm_app_init
+  register: check_app_cosmian_vm_app_init
   tags: app_init
   ignore_errors: true
   delegate_to: localhost
   become: false
-  changed_when: cosmian_vm_app_init.rc != 0
+  changed_when: check_app_cosmian_vm_app_init.rc != 0
 
 - name: Display CLI logs after app init
   ansible.builtin.debug:
-    var: cosmian_vm_app_init
+    var: check_app_cosmian_vm_app_init
   tags: app_init
 
 - name: App initialization - reading Cosmian VM agent logs
   ansible.builtin.command:
     cmd: |
       journalctl -u cosmian_vm_agent
-  register: agent_logs
+  register: check_app_agent_logs
   tags: app_init
-  changed_when: agent_logs.rc != 0
+  changed_when: check_app_agent_logs.rc != 0
 
 - name: App initialization - displaying Agent logs
   ansible.builtin.debug:
-    var: agent_logs
+    var: check_app_agent_logs
   tags: app_init
 
 - name: Fail if Cosmian app init has failed previously
   ansible.builtin.fail:
-    msg: Cosmian app init failed with return code {{ cosmian_vm_app_init }}
+    msg: Cosmian app init failed with return code {{ check_app_cosmian_vm_app_init }}
   when:
-    - cosmian_vm_app_init is defined
-    - cosmian_vm_app_init.rc is defined
-    - cosmian_vm_app_init.rc != 0
+    - check_app_cosmian_vm_app_init is defined
+    - check_app_cosmian_vm_app_init.rc is defined
+    - check_app_cosmian_vm_app_init.rc != 0
   tags: app_init
 
 - name: App restart
   ansible.builtin.command:
     cmd: |
       cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls app restart
-  register: cosmian_vm_app_restart
+  register: check_app_cosmian_vm_app_restart
   tags: app_restart
   delegate_to: localhost
   become: false
-  changed_when: cosmian_vm_app_restart.rc != 0
+  changed_when: check_app_cosmian_vm_app_restart.rc != 0
 
 - name: Display CLI logs after app restart
   ansible.builtin.debug:
-    var: cosmian_vm_app_restart
+    var: check_app_cosmian_vm_app_restart
   tags: app_restart
 
 - name: App restart - reading Cosmian VM agent logs
   ansible.builtin.command:
     cmd: |
       journalctl -u cosmian_vm_agent
-  register: agent_logs
+  register: check_app_agent_logs
   ignore_errors: true
   tags: app_restart
-  changed_when: agent_logs.rc != 0
+  changed_when: check_app_agent_logs.rc != 0
 
 - name: App restart - displaying Agent logs
   ansible.builtin.debug:
-    var: agent_logs
+    var: check_app_agent_logs
   tags: app_restart
 
 - name: Fail if Cosmian app restart has failed previously
   ansible.builtin.fail:
-    msg: Cosmian app restart failed with return code {{ cosmian_vm_app_restart }}
+    msg: Cosmian app restart failed with return code {{ check_app_cosmian_vm_app_restart }}
   when:
-    - cosmian_vm_app_restart is defined
-    - cosmian_vm_app_restart.rc is defined
-    - cosmian_vm_app_restart.rc != 0
+    - check_app_cosmian_vm_app_restart is defined
+    - check_app_cosmian_vm_app_restart.rc is defined
+    - check_app_cosmian_vm_app_restart.rc != 0
   tags: app_restart
 
 - name: Read logs of {{ check_app_name }}
   ansible.builtin.command:
     cmd: |
       journalctl -u {{ check_app_systemd_name }}
-  register: app_logs
+  register: check_app_app_logs
   tags: after_restart
-  changed_when: app_logs.rc != 0
+  changed_when: check_app_app_logs.rc != 0
 
 - name: Display logs of {{ check_app_name }}
   ansible.builtin.debug:
-    var: app_logs
+    var: check_app_app_logs
   tags: launch
 
 - name: Check if port 443 is listening
@@ -175,10 +175,10 @@
     validate_certs: false
   delegate_to: localhost
   become: false
-  register: result
+  register: check_app_result
   retries: 5
   delay: 600
-  until: result.status == 200
+  until: check_app_result.status == 200
   tags: listening,listening_app
   when: (check_app_name == "AI Runner") or (check_app_name == "KMS")
 
@@ -217,10 +217,10 @@
         à faire le don, le don de soi..."
   delegate_to: localhost
   become: false
-  register: result
+  register: check_app_result
   retries: 5
   delay: 600
-  until: result.status == 200
+  until: check_app_result.status == 200
   tags: second_endpoint
   when: false # (check_app_name == "AI Runner")
 
@@ -237,10 +237,10 @@
       tgt_lang: fr
   delegate_to: localhost
   become: false
-  register: result
+  register: check_app_result
   retries: 5
   delay: 600
-  until: result.status == 200
+  until: check_app_result.status == 200
   tags: third_endpoint
   when: false # (check_app_name == "AI Runner")
 
@@ -249,5 +249,5 @@
     cmd: |
       rm -f cosmian_vm
   delegate_to: localhost
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: check_app_cmd_output
+  changed_when: check_app_cmd_output.rc != 0

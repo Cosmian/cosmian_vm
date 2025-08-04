@@ -15,8 +15,8 @@
     state: stopped
     enabled: false
     daemon_reload: true
-  register: stop_cosmian_ai_runner
-  failed_when: stop_cosmian_ai_runner is defined and stop_cosmian_ai_runner.failed=='true'
+  register: cleanup_ai_runner_stop_cosmian_ai_runner
+  failed_when: cleanup_ai_runner_stop_cosmian_ai_runner is defined and cleanup_ai_runner_stop_cosmian_ai_runner.failed=='true'
   ignore_errors: true
 
 - name: Clean AI Runner existing folders
@@ -24,8 +24,8 @@
     cmd: |
       rm -rf /opt/venv/cosmian_ai_runner
       rm -rf /var/lib/cosmian_vm/data/app
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: cleanup_ai_runner_cmd_output
+  changed_when: cleanup_ai_runner_cmd_output.rc != 0
 
 - name: Reboot since systemd service has been disabled
   ansible.builtin.reboot:
