@@ -61,4 +61,4 @@
 
     - name: Install Cosmian VM Debian package
       ansible.builtin.apt:
-        deb: /tmp/{{ package_name }}
+        deb: /tmp/{{ cosmian_vm_package_name }}
