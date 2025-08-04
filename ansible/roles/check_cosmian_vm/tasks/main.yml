@@ -117,12 +117,12 @@
 
 - name: Wait for LUKS password generation
   ansible.builtin.wait_for:
-    path: /var/lib/cosmian_vm/data/check_cosmian_vm_luks_password
+    path: /var/lib/cosmian_vm/data/luks_password
     state: present
 
 - name: Read LUKS password
   ansible.builtin.slurp:
-    src: /var/lib/cosmian_vm/data/check_cosmian_vm_luks_password
+    src: /var/lib/cosmian_vm/data/luks_password
   register: check_cosmian_vm_luks_password
 
 - name: Display LUKS password
