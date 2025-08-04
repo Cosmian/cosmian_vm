@@ -65,11 +65,11 @@
 
     - name: Extract version from ansible_kernel
       ansible.builtin.set_fact:
-        kernel_release: "{{ ansible_kernel | regex_search('([0-9]+\\.[0-9]+\\.[0-9]+\\.[a-zA-Z0-9_]+)') }}"
+        cleanup_kernel_release: "{{ ansible_kernel | regex_search('([0-9]+\\.[0-9]+\\.[0-9]+\\.[a-zA-Z0-9_]+)') }}"
 
     - name: Extract main kernel version (X.Y.Z)
       ansible.builtin.set_fact:
-        kernel_main_version: "{{ ansible_kernel | regex_search('^[0-9]+\\.[0-9]+\\.[0-9]+') }}"
+        cleanup_kernel_main_version: "{{ ansible_kernel | regex_search('^[0-9]+\\.[0-9]+\\.[0-9]+') }}"
 
     - name: Show extracted kernel info
       ansible.builtin.debug:

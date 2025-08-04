@@ -34,7 +34,7 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian_kms_server-{{ kms_package_version }}-1.x86_64.rpm
+        kms_package_name: cosmian_kms_server-{{ kms_package_version }}-1.x86_64.rpm
 
     - name: Download RPM Cosmian KMS Server package from package.cosmian.com
       ansible.builtin.get_url:
@@ -57,7 +57,7 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian-kms-server{{ kms_fips }}_{{ kms_package_version }}-1_amd64.deb
+        kms_package_name: cosmian-kms-server{{ kms_fips }}_{{ kms_package_version }}-1_amd64.deb
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:

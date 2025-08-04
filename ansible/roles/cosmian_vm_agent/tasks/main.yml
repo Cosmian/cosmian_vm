@@ -30,7 +30,7 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian_vm_agent-{{ package_version }}-1.x86_64.rpm
+        cosmian_vm_agent_package_name: cosmian_vm_agent-{{ package_version }}-1.x86_64.rpm
 
     - name: Download RPM Agent package from package.cosmian.com
       ansible.builtin.get_url:
@@ -53,7 +53,7 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian-vm-agent_{{ package_version }}-1_amd64.deb
+        cosmian_vm_agent_package_name: cosmian-vm-agent_{{ package_version }}-1_amd64.deb
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
