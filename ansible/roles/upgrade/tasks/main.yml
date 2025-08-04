@@ -41,12 +41,12 @@
       ansible.builtin.shell:
         cmd: |
           dnf updateinfo list security
-      register: dnf_security_update
-      changed_when: dnf_security_update.rc != 0
+      register: upgrade_dnf_security_update
+      changed_when: upgrade_dnf_security_update.rc != 0
 
     - name: Display Security updates
       ansible.builtin.debug:
-        var: dnf_security_update
+        var: upgrade_dnf_security_update
 
 - name: Tasks for Azure platform (Security Check Failure)
   when: ansible_distribution == 'RedHat' and ansible_facts['bios_vendor'] == 'Microsoft Corporation'
@@ -55,11 +55,11 @@
     - name: Get installed version of shim-x64
       ansible.builtin.package_facts:
         manager: auto
-      register: installed_packages
+      register: upgrade_installed_packages
 
     - name: Debug installed shim-x64 version
       ansible.builtin.debug:
-        msg: "Installed shim-x64 version: {{ installed_packages['ansible_facts']['packages']['shim-x64'][0]['version'] }}"
+        msg: "Installed shim-x64 version: {{ upgrade_installed_packages['ansible_facts']['packages']['shim-x64'][0]['version'] }}"
 
     - name: Conditionally update shim-x64
       ansible.builtin.dnf:
@@ -67,15 +67,15 @@
         state: latest
         update_only: true
         disable_plugin: ["*"]
-      when: installed_packages['ansible_facts']['packages']['shim-x64'][0]['version'] is version('15.8', '<')
-      register: yum_update
+      when: upgrade_installed_packages['ansible_facts']['packages']['shim-x64'][0]['version'] is version('15.8', '<')
+      register: upgrade_yum_update
       ignore_errors: true
 
     - name: Verify shim-x64 version after update
       ansible.builtin.package_facts:
         manager: auto
-      register: updated_packages
+      register: upgrade_updated_packages
 
     - name: Debug shim-x64 version after update
       ansible.builtin.debug:
-        msg: "shim-x64 version after update: {{ updated_packages['ansible_facts']['packages']['shim-x64'][0]['version'] }}"
+        msg: "shim-x64 version after update: {{ upgrade_updated_packages['ansible_facts']['packages']['shim-x64'][0]['version'] }}"

@@ -49,8 +49,8 @@
         ./configure --prefix=/usr/local
         make
         make install
-      register: sqlite3_output
-      changed_when: sqlite3_output.rc != 0
+      register: ai_runner_sqlite3_output
+      changed_when: ai_runner_sqlite3_output.rc != 0
       become: true
 
 - name: Install prerequisites packages
@@ -121,8 +121,8 @@
 - name: Selinux - add nginx to permissive allow httpd
   when: ansible_distribution == 'RedHat'
   ansible.builtin.command: semanage permissive -a httpd_t
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: ai_runner_cmd_output
+  changed_when: ai_runner_cmd_output.rc != 0
   tags: selinux
 
 - name: Add SELinux context for AI runner

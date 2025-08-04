@@ -26,11 +26,11 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian_vm-{{ package_version }}-1.x86_64.rpm
+        cosmian_vm_package_name: cosmian_vm-{{ package_version }}-1.x86_64.rpm
 
     - name: Download RPM package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/rhel9/{{ package_name }}
+        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/rhel9/{{ cosmian_vm_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
@@ -38,7 +38,7 @@
 
     - name: Install Cosmian VM RPM package from package.cosmian.com
       ansible.builtin.dnf:
-        name: /tmp/{{ package_name }}
+        name: /tmp/{{ cosmian_vm_package_name }}
         state: present
         disable_gpg_check: true
       tags: install_rpm
@@ -49,11 +49,11 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian-vm_{{ package_version }}-1_amd64.deb
+        cosmian_vm_package_name: cosmian-vm_{{ package_version }}-1_amd64.deb
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/ubuntu-{{ ansible_distribution_version }}/{{ package_name }}
+        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/ubuntu-{{ ansible_distribution_version }}/{{ cosmian_vm_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
@@ -61,4 +61,4 @@
 
     - name: Install Cosmian VM Debian package
       ansible.builtin.apt:
-        deb: /tmp/{{ package_name }}
+        deb: /tmp/{{ cosmian_vm_package_name }}
