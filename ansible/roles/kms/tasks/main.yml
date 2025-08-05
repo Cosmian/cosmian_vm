@@ -38,7 +38,7 @@
 
     - name: Download RPM Cosmian KMS Server package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rockylinux9/{{ package_name }}
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rockylinux9/{{ kms_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
@@ -46,7 +46,7 @@
 
     - name: Install Cosmian KMS Server RPM package from package.cosmian.com
       ansible.builtin.dnf:
-        name: /tmp/{{ package_name }}
+        name: /tmp/{{ kms_package_name }}
         state: present
         disable_gpg_check: true
       tags: install_rpm
@@ -69,7 +69,7 @@
 
     - name: Install Cosmian KMS Debian package
       ansible.builtin.apt:
-        deb: /tmp/{{ package_name }}
+        deb: /tmp/{{ kms_package_name }}
 
 - name: Override Cosmian KMS systemd service
   ansible.builtin.template:
