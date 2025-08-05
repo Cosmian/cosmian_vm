@@ -1,19 +1,19 @@
 packer {
   required_plugins {
     googlecompute = {
-      version = "= 1.1.4"
-      source  = "github.com/hashicorp/googlecompute"
+      version = "= 1.2.1"
+      source  = "github.com/hashicorp/packer-plugin-googlecompute"
     }
     ansible = {
-      version = "= 1.1.1"
-      source  = "github.com/hashicorp/ansible"
+      version = "= 1.1.4"
+      source  = "github.com/hashicorp/packer-plugin-ansible"
     }
   }
 }
 
 source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
   ssh_username              = "root"
-  ssh_timeout               = "60m"
+  ssh_timeout               = "5m"
   ssh_clear_authorized_keys = true
   project_id                = "cosmian-dev"
   source_image              = "TEMPLATE_SOURCE_IMAGE"
