@@ -13,7 +13,7 @@ packer {
 
 source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
   ssh_username              = "root"
-  ssh_timeout               = "5m"
+  ssh_timeout               = "60m"
   ssh_clear_authorized_keys = true
   project_id                = "cosmian-dev"
   source_image              = "TEMPLATE_SOURCE_IMAGE"

@@ -13,7 +13,7 @@ packer {
 
 source "azure-arm" "TEMPLATE_DISTRIBUTION" {
   ssh_username              = "packer"
-  ssh_timeout               = "5m"
+  ssh_timeout               = "60m"
   ssh_clear_authorized_keys = true
   client_id                 = "TEMPLATE_CLIENT_ID"
   tenant_id                 = "TEMPLATE_TENANT_ID"

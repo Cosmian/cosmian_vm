@@ -73,7 +73,7 @@
 
     - name: Show extracted kernel info
       ansible.builtin.debug:
-        msg: "Extracted kernel version: {{ kernel_main_version }} and {{ kernel_release }}"
+        msg: "Extracted kernel version: {{ cleanup_kernel_main_version }} and {{ kernel_release }}"
       tags: clean_old_kernels
 
     - name: Remove old installed kernel-modules-core versions
@@ -81,7 +81,7 @@
         name: "{{ item.name }}-{{ item.version }}-{{ item.release }}"
         state: absent
       with_items: "{{ cleanup_installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
-      when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
+      when: item.release is version(kernel_release, '<') or item.version is version(cleanup_kernel_main_version, '<')
 
     - name: Get installed versions of all packages after cleanup
       ansible.builtin.package_facts:
@@ -92,4 +92,4 @@
       ansible.builtin.fail:
         name: Old version found {{ item.name }}-{{ item.version }}-{{ item.release }}
       with_items: "{{ cleanup_installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
-      when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
+      when: item.release is version(kernel_release, '<') or item.version is version(cleanup_kernel_main_version, '<')
