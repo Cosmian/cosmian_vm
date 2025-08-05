@@ -2,11 +2,11 @@ packer {
   required_plugins {
     amazon = {
       version = "= 1.3.9"
-      source  = "github.com/hashicorp/packer-plugin-amazon"
+      source  = "github.com/hashicorp/amazon"
     }
     ansible = {
       version = "= 1.1.4"
-      source  = "github.com/hashicorp/packer-plugin-ansible"
+      source  = "github.com/hashicorp/ansible"
     }
   }
 }
