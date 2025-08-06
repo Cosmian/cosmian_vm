@@ -2,11 +2,11 @@ packer {
   required_plugins {
     googlecompute = {
       version = "= 1.2.2"
-      source  = "https://releases.hashicorp.com/packer-plugin-googlecompute/1.2.2/packer-plugin-googlecompute_1.2.2_SHA256SUMS"
+      source  = "releases.hashicorp.com/packer-plugin-googlecompute/1.2.2/packer-plugin-googlecompute_1.2.2_SHA256SUMS"
     }
     ansible = {
       version = "= 1.1.4"
-      source  = "https://releases.hashicorp.com/packer-plugin-ansible/1.1.4/packer-plugin-ansible_1.1.4_SHA256SUMS"
+      source  = "releases.hashicorp.com/packer-plugin-ansible/1.1.4/packer-plugin-ansible_1.1.4_SHA256SUMS"
     }
   }
 }

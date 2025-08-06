@@ -2,11 +2,11 @@ packer {
   required_plugins {
     azure = {
       version = "= 2.4.0"
-      source  = "https://releases.hashicorp.com/packer-plugin-azure/2.4.0/packer-plugin-azure_2.4.0_SHA256SUMS"
+      source  = "releases.hashicorp.com/packer-plugin-azure/2.4.0/packer-plugin-azure_2.4.0_SHA256SUMS"
     }
     ansible = {
       version = "= 1.1.4"
-      source  = "https://releases.hashicorp.com/packer-plugin-ansible/1.1.4/packer-plugin-ansible_1.1.4_SHA256SUMS"
+      source  = "releases.hashicorp.com/packer-plugin-ansible/1.1.4/packer-plugin-ansible_1.1.4_SHA256SUMS"
     }
   }
 }
