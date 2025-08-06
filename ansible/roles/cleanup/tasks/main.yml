@@ -81,7 +81,7 @@
         name: "{{ item.name }}-{{ item.version }}-{{ item.release }}"
         state: absent
       with_items: "{{ cleanup_installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
-      when: item.release is version(kernel_recleanup_kernel_releaselease, '<') or item.version is version(cleanup_kernel_main_version, '<')
+      when: item.release is version(cleanup_kernel_release, '<') or item.version is version(cleanup_kernel_main_version, '<')
 
     - name: Get installed versions of all packages after cleanup
       ansible.builtin.package_facts:
