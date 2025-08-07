@@ -111,7 +111,7 @@ jobs:
         run: |
           set -exo pipefail
 
-          IMAGE_VERSION="1.3.7"
+          IMAGE_VERSION="0.0.0"
           if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
               IMAGE_VERSION="${GITHUB_REF_NAME}"

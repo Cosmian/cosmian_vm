@@ -13,7 +13,7 @@ packer {
 
 source "amazon-ebssurrogate" "TEMPLATE_DISTRIBUTION" {
   ssh_username              = "TEMPLATE_SSH_USERNAME"
-  ssh_timeout               = "60m"
+  ssh_timeout               = "5m"
   ssh_clear_authorized_keys = true
   source_ami                = "TEMPLATE_SOURCE_AMI"
   region                    = "eu-west-1"
