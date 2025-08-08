@@ -8,18 +8,18 @@
       - /root
     recurse: true
     patterns: authorized_keys
-  register: authorized_keys
+  register: cleanup_authorized_keys
 
 - name: Display authorized_keys
   ansible.builtin.debug:
-    var: authorized_keys
+    var: cleanup_authorized_keys
 
 - name: Remove found authorized_keys files
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
-  loop: "{{ authorized_keys.files }}"
-  when: authorized_keys.matched > 0
+  loop: "{{ cleanup_authorized_keys.files }}"
+  when: cleanup_authorized_keys.matched > 0
 
 - name: Find all authorized_keys files
   ansible.builtin.find:
@@ -28,27 +28,27 @@
       - /root
     recurse: true
     patterns: authorized_keys
-  register: authorized_keys
+  register: cleanup_authorized_keys
 
 - name: Display authorized_keys authorized_keys
   ansible.builtin.debug:
-    var: authorized_keys
+    var: cleanup_authorized_keys
 
 - name: Fail if authorized_keys files are found
   ansible.builtin.fail:
     msg: "authorized_keys files found in the system!"
-  when: authorized_keys.matched > 0
+  when: cleanup_authorized_keys.matched > 0
 
 - name: List folders in /home
   ansible.builtin.find:
     paths: /home
     file_type: directory
     recurse: false
-  register: home_folders
+  register: cleanup_home_folders
 
 - name: Display home directories
   ansible.builtin.debug:
-    var: home_folders
+    var: cleanup_home_folders
 
 - name: Display kernel version
   ansible.builtin.debug:
@@ -61,35 +61,35 @@
     - name: Get installed versions of all packages
       ansible.builtin.package_facts:
         manager: auto
-      register: installed_packages
+      register: cleanup_installed_packages
 
     - name: Extract version from ansible_kernel
       ansible.builtin.set_fact:
-        kernel_release: "{{ ansible_kernel | regex_search('([0-9]+\\.[0-9]+\\.[0-9]+\\.[a-zA-Z0-9_]+)') }}"
+        cleanup_kernel_release: "{{ ansible_kernel | regex_search('([0-9]+\\.[0-9]+\\.[0-9]+\\.[a-zA-Z0-9_]+)') }}"
 
     - name: Extract main kernel version (X.Y.Z)
       ansible.builtin.set_fact:
-        kernel_main_version: "{{ ansible_kernel | regex_search('^[0-9]+\\.[0-9]+\\.[0-9]+') }}"
+        cleanup_kernel_main_version: "{{ ansible_kernel | regex_search('^[0-9]+\\.[0-9]+\\.[0-9]+') }}"
 
     - name: Show extracted kernel info
       ansible.builtin.debug:
-        msg: "Extracted kernel version: {{ kernel_main_version }} and {{ kernel_release }}"
+        msg: "Extracted kernel version: {{ cleanup_kernel_main_version }} and {{ cleanup_kernel_release }}"
       tags: clean_old_kernels
 
     - name: Remove old installed kernel-modules-core versions
       ansible.builtin.dnf:
         name: "{{ item.name }}-{{ item.version }}-{{ item.release }}"
         state: absent
-      with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
-      when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
+      with_items: "{{ cleanup_installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
+      when: item.release is version(cleanup_kernel_release, '<') or item.version is version(cleanup_kernel_main_version, '<')
 
     - name: Get installed versions of all packages after cleanup
       ansible.builtin.package_facts:
         manager: auto
-      register: installed_packages
+      register: cleanup_installed_packages
 
     - name: Fail if old kernel-modules-core versions are found
       ansible.builtin.fail:
         name: Old version found {{ item.name }}-{{ item.version }}-{{ item.release }}
-      with_items: "{{ installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
-      when: item.release is version(kernel_release, '<') or item.version is version(kernel_main_version, '<')
+      with_items: "{{ cleanup_installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
+      when: item.release is version(cleanup_kernel_release, '<') or item.version is version(cleanup_kernel_main_version, '<')

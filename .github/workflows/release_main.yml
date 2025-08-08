@@ -26,8 +26,8 @@ jobs:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/release_azure_main.yml
     with:
-      base-version: 0.1.11
-      kms-version: 5.0.0
+      base-version: 0.1.12
+      kms-version: 5.6.2
       ai-runner-version: 1.0.0
     secrets: inherit
 
@@ -35,8 +35,8 @@ jobs:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/release_gcp_main.yml
     with:
-      base-version: 0.1.11
-      kms-version: 5.0.0
+      base-version: 0.1.12
+      kms-version: 5.6.2
       ai-runner-version: 1.0.0
     secrets: inherit
 
@@ -44,8 +44,8 @@ jobs:
     needs: build-cosmian-vm-binaries
     uses: ./.github/workflows/release_aws_main.yml
     with:
-      base-version: 0.1.11
-      kms-version: 5.0.0
+      base-version: 0.1.12
+      kms-version: 5.6.2
       ai-runner-version: 1.0.0
     secrets: inherit
 

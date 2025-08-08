@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.8] - 2025-08-08
+
+### 🚀 Features
+
+- Bump KMS version to 5.6.2
+
+## [1.3.7] - 2025-06-30
+
+### 🐛 Bug Fixes
+
+- Upgrade GCP and AWS base image to 0.1.12 ([#179](https://github.com/Cosmian/cosmian_vm/pull/179)
+
 ## [1.3.6] - 2025-05-09
 
 ### 🚀 Features

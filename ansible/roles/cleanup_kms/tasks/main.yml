@@ -15,8 +15,8 @@
     state: stopped
     enabled: false
     daemon_reload: true
-  register: stop_kms
-  failed_when: stop_kms is defined and stop_kms.failed=='true'
+  register: cleanup_kms_stop_kms
+  failed_when: cleanup_kms_stop_kms is defined and cleanup_kms_stop_kms.failed=='true'
   ignore_errors: true
 
 - name: Clean KMS existing folders
@@ -24,8 +24,8 @@
     cmd: |
       rm -f /usr/local/sbin/cosmian_kms
       rm -rf /var/lib/cosmian_vm/data/app
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: cleanup_kms_cmd_output
+  changed_when: cleanup_kms_cmd_output.rc != 0
 
 - name: Reboot since systemd service has been disabled
   ansible.builtin.reboot:

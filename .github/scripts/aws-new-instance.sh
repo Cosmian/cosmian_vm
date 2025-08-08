@@ -30,10 +30,10 @@ if [ "$TECHNO" = "tdx" ]; then
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Ubuntu SEV
-    AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
+    AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610" --query "Images[*].{ID:ImageId}" --output text)
   else
     # Redhat SEV
-    AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.4.0_HVM-20241210-x86_64-0-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
+    AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
   fi
 
   AMI=$(

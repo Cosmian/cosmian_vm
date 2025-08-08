@@ -1,5 +1,14 @@
 # Cosmian Base Image Changelog
 
+## [0.1.12] - 2025-06-30
+
+- *GCP*: ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))
+  - *Ubuntu SEV/TDX capable*: update from `ubuntu-2404-noble-amd64-v20241004`to `ubuntu-2404-noble-amd64-v20250606`
+  - *RedHat SEV/TDX capable*: update from `rhel-9-v20241009` to `rhel-9-v20250611`
+- *AWS*:
+  - *Ubuntu*: update from `ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1`to `ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610`
+  - *RedHat*: update from `RHEL-9.4.0_HVM-20241210-x86_64-0-Hourly2-GP3` to `RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3`
+
 ## [0.1.11] - 2025-01-27
 
 - *Azure*: ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))

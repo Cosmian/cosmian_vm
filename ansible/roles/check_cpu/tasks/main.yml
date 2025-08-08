@@ -18,11 +18,11 @@
     method: GET
     return_content: true
     status_code: 200
-  register: instance_metadata
+  register: check_cpu_instance_metadata
 
 - name: Check Instance metadata
   ansible.builtin.debug:
-    var: instance_metadata
+    var: check_cpu_instance_metadata
 
 - name: Check Confidential VM compatibility - Google
   when: ansible_facts['bios_vendor'] == 'Google'
@@ -33,11 +33,11 @@
     method: GET
     return_content: true
     status_code: 200
-  register: instance_metadata
+  register: check_cpu_instance_metadata
 
 - name: Check Instance metadata
   ansible.builtin.debug:
-    var: instance_metadata
+    var: check_cpu_instance_metadata
 
 - name: Check Confidential VM compatibility - AWS
   when: ansible_facts['bios_vendor'] == 'Amazon EC2'
@@ -48,8 +48,8 @@
     method: GET
     return_content: true
     status_code: 200
-  register: instance_metadata
+  register: check_cpu_instance_metadata
 
 - name: Check Instance metadata
   ansible.builtin.debug:
-    var: instance_metadata
+    var: check_cpu_instance_metadata

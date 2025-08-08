@@ -34,11 +34,11 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian_kms_server-{{ kms_package_version }}-1.x86_64.rpm
+        kms_package_name: cosmian_kms_server-{{ kms_package_version }}-1.x86_64.rpm
 
     - name: Download RPM Cosmian KMS Server package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rockylinux9/{{ package_name }}
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rockylinux9/{{ kms_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
@@ -46,7 +46,7 @@
 
     - name: Install Cosmian KMS Server RPM package from package.cosmian.com
       ansible.builtin.dnf:
-        name: /tmp/{{ package_name }}
+        name: /tmp/{{ kms_package_name }}
         state: present
         disable_gpg_check: true
       tags: install_rpm
@@ -57,11 +57,11 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        package_name: cosmian-kms-server{{ kms_fips }}_{{ kms_package_version }}-1_amd64.deb
+        kms_package_name: cosmian-kms-server{{ kms_fips }}_{{ kms_package_version }}-1_amd64.deb
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu-{{ ansible_distribution_version }}/{{ package_name }}
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu-{{ ansible_distribution_version }}/{{ kms_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
@@ -69,7 +69,7 @@
 
     - name: Install Cosmian KMS Debian package
       ansible.builtin.apt:
-        deb: /tmp/{{ package_name }}
+        deb: /tmp/{{ kms_package_name }}
 
 - name: Override Cosmian KMS systemd service
   ansible.builtin.template:
@@ -114,8 +114,8 @@
 - name: Selinux - add nginx to permissive allow httpd
   when: ansible_distribution == 'RedHat'
   ansible.builtin.command: semanage permissive -a httpd_t
-  register: cmd_output
-  changed_when: cmd_output.rc != 0
+  register: kms_cmd_output
+  changed_when: kms_cmd_output.rc != 0
   tags: selinux
 
 - name: Add SELinux context for KMS

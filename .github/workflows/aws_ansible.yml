@@ -58,9 +58,9 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610" --query "Images[*].{ID:ImageId}" --output text)
           else
-            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.4.0_HVM-20241210-x86_64-0-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
           fi
 
           AMI=$(aws ec2 run-instances \

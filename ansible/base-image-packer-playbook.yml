@@ -32,8 +32,8 @@
 
     - name: Check /proc/cmdline
       ansible.builtin.command: cat /proc/cmdline
-      register: cmdline
-      changed_when: cmdline.rc != 0
+      register: base_image_packer_playbook_cmdline
+      changed_when: base_image_packer_playbook_cmdline.rc != 0
 
     - name: Display /proc/cmdline
       ansible.builtin.debug:
@@ -46,12 +46,12 @@
           ansible.builtin.shell:
             cmd: |
               dnf updateinfo list security
-          register: dnf_security_update
-          changed_when: dnf_security_update.rc != 0
+          register: base_image_packer_playbook_dnf_security_update
+          changed_when: base_image_packer_playbook_dnf_security_update.rc != 0
 
         - name: Display Security updates
           ansible.builtin.debug:
-            var: dnf_security_update
+            var: base_image_packer_playbook_dnf_security_update
 
 - name: Clean base image
   hosts: all

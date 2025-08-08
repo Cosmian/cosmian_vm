@@ -8,17 +8,17 @@ jobs:
   azure:
     uses: ./.github/workflows/base_azure_main.yml
     with:
-      base-version: 0.1.11
+      base-version: 0.1.12
     secrets: inherit
 
   gcp:
     uses: ./.github/workflows/base_gcp_main.yml
     with:
-      base-version: 0.1.11
+      base-version: 0.1.12
     secrets: inherit
 
   aws:
     uses: ./.github/workflows/base_aws_main.yml
     with:
-      base-version: 0.1.11
+      base-version: 0.1.12
     secrets: inherit

@@ -26,7 +26,7 @@
   block:
     - name: Intel's RPM local repo
       ansible.builtin.get_url:
-        url: https://download.01.org/intel-sgx/latest/dcap-latest/linux/distro/rhel9.2-server/sgx_rpm_local_repo.tgz
+        url: https://download.01.org/intel-sgx/latest/dcap-latest/linux/distro/rhel9.4-server/sgx_rpm_local_repo.tgz
         dest: /tmp/
         mode: "0600"
 
