@@ -73,10 +73,10 @@ jobs:
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             IMAGE_OPTIONS="--image-project=ubuntu-os-cloud --project $GCP_DEV_PROJECT"
-            IMAGE_NAME="ubuntu-2404-noble-amd64-v20250606"
+            IMAGE_NAME="ubuntu-2404-noble-amd64-v20250805"
           else
             IMAGE_OPTIONS="--image-project=rhel-cloud --project $GCP_DEV_PROJECT"
-            IMAGE_NAME="rhel-9-v20250611"
+            IMAGE_NAME="rhel-9-v20250709"
           fi
 
           ssh-keygen -t rsa -b 4096 -C "$CI_INSTANCE@example.com" -f $HOME/.ssh/id_rsa -q -N ""
