@@ -27,7 +27,7 @@ if [ "$TECHNO" = "tdx" ]; then
     --min-cpu-platform=AUTOMATIC \
     --confidential-compute-type=TDX \
     --shielded-secure-boot \
-    --image=ubuntu-2404-noble-amd64-v20250606 \
+    --image=ubuntu-2404-noble-amd64-v20250805 \
     --project cosmian-dev \
     --tags "$NAME-cli" \
     --maintenance-policy=TERMINATE \
@@ -47,7 +47,7 @@ else
     IMAGE="cosmian-vm-1-3-8-kms-5-6-2-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
-    IMAGE="ubuntu-2404-noble-amd64-v20250606"
+    IMAGE="ubuntu-2404-noble-amd64-v20250805"
     IMAGE_PROJECT="ubuntu-os-cloud"
   else
     # Base RHEL SEV
@@ -60,7 +60,7 @@ else
     IMAGE="cosmian-vm-1-3-8-kms-5-6-2-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rhel-9-v20250611"
+    IMAGE="rhel-9-v20250709"
     IMAGE_PROJECT="rhel-cloud"
   fi
   gcloud compute instances create "$NAME" \
