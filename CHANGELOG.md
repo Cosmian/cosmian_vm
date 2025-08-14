@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.10] - 2025-08-14
+
+### 🚀 Features
+
+- Bump AI runner version to 1.0.1
+
 ## [1.3.9] - 2025-08-13
 
 ### 🐛 Bug Fixes
