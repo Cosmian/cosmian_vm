@@ -36,7 +36,15 @@ sed -i "s#TEMPLATE_COSMIAN_AI_RUNNER_VERSION#$AI_RUNNER_VERSION#g" "$PACKER_FILE
 
 cat "$PACKER_FILE"
 
-packer init "$PACKER_FILE"
+plugins= "git@github.com:hashicorp/packer-plugin-ansible.git","git@github.com:hashicorp/packer-plugin-googlecompute.git"
+
+for plugin in $plugins; do
+  git clone $plugin
+  cd $plugin
+  go build
+  ./{$plugin} describe
+  packer plugins install --path $plugin releases.hashicorp.com/packer-plugin/gcp
+done
 
 # Since packer build fails randomly because of external resources use, retry packer build until it succeeds
 timeout 60m bash -c "until packer build $PACKER_FILE; do sleep 30; done"
