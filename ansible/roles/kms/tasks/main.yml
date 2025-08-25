@@ -28,6 +28,15 @@
       - redis
     state: present
     update_cache: true
+  when: not kms_fips
+
+- name: Install prerequisites packages (FIPS mode)
+  ansible.builtin.package:
+    name:
+      - nginx
+    state: present
+    update_cache: true
+  when: kms_fips
 
 - name: Install Cosmian VM via RPM package
   when: ansible_distribution == 'RedHat'
@@ -102,6 +111,16 @@
     owner: root
     group: root
     mode: "0644"
+  when: not kms_fips
+
+- name: Create FIPS-compliant Cosmian KMS configuration
+  ansible.builtin.template:
+    src: kms-fips.toml.j2
+    dest: /var/lib/cosmian_vm/data/app/app.conf
+    owner: root
+    group: root
+    mode: "0644"
+  when: kms_fips
 
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
@@ -161,6 +180,7 @@
     enabled: true
     state: stopped
     daemon_reload: true
+  when: not kms_fips
 
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'

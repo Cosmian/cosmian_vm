@@ -32,5 +32,5 @@
       check_app_systemd_name: cosmian_kms
       check_app_endpoint:
         - version
-      check_app_configuration_path: roles/kms/templates/kms.toml.j2
+      check_app_configuration_path: roles/kms/templates/kms-fips.toml.j2
       tags: check-kms-fips

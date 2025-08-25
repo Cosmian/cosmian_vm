@@ -62,6 +62,11 @@ jobs:
           - ${{ inputs.product }}
         techno:
           - ${{ inputs.techno }}
+        exclude:
+          - techno: tdx
+            distrib: rhel
+          - product: kms-fips
+            distrib: rhel
     name: (AZURE) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
