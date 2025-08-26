@@ -1,13 +1,20 @@
-source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
+variable "gcp_credentials_file" {
+  type        = string
+  description = "packer.json"
+  default     = "packer.json"
+}
+
+source "googlecompute" "redhat" {
+  credentials_json          = file(var.gcp_credentials_file)
   ssh_username              = "root"
   ssh_timeout               = "5m"
   ssh_clear_authorized_keys = true
   project_id                = "cosmian-dev"
-  source_image              = "TEMPLATE_SOURCE_IMAGE"
-  source_image_family       = "TEMPLATE_SOURCE_FAMILY"
+  source_image              = "rhel-9-v20250709"
+  source_image_family       = "rhel-9"
   zone                      = "europe-west4-a"
-  image_name                = "TEMPLATE_IMAGE_NAME"
-  image_guest_os_features   = ["TEMPLATE_OS_FEATURES"]
+  image_name                = "base-image-0-0-0-rhel-sev"
+  image_guest_os_features   = ["SEV_SNP_CAPABLE"]
   network                   = "default"
   subnetwork                = "default"
   tags                      = ["ssh"]
@@ -16,12 +23,11 @@ source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
 }
 
 build {
-  sources = ["sources.googlecompute.TEMPLATE_GOOGLE_COMPUTE"]
-
+  sources = ["sources.googlecompute.redhat"]
   provisioner "ansible" {
-    playbook_file   = "../ansible/TEMPLATE_PRODUCT-packer-playbook.yml"
+    playbook_file   = "../ansible/base-image-packer-playbook.yml"
     local_port      = 22
     use_proxy       = false
-    extra_arguments = ["-e", "cosmian_vm_version=TEMPLATE_COSMIAN_VM_VERSION", "-e", "cosmian_kms_version=TEMPLATE_COSMIAN_KMS_VERSION", "-e", "cosmian_ai_runner_version=TEMPLATE_COSMIAN_AI_RUNNER_VERSION"]
+    extra_arguments = ["-e", "cosmian_vm_version=last_build/update_packer_plugins", "-e", "cosmian_kms_version=", "-e", "cosmian_ai_runner_version="]
   }
 }
