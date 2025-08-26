@@ -44,7 +44,7 @@ for plugin in $plugins; do
   cd $plugin_name
   go build
   ./$plugin_name describe
-  packer plugins install --path $plugin_name releases.hashicorp.com/$plugin_name/latest
+  packer plugins install --path $plugin_name releases.hashicorp.com/latest/$plugin_name
   cd ..
 done
 
