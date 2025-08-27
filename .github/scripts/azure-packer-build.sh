@@ -67,7 +67,18 @@ fi
 
 cat "$PACKER_FILE"
 
-packer init "$PACKER_FILE"
+plugins='https://github.com/hashicorp/packer-plugin-ansible.git https://github.com/hashicorp/packer-plugin-azure.git'
+
+for plugin in $plugins; do
+  git clone $plugin
+  plugin_name=$(echo "$plugin" | sed -E 's#.*/([^/]+)\.git#\1#')
+  cd $plugin_name
+  go build
+  ./$plugin_name describe
+  plugin_name_short=$(echo "$plugin_name" | sed 's/.*-//')
+  packer plugins install --path $plugin_name releases.hashicorp.com/$plugin_name/$plugin_name_short
+  cd ..
+done
 
 # Since packer build fails randomly because of external resources use, retry packer build until it succeeds
 timeout 60m bash -c "until packer build -force $PACKER_FILE; do sleep 30; done"
