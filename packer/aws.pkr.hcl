@@ -1,16 +1,3 @@
-packer {
-  required_plugins {
-    amazon = {
-      version = "= 1.3.0"
-      source  = "github.com/hashicorp/amazon"
-    }
-    ansible = {
-      version = "= 1.1.1"
-      source  = "github.com/hashicorp/ansible"
-    }
-  }
-}
-
 source "amazon-ebssurrogate" "TEMPLATE_DISTRIBUTION" {
   ssh_username              = "TEMPLATE_SSH_USERNAME"
   ssh_timeout               = "5m"
