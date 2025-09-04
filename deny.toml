@@ -70,8 +70,8 @@ feature-depth = 1
 # A list of advisory IDs to ignore. Note that ignored advisories will still
 # output a note when they are encountered.
 ignore = [
-    "RUSTSEC-2020-0071", # time du to certtool->acme-lib dependency
-    "RUSTSEC-2023-0071", # rsa marving attack and no fixed upgrade
+    "RUSTSEC-2020-0071", # time due to certtool->acme-lib dependency
+    "RUSTSEC-2023-0071", # rsa marvin attack and no fixed upgrade
     "RUSTSEC-2021-0145", # waiting for tdx-attest-rs to be upgraded: atty unmaintained
     "RUSTSEC-2021-0139", # waiting for tdx-attest-rs to be upgraded: ansi_term unmaintained
     "RUSTSEC-2024-0375", # atty unmaintained
