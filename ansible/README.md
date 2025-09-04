@@ -11,7 +11,7 @@ Cosmian Ansible scripts provides roles and playbooks to install/reinstall the fo
 ```sh
 bash .github/scripts/azure-new-instance.sh
 # output HOST=X.X.X.X
-export HOST=X.X.X.X
+export HOST=34.6.5.100
 virtualenv env
 source env/bin/activate
 pip install -r python_modules.txt
