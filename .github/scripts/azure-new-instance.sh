@@ -16,7 +16,7 @@ if [ "$TECHNO" = "tdx" ]; then
   az vm create \
     --resource-group packer-snp \
     --name "$NAME" \
-    --size Standard_DC2es_v6 \
+    --size Standard_DC2es_v5 \
     --enable-secure-boot true \
     --image "Canonical:ubuntu-24_04-lts:cvm:latest" \
     --public-ip-sku Standard \
