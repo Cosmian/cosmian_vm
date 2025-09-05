@@ -1,5 +1,10 @@
 # Cosmian Base Image Changelog
 
+## [0.1.14] - 2025-09-04
+
+- *GCP*:
+  - *RedHat SEV/TDX capable*: update from `rhel-9-v20250709` to `rhel-9-v20250812`
+
 ## [0.1.13] - 2025-08-13
 
 - *GCP*: ([#168](https://github.com/Cosmian/cosmian_vm/pull/168))

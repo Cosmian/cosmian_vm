@@ -142,8 +142,8 @@ Links:
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
 | GCP - Intel TDX | ubuntu-2404-noble-amd64-v20250805 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
 | GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20250805 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20250709          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
-| GCP - Intel TDX |         rhel-9-v20250709         |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
+| GCP - AMD SEV   |         rhel-9-v20250812          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
+| GCP - Intel TDX |         rhel-9-v20250812          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 
 ```sh
 gcloud compute images list > gcloud_list.json
@@ -345,6 +345,7 @@ cosmian_vm --url https://my_app.dev app restart
 
 | Base image | Cosmian VM  | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ----------- | ----------- | ----------------- |
+| 0.1.14     | 1.3.13      | 5.7.1       | 1.0.1             |
 | 0.1.13     | 1.3.12      | 5.7.1       | 1.0.1             |
 | 0.1.13     | 1.3.11      | 5.7.1       | 1.0.1             |
 | 0.1.13     | 1.3.10      | 5.6.2       | 1.0.1             |

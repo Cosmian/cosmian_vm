@@ -21,7 +21,7 @@ if [ "$TECHNO" = "sev" ]; then
   VM_SIZE="Standard_DC2ads_v5"
 else
   # TDX
-  VM_SIZE="Standard_DC2es_v6"
+  VM_SIZE="Standard_DC2es_v5"
 fi
 
 PACKER_FILE="azure.pkr.hcl"

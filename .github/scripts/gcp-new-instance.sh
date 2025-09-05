@@ -60,7 +60,7 @@ else
     IMAGE="cosmian-vm-1-3-9-kms-5-6-2-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rhel-9-v20250709"
+    IMAGE="rhel-9-v20250812"
     IMAGE_PROJECT="rhel-cloud"
   fi
   gcloud compute instances create "$NAME" \
