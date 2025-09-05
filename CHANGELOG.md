@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.13] - 2025-09-05
+
+### 🐛 Bug Fixes
+
+- Upgrade GCP RHEL base image
+
 ## [1.3.12] - 2025-09-03
 
 ### 🐛 Bug Fixes
