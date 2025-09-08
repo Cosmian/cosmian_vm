@@ -1,5 +1,12 @@
 # Cosmian Base Image Changelog
 
+## [0.1.15] - 2025-09-08
+
+- *AWS*:
+  - *RedHat*: update from `RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3` to `RHEL-10.0.0_HVM_GA-20250423-x86_64-0-Hourly2-GP3`
+- *Azure*: 
+  - *RHEL*: update `9_4_cvm` to `9_5_cvm`
+
 ## [0.1.14] - 2025-09-04
 
 - *GCP*:

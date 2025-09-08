@@ -14,7 +14,7 @@ if [ "$DISTRIBUTION" = "ubuntu" ]; then
 else
   IMAGE_PUBLISHER="redhat"
   IMAGE_OFFER="rhel-cvm"
-  IMAGE_SKU="9_4_cvm"
+  IMAGE_SKU="9_5_cvm"
 fi
 
 if [ "$TECHNO" = "sev" ]; then

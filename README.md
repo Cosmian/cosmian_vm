@@ -107,8 +107,8 @@ Replace `X.Y.Z` in the 3 following tables by the last _Cosmian base image_ [vers
 
 |               |                            Official image                            | OS image | OS version | Kernel version               | Cosmian base image          |
 | :------------ | :------------------------------------------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610|  Ubuntu  | 24.04      | 6.8.0-1016-aws               | base-image-X-Y-Z-ubuntu-sev |
-| AWS - AMD SEV |          RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3             |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610   |  Ubuntu  | 24.04      | 6.8.0-1016-aws               | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV |           RHEL-10.0.0_HVM_GA-20250423-x86_64-0-Hourly2-GP3           |  Redhat  | 10         | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
 
 If needed:
 
@@ -122,8 +122,8 @@ aws ec2 describe-images --output json > aws_list.json
 | :---------------- | :----------------------------: | :------: | ---------- | ---------------------------- | --------------------- | ------- |
 | Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
 | Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - Intel TDX |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
-| Azure - AMD SEV   |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
+| Azure - Intel TDX |    Redhat-rhel-cvm-9_5_cvm     |  Redhat  | 9.5        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
+| Azure - AMD SEV   |    Redhat-rhel-cvm-9_5_cvm     |  Redhat  | 9.5        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ```sh
 az vm image list --all > azure_list.json
@@ -345,6 +345,7 @@ cosmian_vm --url https://my_app.dev app restart
 
 | Base image | Cosmian VM  | Cosmian KMS | Cosmian AI Runner |
 | ---------- | ----------- | ----------- | ----------------- |
+| 0.1.15     | 1.3.14      | 5.7.1       | 1.0.1             |
 | 0.1.14     | 1.3.13      | 5.7.1       | 1.0.1             |
 | 0.1.13     | 1.3.12      | 5.7.1       | 1.0.1             |
 | 0.1.13     | 1.3.11      | 5.7.1       | 1.0.1             |
