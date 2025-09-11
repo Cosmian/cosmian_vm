@@ -179,9 +179,17 @@
   block:
     - name: Install required packages
       ansible.builtin.apt:
-        name: ['lsb-release', 'curl', 'gpg']
+        name: 'lsb-release'
         state: present
         update_cache: true
+
+    - name: Create the keyring file if it does not exist
+      ansible.builtin.file:
+        path: /usr/share/keyrings/redis-archive-keyring.gpg
+        state: file
+        owner: root
+        group: root
+        mode: "0644"
 
     - name: Add Redis apt key
       ansible.builtin.apt_key:
