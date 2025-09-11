@@ -186,7 +186,7 @@
     - name: Create the keyring file if it does not exist
       ansible.builtin.file:
         path: /usr/share/keyrings/redis-archive-keyring.gpg
-        state: file
+        state: touch
         owner: root
         group: root
         mode: "0644"
