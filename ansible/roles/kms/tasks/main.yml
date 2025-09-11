@@ -184,10 +184,10 @@
         update_cache: true
 
     - name: Add Redis apt key
-      ansible.builtin.get_url:
+      ansible.builtin.apt_key:
         url: https://packages.redis.io/gpg
-        dest: /usr/share/keyrings/redis-archive-keyring.gpg
-        mode: "0644"
+        state: present
+        keyring: /usr/share/keyrings/redis-archive-keyring.gpg
 
     - name: Add Redis APT repo
       ansible.builtin.apt_repository:
