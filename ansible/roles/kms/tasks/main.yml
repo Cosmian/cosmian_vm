@@ -187,8 +187,11 @@
       ansible.builtin.deb822_repository:
         name: redis
         types: deb
-        uris: "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main"
-        components: stable
+        uris: https://packages.redis.io/deb
+        suites: stable
+        components:
+          - $(lsb_release -cs)
+          - main
         signed_by: /usr/share/keyrings/redis-archive-keyring.gpg
 
     - name: Update APT
