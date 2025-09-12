@@ -192,7 +192,7 @@
         components:
           - $(lsb_release -cs)
           - main
-        signed_by: /usr/share/keyrings/redis-archive-keyring.gpg
+        signed_by: https://packages.redis.io/gpg
 
     - name: Update APT
       ansible.builtin.apt:
