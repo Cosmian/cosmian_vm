@@ -1,5 +1,10 @@
 # Cosmian Base Image Changelog
 
+## [0.1.15] - 2025-09-04
+
+- *GCP*:
+  - *RedHat SEV/TDX capable*: update from `rhel-9-v20250812` to `rhel-10-v20250826`
+
 ## [0.1.14] - 2025-09-04
 
 - *GCP*:

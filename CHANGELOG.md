@@ -2,11 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.14] - 2025-09-03
+
+### 🐛 Bug Fixes
+
+- Fix Redis vulnerability on RHEL GCP images (CVE-2024-46981)
+
 ## [1.3.13] - 2025-09-05
 
 ### 🐛 Bug Fixes
 
-- Upgrade GCP RHEL base image
+- Upgrade GCP RHEL base image (CVE-2025-6965)
 
 ## [1.3.12] - 2025-09-03
 
