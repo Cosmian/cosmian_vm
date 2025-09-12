@@ -184,7 +184,7 @@
         update_cache: true
 
     - name: Add Redis repo using key from URL
-      deb822_repository:
+      ansible.builtin.deb822_repository:
         name: redis
         types: deb
         uris: "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main"
