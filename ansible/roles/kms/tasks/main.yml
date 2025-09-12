@@ -183,24 +183,13 @@
         state: present
         update_cache: true
 
-    - name: Create the keyring file if it does not exist
-      ansible.builtin.file:
-        path: /usr/share/keyrings/redis-archive-keyring.gpg
-        state: touch
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Add Redis apt key
-      ansible.builtin.apt_key:
-        url: https://packages.redis.io/gpg
-        state: present
-        keyring: /usr/share/keyrings/redis-archive-keyring.gpg
-
-    - name: Add Redis APT repo
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main"
-        state: present
+    - name: Add Redis repo using key from URL
+      deb822_repository:
+        name: redis
+        types: deb
+        uris: "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main"
+        components: stable
+        signed_by: /usr/share/keyrings/redis-archive-keyring.gpg
 
     - name: Update APT
       ansible.builtin.apt:
