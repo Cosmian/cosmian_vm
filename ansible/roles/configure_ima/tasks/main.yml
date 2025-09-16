@@ -20,7 +20,7 @@
     state: directory
     owner: root
     group: root
-    mode: "0500"
+    mode: "755"
 
 - name: Copy ima policy
   ansible.builtin.template:
@@ -28,7 +28,7 @@
     dest: /etc/ima/ima-policy
     owner: root
     group: root
-    mode: "0400"
+    mode: "644"
 
 - name: Override ima policy for RedHat
   when: ansible_distribution == 'RedHat'
@@ -37,7 +37,7 @@
     dest: /etc/ima/ima-policy
     owner: root
     group: root
-    mode: "0400"
+    mode: "644"
 
 - name: Copy the bash script to the remote host (in order to update the grub conf)
   when: configure_ima_etc_default_grub.stat.exists
@@ -92,7 +92,7 @@
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
       fi
     dest: /tmp/grub.sh
-    mode: "0700" # Make the script executable
+    mode: "700" # Make the script executable
     remote_src: true
 
 - name: Insert/update missing line if default grub does not exist
