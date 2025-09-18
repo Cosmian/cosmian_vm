@@ -22,7 +22,7 @@
     var: kms_fips
 
 - name: Prepare repo file for official Redis Open Source
-  when: ansible_os_family == 'RedHat'
+  when: ansible_distribution == 'RedHat' and not kms_fips
   block:
     - name: Create the Redis repo file
       ansible.builtin.copy:
