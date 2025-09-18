@@ -21,6 +21,25 @@
   ansible.builtin.debug:
     var: kms_fips
 
+- name: Prepare repo file for official Redis Open Source
+  when: ansible_distribution == 'RedHat' and not kms_fips
+  block:
+    - name: Create the Redis repo file
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/redis.repo
+        content: |
+          [Redis]
+          name=Redis
+          baseurl=http://packages.redis.io/rpm/rockylinux9
+          enabled=1
+          gpgcheck=1
+        mode: '0644'
+
+    - name: Import Redis GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://packages.redis.io/gpg
+
 - name: Install prerequisites packages
   ansible.builtin.package:
     name:
@@ -174,7 +193,7 @@
       RestartSec=10s
   tags: systemd_nginx
 
-- name: Enable systemd Redis service
+- name: Enable Redis service
   ansible.builtin.systemd_service:
     name: redis
     enabled: true
