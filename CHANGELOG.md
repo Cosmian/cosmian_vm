@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.14] - 2025-09-18
+
+### 🐛 Bug Fixes
+
+- Fix redis vulnerability (CVE-2024-46981) on RHEL GCP images ([#203](https://github.com/Cosmian/cosmian_vm/pull/203))
+
 ## [1.3.13] - 2025-09-05
 
 ### 🐛 Bug Fixes
@@ -12,7 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- Fix sqlite vulnerability on RHEL GCP images ([#195](https://github.com/Cosmian/cosmian_vm/pull/195))
+- Fix sqlite vulnerability (CVE-2025-6965) on RHEL GCP images ([#195](https://github.com/Cosmian/cosmian_vm/pull/195))
 
 ## [1.3.11] - 2025-08-28
 
