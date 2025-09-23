@@ -181,3 +181,10 @@
       ansible.builtin.service:
         name: firewalld
         state: reloaded
+
+- name: Clean AI Runner existing folders
+  ansible.builtin.command:
+    cmd: |
+      rm -rf /opt/venv/cosmian_ai_runner/lib
+  register: cleanup_ai_runner_cmd_output
+  changed_when: cleanup_ai_runner_cmd_output.rc != 0
