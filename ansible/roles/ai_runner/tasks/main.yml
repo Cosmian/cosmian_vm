@@ -185,6 +185,11 @@
 - name: Clean AI Runner existing folders
   ansible.builtin.command:
     cmd: |
-      rm -rf /opt/venv/cosmian_ai_runner/lib
+      rm -rf /usr/lib/python3/dist-packages/twisted/names/test/test_client.py
+      rm -rf /usr/lib/python3/dist-packages/twisted/web/test/test_client.py
+      rm -rf /opt/venv/cosmian_ai_runner/lib/python3.12/site-packages/chromadb/test/property/test_client_url.py
+      rm -rf /opt/venv/cosmian_ai_runner/lib/python3.12/site-packages/chromadb/test/test_client.py
+      rm -rf /opt/venv/cosmian_ai_runner/lib/python3.12/site-packages/posthog/test/test_client.py
+      rm -rf /opt/venv/cosmian_ai_runner/lib/python3.12/site-packages/kubernetes/dynamic/test_client.py
   register: ai_runner_cmd_output
   changed_when: ai_runner_cmd_output.rc != 0
