@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
+- Fix Azure Cosmian AI validation error ([#205](https://github.com/Cosmian/cosmian_vm/pull/205))
+
+## [1.3.14] - 2025-09-18
+
+### 🐛 Bug Fixes
+
 - Fix redis vulnerability (CVE-2024-46981) on RHEL GCP images ([#203](https://github.com/Cosmian/cosmian_vm/pull/203))
 
 ## [1.3.13] - 2025-09-05
