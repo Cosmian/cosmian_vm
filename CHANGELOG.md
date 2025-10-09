@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.3.14] - 2025-09-18
+## [1.3.16] - 2025-10-09
+
+### 🚀 Features
+
+- Bump KMS version to 5.9.0
+
+## [1.3.15] - 2025-10-07
 
 ### 🐛 Bug Fixes
 
