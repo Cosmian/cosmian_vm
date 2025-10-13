@@ -1,0 +1,90 @@
+@startuml cosmian_vm_sec
+
+skinparam SequenceMessageAlign center
+skinparam BoxPadding 30
+
+mainframe Cosmian VM
+
+box #ededed
+    participant "SysAdmin" as client
+end box
+
+box #f8dfdf
+    entity "Cosmian VM instance" as server
+end box
+
+box #ededed
+    Database "Cloud Provider API" as cp
+end box
+
+group Setup stage
+client -> server: // GET /snapshot//
+note right
+**Snapshot**
+
+Freeze the system curently trusted by generating
+a snapshot with: 
+
+* Hash digests of all files
+* Quote metadata related to the TEE
+* TPM metadata such as reset and restart count
+
+end note
+server -> client : snapshot.json
+end
+
+group Verification stage
+
+group Optionally: Store TPM Edorsement Key
+client -> cp : //GET /compute/v1/.../instances/[INSTANCE_NAME]/getShieldedInstanceIdentity//
+cp -> client :
+note right
+**Endorsement Key (EK)**
+
+Store RSA Public key to be compared
+with the one sent by the instance.
+
+end note
+end
+
+client -> server : //GET /ima/binary//
+server -> client : //IMA event log//
+note left
+**IMA event log**
+
+Compare the IMA  event log with the 
+snapshot to detect alteration in 
+monitored files.
+
+end note
+
+client -> server : //POST /quote/tpm + nonce//
+server -> client : //TPM quote//
+note left
+**TPM Remote Attestation**
+
+* Verify Attestation Key (AK) of the TPM
+is a child of EK
+* Recompute PCR-10 value from IMA event log
+* Check quote metadata: PCR value,
+reset count, AK...
+* Check signature of the quote with AK and nonce
+
+end note
+
+client -> server : //POST /quote/tee + nonce//
+server -> client://TEE quote//
+note left
+**TEE Remote Attestation**
+
+* Check quote metadata: expected 
+measurement, identity of the owner...
+* Verify quote signature and nonce
+* Verify certificate chain with CAs of
+the manufacturer
+
+end note
+
+end
+
+@enduml
