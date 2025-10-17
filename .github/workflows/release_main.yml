@@ -52,9 +52,5 @@ jobs:
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
-    needs:
-      - azure
-      - gcp
-      - aws
     secrets: inherit
     uses: ./.github/workflows/github_release.yml

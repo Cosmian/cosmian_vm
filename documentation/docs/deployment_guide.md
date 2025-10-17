@@ -1,6 +1,6 @@
 !!! info "Cosmian VM reminder"
 
-    First, read detailed information about [Cosmian VM](./overview.md) or about [Cosmian VM Agent and related software tools functioning](https://github.com/Cosmian/cosmian_vm).
+    First, read detailed information about [Cosmian VM](./index.md) or about [Cosmian VM Agent and related software tools functioning](https://github.com/Cosmian/cosmian_vm).
 
     As a reminder, the Cosmian VM's goal is to verify Confidential VM trustworthiness and integrity at anytime. This verification runs on the operating system where one or more applications have been installed.
 
@@ -9,12 +9,12 @@
     Then, at anytime, a remote verification of the VM can be done using the Cosmian VM CLI tool (`cosmian_vm`).
 
 <p align="center">
-  <img src="/cosmian_vm/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
+  <img src="/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
 The Cosmian VM can be deployed on virtual machines that supports AMD SEV-SNP or Intel TDX technologies.
 
-The following steps help to deploy a Cosmian VM instance on any [supported cloud provider](./overview.md#cloud-providers-support).
+The following steps help to deploy a Cosmian VM instance on any [supported cloud provider](./index.md#cloud-providers-support).
 
 The Cosmian VM contains a set of software to ensure trustworthiness of the executable environment of the VM.
 
@@ -115,7 +115,7 @@ cosmian_vm --url https://${COSMIAN_VM_IP_ADDR}:5555 --allow-insecure-tls snapsho
 
 ## Verify the VM snapshot
 
-Take a look at the [global flow](./overview.md#verification-of-the-remote-instance) to fully understand the whole verification process of a Cosmian VM.
+Take a look at the [global flow](./index.md#verification-of-the-remote-instance) to fully understand the whole verification process of a Cosmian VM.
 
 Previous downloaded snapshot is stored as `cosmian_vm.snapshot` file (see the [previous step](#snapshot-the-vm-remotely)).
 

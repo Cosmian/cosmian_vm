@@ -22,7 +22,7 @@ Cosmian VM is used in these two scenarios:
 - offer confidential SaaS services to your customers/users, protecting their privacy against the cloud provider and any extra-territorial law, e.g., offering confidential AI/Gen. AI in the public cloud.
 
 <p align="center">
-  <img src="/cosmian_vm/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
+  <img src="/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
 !!! info "Threat Model"
@@ -78,7 +78,7 @@ A Cosmian VM is instantiated from a [cloud provider marketplace](https://cosmian
 Once the system administrator has installed the application and its dependencies, a snapshot of the VM is taken. Integrity checks can then be performed on the running VM to verify the running code, OS, and hardware.
 
 <p align="center">
-  <img src="/cosmian_vm/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
+  <img src="/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
 ## Snapshot of the system
@@ -106,13 +106,13 @@ The verification is successful if files in IMA measurement log and snapshot have
 === "Flow"
 
     <p align="center">
-        <img src="/cosmian_vm/images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
+        <img src="/images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
     </p>
 
 === "Detailed flow"
 
     <p align="center">
-        <img src="/cosmian_vm/images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
+        <img src="/images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
     </p>
 
 ## Cloud providers support
@@ -123,26 +123,26 @@ _Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on t
 
 |               |                            Official image                            | OS image | OS version | Kernel version               | Cosmian base image          |
 | :------------ | :------------------------------------------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240523.1 |  Ubuntu  | 24.04      | 6.8.0-1016-aws               | base-image-X-Y-Z-ubuntu-sev |
-| AWS - AMD SEV |             RHEL-9.4.0_HVM-20241210-x86_64-0-Hourly2-GP3             |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610|  Ubuntu  | 24.04      | 6.8.0-1016-aws               | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV |          RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3             |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
 
 ### Azure images
 
-|                   |         Official image         | OS image | OS version      | Kernel version               | Cosmian base image    | Version |
-| :---------------- | :----------------------------: | :------: | --------------- | ---------------------------- | --------------------- | ------- |
-| Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
-| Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 22.04.202404090 | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - Intel TDX |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
-| Azure - AMD SEV   |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4             | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
+|                   |         Official image         | OS image | OS version | Kernel version               | Cosmian base image    | Version |
+| :---------------- | :----------------------------: | :------: | ---------- | ---------------------------- | --------------------- | ------- |
+| Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
+| Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - Intel TDX |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
+| Azure - AMD SEV   |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
 ### GCP images
 
 |                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20241004 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
-| GCP - Intel TDX |         rhel-9-v20241009          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
+| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20250805 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20250805 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   |         rhel-9-v20250812          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
+| GCP - Intel TDX |         rhel-9-v20250812          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 
 ### Marketplace Image content
 
