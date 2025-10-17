@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="2456px" preserveAspectRatio="none" style="width:2164px;height:2456px;background:#FFFFFF;" version="1.1" viewBox="0 0 2164 2456" width="2164px" zoomAndPan="magnify"><defs/><g><rect fill="#FFFFFF" height="2435.949" style="stroke:#000000;stroke-width:3.0;" width="2134" x="18" y="10"/><path d="M204,10 L204,34.1358 L184,54.1358 L18,54.1358 " fill="none" style="stroke:#000000;stroke-width:3.0;"/><text fill="#000000" font-family="sans-serif" font-size="28" lengthAdjust="spacing" textLength="166" x="24" y="41.9319">Cosmian VM</text><rect fill="#EDEDED" height="2343.8132" style="stroke:#181818;stroke-width:1.0;" width="176" x="572" y="70.1358"/><rect fill="#F8DFDF" height="2343.8132" style="stroke:#181818;stroke-width:1.0;" width="316" x="872" y="70.1358"/><rect fill="#EDEDED" height="2343.8132" style="stroke:#181818;stroke-width:1.0;" width="304" x="1448" y="70.1358"/><rect fill="none" height="461.5324" style="stroke:#000000;stroke-width:3.0;" width="1140" x="560" y="242.2717"/><rect fill="none" height="1512.0091" style="stroke:#000000;stroke-width:3.0;" width="2110" x="30" y="731.804"/><rect fill="none" height="319.8842" style="stroke:#000000;stroke-width:3.0;" width="1560" x="560" y="785.2161"/><line style="stroke:#2980B9;stroke-width:1.0;stroke-dasharray:5.0,5.0;" x1="660" x2="660" y1="208.2717" y2="2277.8132"/><line style="stroke:#2980B9;stroke-width:1.0;stroke-dasharray:5.0,5.0;" x1="1030" x2="1030" y1="208.2717" y2="2277.8132"/><line style="stroke:#2980B9;stroke-width:1.0;stroke-dasharray:5.0,5.0;" x1="1600" x2="1600" y1="208.2717" y2="2277.8132"/><rect fill="#E2E2F0" height="66.1358" rx="5" ry="5" style="stroke:#181818;stroke-width:1.0;" width="160" x="580" y="140.1358"/><text fill="#000000" font-family="sans-serif" font-size="28" lengthAdjust="spacing" textLength="132" x="594" y="184.0677">SysAdmin</text><rect fill="#E2E2F0" height="66.1358" rx="5" ry="5" style="stroke:#181818;stroke-width:1.0;" width="160" x="580" y="2275.8132"/><text fill="#000000" font-family="sans-serif" font-size="28" lengthAdjust="spacing" textLength="132" x="594" y="2319.745">SysAdmin</text><text fill="#000000" font-family="sans-serif" font-size="28" lengthAdjust="spacing" textLength="288" x="880" y="200.0677">Cosmian VM instance</text><ellipse cx="1030" cy="138.1358" fill="#E2E2F0" rx="24" ry="24" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="1006" x2="1054" y1="166.1358" y2="166.1358"/><text fill="#000000" font-family="sans-serif" font-size="28" lengthAdjust="spacing" textLength="288" x="880" y="2305.745">Cosmian VM instance</text><ellipse cx="1030" cy="2345.949" fill="#E2E2F0" rx="24" ry="24" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="1006" x2="1054" y1="2373.949" y2="2373.949"/><text fill="#000000" font-family="sans-serif" font-size="28" lengthAdjust="spacing" textLength="276" x="1456" y="200.0677">Google Compute API</text><path d="M1564,98.1358 C1564,78.1358 1600,78.1358 1600,78.1358 C1600,78.1358 1636,78.1358 1636,98.1358 L1636,150.1358 C1636,170.1358 1600,170.1358 1600,170.1358 C1600,170.1358 1564,170.1358 1564,150.1358 L1564,98.1358 " fill="#E2E2F0" style="stroke:#181818;stroke-width:3.0;"/><path d="M1564,98.1358 C1564,118.1358 1600,118.1358 1600,118.1358 C1600,118.1358 1636,118.1358 1636,98.1358 " fill="none" style="stroke:#181818;stroke-width:3.0;"/><text fill="#000000" font-family="sans-serif" font-size="28" lengthAdjust="spacing" textLength="276" x="1456" y="2305.745">Google Compute API</text><path d="M1564,2333.949 C1564,2313.949 1600,2313.949 1600,2313.949 C1600,2313.949 1636,2313.949 1636,2333.949 L1636,2385.949 C1636,2405.949 1600,2405.949 1600,2405.949 C1600,2405.949 1564,2405.949 1564,2385.949 L1564,2333.949 " fill="#E2E2F0" style="stroke:#181818;stroke-width:3.0;"/><path d="M1564,2333.949 C1564,2353.949 1600,2353.949 1600,2353.949 C1600,2353.949 1636,2353.949 1636,2333.949 " fill="none" style="stroke:#181818;stroke-width:3.0;"/><path d="M560,242.2717 L804,242.2717 L804,261.6837 L784,281.6837 L560,281.6837 L560,242.2717 " fill="#EEEEEE" style="stroke:#000000;stroke-width:3.0;"/><rect fill="none" height="461.5324" style="stroke:#000000;stroke-width:3.0;" width="1140" x="560" y="242.2717"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="154" x="590" y="272.0657">Setup stage</text><polygon fill="#181818" points="1006,468.7439,1026,476.7439,1006,484.7439,1014,476.7439" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="660" x2="1018" y1="476.7439" y2="476.7439"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="170" x="763" y="465.1259">GET /snapshot</text><path d="M1040,291.6837 L1040,629.6837 L1670,629.6837 L1670,311.6837 L1650,291.6837 L1040,291.6837 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><path d="M1650,291.6837 L1650,311.6837 L1670,311.6837 L1650,291.6837 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="122" x="1052" y="329.4777">Snapshot</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="1052" y="364.8898"> </text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="588" x="1052" y="400.3018">Freeze the system curently trusted by generating</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="196" x="1052" y="435.7138">a snapshot with:</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="1052" y="471.1259"> </text><ellipse cx="1063" cy="499.1559" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="268" x="1076" y="506.5379">Hash digests of all files</text><ellipse cx="1063" cy="534.5679" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="414" x="1076" y="541.9499">Quote metadata related to the TEE</text><ellipse cx="1063" cy="569.98" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="550" x="1076" y="577.362">TPM metadata such as reset and restart count</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="1052" y="612.774"> </text><polygon fill="#181818" points="682,679.804,662,687.804,682,695.804,674,687.804" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="670" x2="1028" y1="687.804" y2="687.804"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="168" x="761" y="676.186">snapshot.json</text><path d="M30,731.804 L352,731.804 L352,751.2161 L332,771.2161 L30,771.2161 L30,731.804 " fill="#EEEEEE" style="stroke:#000000;stroke-width:3.0;"/><rect fill="none" height="1512.0091" style="stroke:#000000;stroke-width:3.0;" width="2110" x="30" y="731.804"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="232" x="60" y="761.5981">Verification stage</text><path d="M560,785.2161 L1520,785.2161 L1520,804.6281 L1500,824.6281 L560,824.6281 L560,785.2161 " fill="#EEEEEE" style="stroke:#000000;stroke-width:3.0;"/><rect fill="none" height="319.8842" style="stroke:#000000;stroke-width:3.0;" width="1560" x="560" y="785.2161"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="870" x="590" y="815.0101">Optionally: Store TPM Edorsement Key (require Google credentials)</text><polygon fill="#181818" points="1576,864.0401,1596,872.0401,1576,880.0401,1584,872.0401" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="660" x2="1588" y1="872.0401" y2="872.0401"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="892" x="684" y="860.4221">GET /compute/v1/.../instances/[INSTANCE_NAME]/getShieldedInstanceIdentity</text><polygon fill="#181818" points="682,986.5702,662,994.5702,682,1002.5702,674,994.5702" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="670" x2="1598" y1="994.5702" y2="994.5702"/><path d="M1610,898.0401 L1610,1094.0401 L2090,1094.0401 L2090,918.0401 L2070,898.0401 L1610,898.0401 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><path d="M2070,898.0401 L2070,918.0401 L2090,918.0401 L2070,898.0401 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="284" x="1622" y="935.8342">Endorsement Key (EK)</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="1622" y="971.2462"> </text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="438" x="1622" y="1006.6582">Store RSA Public key to be compared</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="402" x="1622" y="1042.0703">with the one sent by the instance.</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="1622" y="1077.4823"> </text><polygon fill="#181818" points="1006,1158.5123,1026,1166.5123,1006,1174.5123,1014,1166.5123" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="660" x2="1018" y1="1166.5123" y2="1166.5123"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="184" x="753" y="1154.8943">GET /quote/tpm</text><polygon fill="#181818" points="682,1369.5725,662,1377.5725,682,1385.5725,674,1377.5725" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="670" x2="1028" y1="1377.5725" y2="1377.5725"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="122" x="784" y="1365.9545">TPM quote</text><path d="M50,1192.5123 L50,1530.5123 L650,1530.5123 L650,1212.5123 L630,1192.5123 L50,1192.5123 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><path d="M630,1192.5123 L630,1212.5123 L650,1212.5123 L630,1192.5123 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="324" x="62" y="1230.3064">TPM Remote Attestation</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="62" y="1265.7184"> </text><ellipse cx="73" cy="1293.7484" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="448" x="86" y="1301.1304">Verify Attestation Key (AK) of the TPM</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="166" x="62" y="1336.5425">is a child of EK</text><ellipse cx="73" cy="1364.5725" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="534" x="86" y="1371.9545">Recompute PCR-10 value from IMA event log</text><ellipse cx="73" cy="1399.9845" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="408" x="86" y="1407.3665">Check quote metadata: PCR value,</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="198" x="62" y="1442.7786">reset count, AK...</text><ellipse cx="73" cy="1470.8086" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="442" x="86" y="1478.1906">Check signature of the quote with AK</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="62" y="1513.6026"> </text><polygon fill="#181818" points="1006,1580.6327,1026,1588.6327,1006,1596.6327,1014,1588.6327" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="660" x2="1018" y1="1588.6327" y2="1588.6327"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="188" x="751" y="1577.0147">GET /ima/binary</text><polygon fill="#181818" points="682,1738.5748,662,1746.5748,682,1754.5748,674,1746.5748" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="670" x2="1028" y1="1746.5748" y2="1746.5748"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="152" x="769" y="1734.9568">IMA event log</text><path d="M164,1614.6327 L164,1846.6327 L650,1846.6327 L650,1634.6327 L630,1614.6327 L164,1614.6327 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><path d="M630,1614.6327 L630,1634.6327 L650,1634.6327 L630,1614.6327 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="180" x="176" y="1652.4267">IMA event log</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="176" y="1687.8387"> </text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="438" x="176" y="1723.2508">Compare the IMA  event log with the</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="376" x="176" y="1758.6628">snapshot to detect alteration in</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="186" x="176" y="1794.0748">monitored files.</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="176" y="1829.4869"> </text><polygon fill="#181818" points="1006,1896.5169,1026,1904.5169,1006,1912.5169,1014,1904.5169" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="660" x2="1018" y1="1904.5169" y2="1904.5169"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="170" x="760" y="1892.8989">GET /quote/tee</text><polygon fill="#181818" points="682,2089.871,662,2097.871,682,2105.871,674,2097.871" style="stroke:#181818;stroke-width:2.0;"/><line style="stroke:#181818;stroke-width:2.0;" x1="670" x2="1028" y1="2097.871" y2="2097.871"/><text fill="#000000" font-family="sans-serif" font-size="26" font-style="italic" lengthAdjust="spacing" textLength="114" x="788" y="2086.253">TEE quote</text><path d="M160,1930.5169 L160,2232.5169 L650,2232.5169 L650,1950.5169 L630,1930.5169 L160,1930.5169 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><path d="M630,1930.5169 L630,1950.5169 L650,1950.5169 L630,1930.5169 " fill="#FEFFDD" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" font-weight="bold" lengthAdjust="spacing" textLength="312" x="172" y="1968.3109">TEE Remote Attestation</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="172" y="2003.723"> </text><ellipse cx="183" cy="2031.753" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="394" x="196" y="2039.135">Check quote metadata: expected</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="448" x="172" y="2074.547">measurement, identity of the owner...</text><ellipse cx="183" cy="2102.5771" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="266" x="196" y="2109.9591">Verify quote signature</text><ellipse cx="183" cy="2137.9891" fill="#000000" rx="5" ry="5" style="stroke:#000000;stroke-width:0.0;"/><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="398" x="196" y="2145.3711">Verify certificate chain with CAs of</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="210" x="172" y="2180.7831">the manufacturer</text><text fill="#000000" font-family="sans-serif" font-size="26" lengthAdjust="spacing" textLength="6" x="172" y="2216.1951"> </text><!--MD5=[a81460727788d7dcc9dec7220c5a2754]
+@startuml cosmian_vm_sec
+scale 2
+
+skinparam actorStyle awesome
+
+
+' title <size:36>Cosmian SGX Enclave</size>
+
+mainframe Cosmian VM
+
+box #ededed
+    participant "SysAdmin" as client
+end box
+
+box #f8dfdf
+    entity "Cosmian VM instance" as server
+end box
+
+box #ededed
+    Database "Google Compute API" as google
+end box
+
+group Setup stage
+client -> server: // GET /snapshot//
+note right
+**Snapshot**
+
+Freeze the system curently trusted by generating
+a snapshot with: 
+
+* Hash digests of all files
+* Quote metadata related to the TEE
+* TPM metadata such as reset and restart count
+
+end note
+server -> client : snapshot.json
+end
+
+group Verification stage
+
+group Optionally: Store TPM Edorsement Key (require Google credentials)
+client -> google : //GET /compute/v1/.../instances/[INSTANCE_NAME]/getShieldedInstanceIdentity//
+google -> client :
+note right
+**Endorsement Key (EK)**
+
+Store RSA Public key to be compared
+with the one sent by the instance.
+
+end note
+end
+
+client -> server : //GET /quote/tpm//
+server -> client : //TPM quote//
+note left
+**TPM Remote Attestation**
+
+* Verify Attestation Key (AK) of the TPM
+is a child of EK
+* Recompute PCR-10 value from IMA event log
+* Check quote metadata: PCR value,
+reset count, AK...
+* Check signature of the quote with AK
+
+end note
+
+client -> server : //GET /ima/binary//
+server -> client : //IMA event log//
+note left
+**IMA event log**
+
+Compare the IMA  event log with the 
+snapshot to detect alteration in 
+monitored files.
+
+end note
+
+client -> server : //GET /quote/tee//
+server -> client://TEE quote//
+note left
+**TEE Remote Attestation**
+
+* Check quote metadata: expected 
+measurement, identity of the owner...
+* Verify quote signature
+* Verify certificate chain with CAs of
+the manufacturer
+
+end note
+
+end
+
+skinparam backgroundColor white
+skinparam SequenceMessageAlign center
+skinparam BoxPadding 30
+
+skinparam note {
+    BackgroundColor #F1FFFF
+    BorderColor #2980B9
+}
+
+skinparam activity {
+    BackgroundColor #BDE3FF
+    ArrowColor #2980B9
+    BorderColor #2980B9
+    StartColor #227BC6
+    EndColor #227BC6
+    BarColor #227BC6
+}
+
+skinparam sequence {
+    ArrowColor  #2980B9
+    DividerBackgroundColor  #BDE3FF
+    ' GroupBackgroundColor    #BDE3FF
+    LifeLineBackgroundColor white
+    LifeLineBorderColor #2980B9
+    ParticipantBackgroundColor  #BDE3FF
+    ParticipantBorderColor  #2980B9
+    CollectionsBackgroundColor  #BDE3FF
+    CollectionsBorderColor  #2980B9
+    BoxLineColor    #2980B9
+    BoxBackgroundColor  #DDDDDD
+}
+
+skinparam CollectionsBackgroundColor #BDE3FF
+skinparam CollectionsBorderColor #2980B9
+
+skinparam actorBackgroundColor #FEFECE
+skinparam actorBorderColor    #A80036
+
+skinparam usecaseArrowColor   #A80036
+skinparam usecaseBackgroundColor  #FEFECE
+skinparam usecaseBorderColor  #A80036
+
+skinparam classArrowColor #A80036
+skinparam classBackgroundColor    #FEFECE
+skinparam classBorderColor    #A80036
+
+skinparam objectArrowColor    #A80036
+skinparam objectBackgroundColor   #FEFECE
+skinparam objectBorderColor   #A80036
+
+skinparam packageBackgroundColor  #FEFECE
+skinparam packageBorderColor  #A80036
+
+skinparam stereotypeCBackgroundColor  #ADD1B2
+skinparam stereotypeABackgroundColor  #A9DCDF
+skinparam stereotypeIBackgroundColor  #B4A7E5
+skinparam stereotypeEBackgroundColor  #EB937F
+
+skinparam componentArrowColor #A80036
+skinparam componentBackgroundColor    #FEFECE
+skinparam componentBorderColor    #A80036
+skinparam componentInterfaceBackgroundColor   #FEFECE
+skinparam componentInterfaceBorderColor   #A80036
+
+skinparam stateBackgroundColor #BDE3FF
+skinparam stateBorderColor #2980B9
+skinparam stateArrowColor #2980B9
+skinparam stateStartColor black
+skinparam stateEndColor   black
+
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 1
+skinparam titleBorderColor black
+' skinparam titleBackgroundColor #d2d2d2
+
+@enduml
+
+@startuml cosmian_vm_sec
+scale 2
+
+skinparam actorStyle awesome
+
+
+
+mainframe Cosmian VM
+
+box #ededed
+    participant "SysAdmin" as client
+end box
+
+box #f8dfdf
+    entity "Cosmian VM instance" as server
+end box
+
+box #ededed
+    Database "Google Compute API" as google
+end box
+
+group Setup stage
+client -> server: // GET /snapshot//
+note right
+**Snapshot**
+
+Freeze the system curently trusted by generating
+a snapshot with: 
+
+* Hash digests of all files
+* Quote metadata related to the TEE
+* TPM metadata such as reset and restart count
+
+end note
+server -> client : snapshot.json
+end
+
+group Verification stage
+
+group Optionally: Store TPM Edorsement Key (require Google credentials)
+client -> google : //GET /compute/v1/.../instances/[INSTANCE_NAME]/getShieldedInstanceIdentity//
+google -> client :
+note right
+**Endorsement Key (EK)**
+
+Store RSA Public key to be compared
+with the one sent by the instance.
+
+end note
+end
+
+client -> server : //GET /quote/tpm//
+server -> client : //TPM quote//
+note left
+**TPM Remote Attestation**
+
+* Verify Attestation Key (AK) of the TPM
+is a child of EK
+* Recompute PCR-10 value from IMA event log
+* Check quote metadata: PCR value,
+reset count, AK...
+* Check signature of the quote with AK
+
+end note
+
+client -> server : //GET /ima/binary//
+server -> client : //IMA event log//
+note left
+**IMA event log**
+
+Compare the IMA  event log with the 
+snapshot to detect alteration in 
+monitored files.
+
+end note
+
+client -> server : //GET /quote/tee//
+server -> client://TEE quote//
+note left
+**TEE Remote Attestation**
+
+* Check quote metadata: expected 
+measurement, identity of the owner...
+* Verify quote signature
+* Verify certificate chain with CAs of
+the manufacturer
+
+end note
+
+end
+
+skinparam backgroundColor white
+skinparam SequenceMessageAlign center
+skinparam BoxPadding 30
+
+skinparam note {
+    BackgroundColor #F1FFFF
+    BorderColor #2980B9
+}
+
+skinparam activity {
+    BackgroundColor #BDE3FF
+    ArrowColor #2980B9
+    BorderColor #2980B9
+    StartColor #227BC6
+    EndColor #227BC6
+    BarColor #227BC6
+}
+
+skinparam sequence {
+    ArrowColor  #2980B9
+    DividerBackgroundColor  #BDE3FF
+    LifeLineBackgroundColor white
+    LifeLineBorderColor #2980B9
+    ParticipantBackgroundColor  #BDE3FF
+    ParticipantBorderColor  #2980B9
+    CollectionsBackgroundColor  #BDE3FF
+    CollectionsBorderColor  #2980B9
+    BoxLineColor    #2980B9
+    BoxBackgroundColor  #DDDDDD
+}
+
+skinparam CollectionsBackgroundColor #BDE3FF
+skinparam CollectionsBorderColor #2980B9
+
+skinparam actorBackgroundColor #FEFECE
+skinparam actorBorderColor    #A80036
+
+skinparam usecaseArrowColor   #A80036
+skinparam usecaseBackgroundColor  #FEFECE
+skinparam usecaseBorderColor  #A80036
+
+skinparam classArrowColor #A80036
+skinparam classBackgroundColor    #FEFECE
+skinparam classBorderColor    #A80036
+
+skinparam objectArrowColor    #A80036
+skinparam objectBackgroundColor   #FEFECE
+skinparam objectBorderColor   #A80036
+
+skinparam packageBackgroundColor  #FEFECE
+skinparam packageBorderColor  #A80036
+
+skinparam stereotypeCBackgroundColor  #ADD1B2
+skinparam stereotypeABackgroundColor  #A9DCDF
+skinparam stereotypeIBackgroundColor  #B4A7E5
+skinparam stereotypeEBackgroundColor  #EB937F
+
+skinparam componentArrowColor #A80036
+skinparam componentBackgroundColor    #FEFECE
+skinparam componentBorderColor    #A80036
+skinparam componentInterfaceBackgroundColor   #FEFECE
+skinparam componentInterfaceBorderColor   #A80036
+
+skinparam stateBackgroundColor #BDE3FF
+skinparam stateBorderColor #2980B9
+skinparam stateArrowColor #2980B9
+skinparam stateStartColor black
+skinparam stateEndColor   black
+
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 1
+skinparam titleBorderColor black
+
+@enduml
+
+PlantUML version 1.2022.7(Mon Aug 22 21:01:30 RET 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

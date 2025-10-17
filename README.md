@@ -105,10 +105,7 @@ Replace `X.Y.Z` in the 3 following tables by the last _Cosmian base image_ [vers
 
 ### AWS images
 
-|               |                            Official image                            | OS image | OS version | Kernel version               | Cosmian base image          |
-| :------------ | :------------------------------------------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610|  Ubuntu  | 24.04      | 6.8.0-1016-aws               | base-image-X-Y-Z-ubuntu-sev |
-| AWS - AMD SEV |          RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3             |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
+[Base images list](https://github.com/Cosmian/cosmian_vm/tree/main/documentation/docs/index.md#aws-images)
 
 If needed:
 
@@ -118,12 +115,7 @@ aws ec2 describe-images --output json > aws_list.json
 
 ### Azure images
 
-|                   |         Official image         | OS image | OS version | Kernel version               | Cosmian base image    | Version |
-| :---------------- | :----------------------------: | :------: | ---------- | ---------------------------- | --------------------- | ------- |
-| Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
-| Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
-| Azure - Intel TDX |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
-| Azure - AMD SEV   |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
+[Base images list](https://github.com/Cosmian/cosmian_vm/tree/main/documentation/docs/index.md#azure-images)
 
 ```sh
 az vm image list --all > azure_list.json
@@ -138,12 +130,7 @@ Links:
 
 ### GCP images
 
-|                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
-| :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20250805 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20250805 |  Ubuntu  | 24.04      | 6.8.0-1015-gcp               | base-image-X-Y-Z-ubuntu-sev |
-| GCP - AMD SEV   |         rhel-9-v20250812          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-sev   |
-| GCP - Intel TDX |         rhel-9-v20250812          |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-rhel-tdx   |
+[Base images list](https://github.com/Cosmian/cosmian_vm/tree/main/documentation/docs/index.md#gcp-images)
 
 ```sh
 gcloud compute images list > gcloud_list.json
