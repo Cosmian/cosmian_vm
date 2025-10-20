@@ -26,9 +26,16 @@ case $? in
     NULL_CIPHERS=$(echo "$LUKS_DUMP" | jq '[.keyslots.[].area.encryption] | select(any(contains("null")))')
 
     if [ -n "$NULL_CIPHERS" ]; then
-        echo "cipher_null is not allowed in LUKS header"
+        echo "cipher_null in keyslots is not allowed in LUKS header"
         exit 3
-    fi 
+    fi
+
+    NULL_CIPHERS=$(echo "$LUKS_DUMP" | jq '[.segments.[].encryption] | select(any(contains("null")))')
+
+    if [ -n "$NULL_CIPHERS" ]; then
+        echo "cipher_null in segments is not allowed in LUKS header"
+        exit 4
+    fi
 
     # unlock the partition
     /lib/systemd/systemd-cryptsetup attach cosmian_vm_container /var/lib/cosmian_vm/container - tpm2-device=auto,headless=true,header=/var/lib/cosmian_vm/header || exit 1
