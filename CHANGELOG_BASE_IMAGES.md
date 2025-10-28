@@ -1,5 +1,11 @@
 # Cosmian Base Image Changelog
 
+## [0.1.15] - 2025-10-27
+
+- *GCP*:
+  - *Ubuntu SEV/TDX capable*: update from `ubuntu-2404-noble-amd64-v20250805` to `ubuntu-2404-noble-amd64-v20251021`
+  - *RedHat SEV/TDX capable*: update from `rhel-9-v20250709` to `rhel-9-v20251016`
+
 ## [0.1.14] - 2025-09-04
 
 - *GCP*:

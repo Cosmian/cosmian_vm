@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.17] - 2025-10-28
+
+### 🐛 Bug Fixes
+
+- Upgrade GCP RHEL base image (CVE-2025-5914) and GCP Ubuntu base image (CVE-2025-49844) 
+
 ## [1.3.16] - 2025-10-09
 
 ### 🚀 Features

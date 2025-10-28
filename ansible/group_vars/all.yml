@@ -1,6 +1,6 @@
 ---
-cosmian_vm_version: 1.3.16
-package_version: 1.3.16
+cosmian_vm_version: 1.3.17
+package_version: 1.3.17
 cosmian_kms_version: 5.9.0
 kms_package_version: 5.9.0
 cosmian_ai_runner_version: 1.0.1
