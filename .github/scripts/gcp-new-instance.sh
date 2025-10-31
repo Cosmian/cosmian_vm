@@ -33,7 +33,7 @@ if [ "$TECHNO" = "tdx" ]; then
     --maintenance-policy=TERMINATE \
     --max-run-duration=$DURATION \
     --instance-termination-action=DELETE \
-    --boot-disk-size=20GB \
+    --boot-disk-size=50GB \
     --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
@@ -75,7 +75,7 @@ else
     --maintenance-policy=TERMINATE \
     --instance-termination-action=DELETE \
     --max-run-duration=$DURATION \
-    --boot-disk-size=20GB \
+    --boot-disk-size=50GB \
     --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
 fi
 
