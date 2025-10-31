@@ -94,7 +94,7 @@ jobs:
             --maintenance-policy=TERMINATE \
             --max-run-duration=120m \
             --instance-termination-action=DELETE \
-            --boot-disk-size=20GB \
+            --boot-disk-size=50GB \
             --metadata=ssh-keys="cosmian:$PUBKEY"
           IP_ADDR=$(gcloud compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=$ZONE)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
