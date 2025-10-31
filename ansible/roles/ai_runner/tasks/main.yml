@@ -70,7 +70,9 @@
 
 - name: Install Cosmian AI Runner WHL
   ansible.builtin.pip:
-    name: file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
+    name:
+      - file:///tmp/cosmian_ai_runner-{{ cosmian_ai_runner_version }}-py3-none-any.whl
+      - packaging
     virtualenv_command: /usr/bin/python3.12 -m venv
     virtualenv: /opt/venv/cosmian-ai-runner
   async: 1800  # 30 minutes timeout
