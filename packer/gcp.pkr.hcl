@@ -21,7 +21,6 @@ source "googlecompute" "TEMPLATE_GOOGLE_COMPUTE" {
   zone                      = "europe-west4-a"
   image_name                = "TEMPLATE_IMAGE_NAME"
   image_guest_os_features   = ["TEMPLATE_OS_FEATURES"]
-  disk_size                 = 50
   network                   = "default"
   subnetwork                = "default"
   tags                      = ["ssh"]
