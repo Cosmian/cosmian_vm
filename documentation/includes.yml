@@ -20,7 +20,7 @@ toc-depth: 3
 logo-width: 200pt
 lang: en-US
 footer-left: Confidential
-footer-center: © Copyright 2018-2024 Cosmian. All rights reserved
+footer-center: © Copyright 2018-2025 Cosmian. All rights reserved
 # header-left: ./pandoc/favicon.png
 header-includes:
   - \setcounter{page}{0} # So that the titlepage is the zeroth page
