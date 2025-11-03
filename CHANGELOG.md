@@ -2,11 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.18] - 2025-11-03
+
+### 🐛 Bug Fixes
+
+- Fix OSDisk error when building ai-runner image ([#212](https://github.com/Cosmian/cosmian_vm/pull/212))
+
 ## [1.3.17] - 2025-10-28
 
 ### 🐛 Bug Fixes
 
-- Upgrade GCP RHEL base image (CVE-2025-5914) and GCP Ubuntu base image (CVE-2025-49844) 
+- Upgrade GCP RHEL base image (CVE-2025-5914) and GCP Ubuntu base image (CVE-2025-49844) ([#210](https://github.com/Cosmian/cosmian_vm/pull/210))
 - Bump KMS version to 5.11.0
 
 ## [1.3.16] - 2025-10-09

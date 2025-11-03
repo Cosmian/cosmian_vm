@@ -179,6 +179,12 @@ jobs:
             MIN_CPU_PLATFORM="AUTOMATIC"
           fi
 
+          if [ "${{ inputs.product }}" = "ai-runner" ]; then
+            DISK_SIZE=75
+          else
+            DISK_SIZE=20
+          fi
+
           gcloud compute instances create $CI_INSTANCE \
             --machine-type "$MACHINE_TYPE" \
             --zone "$ZONE" \
@@ -192,7 +198,7 @@ jobs:
             --maintenance-policy=TERMINATE \
             --max-run-duration=120m \
             --instance-termination-action=DELETE \
-            --boot-disk-size=50GB \
+            --boot-disk-size=$DISK_SIZE \
             --metadata=ssh-keys="cosmian:$PUBKEY"
           IP_ADDR=$(gcloud compute instances describe $CI_INSTANCE --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=$ZONE)
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"

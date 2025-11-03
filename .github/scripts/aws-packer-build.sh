@@ -6,8 +6,8 @@
 # VERSION=0.1.12 # Optional
 # KMS_VERSION=5.11.0 # Provided by Github workflow
 # AI_RUNNER_VERSION=1.0.1 # Provided by Github workflow
-# GITHUB_REF=refs/tags/1.3.17 # Provided by Github Actions
-# GITHUB_REF_NAME=1.3.17 # Provided by Github Actions
+# GITHUB_REF=refs/tags/1.3.18 # Provided by Github Actions
+# GITHUB_REF_NAME=1.3.18 # Provided by Github Actions
 # IMAGE_NAME="cosmian-vm-${GITHUB_REF_NAME}-sev-${DISTRIBUTION}" # Only for testing
 
 set -ex
@@ -31,7 +31,12 @@ fi
 
 SOURCE_AMI=$(aws ec2 describe-images --filters "Name=name,Values=${BASE_IMAGE_NAME}" --query "Images[*].{ID:ImageId}" --output text)
 
-VOLUME_SIZE=20
+if [ "$PRODUCT" = "ai-runner" ]; then
+  VOLUME_SIZE=75
+else
+  VOLUME_SIZE=20
+fi
+
 
 set
 
