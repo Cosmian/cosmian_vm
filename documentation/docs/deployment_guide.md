@@ -27,7 +27,11 @@ Then, the deployment flow is the following:
 
 ## Instantiate Cosmian VM on your favorite cloud provider 🚚
 
-Go the Cosmian marketplace webpage of the chosen cloud provider.
+Go the Cosmian marketplace webpage of the chosen cloud provider:
+
+- [Cosmian VM/KMS/AI on AWS Marketplace](https://aws.amazon.com/marketplace/search/results?searchTerms=cosmian)
+- [Cosmian VM/KMS/AI on Azure Marketplace](https://marketplace.microsoft.com/fr-fr/marketplace/apps?search=cosmian&page=1)
+- [Cosmian VM/KMS/AI on GCP Marketplace](https://console.cloud.google.com/marketplace/browse?hl=fr&q=Cosmian)
 
 Select an OS, set an external IP and continue until the Cosmian VM instance is spawned.
 
