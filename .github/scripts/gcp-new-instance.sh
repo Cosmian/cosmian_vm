@@ -7,6 +7,7 @@ TECHNO="${1:-sev}"
 DISTRIB="${2:-ubuntu}"
 PREFIX="${3:-$(whoami)}"
 PREFIX=$(echo "$PREFIX" | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+DISK_SIZE=20
 
 NAME="$PREFIX-$TECHNO-$DISTRIB"
 DURATION=240m
@@ -27,42 +28,52 @@ if [ "$TECHNO" = "tdx" ]; then
     --min-cpu-platform=AUTOMATIC \
     --confidential-compute-type=TDX \
     --shielded-secure-boot \
-    --image=ubuntu-2404-noble-amd64-v20250805 \
+    --image=ubuntu-2404-noble-amd64-v20251021 \
     --project cosmian-dev \
     --tags "$NAME-cli" \
     --maintenance-policy=TERMINATE \
     --max-run-duration=$DURATION \
     --instance-termination-action=DELETE \
-    --boot-disk-size=20GB \
+    --boot-disk-size=$DISK_SIZE \
     --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
 else
   if [ "$DISTRIB" = "ubuntu" ]; then
     # Base Ubuntu SEV
-    IMAGE="base-image-0-1-12-ubuntu-sev"
+    IMAGE="base-image-0-1-15-ubuntu-sev"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian Ubuntu SEV
-    IMAGE="cosmian-vm-1-3-9-sev-ubuntu"
+    IMAGE="cosmian-vm-1-3-18-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Cosmian KMS Ubuntu SEV
-    IMAGE="cosmian-vm-1-3-9-kms-5-6-2-sev-ubuntu"
+    IMAGE="cosmian-vm-1-3-18-kms-5-11-0-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
-    IMAGE="ubuntu-2404-noble-amd64-v20250805"
+    IMAGE="ubuntu-2404-noble-amd64-v20251021"
     IMAGE_PROJECT="ubuntu-os-cloud"
   else
     # Base RHEL SEV
-    IMAGE="base-image-0-1-12-rhel-sev"
+    IMAGE="base-image-0-1-15-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
-    # Cosmian RHEL SEV
-    IMAGE="cosmian-vm-1-3-9-rhel-sev"
+    # Cosmian vm RHEL SEV
+    IMAGE="cosmian-vm-1-3-18-rhel-sev"
     IMAGE_PROJECT="cosmian-dev"
-    # Cosmian RHEL SEV
-    IMAGE="cosmian-vm-1-3-9-kms-5-6-2-sev-rhel"
+    # Cosmian kms RHEL SEV
+    IMAGE="cosmian-vm-1-3-18-kms-5-11-0-sev-rhel"
+    IMAGE_PROJECT="cosmian-dev"
+    # Cosmian ai runner RHEL SEV
+    IMAGE="cosmian-vm-1-3-14-ai-runner-1-0-1-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rhel-9-v20250812"
+    IMAGE="rhel-9-v20251016"
     IMAGE_PROJECT="rhel-cloud"
   fi
+
+  if [ "$IMAGE" = "cosmian-vm-1-3-14-ai-runner-1-0-1-sev-rhel" ]; then
+    DISK_SIZE=75
+  else
+    DISK_SIZE=20
+  fi
+
   gcloud compute instances create "$NAME" \
     --machine-type n2d-standard-2 \
     --zone europe-west4-a \
@@ -75,7 +86,7 @@ else
     --maintenance-policy=TERMINATE \
     --instance-termination-action=DELETE \
     --max-run-duration=$DURATION \
-    --boot-disk-size=20GB \
+    --boot-disk-size=$DISK_SIZE \
     --metadata=ssh-keys="cosmian:$SSH_PUB_KEY"
 fi
 
