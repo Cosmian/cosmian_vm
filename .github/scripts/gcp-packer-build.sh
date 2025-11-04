@@ -22,6 +22,12 @@ else
   OS_FEATURES="TDX_CAPABLE"
 fi
 
+if [ "$PRODUCT" = "ai-runner" ]; then
+  DISK_SIZE=75
+else
+  DISK_SIZE=20
+fi
+
 PACKER_FILE="gcp.pkr.hcl"
 
 sed -i "s#TEMPLATE_PRODUCT#$PRODUCT#g" "$PACKER_FILE"
