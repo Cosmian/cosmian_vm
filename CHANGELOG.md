@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - Upgrade GCP RHEL base image (CVE-2025-5914) and GCP Ubuntu base image (CVE-2025-49844) 
+
+### 🚀 Features
+
 - Bump KMS version to 5.11.0
 
 ## [1.3.16] - 2025-10-09

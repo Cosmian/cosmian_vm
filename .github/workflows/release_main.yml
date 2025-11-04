@@ -54,3 +54,30 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     secrets: inherit
     uses: ./.github/workflows/github_release.yml
+
+  public_documentation:
+    if: github.repository == 'Cosmian/cosmian_vm' && !startsWith(github.ref_name, 'dependabot/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Deploy documentation in staging
+        if: ${{ github.ref_name == 'main' }}
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: staging.yml
+          repo: Cosmian/public_documentation
+          ref: develop
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Deploy documentation in prod
+        if: startsWith(github.ref, 'refs/tags')
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: prod.yml
+          repo: Cosmian/public_documentation
+          ref: main
+          token: ${{ secrets.PAT_TOKEN }}
