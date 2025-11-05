@@ -22,7 +22,7 @@ Cosmian VM is used in these two scenarios:
 - offer confidential SaaS services to your customers/users, protecting their privacy against the cloud provider and any extra-territorial law, e.g., offering confidential AI/Gen. AI in the public cloud.
 
 <p align="center">
-  <img src="/images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
+  <img src="../images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
 !!! info "Threat Model"
@@ -78,7 +78,7 @@ A Cosmian VM is instantiated from a [cloud provider marketplace](https://cosmian
 Once the system administrator has installed the application and its dependencies, a snapshot of the VM is taken. Integrity checks can then be performed on the running VM to verify the running code, OS, and hardware.
 
 <p align="center">
-  <img src="/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
+  <img src="../images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
 ## Snapshot of the system
@@ -106,13 +106,13 @@ The verification is successful if files in IMA measurement log and snapshot have
 === "Flow"
 
     <p align="center">
-        <img src="/images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
+        <img src="../images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
     </p>
 
 === "Detailed flow"
 
     <p align="center">
-        <img src="/images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
+        <img src="../images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
     </p>
 
 ## Cloud providers support
