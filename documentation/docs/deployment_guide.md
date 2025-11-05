@@ -68,8 +68,8 @@ Install the Cosmian VM CLI on a local machine
 
     ```console title="On the local machine"
     sudo apt update && sudo apt install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.18/ubuntu-22.04/cosmian-vm_1.3.18-1_amd64.deb
-    sudo apt install ./cosmian-vm_1.3.18-1_amd64.deb
+    wget https://package.cosmian.com/cosmian_vm/1.3.19/ubuntu-22.04/cosmian-vm_1.3.19-1_amd64.deb
+    sudo apt install ./cosmian-vm_1.3.19-1_amd64.deb
     cosmian_vm --version
     ```
 
@@ -79,8 +79,8 @@ Install the Cosmian VM CLI on a local machine
 
     ```console title="On the local machine"
     sudo apt update && sudo apt install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.18/ubuntu-24.04/cosmian-vm_1.3.18-1_amd64.deb
-    sudo apt install ./cosmian-vm_1.3.18-1_amd64.deb
+    wget https://package.cosmian.com/cosmian_vm/1.3.19/ubuntu-24.04/cosmian-vm_1.3.19-1_amd64.deb
+    sudo apt install ./cosmian-vm_1.3.19-1_amd64.deb
     cosmian_vm --version
     ```
 
@@ -90,8 +90,8 @@ Install the Cosmian VM CLI on a local machine
 
     ```console title="On the local machine"
     sudo dnf update && dnf install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.18/rhel9/cosmian_vm-1.3.18-1.x86_64.rpm
-    sudo dnf install ./cosmian_vm-1.3.18-1.x86_64.rpm
+    wget https://package.cosmian.com/cosmian_vm/1.3.19/rhel9/cosmian_vm-1.3.19-1.x86_64.rpm
+    sudo dnf install ./cosmian_vm-1.3.19-1.x86_64.rpm
     cosmian_vm --version
     ```
 
@@ -107,8 +107,8 @@ Install the Cosmian VM CLI on a local machine
 
     ```console title="In Docker container (local machine)"
     apt update && apt install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.18/ubuntu-22.04/cosmian-vm_1.3.18-1_amd64.deb
-    apt install ./cosmian-vm_1.3.18-1_amd64.deb
+    wget https://package.cosmian.com/cosmian_vm/1.3.19/ubuntu-22.04/cosmian-vm_1.3.19-1_amd64.deb
+    apt install ./cosmian-vm_1.3.19-1_amd64.deb
     ```
 
 Generate a snapshot of the Cosmian VM:
