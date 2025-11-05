@@ -32,6 +32,7 @@ set_default_variables() {
     # Optional args
     DEFAULT_ROOT="/var/lib/cosmian_vm"
     CONTAINER_PATH="$DEFAULT_ROOT/container"
+    HEADER_PATH="$DEFAULT_ROOT/header"
     CONTAINER_MAPPING_NAME="cosmian_vm_container"
     CONTAINER_MAPPING_PATH="/dev/mapper/$CONTAINER_MAPPING_NAME"
     CONTAINER_MOUNT_PATH="$DEFAULT_ROOT/data"
@@ -95,6 +96,11 @@ if [ -e "$CONTAINER_PATH" ]; then
     exit 1
 fi
 
+if [ -e "$HEADER_PATH" ]; then
+    echo "A LUKS header already exists in $HEADER_PATH (remove it before going any further)"
+    exit 1
+fi
+
 # Make sure to close/umount existing container
 if [ -e "$CONTAINER_MAPPING_PATH" ]; then
     echo "Closing previous mounted container..."
@@ -109,11 +115,11 @@ fallocate -l "$CONTAINER_SIZE" "$CONTAINER_PATH"
 
 # Encrypt the container (a password is required to run this command)
 echo "Encrypting the container (with password=${PASSWORD})..."
-echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" -d -
+echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" --type luks2 --integrity hmac-sha256 --header "$HEADER_PATH" --key-file -
 
 # Open the container and map it (a password is required to run this command)
 echo "Opening the container at $CONTAINER_MAPPING_PATH..."
-echo -n "$PASSWORD" | cryptsetup luksOpen -d - "$CONTAINER_PATH" "$CONTAINER_MAPPING_NAME"
+echo -n "$PASSWORD" | cryptsetup luksOpen --header "$HEADER_PATH" --key-file - "$CONTAINER_PATH" "$CONTAINER_MAPPING_NAME"
 
 # Format it
 echo "Formatting the container in Ext4..."
@@ -137,16 +143,17 @@ fi
 echo "Enrolling the TPM for this container on block device $BLOCK_DEVICE..."
 
 set +e
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$BLOCK_DEVICE"
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$HEADER_PATH"
 if [ $? -ne 0 ]; then
     # Need to clean container after failure
     rm -f "$CONTAINER_PATH"
+    rm -f "$HEADER_PATH"
     exit 1
 fi
 
 # Display debug information
 set -x
-cryptsetup luksDump $CONTAINER_PATH
+cryptsetup luksDump "$HEADER_PATH"
 set +x
 
 echo "Process completed with success!"
