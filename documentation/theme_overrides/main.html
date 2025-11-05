@@ -22,14 +22,14 @@ Check this documentation for customizations: https://squidfunk.github.io/mkdocs-
         const darkModeOn = mode === "dark" || (mode === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
         if (darkModeOn) {
             if (favicon) {
-                favicon.href = "/images/favicon-white.png";
+                favicon.href = "../images/favicon-white.png";
             }
             if (!document.body.classList.contains("dark-mode")) {
                 document.body.classList.add("dark-mode");
             }
         } else {
             if (favicon) {
-                favicon.href = "/images/favicon-black.png";
+                favicon.href = "../images/favicon-black.png";
             }
             document.body.classList.remove("dark-mode");
         }

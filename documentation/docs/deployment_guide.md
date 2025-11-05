@@ -9,7 +9,7 @@
     Then, at anytime, a remote verification of the VM can be done using the Cosmian VM CLI tool (`cosmian_vm`).
 
 <p align="center">
-  <img src="/images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
+  <img src="../images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
 The Cosmian VM can be deployed on virtual machines that supports AMD SEV-SNP or Intel TDX technologies.
