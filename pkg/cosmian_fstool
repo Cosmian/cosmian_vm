@@ -115,7 +115,7 @@ fallocate -l "$CONTAINER_SIZE" "$CONTAINER_PATH"
 
 # Encrypt the container (a password is required to run this command)
 echo "Encrypting the container (with password=${PASSWORD})..."
-echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" --header "$HEADER_PATH" --key-file -
+echo -n "$PASSWORD" | cryptsetup luksFormat "$CONTAINER_PATH" --type luks2 --integrity hmac-sha256 --header "$HEADER_PATH" --key-file -
 
 # Open the container and map it (a password is required to run this command)
 echo "Opening the container at $CONTAINER_MAPPING_PATH..."
