@@ -76,7 +76,7 @@ jobs:
             IMAGE_NAME="ubuntu-2404-noble-amd64-v20250805"
           else
             IMAGE_OPTIONS="--image-project=rhel-cloud --project $GCP_DEV_PROJECT"
-            IMAGE_NAME="rhel-9-v20250812"
+            IMAGE_NAME="rhel-9-v20251016"
           fi
 
           if [ "${{ inputs.product }}" = "ai-runner" ]; then
