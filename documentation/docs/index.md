@@ -22,7 +22,7 @@ Cosmian VM is used in these two scenarios:
 - offer confidential SaaS services to your customers/users, protecting their privacy against the cloud provider and any extra-territorial law, e.g., offering confidential AI/Gen. AI in the public cloud.
 
 <p align="center">
-  <img src="../images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
+  <img src="./images/cosmian_vm_usage_flow.drawio.svg" alt="setup flow">
 </p>
 
 !!! info "Threat Model"
