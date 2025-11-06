@@ -78,7 +78,7 @@ A Cosmian VM is instantiated from a [cloud provider marketplace](https://cosmian
 Once the system administrator has installed the application and its dependencies, a snapshot of the VM is taken. Integrity checks can then be performed on the running VM to verify the running code, OS, and hardware.
 
 <p align="center">
-  <img src="../images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
+  <img src="./images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
 ## Snapshot of the system
