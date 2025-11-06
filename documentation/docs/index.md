@@ -106,13 +106,13 @@ The verification is successful if files in IMA measurement log and snapshot have
 === "Flow"
 
     <p align="center">
-        <img src="../images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
+        <img src="./images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
     </p>
 
 === "Detailed flow"
 
     <p align="center">
-        <img src="../images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
+        <img src="./images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
     </p>
 
 ## Cloud providers support
