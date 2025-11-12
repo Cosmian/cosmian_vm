@@ -119,16 +119,16 @@
   ansible.builtin.file:
     path: /var/lib/cosmian_vm/data/app
     state: directory
-    owner: root
-    group: root
+    owner: cosmian
+    group: cosmian
     mode: "0644"
 
 - name: Create default Cosmian KMS configuration
   ansible.builtin.template:
     src: kms.toml.j2
     dest: /var/lib/cosmian_vm/data/app/app.conf
-    owner: root
-    group: root
+    owner: cosmian
+    group: cosmian
     mode: "0644"
   when: not kms_fips
 
@@ -136,8 +136,8 @@
   ansible.builtin.template:
     src: kms-fips.toml.j2
     dest: /var/lib/cosmian_vm/data/app/app.conf
-    owner: root
-    group: root
+    owner: cosmian
+    group: cosmian
     mode: "0644"
   when: kms_fips
 
