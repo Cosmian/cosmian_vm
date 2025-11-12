@@ -98,8 +98,8 @@
   ansible.builtin.file:
     path: /var/lib/cosmian_vm/data/app
     state: directory
-    owner: root
-    group: root
+    owner: cosmian
+    group: cosmian
     mode: "0644"
 
 - name: Create default Cosmian AI Runner configuration
