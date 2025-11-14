@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Bump KMS version to 5.11.1
 
+### 🐛 Bug Fixes
+
+- Upgrade GCP RHEL base image
+
 ## [1.3.19] - 2025-11-05
 
 ### 📚 Documentation
