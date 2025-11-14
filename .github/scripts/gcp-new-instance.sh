@@ -64,7 +64,7 @@ else
     IMAGE="cosmian-vm-1-3-14-ai-runner-1-0-1-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rhel-9-v20251016"
+    IMAGE="rhel-9-v20251111"
     IMAGE_PROJECT="rhel-cloud"
   fi
 
