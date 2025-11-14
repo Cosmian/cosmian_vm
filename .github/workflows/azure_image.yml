@@ -79,7 +79,7 @@ jobs:
 
   test-image:
     name: Image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: build-image
     permissions:
       contents: read
