@@ -141,7 +141,7 @@ jobs:
           for i in {1..1}
           do
             echo "Iteration: $i"
-            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, --private-key=/home/runner/.ssh/id_rsa -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --skip-tags role-cleanup
+            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, --private-key="${HOME}/.ssh/id_rsa" --timeout 60 -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --skip-tags role-cleanup
           done
 
       - name: Stop and delete GCP instance
