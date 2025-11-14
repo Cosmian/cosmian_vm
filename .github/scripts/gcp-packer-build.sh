@@ -9,7 +9,7 @@ SOURCE_IMAGE=$3
 set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
-  SOURCE_IMAGE_FAMILY="ubuntu-2204-lts"
+  SOURCE_IMAGE_FAMILY="ubuntu-2404-lts"
   GOOGLE_COMPUTE="ubuntu"
 else
   SOURCE_IMAGE_FAMILY="rhel-9"
