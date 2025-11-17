@@ -139,6 +139,7 @@ jobs:
           echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> $GITHUB_ENV
 
           export ANSIBLE_HOST_KEY_CHECKING=False
+          export ANSIBLE_SSH_RETRIES=3
           for i in {1..1}
           do
             echo "Iteration: $i"
