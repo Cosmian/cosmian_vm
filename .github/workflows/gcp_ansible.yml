@@ -106,7 +106,7 @@ jobs:
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
           # Wait for VM to be ready
-          sleep 60
+          sleep 6000
 
       - name: Create Firewall Rules for CLI Ports
         env:
