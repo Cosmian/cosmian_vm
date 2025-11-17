@@ -140,11 +140,7 @@ jobs:
 
           export ANSIBLE_HOST_KEY_CHECKING=False
           export ANSIBLE_SSH_RETRIES=3
-          for i in {1..1}
-          do
-            echo "Iteration: $i"
-            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, --private-key="${HOME}/.ssh/id_rsa" --timeout 60 -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --skip-tags role-cleanup
-          done
+          ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, --private-key="${HOME}/.ssh/id_rsa" --timeout 60 -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --skip-tags role-cleanup
 
       - name: Stop and delete GCP instance
         if: success() || cancelled()
