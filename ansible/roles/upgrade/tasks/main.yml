@@ -15,6 +15,14 @@
         upgrade: safe
       tags: ubuntu
 
+- name: Upgrade all packages (dnf)
+  when: ansible_distribution == 'RedHat'
+  block:
+    - name: Upgrade all packages (dnf)
+      ansible.builtin.dnf:
+        name: ""
+        state: latest
+
 - name: Upgrade all packages
   when: ansible_distribution == 'RedHat'
   block:
