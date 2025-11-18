@@ -5,6 +5,8 @@
   roles:
     - role: check_cpu
       tags: role-check-cpu
+    - role: tmpfs
+      tags: role-tmpfs
     - role: upgrade
       tags: role-upgrade
     - role: tpm

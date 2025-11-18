@@ -1,0 +1,11 @@
+---
+
+# tasks file for ansible/roles/tmpfs
+
+- name: Mount a tmpfs volume
+  ansible.posix.mount:
+    src: tmpfs
+    path: /var/tmp
+    opts: size=1G
+    state: present
+    fstype: tmpfs
