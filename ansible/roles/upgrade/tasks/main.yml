@@ -20,7 +20,7 @@
   block:
     - name: Upgrade all packages (dnf)
       ansible.builtin.dnf:
-        name: ""
+        name: "*"
         state: latest
 
 - name: Upgrade all packages

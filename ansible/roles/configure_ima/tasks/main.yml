@@ -152,11 +152,3 @@
       register: configure_ima_cmd_output
       changed_when: configure_ima_cmd_output.rc != 0
       tags: selinux
-
-- name: Mount a tmpfs volume
-  ansible.posix.mount:
-    src: tmpfs
-    path: /var/tmp
-    opts: size=1G
-    state: present
-    fstype: tmpfs
