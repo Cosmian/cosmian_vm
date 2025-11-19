@@ -21,7 +21,7 @@
     - name: Upgrade all packages (dnf)
       ansible.builtin.dnf:
         name: "*"
-        state: latest
+        state: latest  # noqa package-latest
 
 - name: Upgrade all packages
   when: ansible_distribution == 'RedHat'
