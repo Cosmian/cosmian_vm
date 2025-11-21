@@ -453,9 +453,6 @@ footer,
     @bottom-right {
         content: "Page " counter(__pgnum__);
     }
-    @bottom-left {
-        content: "Version draft";
-    }
 }
 
 *::selection {
