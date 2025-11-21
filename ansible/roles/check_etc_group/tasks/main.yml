@@ -1,0 +1,14 @@
+---
+# tasks file for check_etc_group
+
+- name: Read /etc/group
+  ansible.builtin.shell:
+    cmd: |
+      set -x
+      cat /etc/group
+  register: check_etc_group_content
+  changed_when: check_etc_group_content.rc != 0
+
+- name: Display /etc/group
+  ansible.builtin.debug:
+    var: check_etc_group_content
