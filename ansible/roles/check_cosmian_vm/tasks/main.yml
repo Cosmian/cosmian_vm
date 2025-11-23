@@ -64,7 +64,7 @@
 - name: Before any check - LUKS dump
   ansible.builtin.command:
     cmd: |
-      cryptsetup luksDump /var/lib/cosmian_vm/container
+      cryptsetup luksDump /var/lib/cosmian_vm/header
   register: check_cosmian_vm_cryptsetup_luks_dump
   changed_when: check_cosmian_vm_cryptsetup_luks_dump.rc != 0
   tags: check_cosmian_vm_cryptsetup_luks_dump
