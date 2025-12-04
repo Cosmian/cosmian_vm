@@ -23,7 +23,7 @@
         state: present
 
 - name: Update dnf cache
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Update dnf cache
       ansible.builtin.dnf:
@@ -121,14 +121,14 @@
     mode: "0644"
 
 - name: Selinux - add nginx to permissive allow httpd
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   ansible.builtin.command: semanage permissive -a httpd_t
   register: ai_runner_cmd_output
   changed_when: ai_runner_cmd_output.rc != 0
   tags: selinux
 
 - name: Add SELinux context for AI runner
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   ansible.builtin.shell: |
     set -exo pipefail
     semanage fcontext -a -t cosmiand_script_t '/opt/venv/cosmian-ai-runner/lib/python3.12/site-packages/cosmian_ai_runner(/.*\.py)?'
@@ -170,7 +170,7 @@
     daemon_reload: true
 
 - name: Open ports on RHEL
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Open port 443 for HTTPS
       ansible.posix.firewalld:

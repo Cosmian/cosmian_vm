@@ -21,7 +21,7 @@
         update_cache: true
 
 - name: TPM packages installation on RedHat
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Update packages cache
       ansible.builtin.dnf:

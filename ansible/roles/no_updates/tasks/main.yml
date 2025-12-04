@@ -38,7 +38,7 @@
         update_cache: true
 
 - name: Disable automatic updates on Red Hat
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   tags: disable_automatic_update
   block:
     - name: Populate service facts
