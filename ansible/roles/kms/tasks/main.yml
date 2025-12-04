@@ -22,7 +22,7 @@
     var: kms_fips
 
 - name: Prepare repo file for official Redis Open Source
-  when: ansible_distribution == 'RedHat' and not kms_fips
+  when: ansible_distribution == 'Rocky' and not kms_fips
   block:
     - name: Create the Redis repo file
       ansible.builtin.copy:
@@ -58,7 +58,7 @@
   when: kms_fips
 
 - name: Install Cosmian VM via RPM package
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
@@ -166,14 +166,14 @@
     mode: "0644"
 
 - name: Selinux - add nginx to permissive allow httpd
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   ansible.builtin.command: semanage permissive -a httpd_t
   register: kms_cmd_output
   changed_when: kms_cmd_output.rc != 0
   tags: selinux
 
 - name: Add SELinux context for KMS
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   ansible.builtin.shell: |
     set -exo pipefail
     semanage fcontext -a -t cosmiand_exec_t /usr/sbin/cosmian_kms
@@ -218,7 +218,7 @@
   when: not kms_fips
 
 - name: Open ports on RHEL
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Open port 443 for HTTPS
       ansible.posix.firewalld:

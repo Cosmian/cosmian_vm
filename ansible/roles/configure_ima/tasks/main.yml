@@ -31,7 +31,7 @@
     mode: "0400"
 
 - name: Override ima policy for RedHat
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   ansible.builtin.template:
     src: ima-policy-selinux.j2
     dest: /etc/ima/ima-policy
@@ -129,7 +129,7 @@
       changed_when: configure_ima_cmd_output.rc != 0
 
 - name: Update grub on RedHat
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   tags: update_grub
   block:
     - name: Install missing packages

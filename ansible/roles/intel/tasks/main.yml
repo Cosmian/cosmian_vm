@@ -22,7 +22,7 @@
 
 - name: Add Intel SGX/TDX RPM repository
   tags: intel_libs
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Intel's RPM local repo
       ansible.builtin.get_url:
