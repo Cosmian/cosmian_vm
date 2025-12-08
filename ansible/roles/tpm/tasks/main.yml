@@ -36,9 +36,9 @@
         state: present
         update_cache: true
 
-- name: Check if tpm2-abrmd systemd service is enabled but stopped
-  ansible.builtin.systemd_service:
-    name: tpm2-abrmd
-    enabled: true
-    state: stopped
-    daemon_reload: true
+# - name: Check if tpm2-abrmd systemd service is enabled but stopped
+#   ansible.builtin.systemd_service:
+#     name: tpm2-abrmd
+#     enabled: true
+#     state: stopped
+#     daemon_reload: true
