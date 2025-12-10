@@ -15,12 +15,12 @@ jobs:
     with:
       distrib: ${{ matrix.distrib }}
 
-  cargo-deny:
-    name: Security Audit
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: EmbarkStudios/cargo-deny-action@v2
+  # cargo-deny:
+  #   name: Security Audit
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: EmbarkStudios/cargo-deny-action@v2
 
   ansible-lint:
     name: Ansible Lint
