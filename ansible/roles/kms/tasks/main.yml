@@ -94,7 +94,7 @@
         mode: "0755"
         group: root
         owner: root
-        when: not kms_fips
+      when: not kms_fips
 
     - name: Download Debian package from package.cosmian.com (FIPS mode)
       ansible.builtin.get_url:
@@ -103,7 +103,7 @@
         mode: "0755"
         group: root
         owner: root
-        when: kms_fips
+      when: kms_fips
 
     - name: Install Cosmian KMS Debian package
       ansible.builtin.apt:
