@@ -86,6 +86,7 @@
     - name: Declare package name
       ansible.builtin.set_fact:
         kms_package_name: cosmian-kms-server-non-fips-static-openssl_{{ kms_package_version }}_amd64.deb
+      when: not kms_fips
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
@@ -95,6 +96,11 @@
         group: root
         owner: root
       when: not kms_fips
+
+    - name: Declare package name
+      ansible.builtin.set_fact:
+        kms_package_name: cosmian-kms-server-fips-static-openssl_{{ kms_package_version }}_amd64.deb
+      when: kms_fips
 
     - name: Download Debian package from package.cosmian.com (FIPS mode)
       ansible.builtin.get_url:
