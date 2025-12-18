@@ -142,7 +142,7 @@
 - name: Create default Cosmian KMS configuration
   ansible.builtin.template:
     src: kms.toml.j2
-    dest: /var/lib/cosmian_vm/data/app/app.conf
+    dest: /var/lib/cosmian_vm/data/app.conf
     owner: root
     group: root
     mode: "0644"
@@ -151,7 +151,7 @@
 - name: Create FIPS-compliant Cosmian KMS configuration
   ansible.builtin.template:
     src: kms-fips.toml.j2
-    dest: /var/lib/cosmian_vm/data/app/app.conf
+    dest: /var/lib/cosmian_vm/data/app.conf
     owner: root
     group: root
     mode: "0644"
