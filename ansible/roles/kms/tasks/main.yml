@@ -62,11 +62,11 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        kms_package_name: cosmian_kms_server-{{ kms_package_version }}-1.x86_64.rpm
+        kms_package_name: cosmian-kms-server-non-fips-static-openssl_{{ kms_package_version }}_x86_64.rpm
 
     - name: Download RPM Cosmian KMS Server package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rockylinux9/{{ kms_package_name }}
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/rpm/amd64/non-fips/static/{{ kms_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
@@ -85,15 +85,31 @@
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
-        kms_package_name: cosmian-kms-server{{ kms_fips }}_{{ kms_package_version }}-1_amd64.deb
+        kms_package_name: cosmian-kms-server-non-fips-static-openssl_{{ kms_package_version }}_amd64.deb
+      when: not kms_fips
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/ubuntu-{{ ansible_distribution_version }}/{{ kms_package_name }}
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/deb/amd64/non-fips/static/{{ kms_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
         owner: root
+      when: not kms_fips
+
+    - name: Declare package name
+      ansible.builtin.set_fact:
+        kms_package_name: cosmian-kms-server-fips-static-openssl_{{ kms_package_version }}_amd64.deb
+      when: kms_fips
+
+    - name: Download Debian package from package.cosmian.com (FIPS mode)
+      ansible.builtin.get_url:
+        url: https://package.cosmian.com/kms/{{ cosmian_kms_version }}/deb/amd64/fips/static/{{ kms_package_name }}
+        dest: /tmp
+        mode: "0755"
+        group: root
+        owner: root
+      when: kms_fips
 
     - name: Install Cosmian KMS Debian package
       ansible.builtin.apt:
@@ -126,7 +142,7 @@
 - name: Create default Cosmian KMS configuration
   ansible.builtin.template:
     src: kms.toml.j2
-    dest: /var/lib/cosmian_vm/data/app/app.conf
+    dest: /var/lib/cosmian_vm/data/app.conf
     owner: root
     group: root
     mode: "0644"
@@ -135,7 +151,7 @@
 - name: Create FIPS-compliant Cosmian KMS configuration
   ansible.builtin.template:
     src: kms-fips.toml.j2
-    dest: /var/lib/cosmian_vm/data/app/app.conf
+    dest: /var/lib/cosmian_vm/data/app.conf
     owner: root
     group: root
     mode: "0644"

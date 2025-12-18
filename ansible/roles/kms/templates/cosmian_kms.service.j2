@@ -9,8 +9,10 @@ User=root
 ExecStart=/usr/sbin/cosmian_kms
 Restart=on-failure
 RestartSec=3s
-Environment="COSMIAN_KMS_CONF=/var/lib/cosmian_vm/data/app/app.conf"
-StandardOutput=syslog+console
+Environment="COSMIAN_KMS_CONF=/var/lib/cosmian_vm/data/app.conf"
+Environment="OPENSSL_CONF=/usr/local/cosmian/lib/ssl/openssl.cnf"
+Environment="OPENSSL_MODULES=/usr/local/cosmian/lib/ossl-modules"
+StandardOutput=journal+console
 
 [Install]
 WantedBy=multi-user.target

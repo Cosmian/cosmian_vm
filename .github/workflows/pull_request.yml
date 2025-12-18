@@ -21,7 +21,7 @@ jobs:
     uses: ./.github/workflows/azure_main.yml
     with:
       product: kms-fips
-      kms-version: 5.11.0
+      kms-version: 5.14.0
       ai-runner-version: 1.0.1
       techno: sev
     secrets: inherit
@@ -31,7 +31,7 @@ jobs:
     uses: ./.github/workflows/gcp_main.yml
     with:
       product: kms
-      kms-version: 5.11.0
+      kms-version: 5.14.0
       ai-runner-version: 1.0.1
       techno: sev
     secrets: inherit
@@ -42,7 +42,7 @@ jobs:
   #   uses: ./.github/workflows/aws_main.yml
   #   with:
   #     product: cosmian-vm
-  #     kms-version: 5.11.0
+  #     kms-version: 5.14.0
   #     ai-runner-version: 1.0.1
   #     techno: sev
   #   secrets: inherit
