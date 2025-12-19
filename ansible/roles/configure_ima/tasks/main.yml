@@ -14,27 +14,27 @@
   register: configure_ima_etc_default_grub
   tags: update_grub
 
-- name: Create ima folder
-  ansible.builtin.file:
-    path: /etc/ima
-    state: directory
-    owner: root
-    group: root
-    mode: "0500"
+# - name: Create ima folder
+#   ansible.builtin.file:
+#     path: /etc/ima
+#     state: directory
+#     owner: root
+#     group: root
+#     mode: "0500"
 
-- name: Copy ima policy
-  ansible.builtin.template:
-    src: ima-policy.j2
-    dest: /etc/ima/ima-policy
-    owner: root
-    group: root
-    mode: "0400"
+# - name: Copy ima policy
+#   ansible.builtin.template:
+#     src: ima-policy.j2
+#     dest: /etc/ima/ima-policy
+#     owner: root
+#     group: root
+#     mode: "0400"
 
 - name: Override ima policy for RedHat
   when: ansible_distribution == 'Rocky'
   ansible.builtin.template:
     src: ima-policy-selinux.j2
-    dest: /etc/ima/ima-policy
+    dest: /usr/share/ima/policies/03-cosmian-ra
     owner: root
     group: root
     mode: "0400"
@@ -91,6 +91,8 @@
         echo "earlyprintk not set"
         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
       fi
+
+      sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_appraise=log\"/ $f
     dest: /tmp/grub.sh
     mode: "0700" # Make the script executable
     remote_src: true
@@ -143,7 +145,7 @@
     - name: Update grub
       ansible.builtin.command:
         cmd: |
-          grub2-mkconfig -o /boot/grub2/grub.cfg
+          grub2-mkconfig -o /boot/grub2/grub.cfg --update-bls-cmdline
       register: configure_ima_cmd_output
       changed_when: configure_ima_cmd_output.rc != 0
 
