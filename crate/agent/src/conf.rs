@@ -1,8 +1,6 @@
-use std::{
-    fs::File,
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
+use rustls_pki_types::{pem::PemObject, CertificateDer};
 use serde::Deserialize;
 
 use crate::{app::service::ServiceType, error::Error, VAR_PATH};
@@ -14,17 +12,23 @@ pub struct CosmianVmAgent {
 }
 
 impl CosmianVmAgent {
-    /// Extract the leaf certificate from a pem file. Returning in DER.
+    /// Extract the leaf certificate from a PEM file, returning DER bytes.
     pub fn read_leaf_certificate(&self) -> Result<Vec<u8>, Error> {
-        let mut reader = std::io::BufReader::new(File::open(self.agent.ssl_certificate())?);
-        let certificate = rustls_pemfile::read_one(&mut reader)?;
-        if let Some(rustls_pemfile::Item::X509Certificate(certificate)) = certificate {
-            Ok(certificate.to_vec())
-        } else {
-            Err(Error::Certificate(format!(
-                "No PEM certificate found in {:?}",
-                self.agent.ssl_certificate()
-            )))
+        match CertificateDer::from_pem_file(self.agent.ssl_certificate()) {
+            Ok(cert) => Ok(cert.to_vec()),
+            Err(e) => {
+                use rustls_pki_types::pem::Error as PemError;
+                match e {
+                    PemError::NoItemsFound => Err(Error::Certificate(format!(
+                        "No PEM certificate found in {:?}",
+                        self.agent.ssl_certificate()
+                    ))),
+                    other => Err(Error::Certificate(format!(
+                        "Unable to parse PEM certificate: {}",
+                        other
+                    ))),
+                }
+            }
         }
     }
 }

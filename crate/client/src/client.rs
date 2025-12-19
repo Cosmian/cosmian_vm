@@ -1,7 +1,7 @@
 use std::{io::Write, sync::Arc, thread::sleep, time::Duration};
 
-use http::{HeaderMap, HeaderValue, StatusCode};
-use reqwest::{Client, ClientBuilder, Response, Url};
+use reqwest::header::{HeaderMap, HeaderValue};
+use reqwest::{Client, ClientBuilder, Response, StatusCode, Url};
 use rustls::{client::WebPkiVerifier, Certificate};
 use serde::{Deserialize, Serialize};
 use tpm_quote::PcrHashMethod;

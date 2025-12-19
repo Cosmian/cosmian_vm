@@ -109,7 +109,7 @@ repos:
         args: [--skip-string-normalization]
 
   - repo: https://github.com/Cosmian/git-hooks.git
-    rev: v1.0.27
+    rev: v1.0.42
     hooks:
       - id: cargo-format
       # - id: dprint-toml-fix
@@ -117,15 +117,15 @@ repos:
       # - id: cargo-update
       - id: cargo-machete
       - id: cargo-tests-all
-      - id: cargo-outdated
-      - id: clippy-autofix-all
-      - id: clippy-autofix-pedantic
-      - id: clippy-autofix-others
+      - id: nightly-clippy-autofix-unreachable-pub
+      - id: nightly-clippy-autofix-all-targets-all-features
+      - id: nightly-clippy-autofix-all-targets
       - id: clippy-all-targets-all-features
+      - id: clippy-all-targets
       - id: cargo-format # in last due to clippy fixes
 
   - repo: https://github.com/EmbarkStudios/cargo-deny
-    rev: 0.16.1 # choose your preferred tag
+    rev: 0.18.2
     hooks:
       - id: cargo-deny
         args: [--all-features, check]     # optionally modify the arguments for cargo-deny (default arguments shown here)
