@@ -33,7 +33,7 @@ rand = { workspace = true }
 rand_chacha = { workspace = true }
 # Important: align the rustls version with actix rustls dependency
 rustls = "0.22"
-rustls-pemfile = "2.1"
+rustls-pki-types = "1.13"
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha1 = { workspace = true }
