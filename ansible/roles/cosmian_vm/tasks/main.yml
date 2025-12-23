@@ -22,7 +22,7 @@
     var: cosmian_vm_version
 
 - name: Install Cosmian VM via RPM package
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Declare package name
       ansible.builtin.set_fact:

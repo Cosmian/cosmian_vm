@@ -26,7 +26,7 @@
     var: cosmian_vm_version
 
 - name: Install Cosmian VM via RPM package
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
@@ -68,7 +68,7 @@
         deb: /tmp/{{ cosmian_vm_agent_package_name }}
 
 - name: Add SELinux context for cosmian_vm_agent
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   ansible.builtin.shell: |
     set -exo pipefail
     semanage fcontext -a -t cosmiand_exec_t /usr/sbin/cosmian_vm_agent
@@ -81,7 +81,7 @@
   changed_when: true
 
 - name: Open ports on RHEL
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Start firewalld service
       ansible.builtin.service:

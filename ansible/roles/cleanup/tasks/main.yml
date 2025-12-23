@@ -56,7 +56,7 @@
 
 - name: Clean old kernel images
   tags: clean_old_kernels
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   block:
     - name: Get installed versions of all packages
       ansible.builtin.package_facts:

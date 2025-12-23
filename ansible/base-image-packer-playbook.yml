@@ -5,6 +5,8 @@
   roles:
     - role: check_cpu
       tags: role-check-cpu
+    - role: tmpfs
+      tags: role-tmpfs
     - role: upgrade
       tags: role-upgrade
     - role: tpm
@@ -37,10 +39,10 @@
 
     - name: Display /proc/cmdline
       ansible.builtin.debug:
-        var: cmdline
+        var: base_image_packer_playbook_cmdline
 
     - name: Display Redhat security updates
-      when: ansible_distribution == 'RedHat'
+      when: ansible_distribution == 'Rocky'
       block:
         - name: Display security available updates
           ansible.builtin.shell:

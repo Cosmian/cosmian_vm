@@ -8,7 +8,7 @@
     state: absent
 
 - name: Remove cosmian-vm-agent on RedHat
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'Rocky'
   ansible.builtin.dnf:
     name: cosmian_vm_agent
     state: absent

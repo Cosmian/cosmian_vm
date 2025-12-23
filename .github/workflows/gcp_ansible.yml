@@ -27,7 +27,7 @@ env:
 jobs:
   test-ansible:
     name: Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       id-token: write
@@ -75,8 +75,8 @@ jobs:
             IMAGE_OPTIONS="--image-project=ubuntu-os-cloud --project $GCP_DEV_PROJECT"
             IMAGE_NAME="ubuntu-2404-noble-amd64-v20250805"
           else
-            IMAGE_OPTIONS="--image-project=rhel-cloud --project $GCP_DEV_PROJECT"
-            IMAGE_NAME="rhel-9-v20251016"
+            IMAGE_OPTIONS="--image-project=rocky-linux-cloud --project $GCP_DEV_PROJECT"
+            IMAGE_NAME="rocky-linux-10-v20251113"
           fi
 
           if [ "${{ inputs.product }}" = "ai-runner" ]; then
@@ -130,6 +130,7 @@ jobs:
         run: |
           set -ex
           cd ansible
+          python3 -m pip --version
           python3 -m pip install -r python_modules.txt
 
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
@@ -138,11 +139,8 @@ jobs:
           echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> $GITHUB_ENV
 
           export ANSIBLE_HOST_KEY_CHECKING=False
-          for i in {1..1}
-          do
-            echo "Iteration: $i"
-            ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, --private-key=/home/runner/.ssh/id_rsa -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --skip-tags role-cleanup
-          done
+          export ANSIBLE_SSH_RETRIES=3
+          ansible-playbook ${{ inputs.product }}-playbook.yml -i ${IP_ADDR}, --private-key="${HOME}/.ssh/id_rsa" --timeout 60 -u cosmian -e cosmian_vm_version=$COSMIAN_VM_VERSION -e cosmian_kms_version=${{ inputs.kms-version }} -e cosmian_ai_runner_version=${{ inputs.ai-runner-version }} --skip-tags role-cleanup
 
       - name: Stop and delete GCP instance
         if: success() || cancelled()

@@ -75,7 +75,7 @@ assets = [
     "500",
   ],
   [
-    "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.23.100.0",
+    "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2",
     "lib/x86_64-linux-gnu/libtdx_attest.so.1",
     "500",
   ],
@@ -118,7 +118,7 @@ systemd-units = [
 [package.metadata.generate-rpm]
 license = "BUSL-1.1"
 assets = [
-  { source = "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.23.100.0", dest = "/usr/local/lib/libtdx_attest.so.1", mode = "500" },
+  { source = "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2", dest = "/usr/local/lib/libtdx_attest.so.1", mode = "500" },
   { source = "target/release/cosmian_vm_agent", dest = "/usr/sbin/cosmian_vm_agent", mode = "500" },
   { source = "target/release/cosmian_certtool", dest = "/usr/sbin/cosmian_certtool", mode = "500" },
   { source = "../../pkg/cosmian_fstool", dest = "/usr/sbin/cosmian_fstool", mode = "500" },

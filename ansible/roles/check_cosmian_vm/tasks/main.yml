@@ -24,6 +24,7 @@
 
 - name: Reboot before anything to test boot of systemd services
   ansible.builtin.reboot:
+    reboot_command: systemctl reboot
     connect_timeout: 3600
     reboot_timeout: 3600
   when: check_cosmian_vm_test_reboot
@@ -120,14 +121,14 @@
     path: /var/lib/cosmian_vm/data/luks_password
     state: present
 
-- name: Read LUKS password
-  ansible.builtin.slurp:
-    src: /var/lib/cosmian_vm/data/luks_password
-  register: check_cosmian_vm_luks_password
+# - name: Read LUKS password
+#   ansible.builtin.slurp:
+#     src: /var/lib/cosmian_vm/data/luks_password
+#   register: check_cosmian_vm_luks_password
 
-- name: Display LUKS password
-  ansible.builtin.debug:
-    var: "{{ check_cosmian_vm_luks_password['content'] | b64decode }}"
+# - name: Display LUKS password
+#   ansible.builtin.debug:
+#     var: "{{ check_cosmian_vm_luks_password['content'] | b64decode }}"
 
 - name: Check if port 5555 is locally listening on {{ inventory_hostname }}
   ansible.builtin.wait_for:
@@ -217,6 +218,7 @@
   block:
     - name: Reboot after snapshot
       ansible.builtin.reboot:
+        reboot_command: systemctl reboot
         connect_timeout: 3600
         reboot_timeout: 3600
 
