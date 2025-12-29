@@ -90,7 +90,7 @@ Install the Cosmian VM CLI on a local machine
 
     ```console title="On the local machine"
     sudo dnf update && dnf install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.20/rhel9/cosmian_vm-1.3.20-1.x86_64.rpm
+    wget https://package.cosmian.com/cosmian_vm/1.3.20/rhel10/cosmian_vm-1.3.20-1.x86_64.rpm
     sudo dnf install ./cosmian_vm-1.3.20-1.x86_64.rpm
     cosmian_vm --version
     ```

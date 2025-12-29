@@ -84,15 +84,10 @@ jobs:
           rm -rf target/generate-rpm
           cargo install --version 0.14.1 cargo-generate-rpm --force
           cargo install --version 2.4.0 cargo-deb --force
-          if [[ ${{ inputs.distrib }} = *'22'* ]]; then
-            cargo deb -p cosmian_vm
-            cargo deb -p cosmian_vm_agent
-            cargo generate-rpm -p crate/cli
-            cargo generate-rpm -p crate/agent --metadata-overwrite=pkg/rpm/scriptlets.toml
-          else
-            cargo deb -p cosmian_vm
-            cargo deb -p cosmian_vm_agent
-          fi
+          cargo deb -p cosmian_vm
+          cargo deb -p cosmian_vm_agent
+          cargo generate-rpm -p crate/cli
+          cargo generate-rpm -p crate/agent --metadata-overwrite=pkg/rpm/scriptlets.toml
 
       - name: Upload artifacts
         if: steps.cargo-cache.outputs.cache-hit != 'true'
