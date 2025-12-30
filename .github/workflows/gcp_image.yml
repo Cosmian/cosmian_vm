@@ -190,7 +190,6 @@ jobs:
             --zone "$ZONE" \
             --min-cpu-platform="$MIN_CPU_PLATFORM" \
             --confidential-compute-type="$CONFIDENTIAL_COMPUTE_TYPE" \
-            --shielded-secure-boot \
             --image="$IMAGE_NAME" \
             --image-project="$GCP_DEV_PROJECT" \
             --project "$GCP_DEV_PROJECT" \

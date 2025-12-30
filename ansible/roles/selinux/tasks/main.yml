@@ -6,7 +6,9 @@
   block:
     - name: Install policycoreutils
       ansible.builtin.dnf:
-        name: policycoreutils
+        name:
+          - policycoreutils
+          - policycoreutils-python-utils
         state: present
         update_cache: true
 

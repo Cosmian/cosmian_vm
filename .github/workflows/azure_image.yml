@@ -137,7 +137,6 @@ jobs:
             --os-disk-security-encryption-type VMGuestStateOnly \
             --size $VM_SIZE \
             --enable-vtpm true \
-            --enable-secure-boot true \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --data-disk-delete-option delete \

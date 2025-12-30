@@ -17,7 +17,6 @@ if [ "$TECHNO" = "tdx" ]; then
     --resource-group packer-snp \
     --name "$NAME" \
     --size Standard_DC2es_v5 \
-    --enable-secure-boot true \
     --image "Canonical:ubuntu-24_04-lts:cvm:latest" \
     --public-ip-sku Standard \
     --admin-username azureuser \
@@ -45,7 +44,6 @@ else
     --os-disk-security-encryption-type VMGuestStateOnly \
     --size Standard_DC2ads_v5 \
     --enable-vtpm true \
-    --enable-secure-boot true \
     --nic-delete-option delete \
     --os-disk-delete-option delete \
     --data-disk-delete-option delete \

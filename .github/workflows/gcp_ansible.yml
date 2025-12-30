@@ -93,7 +93,6 @@ jobs:
             --zone "$ZONE" \
             --min-cpu-platform="$MIN_CPU_PLATFORM" \
             --confidential-compute-type="$CONFIDENTIAL_COMPUTE_TYPE" \
-            --shielded-secure-boot \
             --image="$IMAGE_NAME" \
             $IMAGE_OPTIONS \
             --tags "$CI_INSTANCE-fw" \

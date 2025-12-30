@@ -79,7 +79,6 @@ else
     --zone europe-west4-a \
     --min-cpu-platform='AMD Milan' \
     --confidential-compute-type=SEV_SNP \
-    --shielded-secure-boot \
     --image=$IMAGE --image-project=$IMAGE_PROJECT \
     --project cosmian-dev \
     --tags "$NAME-cli" \
