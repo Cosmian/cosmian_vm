@@ -160,7 +160,7 @@ Connect to the Cosmian VM instance through SSH to perform this setup.
     [Service]
     Type=simple
     User=root
-    ExecStart=/usr/local/sbin/my_app
+    ExecStart=/usr/local/local/bin/my_app
     Restart=on-failure
     RestartSec=3s
     Environment="MY_APP_CONF=/var/lib/cosmian_vm/data/app/app.conf"
@@ -552,10 +552,11 @@ This is an abstract of the updated file tree:
 │       └── system
 │           └── cosmian_vm_agent.service
 ├── usr
-│   └── sbin
-│       ├── cosmian_certtool
-│       ├── cosmian_fstool
-│       └── cosmian_vm_agent
+│   └── local
+│       └── bin
+│           ├── cosmian_certtool
+│           ├── cosmian_fstool
+│           └── cosmian_vm_agent
 └── var
     └── lib
         └── cosmian_vm

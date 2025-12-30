@@ -58,7 +58,7 @@
     cmd: |
       rm -rf /var/lib/cosmian_vm
       rm -rf /etc/cosmian_vm
-      rm -f /usr/sbin/cosmian_vm_agent
+      rm -f /usr/local/bin/cosmian_vm_agent
   register: cleanup_cosmian_vm_agent_cmd_output
   changed_when: cleanup_cosmian_vm_agent_cmd_output.rc != 0
 
