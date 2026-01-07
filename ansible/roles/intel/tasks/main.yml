@@ -32,23 +32,28 @@
         dest: /tmp/
         mode: "0600"
 
+    - name: Creates directory
+      ansible.builtin.file:
+        path: /opt/intel
+        state: directory
+        mode: "0775"
+
     - name: Extract the tar.gz file
       ansible.builtin.unarchive:
         src: /tmp/sgx_rpm_local_repo.tgz
-        dest: /srv/
+        dest: /opt/intel
         remote_src: true
         mode: "0600"
 
-    - name: Set up local RPM repository
-      ansible.builtin.blockinfile:
-        path: /etc/yum.repos.d/tdx-attestation.repo
-        block: |
-          [tdx-attestation-local]
-          name=tdx-attestation-local
-          baseurl=file:///srv/sgx_rpm_local_repo
-          enabled=1
-        create: true
-        mode: "0600"
+    - name: Setup local RPM repository
+      ansible.builtin.shell: |
+        set -exo pipefail
+        dnf config-manager --add-repo file:///opt/intel/sgx_rpm_local_repo
+        rpm --import /opt/intel/sgx_rpm_local_repo/keys/intel-sgx.key
+        dnf config-manager --save --setopt=*sgx_rpm_local_repo.gpgkey=file:///opt/intel/sgx_rpm_local_repo/keys/intel-sgx.key
+      args:
+        executable: /bin/bash
+      changed_when: true
 
     - name: Update cache and install libtdx-attest-devel package
       ansible.builtin.dnf:
@@ -57,12 +62,11 @@
           - libtdx-attest-devel
         state: present
         update_cache: true
-        disable_gpg_check: true
+        disable_gpg_check: false
       tags: libtdx-attest
 
     - name: Remove the update grub configuration script
       ansible.builtin.file:
         path: |
           /tmp/sgx_rpm_local_repo.tgz
-          /srv/sgx_rpm_local_repo
         state: absent
