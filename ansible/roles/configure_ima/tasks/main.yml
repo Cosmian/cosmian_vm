@@ -68,6 +68,8 @@
         cmd: |
           find / -fstype xfs -type f -uid 0 -exec head -c 0 '{}' \;
       changed_when: true
+      ignore_errors: true
+      register: configure_ima_errors_register
 
     - name: Remove kernel parameter to re-label the system
       ansible.builtin.shell: |
