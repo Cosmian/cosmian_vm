@@ -87,3 +87,9 @@
     - name: Debug shim-x64 version after update
       ansible.builtin.debug:
         msg: "shim-x64 version after update: {{ upgrade_updated_packages['ansible_facts']['packages']['shim-x64'][0]['version'] }}"
+
+- name: Reboot
+  ansible.builtin.reboot:
+    reboot_command: systemctl reboot
+    connect_timeout: 3600
+    reboot_timeout: 3600
