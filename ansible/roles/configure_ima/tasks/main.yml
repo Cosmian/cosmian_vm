@@ -103,6 +103,16 @@
       args:
         executable: /bin/bash
       changed_when: true
+      ignore_errors: true
+      become: true
+      register: configure_ima_errors_register
+
+    - name: Setup IMA policy 2
+      ansible.builtin.shell: |
+        ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
+      args:
+        executable: /bin/bash
+      changed_when: true
       become: true
 
     - name: Reboot
