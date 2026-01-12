@@ -102,6 +102,8 @@
         cmd: |
           ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
       changed_when: true
+      become: true
+      register: configure_ima_errors_register
 
     - name: Reboot
       ansible.builtin.reboot:
