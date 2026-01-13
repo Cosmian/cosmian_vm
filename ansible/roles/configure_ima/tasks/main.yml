@@ -97,19 +97,38 @@
       ansible.builtin.command: setsebool -P httpd_can_network_connect 1
       changed_when: true
 
-    - name: Setup IMA policy
-      ansible.builtin.shell: |
-        ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
-      args:
-        executable: /bin/bash
-      changed_when: true
-      ignore_errors: true
-      become: true
-      register: configure_ima_errors_register
+    # - name: Setup IMA policy
+    #   ansible.builtin.shell: |
+    #     ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
+    #   args:
+    #     executable: /bin/bash
+    #   changed_when: true
+    #   ignore_errors: true
+    #   become: true
+    #   register: configure_ima_errors_register
 
     - name: Setup IMA policy 2
       ansible.builtin.shell: |
-        ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
+        # extracted from /usr/bin/ima-setup script
+        IMA_SYSTEMD_POLICY=/etc/ima/ima-policy
+        IMA_POLICY_SYSFS=/sys/kernel/security/ima/policy
+        ima_policy_path=/usr/share/ima/policies/03-cosmian-remote-attestation
+        if ! test -f "$ima_policy_path"; then
+                echo "$ima_policy_path doesn't exist"
+                return 1
+        fi
+        if ! echo "$ima_policy_path" >"$IMA_POLICY_SYSFS"; then
+                echo "$ima_policy_path can't be loaded"
+                return 1
+        fi
+        # Let systemd load the IMA policy which will load LSM rules first so IMA
+        # policy containing rules like "appraise obj_type=ifconfig_exec_t" can be
+        # loaded
+        [[ -e /etc/ima ]] || mkdir -p /etc/ima/
+        if ! cp --preserve=xattr "$ima_policy_path" "$IMA_SYSTEMD_POLICY"; then
+                echo "Failed to copy $ima_policy_path to $IMA_SYSTEMD_POLICY"
+                return 1
+        fi
       args:
         executable: /bin/bash
       changed_when: true
