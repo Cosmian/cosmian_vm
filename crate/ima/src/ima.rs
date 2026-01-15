@@ -12,6 +12,14 @@ use crate::error::Error;
 const EVENT_ENTRY_SIZE: usize = 28;
 const IMA_ASCII_PATH: &str = "/sys/kernel/security/ima/ascii_runtime_measurements";
 const IMA_BINARY_PATH: &str = "/sys/kernel/security/ima/binary_runtime_measurements";
+const EXCLUDED_HASH_DGST: [&[u8]; 3] = [
+    // sha1(b"")
+    b"\xda\x39\xa3\xee\x5e\x6b\x4b\x0d\x32\x55\xbf\xef\x95\x60\x18\x90\xaf\xd8\x07\x09",
+    // sha256(b"")
+    b"\xe3\xb0\xc4\x42\x98\xfc\x1c\x14\x9a\xfb\xf4\xc8\x99\x6f\xb9\x24\x27\xae\x41\xe4\x64\x9b\x93\x4c\xa4\x95\x99\x1b\x78\x52\xb8\x55",
+    // sha512(b"")
+    b"\xcf\x83\xe1\x35\x7e\xef\xb8\xbd\xf1\x54\x28\x50\xd6\x6d\x80\x07\xd6\x20\xe4\x05\x0b\x57\x15\xdc\x83\xf4\xa9\x21\xd3\x6c\xe9\xce\x47\xd0\xd1\x3c\x5d\x85\xf2\xb0\xff\x83\x18\xd2\x87\x7e\xec\x2f\x63\xb9\x31\xbd\x47\x41\x7a\x81\xa5\x38\x32\x7a\xf9\x27\xda\x3e"
+];
 
 /// Read the ascii IMA values
 pub fn read_ima_ascii() -> Result<String, Error> {
@@ -558,6 +566,7 @@ impl Ima {
                         // In these two cases, IMA cannot know what is actually read,
                         // and invalidates the measurement with all zeros
                         && entry.filedata_hash != vec![0; entry.filedata_hash.len()]
+                        && !EXCLUDED_HASH_DGST.contains(&entry.filedata_hash.as_ref())
                         && !snapshot_ima.contains(&(entry.filename_hint.clone(), &entry.filedata_hash)))
                     .then_some(entry.clone())
                 })
