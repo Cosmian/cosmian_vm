@@ -7,5 +7,5 @@
     src: tmpfs
     path: /var/tmp
     opts: size=1G
-    state: present
+    state: mounted
     fstype: tmpfs
