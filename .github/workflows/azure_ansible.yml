@@ -66,7 +66,7 @@ jobs:
             VM_SIZE="Standard_DC2ads_v5"
           else
             # TDX
-            VM_SIZE="Standard_DC2es_v5"
+            VM_SIZE="Standard_DC2es_v6"
           fi
 
           timeout 30m bash -c "until az vm create -g $RESOURCE_GROUP -n $CI_INSTANCE \
