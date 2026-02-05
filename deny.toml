@@ -63,6 +63,8 @@ feature-depth = 1
 # More documentation for the advisories section can be found here:
 # https://embarkstudios.github.io/cargo-deny/checks/advisories/cfg.html
 [advisories]
+# workaround to pass CI for tests
+unmaintained = "warn"
 # The path where the advisory databases are cloned/fetched into
 #db-path = "$CARGO_HOME/advisory-dbs"
 # The url(s) of the advisory databases to use
@@ -72,6 +74,7 @@ feature-depth = 1
 ignore = [
     "RUSTSEC-2020-0071", # time due to certtool->acme-lib dependency
     "RUSTSEC-2023-0071", # rsa marvin attack and no fixed upgrade
+    "RUSTSEC-2021-0145", # waiting for tdx-attest-rs to be upgraded: atty unmaintained
     "RUSTSEC-2021-0139", # waiting for tdx-attest-rs to be upgraded: ansi_term unmaintained
     "RUSTSEC-2024-0375", # atty unmaintained
     "RUSTSEC-2025-0134", # rustls-pemfile crate is no longer maintained
