@@ -48,7 +48,6 @@ The following table lists security advisories that are currently being tracked o
 | ----------------- | -------------------------------------------------------- | ------- | -------------------------------------------------------- |
 | RUSTSEC-2020-0071 | Potential segfault in time crate                         | Ignored | Dependency via certtool->acme-lib - limited impact       |
 | RUSTSEC-2023-0071 | RSA crate vulnerability affecting signature verification | Ignored | Under evaluation - specific use case may not be affected |
-| RUSTSEC-2021-0145 | atty unmaintained                                        | Ignored | Waiting for tdx-attest-rs to be upgraded                 |
 | RUSTSEC-2021-0139 | ansi_term unmaintained                                   | Ignored | Waiting for tdx-attest-rs to be upgraded                 |
 | RUSTSEC-2024-0375 | atty unmaintained                                        | Ignored | Low priority - related to terminal handling              |
 
