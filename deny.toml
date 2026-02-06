@@ -75,9 +75,9 @@ unused-ignored-advisory = "warn"
 ignore = [
     "RUSTSEC-2020-0071", # time due to certtool->acme-lib dependency
     "RUSTSEC-2023-0071", # rsa marvin attack and no fixed upgrade
-    "RUSTSEC-2021-0145", # waiting for tdx-attest-rs to be upgraded: atty unmaintained
-    "RUSTSEC-2021-0139", # waiting for tdx-attest-rs to be upgraded: ansi_term unmaintained
-    "RUSTSEC-2024-0375", # atty unmaintained
+    # "RUSTSEC-2021-0145", # waiting for tdx-attest-rs to be upgraded: atty unmaintained
+    # "RUSTSEC-2021-0139", # waiting for tdx-attest-rs to be upgraded: ansi_term unmaintained
+    # "RUSTSEC-2024-0375", # atty unmaintained
     "RUSTSEC-2025-0134", # rustls-pemfile crate is no longer maintained
     "RUSTSEC-2025-0141", # bincode crate is no longer maintained
     "RUSTSEC-2026-0007", # Integer overflow in `BytesMut::reserve`
