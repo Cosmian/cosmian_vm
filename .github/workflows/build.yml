@@ -27,7 +27,7 @@ jobs:
         with:
           key: ${{ inputs.distrib }}-${{ github.ref_name }}
           cache-directories: |
-            - /usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.23.100.0
+            - /usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2
 
       - name: Install dependencies
         if: steps.cargo-cache.outputs.cache-hit != 'true'
@@ -102,7 +102,7 @@ jobs:
             target/release/cosmian_vm
             target/release/cosmian_vm_agent
             target/release/cosmian_certtool
-            /usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.23.100.0
+            /usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2
           retention-days: 1
           if-no-files-found: error
 
