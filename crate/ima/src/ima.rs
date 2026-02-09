@@ -545,7 +545,11 @@ impl Ima {
 
     /// Return the couple (file, hash) from the current IMA list not present in the given snapshot
     #[must_use]
-    pub fn compare(&self, snapshot: &HashSet<(String, Vec<u8>)>) -> Self {
+    pub fn compare(
+        &self,
+        snapshot: &HashSet<(String, Vec<u8>)>,
+        whitelist: Option<&HashSet<(String, Vec<u8>)>>,
+    ) -> Self {
         // Pre-process the snapshot to be use later:
         // - Replace all whitespaces in filenames by underscores (to fit IMA filename-hint)
         let snapshot_ima = snapshot
@@ -558,7 +562,7 @@ impl Ima {
                 .entries
                 .iter()
                 .filter_map(|entry| {
-                    (entry.filename_hint != "boot_aggregate"
+                    let entry = (entry.filename_hint != "boot_aggregate"
                         // The kernel prohibits writing and executing a file concurrently.
                         // Other files can be read and written concurrently:
                         // - "open_writers" file already open for write, is opened for read
@@ -568,8 +572,18 @@ impl Ima {
                         && entry.filedata_hash != vec![0; entry.filedata_hash.len()]
                         && !EXCLUDED_HASH_DGST.contains(&entry.filedata_hash.as_ref())
                         && !snapshot_ima.contains(&(entry.filename_hint.clone(), &entry.filedata_hash)))
-                    .then_some(entry.clone())
+                    .then_some(entry.clone());
+
+                    // check if entry belongs to the whitelist
+                    if let Some(whitelist) = whitelist  {
+                        return entry.and_then(|entry| {
+                            (!whitelist.contains(&(entry.filename_hint.clone(), entry.filedata_hash.clone()))).then_some(entry.clone())
+                        });
+                    }
+
+                    entry
                 })
+
                 .collect(),
         }
     }
@@ -982,7 +996,7 @@ mod tests {
             ),
         ]);
 
-        let ret = ima.compare(&snapshot);
+        let ret = ima.compare(&snapshot, None);
 
         assert_eq!(ret.entries.len(), 444);
 
@@ -1042,10 +1056,13 @@ mod tests {
         let line = "10 479a8012721c06d45aedba1791ffab7d995ad30f ima-sig sha1:4f509d391aa126829f746cc3961dc39ffbef21ab /home/cosmian/cosmian_vm_agent_";
         let ima = Ima::try_from(line).expect("Can't parse IMA file");
 
-        let ret = ima.compare(&HashSet::from([(
-            "/home/cosmian/cosmian_vm agent ".to_owned(),
-            hex::decode("4f509d391aa126829f746cc3961dc39ffbef21ab").unwrap(),
-        )]));
+        let ret = ima.compare(
+            &HashSet::from([(
+                "/home/cosmian/cosmian_vm agent ".to_owned(),
+                hex::decode("4f509d391aa126829f746cc3961dc39ffbef21ab").unwrap(),
+            )]),
+            None,
+        );
 
         assert_eq!(ret.entries.len(), 0);
     }
