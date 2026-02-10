@@ -140,104 +140,103 @@
         connect_timeout: 3600
         reboot_timeout: 3600
 
+- name: Configure IMA on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  tags: ima_ubuntu
+  block:
+    - name: Create ima folder
+      ansible.builtin.file:
+        path: /etc/ima
+        state: directory
+        owner: root
+        group: root
+        mode: "0500"
 
-# - name: Create ima folder
-#   ansible.builtin.file:
-#     path: /etc/ima
-#     state: directory
-#     owner: root
-#     group: root
-#     mode: "0500"
-
-# - name: Copy IMA policy for Ubuntu
-#   when: ansible_distribution == 'Ubuntu'
-#   ansible.builtin.template:
-#     src: ima-policy.j2
-#     dest: /etc/ima/ima-policy
-#     owner: root
-#     group: root
-#     mode: u=rwX,g=rX,o=rX
+    - name: Copy IMA policy
+      ansible.builtin.template:
+        src: ima-policy.j2
+        dest: /etc/ima/ima-policy
+        owner: root
+        group: root
+        mode: u=rwX,g=rX,o=rX
 
 
-# - name: Copy the bash script to the remote host (in order to update the grub conf)
-#   when: configure_ima_etc_default_grub.stat.exists
-#   tags: update_grub
-#   ansible.builtin.copy:
-#     content: |
-#       #!/usr/bin/bash
-#       f=/etc/default/grub
+    - name: Copy the bash script to modify grub conf
+      when: configure_ima_etc_default_grub.stat.exists
+      tags: update_grub
+      ansible.builtin.copy:
+        content: |
+          #!/usr/bin/bash
+          f=/etc/default/grub
 
-#       # Template policy
-#       if grep -q ima_policy= $f ; then
-#         # Template policy already set
-#         sed -i 's/ima_policy=[^ "]\+/ima_policy=tcb/' $f
-#       else
-#         # Template policy not set
-#         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
-#       fi
+          # Template policy
+          if grep -q ima_policy= $f ; then
+            # Template policy already set
+            sed -i 's/ima_policy=[^ "]\+/ima_policy=tcb/' $f
+          else
+            # Template policy not set
+            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_policy=tcb\"/ $f
+          fi
 
-#       # Hash method
-#       if grep -q ima_hash= $f ; then
-#         echo "Hash method already set"
-#         sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
-#       else
-#         echo "Hash method not set"
-#         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
-#       fi
+          # Hash method
+          if grep -q ima_hash= $f ; then
+            echo "Hash method already set"
+            sed -i 's/ima_hash=[^ "]\+/ima_hash=sha256/' $f
+          else
+            echo "Hash method not set"
+            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_hash=sha256\"/ $f
+          fi
 
-#       # Template format
-#       if grep -q ima_template= $f ; then
-#         echo "Template format already set"
-#         sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
-#       else
-#         echo "Template format not set"
-#         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
-#       fi
+          # Template format
+          if grep -q ima_template= $f ; then
+            echo "Template format already set"
+            sed -i 's/ima_template=[^ "]\+/ima_template=ima-ng/' $f
+          else
+            echo "Template format not set"
+            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_template=ima-ng\"/ $f
+          fi
 
-#       # Console ttyS0
-#       if grep -q console= $f ; then
-#         echo "console already set"
-#         sed -i 's/console=[^ "]\+/console=ttyS0/' $f
-#       else
-#         echo "console not set"
-#         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ console=ttyS0\"/ $f
-#       fi
+          # Console ttyS0
+          if grep -q console= $f ; then
+            echo "console already set"
+            sed -i 's/console=[^ "]\+/console=ttyS0/' $f
+          else
+            echo "console not set"
+            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ console=ttyS0\"/ $f
+          fi
 
-#       # earlyprintk
-#       if grep -q earlyprintk= $f ; then
-#         echo "earlyprintk already set"
-#         sed -i 's/earlyprintk=[^ "]\+/earlyprintk=ttyS0/' $f
-#       else
-#         echo "earlyprintk not set"
-#         sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
-#       fi
+          # earlyprintk
+          if grep -q earlyprintk= $f ; then
+            echo "earlyprintk already set"
+            sed -i 's/earlyprintk=[^ "]\+/earlyprintk=ttyS0/' $f
+          else
+            echo "earlyprintk not set"
+            sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ earlyprintk=ttyS0\"/ $f
+          fi
 
-#       sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_appraise=log\"/ $f
-#     dest: /tmp/grub.sh
-#     mode: "0700" # Make the script executable
-#     remote_src: true
+          sed -i /GRUB_CMDLINE_LINUX=/s/\"$/\ ima_appraise=log\"/ $f
+        dest: /tmp/grub.sh
+        mode: "0700" # Make the script executable
+        remote_src: true
 
-# - name: Update the grub configuration
-#   when: configure_ima_etc_default_grub.stat.exists
-#   tags: update_grub
-#   ansible.builtin.command: /tmp/grub.sh
-#   register: configure_ima_cmd_output
-#   changed_when: configure_ima_cmd_output.rc != 0
+    - name: Run the bash script to modify grub conf
+      when: configure_ima_etc_default_grub.stat.exists
+      tags: update_grub
+      ansible.builtin.command: /tmp/grub.sh
+      register: configure_ima_cmd_output
+      changed_when: configure_ima_cmd_output.rc != 0
 
-# - name: Remove the update grub configuration script
-#   when: configure_ima_etc_default_grub.stat.exists
-#   ansible.builtin.file:
-#     path: /tmp/grub.sh
-#     state: absent
+    - name: Remove the bash script to modify grub conf
+      when: configure_ima_etc_default_grub.stat.exists
+      ansible.builtin.file:
+        path: /tmp/grub.sh
+        state: absent
 
-# - name: Update grub on Ubuntu
-#   when: ansible_distribution == 'Ubuntu'
-#   block:
-#     - name: Update and upgrade apt packages
-#       ansible.builtin.apt:
-#         name: grub2-common
+    - name: Install package grub2-common
+      ansible.builtin.apt:
+        name: grub2-common
 
-#     - name: Update grub
-#       ansible.builtin.command: update-grub
-#       register: configure_ima_cmd_output
-#       changed_when: configure_ima_cmd_output.rc != 0
+    - name: Update grub
+      ansible.builtin.command: update-grub
+      register: configure_ima_cmd_output
+      changed_when: configure_ima_cmd_output.rc != 0
