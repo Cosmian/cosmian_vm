@@ -107,7 +107,7 @@
     #   become: true
     #   register: configure_ima_errors_register
 
-    - name: Setup IMA policy 2
+    - name: Setup IMA policy
       ansible.builtin.shell: |
         # extracted from /usr/bin/ima-setup script
         IMA_SYSTEMD_POLICY=/etc/ima/ima-policy
