@@ -35,7 +35,7 @@ else
     IMAGE_NAME="Canonical:ubuntu-24_04-lts:cvm:latest"
   else
     # Redhat SEV
-    IMAGE_NAME="redhat:rhel-cvm:9_4_cvm:latest"
+    IMAGE_NAME="RedHat:rhel-cvm:10_1_cvm:10.1.2026011314"
   fi
 
   az vm create -g packer-snp -n "$NAME" \

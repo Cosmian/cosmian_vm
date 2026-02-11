@@ -59,7 +59,7 @@ jobs:
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             IMAGE_TO_INSTANTIATE="Canonical:ubuntu-24_04-lts:cvm:latest"
           else
-            IMAGE_TO_INSTANTIATE="redhat:rhel-cvm:9_4_cvm:latest"
+            IMAGE_TO_INSTANTIATE="RedHat:rhel-cvm:10_1_cvm:10.1.2026011314"
           fi
 
           if [ "${{ inputs.techno }}" = "sev" ]; then
