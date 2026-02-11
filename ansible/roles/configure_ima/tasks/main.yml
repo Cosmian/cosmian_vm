@@ -97,17 +97,19 @@
       ansible.builtin.command: setsebool -P httpd_can_network_connect 1
       changed_when: true
 
-    # - name: Setup IMA policy
-    #   ansible.builtin.shell: |
-    #     ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
-    #   args:
-    #     executable: /bin/bash
-    #   changed_when: true
-    #   ignore_errors: true
-    #   become: true
-    #   register: configure_ima_errors_register
+    - name: Setup IMA policy for RHEL
+      when: ansible_distribution == 'RedHat'
+      ansible.builtin.shell: |
+        ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
+      args:
+        executable: /bin/bash
+      changed_when: true
+      ignore_errors: true
+      become: true
+      register: configure_ima_errors_register
 
-    - name: Setup IMA policy
+    - name: Setup IMA policy for Rocky
+      when: ansible_distribution == 'Rocky'
       ansible.builtin.shell: |
         # extracted from /usr/bin/ima-setup script
         IMA_SYSTEMD_POLICY=/etc/ima/ima-policy
