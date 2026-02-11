@@ -7,11 +7,11 @@
 
 - name: Check OS distribution
   ansible.builtin.debug:
-    var: ansible_distribution
+    var: ansible_distribution_file_variety
 
 - name: Check OS version
   ansible.builtin.debug:
-    var: ansible_distribution_version
+    var: ansible_distribution_file_variety_version
 
 - name: Check package version
   ansible.builtin.debug:
@@ -22,7 +22,7 @@
     var: cosmian_vm_version
 
 - name: Install Cosmian VM via RPM package
-  when: ansible_distribution == 'Rocky'
+  when: ansible_distribution_file_variety == 'RedHat'
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
@@ -44,7 +44,7 @@
       tags: install_rpm
 
 - name: Install Cosmian VM via Debian package
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution_file_variety == 'Debian'
   tags: install_deb
   block:
     - name: Declare package name

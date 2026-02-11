@@ -6,7 +6,7 @@
   ansible.builtin.gather_facts:
 
 - name: Update and upgrade apt packages
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution_file_variety == 'Debian'
   block:
     - name: Update and upgrade apt packages
       ansible.builtin.apt:
@@ -16,7 +16,7 @@
       tags: ubuntu
 
 - name: Upgrade all packages (dnf)
-  when: ansible_distribution == 'Rocky'
+  when: ansible_distribution_file_variety == 'RedHat'
   block:
     - name: Upgrade all packages (dnf)
       ansible.builtin.dnf:
@@ -24,7 +24,7 @@
         state: latest  # noqa package-latest
 
 - name: Upgrade all packages
-  when: ansible_distribution == 'Rocky'
+  when: ansible_distribution_file_variety == 'RedHat'
   block:
     - name: Install required packages
       ansible.builtin.dnf:
@@ -57,7 +57,7 @@
         var: upgrade_dnf_security_update
 
 - name: Tasks for Azure platform (Security Check Failure)
-  when: ansible_distribution == 'Rocky' and ansible_facts['bios_vendor'] == 'Microsoft Corporation'
+  when: ansible_distribution_file_variety == 'RedHat' and ansible_facts['bios_vendor'] == 'Microsoft Corporation'
   tags: shim
   block:
     - name: Get installed version of shim-x64

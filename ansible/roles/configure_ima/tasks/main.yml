@@ -6,7 +6,7 @@
 
 - name: Check OS distribution
   ansible.builtin.debug:
-    var: ansible_distribution
+    var: ansible_distribution_file_variety
 
 - name: Check grub file path
   ansible.builtin.stat:
@@ -15,7 +15,7 @@
   tags: update_grub
 
 - name: Configure IMA on Rocky Linux
-  when: ansible_distribution == 'Rocky'
+  when: ansible_distribution_file_variety == 'RedHat'
   tags: ima_rocky
   block:
     - name: Install packages to configure IMA
@@ -141,7 +141,7 @@
         reboot_timeout: 3600
 
 - name: Configure IMA on Ubuntu
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution_file_variety == 'Debian'
   tags: ima_ubuntu
   block:
     - name: Create ima folder
