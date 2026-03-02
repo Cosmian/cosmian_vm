@@ -159,15 +159,6 @@
     mode: "0644"
   when: kms_fips == "-fips"
 
-- name: Verify file presence
-  ansible.builtin.stat:
-    path: /var/lib/cosmian_vm/data/app.conf
-  register: appconf
-
-- name: Debug file presence
-  ansible.builtin.debug:
-    var: appconf.stat
-
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
     path: /var/www/html
