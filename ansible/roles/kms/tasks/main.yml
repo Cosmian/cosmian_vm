@@ -22,7 +22,7 @@
     var: kms_fips
 
 - name: Prepare repo file for official Redis Open Source
-  when: ansible_distribution == 'RedHat' and not kms_fips
+  when: ansible_distribution == 'RedHat' and kms_fips == "not-fips"
   block:
     - name: Create the Redis repo file
       ansible.builtin.copy:
@@ -47,7 +47,7 @@
       - redis
     state: present
     update_cache: true
-  when: not kms_fips
+  when: kms_fips == "not-fips"
 
 - name: Install prerequisites packages (FIPS mode)
   ansible.builtin.package:
@@ -55,7 +55,8 @@
       - nginx
     state: present
     update_cache: true
-  when: kms_fips
+  when: kms_fips == "-fips"
+
 
 - name: Install Cosmian VM via RPM package
   when: ansible_distribution == 'RedHat'
@@ -86,7 +87,7 @@
     - name: Declare package name
       ansible.builtin.set_fact:
         kms_package_name: cosmian-kms-server-non-fips-static-openssl_{{ kms_package_version }}_amd64.deb
-      when: not kms_fips
+      when: kms_fips == "not-fips"
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
@@ -95,12 +96,13 @@
         mode: "0755"
         group: root
         owner: root
-      when: not kms_fips
+      when: kms_fips == "not-fips"
 
     - name: Declare package name
       ansible.builtin.set_fact:
         kms_package_name: cosmian-kms-server-fips-static-openssl_{{ kms_package_version }}_amd64.deb
-      when: kms_fips
+      when: kms_fips == "-fips"
+
 
     - name: Download Debian package from package.cosmian.com (FIPS mode)
       ansible.builtin.get_url:
@@ -109,7 +111,7 @@
         mode: "0755"
         group: root
         owner: root
-      when: kms_fips
+      when: kms_fips == "-fips"
 
     - name: Install Cosmian KMS Debian package
       ansible.builtin.apt:
@@ -131,22 +133,22 @@
     group: root
     mode: "0644"
 
-- name: Create the directory /var/lib/cosmian_vm/data/app if it does not exist
+- name: Create the directory /var/lib/cosmian_vm/data/ if it does not exist
   ansible.builtin.file:
-    path: /var/lib/cosmian_vm/data/app
+    path: /var/lib/cosmian_vm/data
     state: directory
     owner: root
     group: root
     mode: "0644"
 
-- name: Create default Cosmian KMS configuration
+- name: Create Cosmian KMS configuration
   ansible.builtin.template:
     src: kms.toml.j2
     dest: /var/lib/cosmian_vm/data/app.conf
     owner: root
     group: root
     mode: "0644"
-  when: not kms_fips
+  when: kms_fips == "not-fips"
 
 - name: Create FIPS-compliant Cosmian KMS configuration
   ansible.builtin.template:
@@ -155,7 +157,7 @@
     owner: root
     group: root
     mode: "0644"
-  when: kms_fips
+  when: kms_fips == "-fips"
 
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
@@ -215,7 +217,7 @@
     enabled: true
     state: stopped
     daemon_reload: true
-  when: not kms_fips
+  when: kms_fips == "not-fips"
 
 - name: Open ports on RHEL
   when: ansible_distribution == 'RedHat'
