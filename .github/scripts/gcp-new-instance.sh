@@ -64,8 +64,8 @@ else
     IMAGE="cosmian-vm-1-3-14-ai-runner-1-0-1-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rocky-linux-10-optimized-gcp-v20251215"
-    IMAGE_PROJECT="rocky-linux-cloud"
+    IMAGE="rhel-10-v20260210"
+    IMAGE_PROJECT="rhel-cloud"
   fi
 
   if [ "$IMAGE" = "cosmian-vm-1-3-14-ai-runner-1-0-1-sev-rhel" ]; then
