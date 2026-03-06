@@ -29,23 +29,6 @@
           - rpm-plugin-ima
         state: present
 
-    - name: Copy IMA policy
-      ansible.builtin.template:
-        src: ima-policy-selinux.j2
-        dest: /usr/share/ima/policies/03-cosmian-remote-attestation
-        owner: root
-        group: root
-        mode: u=rwX,g=rX,o=rX
-
-    - name: Add SELinux context for IMA policy
-      ansible.builtin.shell: |
-        set -exo pipefail
-        semanage fcontext -a -t usr_t -s system_u /usr/share/ima/policies/03-cosmian-remote-attestation
-        restorecon -vF /usr/share/ima/policies/03-cosmian-remote-attestation
-      args:
-        executable: /bin/bash
-      changed_when: true
-
     - name: Add kernel parameter to re-label the whole system
       ansible.builtin.command:
         cmd: |
@@ -63,6 +46,23 @@
         reboot_command: systemctl reboot
         connect_timeout: 3600
         reboot_timeout: 3600
+
+    - name: Copy IMA policy
+      ansible.builtin.template:
+        src: ima-policy-selinux.j2
+        dest: /usr/share/ima/policies/03-cosmian-remote-attestation
+        owner: root
+        group: root
+        mode: u=rwX,g=rX,o=rX
+
+    - name: Add SELinux context for IMA policy
+      ansible.builtin.shell: |
+        set -exo pipefail
+        semanage fcontext -a -t usr_t -s system_u /usr/share/ima/policies/03-cosmian-remote-attestation
+        restorecon -vF /usr/share/ima/policies/03-cosmian-remote-attestation
+      args:
+        executable: /bin/bash
+      changed_when: true
 
     - name: Re-label the whole system
       ansible.builtin.command:
