@@ -3,7 +3,7 @@
 
 - name: Reboot before anything - {{ check_app_name }}
   ansible.builtin.reboot:
-    connect_timeout: 3600
+    connect_timeout: 60
     reboot_timeout: 3600
   when: check_app_test_reboot # equals to false when AWS (too many instability trouble)
 

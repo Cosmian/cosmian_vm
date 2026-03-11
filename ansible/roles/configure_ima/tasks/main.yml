@@ -44,7 +44,7 @@
     - name: Reboot
       ansible.builtin.reboot:
         reboot_command: systemctl reboot
-        connect_timeout: 3600
+        connect_timeout: 60
         reboot_timeout: 3600
 
     - name: Copy IMA policy
@@ -128,7 +128,7 @@
     - name: Reboot
       ansible.builtin.reboot:
         reboot_command: systemctl reboot
-        connect_timeout: 3600
+        connect_timeout: 60
         reboot_timeout: 3600
 
     - name: SELinux - allow https
@@ -138,7 +138,7 @@
     - name: Reboot
       ansible.builtin.reboot:
         reboot_command: systemctl reboot
-        connect_timeout: 3600
+        connect_timeout: 60
         reboot_timeout: 3600
 
 - name: Configure IMA on Ubuntu

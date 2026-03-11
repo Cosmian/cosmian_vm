@@ -25,7 +25,7 @@
 - name: Reboot before anything to test boot of systemd services
   ansible.builtin.reboot:
     reboot_command: systemctl reboot
-    connect_timeout: 3600
+    connect_timeout: 60
     reboot_timeout: 3600
   when: check_cosmian_vm_test_reboot
 
@@ -219,7 +219,7 @@
     - name: Reboot after snapshot
       ansible.builtin.reboot:
         reboot_command: systemctl reboot
-        connect_timeout: 3600
+        connect_timeout: 60
         reboot_timeout: 3600
 
     - name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem

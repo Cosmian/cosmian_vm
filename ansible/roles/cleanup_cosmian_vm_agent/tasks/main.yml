@@ -64,5 +64,5 @@
 
 - name: Reboot since systemd services have been disabled
   ansible.builtin.reboot:
-    connect_timeout: 3600
+    connect_timeout: 60
     reboot_timeout: 3600
