@@ -4,6 +4,8 @@
 
 - *AWS*:
   - *Ubuntu*: update from `ubuntu-2404-noble-amd64-v20250610` to `ubuntu-2404-noble-amd64-v20251212`
+- *GCP*:
+  - *Ubuntu*: update from `ubuntu-2404-noble-amd64-v20251021` to `ubuntu-2404-noble-amd64-v20260225`
 
 ## [0.1.15] - 2025-10-27
 

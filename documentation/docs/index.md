@@ -139,8 +139,8 @@ _Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on t
 
 |                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20251021 |  Ubuntu  | 24.04      | 6.14.0-1017-gcp               | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20251021 |  Ubuntu  | 24.04      | 6.14.0-1017-gcp               | base-image-X-Y-Z-ubuntu-sev |
+| GCP - Intel TDX | ubuntu-2404-noble-amd64-v20260225 |  Ubuntu  | 24.04      | 6.17.0-1008-gcp              | base-image-X-Y-Z-ubuntu-tdx |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20260225 |  Ubuntu  | 24.04      | 6.17.0-1008-gcp              | base-image-X-Y-Z-ubuntu-sev |
 | GCP - AMD SEV   |         rhel-9-v20251016          |  Redhat  | 9.6        | 5.14.0-570.52.1.el9_6.x86_64 | base-image-X-Y-Z-rhel-sev   |
 | GCP - Intel TDX |         rhel-9-v20251016          |  Redhat  | 9.6        | 5.14.0-570.52.1.el9_6.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 

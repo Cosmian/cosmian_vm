@@ -28,7 +28,7 @@ if [ "$TECHNO" = "tdx" ]; then
     --min-cpu-platform=AUTOMATIC \
     --confidential-compute-type=TDX \
     --shielded-secure-boot \
-    --image=ubuntu-2404-noble-amd64-v20251021 \
+    --image=ubuntu-2404-noble-amd64-v20260225 \
     --project cosmian-dev \
     --tags "$NAME-cli" \
     --maintenance-policy=TERMINATE \
@@ -48,7 +48,7 @@ else
     IMAGE="cosmian-vm-1-3-20-kms-5-11-0-sev-ubuntu"
     IMAGE_PROJECT="cosmian-dev"
     # Ubuntu SEV
-    IMAGE="ubuntu-2404-noble-amd64-v20251021"
+    IMAGE="ubuntu-2404-noble-amd64-v20260225"
     IMAGE_PROJECT="ubuntu-os-cloud"
   else
     # Base RHEL SEV
