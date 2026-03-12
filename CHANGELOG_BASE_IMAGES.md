@@ -1,5 +1,10 @@
 # Cosmian Base Image Changelog
 
+## [0.1.16] - 2026-03-12
+
+- *AWS*:
+  - *Ubuntu*: update from `ubuntu-2404-noble-amd64-v20250610` to `ubuntu-2404-noble-amd64-v20251212`
+
 ## [0.1.15] - 2025-10-27
 
 - *GCP*:
