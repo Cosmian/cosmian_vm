@@ -25,7 +25,7 @@ else
   if [ "$DISTRIBUTION" = "ubuntu" ]; then
     BASE_IMAGE_NAME="ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260218"
   else
-    BASE_IMAGE_NAME="RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3"
+    BASE_IMAGE_NAME="RHEL-10.1.0_HVM-20260108-x86_64-0-Hourly2-GP3"
   fi
 fi
 
