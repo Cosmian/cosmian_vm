@@ -99,6 +99,8 @@
   when: not configure_ima_etc_default_grub.stat.exists
   ansible.builtin.blockinfile:
     path: /etc/default/grub.d/50-cloudimg-settings.cfg
+    mode: "0644"
+    create: true
     block: |
       GRUB_CMDLINE_LINUX="ima_policy=tcb ima_hash=sha256 ima_template=ima-ng console=ttyS0 earlyprintk=ttyS0"
   tags: cloudimg
