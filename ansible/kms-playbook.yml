@@ -9,9 +9,11 @@
 
 - name: Install base image prerequisites
   ansible.builtin.import_playbook: base-image-packer-playbook.yml
+  tags: playbook-base-image
 
 - name: Install KMS
   ansible.builtin.import_playbook: kms-packer-playbook.yml
+  tags: playbook-kms
 
 - name: Start and check KMS
   hosts: all
