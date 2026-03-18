@@ -52,25 +52,25 @@ jobs:
         run: |
           set -ex
 
-          aws ec2 create-security-group --group-name ${CI_INSTANCE}-ansible-sg --description "Security group for ansible test"
-          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 22 --cidr 0.0.0.0/0
-          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 5555 --cidr 0.0.0.0/0
-          aws ec2 authorize-security-group-ingress --group-name ${CI_INSTANCE}-ansible-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
+          aws ec2 create-security-group --group-name "${CI_INSTANCE}-ansible-sg" --description "Security group for ansible test"
+          aws ec2 authorize-security-group-ingress --group-name "${CI_INSTANCE}-ansible-sg" --protocol tcp --port 22 --cidr 0.0.0.0/0
+          aws ec2 authorize-security-group-ingress --group-name "${CI_INSTANCE}-ansible-sg" --protocol tcp --port 5555 --cidr 0.0.0.0/0
+          aws ec2 authorize-security-group-ingress --group-name "${CI_INSTANCE}-ansible-sg" --protocol tcp --port 443 --cidr 0.0.0.0/0
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
-            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610" --query "Images[*].{ID:ImageId}" --output text)
+            export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=ubuntu-24-04-*" --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" --output text)
           else
             export AMI_BASE=$(aws ec2 describe-images --filters "Name=name,Values=RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3" --query "Images[*].{ID:ImageId}" --output text)
           fi
 
           AMI=$(aws ec2 run-instances \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{env.CI_INSTANCE}}}]" \
-            --image-id $AMI_BASE \
+            --image-id "$AMI_BASE" \
             --instance-type c6a.2xlarge \
             --cpu-options AmdSevSnp=enabled \
             --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
             --key-name packer \
-            --security-groups ${CI_INSTANCE}-ansible-sg \
+            --security-groups "${CI_INSTANCE}-ansible-sg" \
             --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \
             --region eu-west-1 \
             --placement AvailabilityZone=eu-west-1c \
@@ -80,7 +80,7 @@ jobs:
           echo "IP_ADDR=${IP_ADDR}" >> "$GITHUB_OUTPUT"
 
           # Wait for VM to be ready
-          aws ec2 wait instance-status-ok --instance-ids $AMI
+          aws ec2 wait instance-status-ok --instance-ids "$AMI"
           timeout 20m bash -c "until nc -z $IP_ADDR 22; do sleep 60; done"
 
       - name: Ansible installation
