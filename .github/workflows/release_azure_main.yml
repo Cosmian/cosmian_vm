@@ -41,9 +41,9 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [rhel, ubuntu]
+        distrib: [ubuntu]  # rhel
         product: [cosmian-vm, kms, kms-fips, ai-runner]
-        techno: [sev, tdx]
+        techno: [sev]  # tdx
         exclude:
           - techno: tdx
             distrib: rhel
@@ -68,9 +68,9 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        distrib: [rhel, ubuntu]
+        distrib: [ubuntu]  # rhel
         product: [cosmian-vm, kms, ai-runner]
-        techno: [sev, tdx]
+        techno: [sev]  # tdx
         exclude:
           - techno: tdx
             distrib: rhel

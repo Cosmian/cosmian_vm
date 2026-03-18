@@ -36,22 +36,21 @@ jobs:
       techno: sev
     secrets: inherit
 
-  # Too many failures when rebooting EC2
-  # aws:
-  #   needs: build-cosmian-vm-binaries
-  #   uses: ./.github/workflows/aws_main.yml
-  #   with:
-  #     product: cosmian-vm
-  #     kms-version: 5.14.0
-  #     ai-runner-version: 1.0.1
-  #     techno: sev
-  #   secrets: inherit
+  aws:
+    needs: build-cosmian-vm-binaries
+    uses: ./.github/workflows/aws_main.yml
+    with:
+      product: cosmian-vm
+      kms-version: 5.14.0
+      ai-runner-version: 1.0.1
+      techno: sev
+    secrets: inherit
 
   release:
     name: Release
     needs:
       - azure
       - gcp
-      # - aws
+      - aws
     secrets: inherit
     uses: ./.github/workflows/github_release.yml

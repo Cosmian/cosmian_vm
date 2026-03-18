@@ -22,9 +22,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu, rhel]
+        distrib: [ubuntu]  # rhel
         product: [base-image]
-        techno: [sev, tdx]
+        techno: [sev]  # tdx
         exclude:
           - techno: tdx
             distrib: rhel
