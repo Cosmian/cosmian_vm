@@ -12,12 +12,14 @@
 
     - name: Intel's APT repository
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main"
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu noble main"
         state: present
 
     - name: Update cache and install libtdx-attest-dev package
       ansible.builtin.apt:
-        name: libtdx-attest-dev
+        name:
+          - libtdx-attest=1.23.100.0-noble1
+          - libtdx-attest-dev=1.23.100.0-noble1
         update_cache: true
 
 - name: Add Intel SGX/TDX RPM repository

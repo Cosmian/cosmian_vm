@@ -9,11 +9,11 @@ SOURCE_IMAGE=$3
 set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
-  SOURCE_IMAGE_FAMILY="ubuntu-2204-lts"
-  GOOGLE_COMPUTE="ubuntu"
+  SOURCE_IMAGE_FAMILY="ubuntu-2404-noble-amd64-v20260225"
+  GOOGLE_COMPUTE="ubuntu-os-cloud"
 else
-  SOURCE_IMAGE_FAMILY="rhel-9"
-  GOOGLE_COMPUTE="redhat"
+  SOURCE_IMAGE_FAMILY="rhel-10-v20260310"
+  GOOGLE_COMPUTE="redhat-cloud"
 fi
 
 if [ "$TECHNO" = "sev" ]; then

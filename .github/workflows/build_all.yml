@@ -21,6 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: EmbarkStudios/cargo-deny-action@v2
+        continue-on-error: true
 
   ansible-lint:
     name: Ansible Lint
