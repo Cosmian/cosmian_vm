@@ -160,7 +160,7 @@ Connect to the Cosmian VM instance through SSH to perform this setup.
     [Service]
     Type=simple
     User=root
-    ExecStart=/usr/local/local/bin/my_app
+    ExecStart=/usr/local/bin/my_app
     Restart=on-failure
     RestartSec=3s
     Environment="MY_APP_CONF=/var/lib/cosmian_vm/data/app/app.conf"
