@@ -98,19 +98,17 @@
   ansible.builtin.file:
     path: /var/lib/cosmian_vm/data/app
     state: directory
-    owner: root
-    group: root
-    mode: "0644"
+    mode: "0755"
+  become: false
 
 - name: Create default Cosmian AI Runner configuration
   ansible.builtin.template:
     src: config.json.j2
     dest: /var/lib/cosmian_vm/data/app/app.conf
-    owner: root
-    group: root
     mode: "0644"
   vars:
     hf_token: "{{ lookup('env', 'HF_TOKEN') }}"
+  become: false
 
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:

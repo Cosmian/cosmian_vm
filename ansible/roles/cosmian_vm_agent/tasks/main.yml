@@ -5,6 +5,10 @@
   tags: install_deb
   ansible.builtin.gather_facts:
 
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_facts
+
 - name: Display kernel version
   ansible.builtin.debug:
     msg: "echo {{ ansible_kernel }}"
@@ -79,6 +83,14 @@
     executable: /bin/bash
   become: true
   changed_when: true
+
+- name: Create the directory /var/lib/cosmian_vm/data if it does not exist
+  ansible.builtin.file:
+    path: /var/lib/cosmian_vm/data
+    state: directory
+    owner: "{{ ansible_facts['env']['SUDO_USER'] }}"
+    group: "{{ ansible_facts['env']['SUDO_USER'] }}"
+    mode: "0755"
 
 - name: Open ports on RHEL
   when: ansible_distribution_file_variety == 'RedHat'

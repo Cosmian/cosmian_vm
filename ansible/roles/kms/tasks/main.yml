@@ -135,27 +135,24 @@
   ansible.builtin.file:
     path: /var/lib/cosmian_vm/data/app
     state: directory
-    owner: root
-    group: root
-    mode: "0644"
+    mode: "0755"
+  become: false
 
 - name: Create default Cosmian KMS configuration
   ansible.builtin.template:
     src: kms.toml.j2
     dest: /var/lib/cosmian_vm/data/app.conf
-    owner: root
-    group: root
     mode: "0644"
   when: not (kms_fips | bool)
+  become: false
 
 - name: Create FIPS-compliant Cosmian KMS configuration
   ansible.builtin.template:
     src: kms-fips.toml.j2
     dest: /var/lib/cosmian_vm/data/app.conf
-    owner: root
-    group: root
     mode: "0644"
   when: kms_fips | bool
+  become: false
 
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
@@ -163,7 +160,7 @@
     state: directory
     owner: root
     group: root
-    mode: "0644"
+    mode: "0755"
 
 - name: Selinux - add nginx to permissive allow httpd
   when: ansible_distribution_file_variety == 'RedHat'
