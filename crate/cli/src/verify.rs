@@ -41,17 +41,16 @@ impl VerifyArgs {
         let whitelist = if let Some(whitelist) = &self.whitelist {
             let content = fs::read_to_string(whitelist)?;
 
-            Some(&HashSet::from_iter(
-                content
-                    .split('\n')
-                    .filter_map(|line| line.split_once(' '))
-                    .map(|(path, digest)| {
-                        (
-                            path.to_string(),
-                            hex::decode(digest).expect("can't decode hash digest"),
-                        )
-                    }),
-            ))
+            Some(&HashSet::from_iter(content.split('\n').filter_map(
+                |line| {
+                    if let Some((path, digest)) = line.split_once(' ') {
+                        if let Ok(dgst) = hex::decode(digest) {
+                            return Some((path.to_string(), dgst));
+                        }
+                    }
+                    None
+                },
+            )))
         } else {
             None
         };
