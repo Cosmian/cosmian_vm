@@ -80,6 +80,13 @@
   become: true
   changed_when: true
 
+- name: Create the directory /var/lib/cosmian_vm/data if it does not exist
+  ansible.builtin.file:
+    path: /var/lib/cosmian_vm/data
+    state: directory
+    mode: "0644"
+  become: false
+
 - name: Open ports on RHEL
   when: ansible_distribution_file_variety == 'RedHat'
   block:
