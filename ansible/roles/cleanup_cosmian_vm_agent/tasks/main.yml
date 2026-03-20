@@ -2,13 +2,13 @@
 # tasks file for cleanup
 
 - name: Remove cosmian-vm-agent on Ubuntu
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution_file_variety == 'Debian'
   ansible.builtin.apt:
     name: cosmian-vm-agent
     state: absent
 
 - name: Remove cosmian-vm-agent on RedHat
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution_file_variety == 'RedHat'
   ansible.builtin.dnf:
     name: cosmian_vm_agent
     state: absent
@@ -58,11 +58,11 @@
     cmd: |
       rm -rf /var/lib/cosmian_vm
       rm -rf /etc/cosmian_vm
-      rm -f /usr/sbin/cosmian_vm_agent
+      rm -f /usr/local/bin/cosmian_vm_agent
   register: cleanup_cosmian_vm_agent_cmd_output
   changed_when: cleanup_cosmian_vm_agent_cmd_output.rc != 0
 
 - name: Reboot since systemd services have been disabled
   ansible.builtin.reboot:
-    connect_timeout: 3600
+    connect_timeout: 60
     reboot_timeout: 3600

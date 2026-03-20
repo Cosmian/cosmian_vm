@@ -7,7 +7,7 @@ use cosmian_vm_client::{
 };
 use rand::RngCore;
 use sha2::Digest;
-use std::{fs, path::PathBuf};
+use std::{collections::HashSet, fs, path::PathBuf};
 use tee_attestation::{
     az_verify_quote as az_tee_verify_quote, forge_report_data_with_nonce,
     verify_quote as tee_verify_quote,
@@ -22,6 +22,10 @@ pub struct VerifyArgs {
     #[arg(short, long)]
     snapshot: PathBuf,
 
+    /// Path of the whitelist to avoid integrity check when verifying files
+    #[arg(short, long)]
+    whitelist: Option<PathBuf>,
+
     /// Application urls (`domain_name:port`) to verify against Cosmian VM TLS certificate
     #[arg(short, long)]
     application: Option<Vec<String>>,
@@ -33,6 +37,23 @@ impl VerifyArgs {
 
         let snapshot = fs::read_to_string(&self.snapshot)?;
         let snapshot: CosmianVmSnapshot = serde_json::from_str(&snapshot)?;
+
+        let whitelist = if let Some(whitelist) = &self.whitelist {
+            let content = fs::read_to_string(whitelist)?;
+
+            Some(&HashSet::from_iter(content.split('\n').filter_map(
+                |line| {
+                    if let Some((path, digest)) = line.split_once(' ') {
+                        if let Ok(dgst) = hex::decode(digest) {
+                            return Some((path.to_string(), dgst));
+                        }
+                    }
+                    None
+                },
+            )))
+        } else {
+            None
+        };
 
         println!(
             "Fetching the collaterals... (cloud_type: {:?})",
@@ -98,7 +119,7 @@ impl VerifyArgs {
                     anyhow::bail!("No IMA list recovered");
                 }
 
-                let failures = ima_entries.compare(&filehashes.0);
+                let failures = ima_entries.compare(&filehashes.0, whitelist);
                 if !failures.entries.is_empty() {
                     failures.entries.iter().for_each(|entry| {
                         println!(

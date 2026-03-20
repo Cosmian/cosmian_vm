@@ -79,7 +79,7 @@ jobs:
 
   test-image:
     name: Image - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: build-image
     permissions:
       contents: read
@@ -137,7 +137,6 @@ jobs:
             --os-disk-security-encryption-type VMGuestStateOnly \
             --size $VM_SIZE \
             --enable-vtpm true \
-            --enable-secure-boot true \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --data-disk-delete-option delete \

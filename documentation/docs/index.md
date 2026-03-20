@@ -181,10 +181,11 @@ This is an abstract of the updated file tree:
 ├── root
 │   ├── mount_luks.sh
 ├── usr
-│   └── sbin
-│       ├── cosmian_certtool
-│       ├── cosmian_fstool
-│       └── cosmian_vm_agent
+│   └── local
+|       └── bin
+│           ├── cosmian_certtool
+│           ├── cosmian_fstool
+│           └── cosmian_vm_agent
 └── var
     └── lib
         └── cosmian_vm

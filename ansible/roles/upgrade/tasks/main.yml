@@ -6,7 +6,7 @@
   ansible.builtin.gather_facts:
 
 - name: Update and upgrade apt packages
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution_file_variety == 'Debian'
   block:
     - name: Update and upgrade apt packages
       ansible.builtin.apt:
@@ -15,8 +15,16 @@
         upgrade: safe
       tags: ubuntu
 
+- name: Upgrade all packages (dnf)
+  when: ansible_distribution_file_variety == 'RedHat'
+  block:
+    - name: Upgrade all packages (dnf)
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest  # noqa package-latest
+
 - name: Upgrade all packages
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution_file_variety == 'RedHat'
   block:
     - name: Install required packages
       ansible.builtin.dnf:
@@ -49,7 +57,7 @@
         var: upgrade_dnf_security_update
 
 - name: Tasks for Azure platform (Security Check Failure)
-  when: ansible_distribution == 'RedHat' and ansible_facts['bios_vendor'] == 'Microsoft Corporation'
+  when: ansible_distribution_file_variety == 'RedHat' and ansible_facts['bios_vendor'] == 'Microsoft Corporation'
   tags: shim
   block:
     - name: Get installed version of shim-x64
@@ -79,3 +87,9 @@
     - name: Debug shim-x64 version after update
       ansible.builtin.debug:
         msg: "shim-x64 version after update: {{ upgrade_updated_packages['ansible_facts']['packages']['shim-x64'][0]['version'] }}"
+
+- name: Reboot
+  ansible.builtin.reboot:
+    reboot_command: systemctl reboot
+    connect_timeout: 60
+    reboot_timeout: 3600

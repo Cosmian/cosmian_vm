@@ -64,7 +64,7 @@ else
     IMAGE="cosmian-vm-1-3-14-ai-runner-1-0-1-sev-rhel"
     IMAGE_PROJECT="cosmian-dev"
     # RHEL SEV
-    IMAGE="rhel-9-v20251016"
+    IMAGE="rhel-10-v20260210"
     IMAGE_PROJECT="rhel-cloud"
   fi
 
@@ -79,7 +79,6 @@ else
     --zone europe-west4-a \
     --min-cpu-platform='AMD Milan' \
     --confidential-compute-type=SEV_SNP \
-    --shielded-secure-boot \
     --image=$IMAGE --image-project=$IMAGE_PROJECT \
     --project cosmian-dev \
     --tags "$NAME-cli" \

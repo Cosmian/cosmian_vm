@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distrib: [ubuntu-22.04, ubuntu-24.04]
+        distrib: [ubuntu-24.04]
     name: Build ${{ matrix.distrib }}
     secrets: inherit
     uses: ./.github/workflows/build.yml
@@ -17,7 +17,7 @@ jobs:
 
   cargo-deny:
     name: Security Audit
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: EmbarkStudios/cargo-deny-action@v2

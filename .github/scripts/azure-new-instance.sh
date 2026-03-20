@@ -17,7 +17,6 @@ if [ "$TECHNO" = "tdx" ]; then
     --resource-group packer-snp \
     --name "$NAME" \
     --size Standard_DC2es_v5 \
-    --enable-secure-boot true \
     --image "Canonical:ubuntu-24_04-lts:cvm:latest" \
     --public-ip-sku Standard \
     --admin-username azureuser \
@@ -36,7 +35,7 @@ else
     IMAGE_NAME="Canonical:ubuntu-24_04-lts:cvm:latest"
   else
     # Redhat SEV
-    IMAGE_NAME="redhat:rhel-cvm:9_4_cvm:latest"
+    IMAGE_NAME="RedHat:rhel-cvm:10_1_cvm:10.1.2026011314"
   fi
 
   az vm create -g packer-snp -n "$NAME" \
@@ -45,7 +44,6 @@ else
     --os-disk-security-encryption-type VMGuestStateOnly \
     --size Standard_DC2ads_v5 \
     --enable-vtpm true \
-    --enable-secure-boot true \
     --nic-delete-option delete \
     --os-disk-delete-option delete \
     --data-disk-delete-option delete \

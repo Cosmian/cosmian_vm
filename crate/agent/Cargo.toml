@@ -71,22 +71,22 @@ priority = "optional"
 assets = [
   [
     "target/release/cosmian_vm_agent",
-    "usr/sbin/",
+    "usr/local/bin/",
     "500",
   ],
   [
-    "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.23.100.0",
+    "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2",
     "lib/x86_64-linux-gnu/libtdx_attest.so.1",
     "500",
   ],
   [
     "target/release/cosmian_certtool",
-    "usr/sbin/",
+    "usr/local/bin/",
     "500",
   ],
   [
     "../../pkg/cosmian_fstool",
-    "usr/sbin/",
+    "usr/local/bin/",
     "500",
   ],
   [
@@ -118,10 +118,10 @@ systemd-units = [
 [package.metadata.generate-rpm]
 license = "BUSL-1.1"
 assets = [
-  { source = "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.23.100.0", dest = "/usr/local/lib/libtdx_attest.so.1", mode = "500" },
-  { source = "target/release/cosmian_vm_agent", dest = "/usr/sbin/cosmian_vm_agent", mode = "500" },
-  { source = "target/release/cosmian_certtool", dest = "/usr/sbin/cosmian_certtool", mode = "500" },
-  { source = "../../pkg/cosmian_fstool", dest = "/usr/sbin/cosmian_fstool", mode = "500" },
+  { source = "/usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2", dest = "/usr/local/lib/libtdx_attest.so.1", mode = "500" },
+  { source = "target/release/cosmian_vm_agent", dest = "/usr/local/bin/cosmian_vm_agent", mode = "500" },
+  { source = "target/release/cosmian_certtool", dest = "/usr/local/bin/cosmian_certtool", mode = "500" },
+  { source = "../../pkg/cosmian_fstool", dest = "/usr/local/bin/cosmian_fstool", mode = "500" },
   { source = "../../README.md", dest = "/usr/share/doc/cosmian_vm_agent/README", mode = "644", doc = true },
   { source = "../../pkg/agent.toml", dest = "/etc/cosmian_vm/agent.toml", mode = "400" },
   { source = "../../pkg/mount_luks.sh", dest = "/root/mount_luks.sh", mode = "700" },

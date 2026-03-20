@@ -3,7 +3,7 @@
 
 - name: Check OS distribution
   ansible.builtin.debug:
-    var: ansible_distribution
+    var: ansible_distribution_file_variety
 
 - name: Check Cosmian AI Runner version
   ansible.builtin.debug:
@@ -29,5 +29,5 @@
 
 - name: Reboot since systemd service has been disabled
   ansible.builtin.reboot:
-    connect_timeout: 3600
+    connect_timeout: 60
     reboot_timeout: 3600

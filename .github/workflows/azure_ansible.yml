@@ -26,7 +26,7 @@ env:
 jobs:
   test-ansible:
     name: Ansible - ${{ inputs.distrib }} - ${{ inputs.techno }} - ${{ inputs.product }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       id-token: write
@@ -59,7 +59,7 @@ jobs:
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             IMAGE_TO_INSTANTIATE="Canonical:ubuntu-24_04-lts:cvm:latest"
           else
-            IMAGE_TO_INSTANTIATE="redhat:rhel-cvm:9_4_cvm:latest"
+            IMAGE_TO_INSTANTIATE="RedHat:rhel-cvm:10_1_cvm:10.1.2026011314"
           fi
 
           if [ "${{ inputs.techno }}" = "sev" ]; then
@@ -75,7 +75,6 @@ jobs:
             --os-disk-security-encryption-type VMGuestStateOnly \
             --size $VM_SIZE \
             --enable-vtpm true \
-            --enable-secure-boot true \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --data-disk-delete-option delete \

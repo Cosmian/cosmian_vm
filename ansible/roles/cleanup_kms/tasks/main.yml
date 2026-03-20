@@ -3,7 +3,7 @@
 
 - name: Check OS distribution
   ansible.builtin.debug:
-    var: ansible_distribution
+    var: ansible_distribution_file_variety
 
 - name: Check Cosmian KMS version
   ansible.builtin.debug:
@@ -22,12 +22,12 @@
 - name: Clean KMS existing folders
   ansible.builtin.command:
     cmd: |
-      rm -f /usr/local/sbin/cosmian_kms
+      rm -f /usr/local/bin/cosmian_kms
       rm -rf /var/lib/cosmian_vm/data/app
   register: cleanup_kms_cmd_output
   changed_when: cleanup_kms_cmd_output.rc != 0
 
 - name: Reboot since systemd service has been disabled
   ansible.builtin.reboot:
-    connect_timeout: 3600
+    connect_timeout: 60
     reboot_timeout: 3600

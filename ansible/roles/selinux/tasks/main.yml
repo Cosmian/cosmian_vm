@@ -2,11 +2,13 @@
 # tasks file for ansible/roles/selinux
 
 - name: Custom SELinux module cosmiand
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution_file_variety == 'RedHat'
   block:
     - name: Install policycoreutils
       ansible.builtin.dnf:
-        name: policycoreutils
+        name:
+          - policycoreutils
+          - policycoreutils-python-utils
         state: present
         update_cache: true
 

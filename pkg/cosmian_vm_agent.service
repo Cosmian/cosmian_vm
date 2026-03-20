@@ -6,7 +6,7 @@ After=multi-user.target mount_luks.service
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/sbin/cosmian_vm_agent
+ExecStart=/usr/local/bin/cosmian_vm_agent
 Restart=on-failure
 RestartSec=3s
 Environment="RUST_LOG=cosmian_vm_agent=trace"

@@ -90,7 +90,7 @@ Install the Cosmian VM CLI on a local machine
 
     ```console title="On the local machine"
     sudo dnf update && dnf install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.20/rhel9/cosmian_vm-1.3.20-1.x86_64.rpm
+    wget https://package.cosmian.com/cosmian_vm/1.3.20/rhel10/cosmian_vm-1.3.20-1.x86_64.rpm
     sudo dnf install ./cosmian_vm-1.3.20-1.x86_64.rpm
     cosmian_vm --version
     ```
@@ -160,7 +160,7 @@ Connect to the Cosmian VM instance through SSH to perform this setup.
     [Service]
     Type=simple
     User=root
-    ExecStart=/usr/local/sbin/my_app
+    ExecStart=/usr/local/bin/my_app
     Restart=on-failure
     RestartSec=3s
     Environment="MY_APP_CONF=/var/lib/cosmian_vm/data/app/app.conf"
@@ -552,10 +552,11 @@ This is an abstract of the updated file tree:
 │       └── system
 │           └── cosmian_vm_agent.service
 ├── usr
-│   └── sbin
-│       ├── cosmian_certtool
-│       ├── cosmian_fstool
-│       └── cosmian_vm_agent
+│   └── local
+│       └── bin
+│           ├── cosmian_certtool
+│           ├── cosmian_fstool
+│           └── cosmian_vm_agent
 └── var
     └── lib
         └── cosmian_vm

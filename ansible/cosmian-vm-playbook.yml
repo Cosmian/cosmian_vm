@@ -3,6 +3,7 @@
   hosts: all
   become: true
   roles:
+    - check_etc_group
     - check_cpu
     - cleanup_cosmian_vm_agent
   tags: cleanup-cosmian-vm-agent
@@ -26,5 +27,7 @@
       tags:
         - role-cosmian-vm
         - check-cosmian-vm
+    - role: check_etc_group
+      tags: check-etc-group
     - role: check_cosmian_vm
       tags: check-cosmian-vm
