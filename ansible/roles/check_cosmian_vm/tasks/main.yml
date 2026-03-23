@@ -120,6 +120,8 @@
   ansible.builtin.wait_for:
     path: /var/lib/cosmian_vm/data/luks_password
     state: present
+    delay: 120
+    sleep: 5
 
 - name: Check if port 5555 is locally listening on {{ inventory_hostname }}
   ansible.builtin.wait_for:
