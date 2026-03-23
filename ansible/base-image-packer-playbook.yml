@@ -42,7 +42,7 @@
         var: base_image_packer_playbook_cmdline
 
     - name: Display Redhat security updates
-      when: ansible_distribution_file_variety == 'RedHat'
+      when: ansible_facts['distribution_file_variety'] == 'RedHat'
       block:
         - name: Display security available updates
           ansible.builtin.shell:

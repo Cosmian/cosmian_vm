@@ -2,7 +2,7 @@
 # tasks file for ansible/roles/cosmian_vm_agent
 
 - name: Add Intel SGX/TDX APT repository
-  when: ansible_distribution_file_variety == 'Debian'
+  when: ansible_facts['distribution_file_variety'] == 'Debian'
   block:
     - name: Intel's public key
       ansible.builtin.get_url:
@@ -24,7 +24,7 @@
 
 - name: Add Intel SGX/TDX RPM repository
   tags: intel_libs
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   block:
     - name: Intel's RPM local repo
       ansible.builtin.get_url:

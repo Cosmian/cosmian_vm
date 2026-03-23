@@ -1,12 +1,8 @@
 ---
 # tasks file for no_updates
 
-- name: Check OS distribution
-  ansible.builtin.debug:
-    var: ansible_distribution_file_variety
-
 - name: Disable automatic updates on Ubuntu
-  when: ansible_distribution_file_variety == 'Debian'
+  when: ansible_facts['distribution_file_variety'] == 'Debian'
   tags: disable_automatic_update
   block:
     - name: Disable auto upgrade services
@@ -38,7 +34,7 @@
         update_cache: true
 
 - name: Disable automatic updates on Red Hat
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   tags: disable_automatic_update
   block:
     - name: Populate service facts
