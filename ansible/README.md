@@ -15,5 +15,6 @@ export HOST=X.X.X.X
 virtualenv env
 source env/bin/activate
 pip install -r python_modules.txt
+ansible-galaxy collection install -r requirements.yml
 ansible-playbook ai-runner-playbook.yml -i $HOST, -u cosmian --skip-tags role-cleanup
 ```

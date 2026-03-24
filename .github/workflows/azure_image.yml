@@ -173,6 +173,7 @@ jobs:
 
           cd ansible
           python3 -m pip install -r python_modules.txt
+          ansible-galaxy collection install -r requirements.yml
 
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-playbook $PLAYBOOK -i ${IP_ADDR}, -u cosmian \
