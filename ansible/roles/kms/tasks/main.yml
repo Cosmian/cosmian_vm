@@ -1,14 +1,6 @@
 ---
 # tasks file for ansible/roles/kms
 
-- name: Check OS distribution
-  ansible.builtin.debug:
-    var: ansible_distribution_file_variety
-
-- name: Check OS version
-  ansible.builtin.debug:
-    var: ansible_distribution_file_variety_version
-
 - name: Check Cosmian KMS version
   ansible.builtin.debug:
     var: cosmian_kms_version
@@ -22,7 +14,7 @@
     var: kms_fips
 
 - name: Prepare repo file for official Redis Open Source
-  when: ansible_distribution_file_variety == 'RedHat' and not (kms_fips | bool)
+  when: ansible_facts['distribution_file_variety'] == 'RedHat' and not (kms_fips | bool)
   block:
     - name: Create the Redis repo file
       ansible.builtin.copy:
@@ -58,7 +50,7 @@
   when: kms_fips | bool
 
 - name: Install Cosmian VM via RPM package
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
@@ -80,7 +72,7 @@
       tags: install_rpm
 
 - name: Install Cosmian KMS Server via Debian package
-  when: ansible_distribution_file_variety == 'Debian'
+  when: ansible_facts['distribution_file_variety'] == 'Debian'
   tags: install_deb
   block:
     - name: Declare package name
@@ -135,27 +127,24 @@
   ansible.builtin.file:
     path: /var/lib/cosmian_vm/data/app
     state: directory
-    owner: root
-    group: root
-    mode: "0644"
+    mode: "0755"
+  become: false
 
 - name: Create default Cosmian KMS configuration
   ansible.builtin.template:
     src: kms.toml.j2
     dest: /var/lib/cosmian_vm/data/app.conf
-    owner: root
-    group: root
     mode: "0644"
   when: not (kms_fips | bool)
+  become: false
 
 - name: Create FIPS-compliant Cosmian KMS configuration
   ansible.builtin.template:
     src: kms-fips.toml.j2
     dest: /var/lib/cosmian_vm/data/app.conf
-    owner: root
-    group: root
     mode: "0644"
   when: kms_fips | bool
+  become: false
 
 - name: Create the directory /var/www/html if it does not exist
   ansible.builtin.file:
@@ -163,17 +152,17 @@
     state: directory
     owner: root
     group: root
-    mode: "0644"
+    mode: "0755"
 
 - name: Selinux - add nginx to permissive allow httpd
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   ansible.builtin.command: semanage permissive -a httpd_t
   register: kms_cmd_output
   changed_when: kms_cmd_output.rc != 0
   tags: selinux
 
 - name: Add SELinux context for KMS
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   ansible.builtin.shell: |
     set -exo pipefail
     semanage fcontext -a -t cosmiand_exec_t /usr/sbin/cosmian_kms
@@ -218,7 +207,7 @@
   when: not (kms_fips | bool)
 
 - name: Open ports on RHEL
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   block:
     - name: Open port 443 for HTTPS
       ansible.posix.firewalld:

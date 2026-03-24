@@ -4,10 +4,6 @@
 - name: Gathering facts
   ansible.builtin.gather_facts:
 
-- name: Check OS distribution
-  ansible.builtin.debug:
-    var: ansible_distribution_file_variety
-
 - name: Check grub file path
   ansible.builtin.stat:
     path: /etc/default/grub
@@ -15,7 +11,7 @@
   tags: update_grub
 
 - name: Configure IMA on RHEL
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   tags: ima_rhel
   block:
     - name: Install packages to configure IMA
@@ -65,7 +61,7 @@
       changed_when: true
 
     - name: Setup IMA policy for RHEL
-      when: ansible_distribution == 'RedHat'
+      when: ansible_facts['distribution_file_variety'] == 'RedHat'
       ansible.builtin.shell: |
         ima-setup --policy=/usr/share/ima/policies/03-cosmian-remote-attestation
       args:
@@ -142,7 +138,7 @@
         reboot_timeout: 3600
 
 - name: Configure IMA on Ubuntu
-  when: ansible_distribution_file_variety == 'Debian'
+  when: ansible_facts['distribution_file_variety'] == 'Debian'
   tags: ima_ubuntu
   block:
     - name: Create ima folder

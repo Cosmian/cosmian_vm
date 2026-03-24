@@ -5,14 +5,6 @@
   tags: install_deb
   ansible.builtin.gather_facts:
 
-- name: Check OS distribution
-  ansible.builtin.debug:
-    var: ansible_distribution_file_variety
-
-- name: Check OS version
-  ansible.builtin.debug:
-    var: ansible_distribution_file_variety_version
-
 - name: Check package version
   ansible.builtin.debug:
     var: package_version
@@ -22,7 +14,7 @@
     var: cosmian_vm_version
 
 - name: Install Cosmian VM via RPM package
-  when: ansible_distribution_file_variety == 'RedHat'
+  when: ansible_facts['distribution_file_variety'] == 'RedHat'
   block:
     - name: Declare package name
       ansible.builtin.set_fact:
@@ -44,7 +36,7 @@
       tags: install_rpm
 
 - name: Install Cosmian VM via Debian package
-  when: ansible_distribution_file_variety == 'Debian'
+  when: ansible_facts['distribution_file_variety'] == 'Debian'
   tags: install_deb
   block:
     - name: Declare package name
@@ -53,7 +45,7 @@
 
     - name: Download Debian package from package.cosmian.com
       ansible.builtin.get_url:
-        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/ubuntu-{{ ansible_distribution_version }}/{{ cosmian_vm_package_name }}
+        url: https://package.cosmian.com/cosmian_vm/{{ cosmian_vm_version }}/ubuntu-{{ ansible_facts['distribution_version'] }}/{{ cosmian_vm_package_name }}
         dest: /tmp
         mode: "0755"
         group: root
