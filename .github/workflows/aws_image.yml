@@ -212,6 +212,7 @@ jobs:
 
           cd ansible
           python3 -m pip install -r python_modules.txt
+          ansible-galaxy collection install -r requirements.yml
 
           if [ "${{ inputs.distrib }}" = "ubuntu" ]; then
             SSH_USER="ubuntu"

@@ -224,6 +224,7 @@ jobs:
           set -ex
           cd ansible
           python3 -m pip install -r python_modules.txt
+          ansible-galaxy collection install -r requirements.yml
 
           if [[ "${GITHUB_REF}" =~ 'refs/tags/' ]]; then
             COSMIAN_VM_VERSION="${{ github.ref_name }}"

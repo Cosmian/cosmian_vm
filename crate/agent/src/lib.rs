@@ -13,6 +13,7 @@ use conf::CosmianVmAgent;
 use const_format::formatcp;
 use error::Error;
 use rustls::ServerConfig;
+use rustls_pki_types::{pem::PemObject, CertificateDer, PrivateKeyDer};
 use user_agent::check_user_agent_middleware;
 use utils::create_tpm_context;
 use worker::snapshot::Snapshot;
@@ -96,24 +97,37 @@ pub fn config(
 
 /// Create a TLS config builder
 pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerConfig, Error> {
-    let mut cert_reader = std::io::BufReader::new(File::open(certificate).map_err(|e| {
+    let cert_reader = std::io::BufReader::new(File::open(certificate).map_err(|e| {
         Error::Certificate(format!("Unable to read cert file {certificate:?}: {e}"))
     })?);
-    let mut sk_reader = std::io::BufReader::new(File::open(private_key).map_err(|e| {
+    let sk_reader = std::io::BufReader::new(File::open(private_key).map_err(|e| {
         Error::Certificate(format!(
             "Unable to read private key of cert file {private_key:?}: {e}"
         ))
     })?);
 
-    let cert_chain = rustls_pemfile::certs(&mut cert_reader)
-        .map(|result| {
-            result.map_err(|err| {
-                Error::Certificate(format!("Unparsable certificate: {:?}", err.to_string()))
-            })
-        })
+    let cert_chain = CertificateDer::pem_reader_iter(cert_reader)
+        .map(|res| res.map_err(|e| Error::Certificate(format!("Unparsable certificate: {}", e))))
         .collect::<Result<Vec<_>, _>>()?;
-    let key_der = rustls_pemfile::private_key(&mut sk_reader)?
-        .ok_or(Error::Certificate("TLS private key not found!".to_string()))?;
+
+    let key_der = match PrivateKeyDer::from_pem_reader(sk_reader) {
+        Ok(key) => key,
+        Err(e) => {
+            // Map to the previous error wording used by tests
+            use rustls_pki_types::pem::Error as PemError;
+            match e {
+                PemError::NoItemsFound => {
+                    return Err(Error::Certificate("TLS private key not found!".to_string()))
+                }
+                other => {
+                    return Err(Error::Certificate(format!(
+                        "Unparsable private key: {}",
+                        other
+                    )))
+                }
+            }
+        }
+    };
 
     Ok(ServerConfig::builder()
         .with_no_client_auth()

@@ -100,6 +100,7 @@ jobs:
           set -ex
           cd ansible
           python3 -m pip install -r python_modules.txt
+          ansible-galaxy collection install -r requirements.yml
 
           COSMIAN_VM_VERSION="last_build/${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
 
