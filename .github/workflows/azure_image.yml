@@ -46,7 +46,7 @@ on:
           - cosmian-vm
           - kms
           - kms-fips
-          - ai-runner
+          # - ai-runner
       kms-version:
         required: true
         type: string
