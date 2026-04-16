@@ -26,7 +26,7 @@ futures = "0.3"
 gethostname = "1.0"
 hex = { workspace = true }
 ima = { path = "../ima" }
-num_cpus = "1.16"
+num_cpus = "1.17"
 p256 = { workspace = true }
 pep440 = "0.2"
 rand = { workspace = true }

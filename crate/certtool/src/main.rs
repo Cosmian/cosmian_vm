@@ -54,7 +54,9 @@ async fn main() -> Result<()> {
 
         CliCommands::Ratls(args) => match args.subcommand {
             #[cfg(target_os = "linux")]
-            RatlsSubSubcommand::Generate(args) => args.run(),
+            RatlsSubSubcommand::Generate(args) => {
+                actix_web::rt::task::spawn_blocking(move || args.run()).await?
+            }
             RatlsSubSubcommand::Fetch(args) => args.run(),
             RatlsSubSubcommand::Verify(args) => args.run(),
         },
