@@ -873,7 +873,6 @@ dependencies = [
  "actix-web",
  "anyhow",
  "clap",
- "cosmian_vm_client",
  "curve25519-dalek",
  "hex",
  "openssl",
