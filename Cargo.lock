@@ -4,8 +4,9 @@ version = 4
 
 [[package]]
 name = "acme-lib"
-version = "0.9.0"
-source = "git+https://github.com/algesten/acme-lib?rev=0803f9190185f9d5fd79de3e91d453c3c08240c9#0803f9190185f9d5fd79de3e91d453c3c08240c9"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bcfe879d8669cfe09f2dd1bef4dc8cb232ca7b9ce46f4621cda9e7cc729cf73"
 dependencies = [
  "base64 0.21.7",
  "lazy_static",
