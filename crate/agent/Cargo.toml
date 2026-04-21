@@ -16,14 +16,14 @@ actix-cors = "0.7"
 actix-http = "3.12"
 actix-web = { workspace = true, features = ["http2"] }
 anyhow = { workspace = true }
-awc = "3.5"
+awc = "3.8"
 const_format = "0.2"
 cosmian_vm_client = { path = "../client" }
 der = { workspace = true }
 ecdsa = { workspace = true }
 env_logger = "0.11"
 futures = "0.3"
-gethostname = "1.0"
+gethostname = "1.1"
 hex = { workspace = true }
 ima = { path = "../ima" }
 num_cpus = "1.17"
@@ -33,13 +33,13 @@ rand = { workspace = true }
 rand_chacha = { workspace = true }
 # Important: align the rustls version with actix rustls dependency
 rustls = "0.23"
-rustls-pki-types = "1.13"
+rustls-pki-types = "1.14"
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha1 = { workspace = true }
 sha2 = { workspace = true }
 spki = { workspace = true }
-sysinfo = "0.33"
+sysinfo = "0.38"
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
 tokio = { version = "1.52", features = [
@@ -48,12 +48,12 @@ tokio = { version = "1.52", features = [
   "sync",
   "io-util",
 ] }
-tokio-util = "0.7.11"
-toml = "0.8"
+tokio-util = "0.7"
+toml = "1.1.2"
 tpm_quote = { workspace = true }
 tracing = { workspace = true }
 tss-esapi = "7.6"
-uuid = { version = "1.16", features = ["serde", "v4"] }
+uuid = { version = "1.23", features = ["serde", "v4"] }
 walkdir = "2.5"
 x509-cert = { workspace = true }
 
