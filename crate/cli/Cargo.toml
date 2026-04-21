@@ -29,7 +29,8 @@ rand = "0.8"
 serde_json = { workspace = true }
 sha2 = { workspace = true }
 tee_attestation = { workspace = true }
-tokio = { version = "1.38", features = ["macros", "rt-multi-thread"] }
+tls-cert = { workspace = true }
+tokio = { version = "1.52", features = ["macros", "rt-multi-thread"] }
 tpm_quote = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

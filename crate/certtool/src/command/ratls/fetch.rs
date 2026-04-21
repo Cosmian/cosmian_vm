@@ -2,8 +2,8 @@ use std::{fs, path::PathBuf};
 
 use anyhow::{anyhow, Result};
 use clap::Args;
-use cosmian_vm_client::client::get_server_certificate;
 use pem_rfc7468::LineEnding;
+use tls_cert::get_tls_certificate;
 
 /// Fetch an RATLS certificate from a domain name
 #[derive(Args, Debug)]
@@ -23,7 +23,7 @@ pub struct FetchArgs {
 
 impl FetchArgs {
     pub fn run(&self) -> Result<()> {
-        let cert = get_server_certificate(&self.hostname, self.port)?;
+        let cert = get_tls_certificate(&self.hostname, self.port)?;
         let cert = pem_rfc7468::encode_string("CERTIFICATE", LineEnding::default(), &cert)
             .map_err(|e| anyhow!(e))?;
 

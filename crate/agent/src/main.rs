@@ -58,7 +58,7 @@ async fn main() -> Result<()> {
                 snapshot_worker.clone(),
             ))
     })
-    .bind_rustls_0_22(
+    .bind_rustls_0_23(
         format!("{host}:{port}"),
         get_tls_config(&ssl_certificate, &ssl_private_key)?,
     )?

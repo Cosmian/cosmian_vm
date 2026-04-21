@@ -35,3 +35,4 @@ pem-rfc7468 = "0.7"
 ratls = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
+tls-cert = { workspace = true }
