@@ -97,6 +97,8 @@ pub fn config(
 
 /// Create a TLS config builder
 pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerConfig, Error> {
+    let provider = Arc::new(rustls::crypto::aws_lc_rs::default_provider());
+
     let cert_reader = std::io::BufReader::new(File::open(certificate).map_err(|e| {
         Error::Certificate(format!("Unable to read cert file {certificate:?}: {e}"))
     })?);
@@ -129,7 +131,8 @@ pub fn get_tls_config(certificate: &Path, private_key: &Path) -> Result<ServerCo
         }
     };
 
-    Ok(ServerConfig::builder()
+    Ok(ServerConfig::builder_with_provider(provider)
+        .with_safe_default_protocol_versions()?
         .with_no_client_auth()
         .with_single_cert(cert_chain, key_der)?)
 }
