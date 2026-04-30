@@ -22,22 +22,20 @@ jobs:
           sudo chown -R $USER /lib/x86_64-linux-gnu/
 
       - name: Checkout tee-tools
-        uses: actions/checkout@v4
-        with:
-          repository: Cosmian/tee-tools
-          path: ${{ github.workspace }}/tee-tools
+        run: |
+          git clone --depth 1 https://github.com/Cosmian/tee-tools.git "$RUNNER_TEMP/tee-tools"
 
       - name: Patch Cargo.toml to use local tee-tools
         id: patch-tee-tools
         run: |
-          TEE_SHA=$(git -C ${{ github.workspace }}/tee-tools rev-parse --short HEAD)
+          TEE_SHA=$(git -C "$RUNNER_TEMP/tee-tools" rev-parse --short HEAD)
           echo "sha=${TEE_SHA}" >> $GITHUB_OUTPUT
-          cat >> Cargo.toml << 'EOF'
+          cat >> Cargo.toml << EOF
 
           [patch."https://github.com/Cosmian/tee-tools"]
-          ratls = { path = "${{ github.workspace }}/tee-tools/crate/ratls" }
-          tee_attestation = { path = "${{ github.workspace }}/tee-tools/crate/tee_attestation" }
-          tpm_quote = { path = "${{ github.workspace }}/tee-tools/crate/tpm_quote" }
+          ratls = { path = "$RUNNER_TEMP/tee-tools/crate/ratls" }
+          tee_attestation = { path = "$RUNNER_TEMP/tee-tools/crate/tee_attestation" }
+          tpm_quote = { path = "$RUNNER_TEMP/tee-tools/crate/tpm_quote" }
           EOF
 
       - name: Cache dependencies
