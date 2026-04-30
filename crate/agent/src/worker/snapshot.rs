@@ -228,7 +228,7 @@ pub async fn hash_filesystem(hash_method: &ImaHashMethod) -> Result<Vec<(String,
 
     // Create threads to compute the hash in parallel
     // Note: processing like that doesn't block the main thread when stopping
-    Ok(futures::stream::iter(files.into_iter())
+    Ok(futures::stream::iter(files)
         .map(|file| {
             async move {
                 hash_file(&file, hash_method)
