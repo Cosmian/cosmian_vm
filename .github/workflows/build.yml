@@ -21,11 +21,30 @@ jobs:
         run: |
           sudo chown -R $USER /lib/x86_64-linux-gnu/
 
+      - name: Checkout tee-tools
+        uses: actions/checkout@v4
+        with:
+          repository: Cosmian/tee-tools
+          path: ../tee-tools
+
+      - name: Patch Cargo.toml to use local tee-tools
+        id: patch-tee-tools
+        run: |
+          TEE_SHA=$(git -C ../tee-tools rev-parse --short HEAD)
+          echo "sha=${TEE_SHA}" >> $GITHUB_OUTPUT
+          cat >> Cargo.toml << 'EOF'
+
+          [patch."https://github.com/Cosmian/tee-tools"]
+          ratls = { path = "../tee-tools/crate/ratls" }
+          tee_attestation = { path = "../tee-tools/crate/tee_attestation" }
+          tpm_quote = { path = "../tee-tools/crate/tpm_quote" }
+          EOF
+
       - name: Cache dependencies
         id: cargo-cache
         uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ inputs.distrib }}-${{ github.ref_name }}
+          key: ${{ inputs.distrib }}-${{ github.ref_name }}-${{ steps.patch-tee-tools.outputs.sha }}
           cache-directories: |
             - /usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2
 
