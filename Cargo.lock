@@ -493,8 +493,8 @@ dependencies = [
 
 [[package]]
 name = "azure_cvm"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "base64 0.22.1",
  "jose-jwk",
@@ -1306,12 +1306,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fastrand"
-version = "2.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f1f227452a390804cdb637b74a86990f2a7d7ba4b7d5693aac9b4dd6defd8d6"
-
-[[package]]
 name = "ff"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1749,22 +1743,6 @@ dependencies = [
  "rustls",
  "tokio",
  "tokio-rustls",
- "tower-service",
-]
-
-[[package]]
-name = "hyper-tls"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70206fc6890eaca9fde8a0bf71caa2ddfc9fe045ac9e5c70df101a7dbde866e0"
-dependencies = [
- "bytes",
- "http-body-util",
- "hyper",
- "hyper-util",
- "native-tls",
- "tokio",
- "tokio-native-tls",
  "tower-service",
 ]
 
@@ -2245,8 +2223,8 @@ checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
 
 [[package]]
 name = "maa_client"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "base64 0.22.1",
  "hex",
@@ -2344,23 +2322,6 @@ dependencies = [
  "log",
  "wasi 0.11.1+wasi-snapshot-preview1",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "native-tls"
-version = "0.2.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "465500e14ea162429d264d44189adc38b199b62b1c21eea9f69e4b73cb03bbf2"
-dependencies = [
- "libc",
- "log",
- "openssl",
- "openssl-probe",
- "openssl-sys",
- "schannel",
- "security-framework",
- "security-framework-sys",
- "tempfile",
 ]
 
 [[package]]
@@ -2598,8 +2559,8 @@ dependencies = [
 
 [[package]]
 name = "pccs_client"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "hex",
  "reqwest",
@@ -2930,8 +2891,8 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
 
 [[package]]
 name = "ratls"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "const-oid 0.9.6",
  "der",
@@ -3026,12 +2987,10 @@ dependencies = [
  "http-body-util",
  "hyper",
  "hyper-rustls",
- "hyper-tls",
  "hyper-util",
  "js-sys",
  "log",
  "mime_guess",
- "native-tls",
  "percent-encoding",
  "pin-project-lite",
  "quinn",
@@ -3043,7 +3002,6 @@ dependencies = [
  "serde_urlencoded",
  "sync_wrapper",
  "tokio",
- "tokio-native-tls",
  "tokio-rustls",
  "tokio-util",
  "tower",
@@ -3419,8 +3377,8 @@ dependencies = [
 
 [[package]]
 name = "sev_quote"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "asn1-rs",
  "hex",
@@ -3437,8 +3395,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_pck_extension"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -3448,8 +3406,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_quote"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "chrono",
  "hex",
@@ -3679,8 +3637,8 @@ dependencies = [
 
 [[package]]
 name = "tdx_quote"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "hex",
  "log",
@@ -3697,8 +3655,8 @@ dependencies = [
 
 [[package]]
 name = "tee_attestation"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "azure_cvm",
  "hex",
@@ -3709,19 +3667,6 @@ dependencies = [
  "sha2 0.11.0",
  "tdx_quote",
  "thiserror 2.0.18",
-]
-
-[[package]]
-name = "tempfile"
-version = "3.27.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
-dependencies = [
- "fastrand",
- "getrandom 0.4.2",
- "once_cell",
- "rustix",
- "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -3842,8 +3787,8 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tls-cert"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "rustls",
  "thiserror 2.0.18",
@@ -3897,16 +3842,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "tokio-native-tls"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbae76ab933c85776efabc971569dd6119c580d8f5d448769dec1764bf796ef2"
-dependencies = [
- "native-tls",
- "tokio",
 ]
 
 [[package]]
@@ -4018,8 +3953,8 @@ checksum = "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3"
 
 [[package]]
 name = "tpm_quote"
-version = "1.6.2"
-source = "git+https://github.com/Cosmian/tee-tools?rev=ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7#ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7"
+version = "1.7.0"
+source = "git+https://github.com/Cosmian/tee-tools?rev=0a4f6ef2add17dd37c88becc20338f4fdd63f52e#0a4f6ef2add17dd37c88becc20338f4fdd63f52e"
 dependencies = [
  "hex",
  "p256",

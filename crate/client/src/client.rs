@@ -244,6 +244,9 @@ pub(crate) fn build_tls_client_tee(
     leaf_cert: &CertificateDer<'static>,
     accept_invalid_certs: bool,
 ) -> Result<ClientBuilder, Error> {
+    rustls::crypto::aws_lc_rs::default_provider()
+        .install_default()
+        .map_err(|e| Error::Default(format!("Failed to install crypto provider: {e:?}")))?;
     let provider = Arc::new(rustls::crypto::aws_lc_rs::default_provider());
 
     let mut root_cert_store = rustls::RootCertStore::empty();

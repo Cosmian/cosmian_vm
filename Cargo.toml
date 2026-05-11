@@ -47,13 +47,13 @@ sha2 = "0.10"
 p256 = { version = "0.13", features = ["arithmetic", "pkcs8"] }
 rand = "0.8"
 rand_chacha = "0.3"
-ratls = { git = "https://github.com/Cosmian/tee-tools", rev = "ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7" }
+ratls = { git = "https://github.com/Cosmian/tee-tools", rev = "0a4f6ef2add17dd37c88becc20338f4fdd63f52e" }
 spki = "0.7"
-tee_attestation = { git = "https://github.com/Cosmian/tee-tools", rev = "ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7" }
-tpm_quote = { git = "https://github.com/Cosmian/tee-tools", rev = "ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7" }
+tee_attestation = { git = "https://github.com/Cosmian/tee-tools", rev = "0a4f6ef2add17dd37c88becc20338f4fdd63f52e" }
+tpm_quote = { git = "https://github.com/Cosmian/tee-tools", rev = "0a4f6ef2add17dd37c88becc20338f4fdd63f52e" }
 thiserror = "2.0"
 tracing = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tls-cert = { git = "https://github.com/Cosmian/tee-tools", rev = "ee2f9fe1663f74fe6893c19e16ba1b203ca5f0f7" }
+tls-cert = { git = "https://github.com/Cosmian/tee-tools", rev = "0a4f6ef2add17dd37c88becc20338f4fdd63f52e" }
 x509-cert = { version = "0.2", features = ["builder", "hazmat"] }
