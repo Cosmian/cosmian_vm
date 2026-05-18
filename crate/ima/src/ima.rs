@@ -44,7 +44,7 @@ pub fn read_ima_binary() -> Result<Vec<u8>, Error> {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone)]
 struct EventHeaderEntry {
     pub pcr: u32,
     pub digest: [u8; 20],
@@ -342,72 +342,99 @@ impl TryFrom<&[u8]> for Ima {
         let mut cursor = 0;
         while (cursor + EVENT_ENTRY_SIZE) < data.len() {
             // Parse the header (first 28 bytes of the ima entry)
-            let event: EventHeaderEntry =
-                bincode::deserialize(&data[cursor..(cursor + EVENT_ENTRY_SIZE)])?;
+            let header = data
+                .get(cursor..(cursor + EVENT_ENTRY_SIZE))
+                .ok_or(Error::ImaParsing(
+                    "Not enough bytes to parse IMA event header".to_string(),
+                ))?;
+            let event_entry =
+                EventHeaderEntry {
+                    pcr: u32::from_le_bytes(header[0..4].try_into().map_err(|_| {
+                        Error::ImaParsing("Failed to parse IMA event pcr".to_string())
+                    })?),
+                    digest: header[4..24].try_into().map_err(|_| {
+                        Error::ImaParsing("Failed to parse IMA event digest".to_string())
+                    })?,
+                    name_length: u32::from_le_bytes(header[24..28].try_into().map_err(|_| {
+                        Error::ImaParsing("Failed to parse IMA event name length".to_string())
+                    })?),
+                };
 
             cursor += EVENT_ENTRY_SIZE;
 
             // Parse the name of the template
             let template_name = &data
-                .get(cursor..(cursor + event.name_length as usize))
+                .get(cursor..(cursor + event_entry.name_length as usize))
                 .ok_or(Error::ImaParsing(
                     "Not enough bytes in the buffer to parse IMA entry template name".to_string(),
                 ))?;
             let template_name = String::from_utf8_lossy(template_name).to_string();
             let template_name = ImaTemplate::try_from(template_name.as_ref())?;
 
-            cursor += event.name_length as usize;
+            cursor += event_entry.name_length as usize;
 
             // Parse the length of the template data
-            let length = bincode::deserialize::<u32>(
-                data.get(cursor..(cursor + (u32::BITS as usize / 8)))
-                    .ok_or(Error::ImaParsing(
-                        "Not enough bytes in the buffer to parse IMA entry length".to_string(),
-                    ))?,
-            )? as usize;
-            cursor += u32::BITS as usize / 8;
+            let template_data_len = data.get(cursor..(cursor + 4)).ok_or(Error::ImaParsing(
+                "Not enough bytes in the buffer to parse IMA entry length".to_string(),
+            ))?;
+            let template_data_len =
+                u32::from_le_bytes(template_data_len.try_into().map_err(|_| {
+                    Error::ImaParsing("Failed to parse IMA entry length".to_string())
+                })?) as usize;
+            cursor += 4;
 
             // Parse the template data
-            let template_data = &data
-                .get(cursor..(cursor + length))
-                .ok_or(Error::ImaParsing(format!(
-                    "Not enough bytes in the buffer to parse IMA entry template: {} > {}",
-                    cursor + length,
-                    data.len(),
-                )))?;
-            cursor += length;
+            let template_data =
+                &data
+                    .get(cursor..(cursor + template_data_len))
+                    .ok_or(Error::ImaParsing(format!(
+                        "Not enough bytes in the buffer to parse IMA entry template: {} > {}",
+                        cursor + template_data_len,
+                        data.len(),
+                    )))?;
+            cursor += template_data_len;
 
             // From the template data, parse the size of the hash field
             let mut template_cursor = 0;
             let hash_length =
-                bincode::deserialize::<u32>(&template_data[0..(u32::BITS as usize / 8)])? as usize;
-            template_cursor += u32::BITS as usize / 8;
+                u32::from_le_bytes(template_data[0..4].try_into().map_err(|_| {
+                    Error::ImaParsing("Failed to parse IMA hash length".to_string())
+                })?) as usize;
+            template_cursor += 4;
 
             // From the template data, parse the hash field
             let hash = &template_data[template_cursor..(template_cursor + hash_length)];
             template_cursor += hash_length;
 
             // From the template data, parse the size of the file field
-            let hint_length = bincode::deserialize::<u32>(
-                &template_data[template_cursor..(template_cursor + (u32::BITS as usize / 8))],
-            )? as usize;
-            template_cursor += u32::BITS as usize / 8;
+            let hint_len = u32::from_le_bytes(
+                template_data[template_cursor..(template_cursor + 4)]
+                    .try_into()
+                    .map_err(|_| {
+                        Error::ImaParsing("Failed to parse IMA hint length".to_string())
+                    })?,
+            ) as usize;
+            template_cursor += 4;
 
             // From the template data, parse the file field
-            let hint = &template_data[template_cursor..(template_cursor + hint_length - 1)];
+            let hint = &template_data[template_cursor..(template_cursor + hint_len - 1)];
 
-            template_cursor += hint_length;
+            template_cursor += hint_len;
 
             // From the template data, parse the signature if any
             let sig = if template_name == ImaTemplate::ImaSig {
-                let sig_length = bincode::deserialize::<u32>(
-                    &template_data[template_cursor..(template_cursor + (u32::BITS as usize / 8))],
-                )? as usize;
-                template_cursor += u32::BITS as usize / 8;
+                let sig_len = u32::from_le_bytes(
+                    template_data[template_cursor..(template_cursor + 4)]
+                        .try_into()
+                        .map_err(|_| {
+                            Error::ImaParsing("Failed to parse IMA signature length".to_string())
+                        })?,
+                ) as usize;
+                template_cursor += 4;
 
-                if sig_length != 0 {
-                    let sig = &template_data[template_cursor..(template_cursor + sig_length)];
-                    template_cursor += sig_length;
+                if sig_len != 0 {
+                    let sig = &template_data[template_cursor..(template_cursor + sig_len)];
+                    template_cursor += sig_len;
 
                     Some(sig.to_vec())
                 } else {
@@ -417,10 +444,10 @@ impl TryFrom<&[u8]> for Ima {
                 None
             };
 
-            if template_cursor != length {
+            if template_cursor != template_data_len {
                 return Err(Error::ImaParsing(format!(
                     "Extra bytes {} unparsed in buffer",
-                    template_cursor - length
+                    template_cursor - template_data_len
                 )));
             }
 
@@ -446,8 +473,8 @@ impl TryFrom<&[u8]> for Ima {
             };
 
             ima.entries.push(ImaEntry::new(
-                event.pcr,
-                event.digest.to_vec(),
+                event_entry.pcr,
+                event_entry.digest.to_vec(),
                 template_name,
                 filedata_hash_method,
                 hash.to_vec(),

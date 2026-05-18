@@ -33,8 +33,8 @@ incremental = false
 opt-level = 0
 
 [workspace.dependencies]
-actix-web = { version = "4.10", features = [
-  "rustls-0_22",
+actix-web = { version = "4.13", features = [
+  "rustls-0_23",
   "macros",
 ], default-features = false }
 aes-gcm = "0.10"
@@ -47,12 +47,13 @@ sha2 = "0.10"
 p256 = { version = "0.13", features = ["arithmetic", "pkcs8"] }
 rand = "0.8"
 rand_chacha = "0.3"
-ratls = { git = "https://github.com/Cosmian/tee-tools", tag = "1.6.2" }
+ratls = { git = "https://github.com/Cosmian/tee-tools", rev = "f2cd284fece7bc6e530ea0a24b4140ccf88b3f83" }
 spki = "0.7"
-tee_attestation = { git = "https://github.com/Cosmian/tee-tools", tag = "1.6.2" }
-tpm_quote = { git = "https://github.com/Cosmian/tee-tools", tag = "1.6.2" }
+tee_attestation = { git = "https://github.com/Cosmian/tee-tools", rev = "f2cd284fece7bc6e530ea0a24b4140ccf88b3f83" }
+tpm_quote = { git = "https://github.com/Cosmian/tee-tools", rev = "f2cd284fece7bc6e530ea0a24b4140ccf88b3f83" }
 thiserror = "2.0"
 tracing = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+tls-cert = { git = "https://github.com/Cosmian/tee-tools", rev = "f2cd284fece7bc6e530ea0a24b4140ccf88b3f83" }
 x509-cert = { version = "0.2", features = ["builder", "hazmat"] }
