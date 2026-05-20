@@ -52,7 +52,7 @@ tokio-util = "0.7"
 toml = "1.1.2"
 tpm_quote = { workspace = true }
 tracing = { workspace = true }
-tss-esapi = "7.6"
+tss-esapi = "7.7"
 uuid = { version = "1.23", features = ["serde", "v4"] }
 walkdir = "2.5"
 x509-cert = { workspace = true }

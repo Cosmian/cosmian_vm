@@ -494,7 +494,7 @@ dependencies = [
 [[package]]
 name = "azure_cvm"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "base64 0.22.1",
  "jose-jwk",
@@ -555,12 +555,6 @@ dependencies = [
  "shlex",
  "syn",
 ]
-
-[[package]]
-name = "bitfield"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d7e60934ceec538daadb9d8432424ed043a904d8e0243f3c6446bce549a46ac"
 
 [[package]]
 name = "bitfield"
@@ -2224,7 +2218,7 @@ checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
 [[package]]
 name = "maa_client"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "base64 0.22.1",
  "hex",
@@ -2560,7 +2554,7 @@ dependencies = [
 [[package]]
 name = "pccs_client"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "hex",
  "reqwest",
@@ -2614,9 +2608,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
 name = "picky-asn1"
-version = "0.8.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "295eea0f33c16be21e2a98b908fdd4d73c04dd48c8480991b76dbcf0cb58b212"
+checksum = "2ff038f9360b934342fb3c0a1d6e82c438a2624b51c3c6e3e6d7cf252b6f3ee3"
 dependencies = [
  "oid",
  "serde",
@@ -2625,9 +2619,9 @@ dependencies = [
 
 [[package]]
 name = "picky-asn1-der"
-version = "0.4.1"
+version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5df7873a9e36d42dadb393bea5e211fe83d793c172afad5fb4ec846ec582793f"
+checksum = "d413165e4bf7f808b9a27cbaba657657a2921f0965db833f488c4d4be96dcd2e"
 dependencies = [
  "picky-asn1",
  "serde",
@@ -2636,11 +2630,11 @@ dependencies = [
 
 [[package]]
 name = "picky-asn1-x509"
-version = "0.12.0"
+version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c5f20f71a68499ff32310f418a6fad8816eac1a2859ed3f0c5c741389dd6208"
+checksum = "859d4117bd1b1dc5646359ee7243c50c5000c0920ea2d1fb120335a2f4c684b8"
 dependencies = [
- "base64 0.21.7",
+ "base64 0.22.1",
  "oid",
  "picky-asn1",
  "picky-asn1-der",
@@ -2892,7 +2886,7 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
 [[package]]
 name = "ratls"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "const-oid 0.9.6",
  "der",
@@ -3358,7 +3352,7 @@ version = "7.1.0"
 source = "git+https://github.com/virtee/sev?rev=2b4e157#2b4e157ad79c0880e345527950a7ad8757a26992"
 dependencies = [
  "base64 0.22.1",
- "bitfield 0.19.4",
+ "bitfield",
  "bitflags",
  "byteorder",
  "dirs",
@@ -3378,7 +3372,7 @@ dependencies = [
 [[package]]
 name = "sev_quote"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "asn1-rs",
  "hex",
@@ -3396,7 +3390,7 @@ dependencies = [
 [[package]]
 name = "sgx_pck_extension"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -3407,7 +3401,7 @@ dependencies = [
 [[package]]
 name = "sgx_quote"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "chrono",
  "hex",
@@ -3638,7 +3632,7 @@ dependencies = [
 [[package]]
 name = "tdx_quote"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "hex",
  "log",
@@ -3656,7 +3650,7 @@ dependencies = [
 [[package]]
 name = "tee_attestation"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "azure_cvm",
  "hex",
@@ -3789,7 +3783,7 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 [[package]]
 name = "tls-cert"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "rustls",
  "thiserror 2.0.18",
@@ -3955,7 +3949,7 @@ checksum = "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3"
 [[package]]
 name = "tpm_quote"
 version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?rev=42a71c49e8efdb0243219d981e938f4583b9d93d#42a71c49e8efdb0243219d981e938f4583b9d93d"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
 dependencies = [
  "hex",
  "p256",
@@ -4035,13 +4029,13 @@ checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
 name = "tss-esapi"
-version = "7.6.0"
+version = "7.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78ea9ccde878b029392ac97b5be1f470173d06ea41d18ad0bb3c92794c16a0f2"
+checksum = "3f10b25a84912b894d0e6d68f4a3771c923e9c44ddaaed7920cde92ed28aa84e"
 dependencies = [
- "bitfield 0.14.0",
+ "bitfield",
  "enumflags2",
- "getrandom 0.2.17",
+ "getrandom 0.4.2",
  "hostname-validator",
  "log",
  "mbox",
@@ -4058,9 +4052,9 @@ dependencies = [
 
 [[package]]
 name = "tss-esapi-sys"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "535cd192581c2ec4d5f82e670b1d3fbba6a23ccce8c85de387642051d7cad5b5"
+checksum = "a7f972672926a3d3d18ecc04524720e4d20b7d1664a3fb73dbf7d4274196dbd9"
 dependencies = [
  "pkg-config",
  "target-lexicon",
