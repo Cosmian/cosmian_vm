@@ -1,6 +1,6 @@
 ---
-title: Cosmian Confidential VM
-subtitle: Cosmian VM
+title: Eviden Confidential VM
+subtitle: Eviden VM
 citation_package: biblatex
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/ieee.csl
 version: Version 1.2
@@ -16,11 +16,11 @@ toc-own-page: true
 toc: true
 toc-title: Table Of Contents
 toc-depth: 3
-# titlepage-logo: ./pandoc/cosmian.png
+# titlepage-logo: ./pandoc/eviden.png
 logo-width: 200pt
 lang: en-US
 footer-left: Confidential
-footer-center: © Copyright 2018-2025 Cosmian. All rights reserved
+footer-center: © Copyright 2018-2026 Eviden. All rights reserved
 # header-left: ./pandoc/favicon.png
 header-includes:
   - \setcounter{page}{0} # So that the titlepage is the zeroth page

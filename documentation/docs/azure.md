@@ -2,7 +2,7 @@
 
 ## Step by step guide
 
-<p align="center"><img src="../images/Azure/01.png" alt="Step 1: Get Cosmian Verifiable VM"></p>
+<p align="center"><img src="../images/Azure/01.png" alt="Step 1: Get Eviden Verifiable VM"></p>
 <p align="center"><img src="../images/Azure/02.png" alt="Step 2: Continue" ></p>
 <p align="center"><img src="../images/Azure/03.png" alt="Step 3: Create" ></p>
 <p align="center"><img src="../images/Azure/04.png" alt="Step 4: Basics" ></p>
