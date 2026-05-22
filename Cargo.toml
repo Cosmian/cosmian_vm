@@ -51,8 +51,8 @@ clap = { version = "4", default-features = false, features = [
 der = { version = "0.7", features = ["alloc", "derive", "flagset", "oid"] }
 ecdsa = { version = "0.16", features = ["sha2", "spki"] }
 hex = "0.4"
-sha1 = "0.10"
-sha2 = "0.10"
+sha1 = "0.11"
+sha2 = "0.11"
 p256 = { version = "0.13", features = ["arithmetic", "pkcs8"] }
 rand = "0.8"
 rand_chacha = "0.3"
