@@ -32,17 +32,17 @@ pep440 = "0.2"
 rand = { workspace = true }
 rand_chacha = { workspace = true }
 # Important: align the rustls version with actix rustls dependency
-rustls = { version = "0.23", features = ["aws_lc_rs"] }
+rustls = { workspace = true }
 rustls-pki-types = "1.14"
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha1 = { workspace = true }
 sha2 = { workspace = true }
 spki = { workspace = true }
-sysinfo = "0.38"
+sysinfo = "0.39"
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
-tokio = { version = "1.52", features = [
+tokio = { workspace = true, default-features = false, features = [
   "rt-multi-thread",
   "macros",
   "sync",
