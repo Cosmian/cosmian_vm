@@ -13,23 +13,16 @@ path = "src/main.rs"
 
 [dependencies]
 anyhow = { workspace = true }
-clap = { version = "4", default-features = false, features = [
-  "cargo",
-  "derive",
-  "error-context",
-  "help",
-  "std",
-  "string",
-  "usage",
-] }
+clap = { workspace = true }
 cosmian_vm_client = { path = "../client" }
 hex = { workspace = true }
 ima = { path = "../ima" }
-rand = "0.8"
+rand = { workspace = true }
 serde_json = { workspace = true }
 sha2 = { workspace = true }
 tee_attestation = { workspace = true }
-tokio = { version = "1.38", features = ["macros", "rt-multi-thread"] }
+tls-cert = { workspace = true }
+tokio = { workspace = true }
 tpm_quote = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

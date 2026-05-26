@@ -9,6 +9,19 @@
   delegate_to: localhost
   become: true
 
+- name: Check if running on GCP
+  ansible.builtin.uri:
+    url: http://metadata.google.internal/computeMetadata/v1/instance/zone
+    headers:
+      Metadata-Flavor: Google
+    timeout: 2
+  register: check_cosmian_vm_gcp_metadata
+  ignore_errors: true
+
+- name: Set GCP fact
+  ansible.builtin.set_fact:
+    check_cosmian_vm_is_gcp: "{{ check_cosmian_vm_gcp_metadata is succeeded }}"
+
 - name: Read PCR-7 and PCR-10 before reboot
   ansible.builtin.shell:
     cmd: |
@@ -234,10 +247,8 @@
       ansible.builtin.shell:
         cmd: |
           set -exo pipefail
-          RESET_COUNT=$(jq '.tpm_policy.reset_count' cosmian_vm.snapshot)
-          NEW_RESET_COUNT=$((RESET_COUNT + 1))
-          jq --arg NEW_RESET_COUNT "$NEW_RESET_COUNT" '.tpm_policy.reset_count = $NEW_RESET_COUNT' cosmian_vm.snapshot >cosmian_vm.new_snapshot
-          jq '.tpm_policy.reset_count |= tonumber' cosmian_vm.new_snapshot | sponge cosmian_vm.new_snapshot
+          jq '.tpm_policy.reset_count += 1' cosmian_vm.snapshot | sponge cosmian_vm.new_snapshot
+
         executable: /bin/bash
       delegate_to: localhost
       become: false
@@ -255,6 +266,30 @@
       ignore_errors: true
       tags: verify
       changed_when: check_cosmian_vm_verify_cosmian_vm_output.rc != 0
+
+    - name: Retry verify with incremented reset_count on GCP
+      when:
+        - check_cosmian_vm_is_gcp | bool
+        - check_cosmian_vm_verify_cosmian_vm_output.rc != 0
+      tags: verify
+      block:
+        - name: Increment reset_count by 1 in snapshot
+          ansible.builtin.shell:
+            cmd: |
+              set -exo pipefail
+              jq '.tpm_policy.reset_count += 1' cosmian_vm.new_snapshot | sponge cosmian_vm.new_snapshot
+            executable: /bin/bash
+          delegate_to: localhost
+          changed_when: true
+
+        - name: Verify Cosmian VM snapshot (GCP retry)
+          ansible.builtin.command:
+            cmd: |
+              cosmian_vm --url https://{{ inventory_hostname }}:5555 --allow-insecure-tls verify --snapshot cosmian_vm.new_snapshot
+          register: check_cosmian_vm_verify_cosmian_vm_output
+          delegate_to: localhost
+          ignore_errors: true
+          changed_when: check_cosmian_vm_verify_cosmian_vm_output.rc != 0
 
     - name: Display CLI logs after verify snapshot
       ansible.builtin.debug:

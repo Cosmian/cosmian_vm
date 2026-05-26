@@ -2,8 +2,6 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error(transparent)]
-    Bincode(#[from] bincode::Error),
     #[error("{0}")]
     Parsing(String),
     #[error("{0}")]

@@ -1,9 +1,7 @@
 use anyhow::Result;
 use clap::Args;
 use cosmian_vm_client::{
-    client::{get_server_certificate_from_url, CosmianVmClient},
-    cloud_provider::CloudProvider,
-    snapshot::CosmianVmSnapshot,
+    client::CosmianVmClient, cloud_provider::CloudProvider, snapshot::CosmianVmSnapshot,
 };
 use rand::RngCore;
 use sha2::Digest;
@@ -12,6 +10,7 @@ use tee_attestation::{
     az_verify_quote as az_tee_verify_quote, forge_report_data_with_nonce,
     verify_quote as tee_verify_quote,
 };
+use tls_cert::get_tls_certificate_from_url;
 use tokio::task::spawn_blocking;
 use tpm_quote::{get_pcr_digest_from_quote, verify_quote as tpm_verify_quote};
 
@@ -158,7 +157,7 @@ impl VerifyArgs {
             Some(CloudProvider::GCP | CloudProvider::AWS) | None => {
                 policy.set_report_data(&forge_report_data_with_nonce(
                     &nonce,
-                    &client.certificate.0,
+                    client.certificate.as_ref(),
                 )?)?;
                 spawn_blocking(move || tee_verify_quote(&quote, Some(&policy))).await??;
             }
@@ -179,13 +178,13 @@ impl VerifyArgs {
                 }
 
                 let app_certificate =
-                    get_server_certificate_from_url(&application_url).map_err(|e| {
+                    get_tls_certificate_from_url(&application_url).map_err(|e| {
                         anyhow::anyhow!(format!(
                             "Can't get the application certificate for {application_url}: {e}"
                         ))
                     })?;
 
-                if app_certificate != client.certificate.0 {
+                if app_certificate != client.certificate.as_ref() {
                     println!("[ FAIL ] TLS certificate for application {application_url} differs from Cosmian VM Agent TLS certificate");
                 } else {
                     println!("[ OK ] Verifying TLS application for {application_url}");
