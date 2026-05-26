@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-05-26
+
+### 🐛 Bug Fixes
+
+- Bump [tee-tools](https://github.com/Cosmian/tee-tools/releases/tag/2.0.0) to version 2.0.0
+
+### 🚀 Features
+
 ## [1.3.21] - 2026-03-23
 
 ### 🚀 Features

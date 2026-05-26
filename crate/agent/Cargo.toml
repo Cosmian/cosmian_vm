@@ -42,7 +42,7 @@ spki = { workspace = true }
 sysinfo = "0.39"
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
-tokio = { workspace = true, default-features = false, features = [
+tokio = { workspace = true, features = [
   "rt-multi-thread",
   "macros",
   "sync",
