@@ -42,7 +42,7 @@ jobs:
       max-parallel: 3
       matrix:
         distrib: [ubuntu]  # rhel
-        product: [cosmian-vm, kms, kms-fips, ai-runner]
+        product: [cosmian-vm, kms, kms-fips]  # ai-runner
         techno: [sev]  # tdx
         exclude:
           - techno: tdx
@@ -69,7 +69,7 @@ jobs:
       max-parallel: 3
       matrix:
         distrib: [ubuntu]  # rhel
-        product: [cosmian-vm, kms, ai-runner]
+        product: [cosmian-vm, kms]  # ai-runner
         techno: [sev]  # tdx
         exclude:
           - techno: tdx
