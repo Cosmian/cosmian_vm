@@ -44,7 +44,7 @@ on:
         options:
           - cosmian-vm
           - kms
-          - ai-runner
+          # - ai-runner
       kms-version:
         required: true
         type: string
@@ -278,18 +278,18 @@ jobs:
           IMAGE_NAME: ${{ needs.build-image.outputs.image_name }}
           TAG: ${{ github.ref_name }}
           KMS: ${{ inputs.kms-version }}
-          AI_RUNNER: ${{ inputs.ai-runner-version }}
+          # AI_RUNNER: ${{ inputs.ai-runner-version }}
         run: |
           set -ex
 
           VERSION=$(echo $TAG | sed 's/\./-/g; s/_/-/g; s/+/-/g')
           KMS_VERSION=$(echo $KMS | sed 's/\./-/g; s/_/-/g; s/+/-/g')
-          AI_RUNNER_VERSION=$(echo $AI_RUNNER | sed 's/\./-/g; s/_/-/g; s/+/-/g')
+          # AI_RUNNER_VERSION=$(echo $AI_RUNNER | sed 's/\./-/g; s/_/-/g; s/+/-/g')
 
           if [ "${{ inputs.product }}" = "cosmian-vm" ]; then
             NEW_IMAGE_NAME=cosmian-vm-$VERSION-${{ inputs.techno }}-${{ inputs.distrib }}
-          elif [ "${{ inputs.product }}" = "ai-runner" ]; then
-            NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
+          # elif [ "${{ inputs.product }}" = "ai-runner" ]; then
+          #   NEW_IMAGE_NAME=cosmian-vm-${VERSION}-ai-runner-${AI_RUNNER_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
           else
             NEW_IMAGE_NAME=cosmian-vm-${VERSION}-${{ inputs.product }}-${KMS_VERSION}-${{ inputs.techno }}-${{ inputs.distrib }}
           fi
