@@ -9,7 +9,7 @@ theme:
   font:
     text: Open Sans
   favicon: eviden-favicon.svg
-  logo: eviden-logo-orange.svg
+  logo: images/eviden-logo-orange.svg
   custom_dir: theme_overrides
   features:
     - content.tabs.link
