@@ -143,7 +143,7 @@ fi
 echo "Enrolling the TPM for this container on block device $BLOCK_DEVICE..."
 
 set +e
-PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 "$HEADER_PATH"
+PASSWORD=$PASSWORD systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs= --wipe-slot=tpm2 "$HEADER_PATH"
 if [ $? -ne 0 ]; then
     # Need to clean container after failure
     rm -f "$CONTAINER_PATH"
