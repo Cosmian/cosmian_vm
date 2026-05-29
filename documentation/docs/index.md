@@ -1,12 +1,12 @@
-# Cosmian VM
+# Eviden VM
 
-Cosmian VM offers:
+Eviden VM offers:
 
 - a hardened pre-configured Linux distribution (based on Ubuntu 22.04 or RHEL 9) with LUKS disk encryption designed for confidential computing machines.
 - a seamless, unique experience across all confidential hardware (Intel TDX, AMD SEV-SNP, soon NVIDIA H100) and cloud providers (AWS, Azure, GCP)
 - an extended verifiability of the hardware, OS, and binaries running on the VM.
 
-Specifically, the Cosmian VM provides the following features:
+Specifically, the Eviden VM provides the following features:
 
 - **Confidentiality**: the whole environment runs in a Trusted Execution Environment (TEE) with encrypted memory on top of encrypted storage.
 - **Verifiability**: the user can verify the integrity of the hardware, OS, and executables at any time and compare them against a reference snapshot
@@ -16,7 +16,7 @@ Specifically, the Cosmian VM provides the following features:
 
 ## Use cases
 
-Cosmian VM is used in these two scenarios:
+Eviden VM is used in these two scenarios:
 
 - Quickly migrate an on-premise application to the public cloud without modifications while running it with the same level of confidentiality, e.g., migrating an HR application to the cloud.
 - offer confidential SaaS services to your customers/users, protecting their privacy against the cloud provider and any extra-territorial law, e.g., offering confidential AI/Gen. AI in the public cloud.
@@ -27,37 +27,37 @@ Cosmian VM is used in these two scenarios:
 
 !!! info "Threat Model"
 
-    *Cosmian VM* is designed to secure your application against passive (honest-but-curious) and active (malicious) cloud provider staff member
+    *Eviden VM* is designed to secure your application against passive (honest-but-curious) and active (malicious) cloud provider staff member
 
 ## Extended Verifiability
 
-Cosmian VM provides memory and disk encryption on a hardened system and extends the hardware remote attestation supplied by Intel and AMD to the verifiability of the operating system,
+Eviden VM provides memory and disk encryption on a hardened system and extends the hardware remote attestation supplied by Intel and AMD to the verifiability of the operating system,
 as well as the binary files or other files marked as verifiable on the system.
 A user can quickly check the integrity of the whole system (no hardware change, no OS change, known binaries running or having run) before sending sensitive data for processing.
 
-To do this, Cosmian VM builds on the following components:
+To do this, Eviden VM builds on the following components:
 
 - Trusted Execution Environment (TEE) such as AMD SEV-SNP or Intel TDX for memory encryption
 - Trusted Platform Module (TPM) or vTPM (virtual TPM) to store secrets and attest the content of some memory region
 - Integrity Measurement Architecture (IMA), a Linux kernel module used to maintain a measurement log of all executables
 
-To securely tie these components together, Cosmian VM image contains the following software:
+To securely tie these components together, Eviden VM image contains the following software:
 
 - `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
 - `cosmian_certtool` to ease the generation of _Let's Encrypt_ certificates if needed
 - `cosmian_fstool` to ease the generation of LUKS container with the secret key stored in the TPM/vTPM (automount on reboot)
 
-Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli) can be used to interact with `cosmian_vm_agent` and verify the trustworthiness of a specific instance launched with Cosmian VM as base image.
+Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli) can be used to interact with `cosmian_vm_agent` and verify the trustworthiness of a specific instance launched with Eviden VM as base image.
 
 !!! info "Audit"
 
-    *Cosmian VM* image construction process can be found in this repository: [https://github.com/Cosmian/cosmian_vm/packer](https://github.com/Cosmian/cosmian_vm/packer)
+    *Eviden VM* image construction process can be found in this repository: [https://github.com/Cosmian/cosmian_vm/packer](https://github.com/Cosmian/cosmian_vm/packer)
 
 ## Usage
 
 <!-- toc -->
 
-- [Cosmian VM](#cosmian-vm)
+- [Eviden VM](#eviden-vm)
   - [Use cases](#use-cases)
   - [Extended Verifiability](#extended-verifiability)
   - [Usage](#usage)
@@ -74,7 +74,7 @@ Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crat
 
 ## Setup flow
 
-A Cosmian VM is instantiated from a [cloud provider marketplace](https://cosmian.com/marketplace/) on top of a confidential computing machine.
+An Eviden VM is instantiated from a [cloud provider marketplace](https://cosmian.com/marketplace/) on top of a confidential computing machine.
 Once the system administrator has installed the application and its dependencies, a snapshot of the VM is taken. Integrity checks can then be performed on the running VM to verify the running code, OS, and hardware.
 
 <p align="center">
@@ -95,7 +95,7 @@ The content will be compared against TEE attestation, TPM/vTPM attestation and I
 
 ## Verification of the remote instance
 
-The verification process of the Cosmian VM is performed using client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli), which will check:
+The verification process of the Eviden VM is performed using client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli), which will check:
 
 - IMA (Integrity Measurement Architecture) measurement log with the list of executable and configuration file's hash digest, to be compared against the snapshot
 - TPM (Trusted Platform Module) attestation of the IMA measurement log
@@ -117,18 +117,18 @@ The verification is successful if files in IMA measurement log and snapshot have
 
 ## Cloud providers support
 
-_Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on the cloud provider.
+_Eviden VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on the cloud provider.
 
 ### AWS images
 
-|               |                            Official image                            | OS image | OS version | Kernel version               | Cosmian base image          |
+|               |                            Official image                            | OS image | OS version | Kernel version               | Eviden base image          |
 | :------------ | :------------------------------------------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
 | AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-v20251212 |  Ubuntu  | 24.04      | 6.17.0-1007-aws              | base-image-X-Y-Z-ubuntu-sev |
 | AWS - AMD SEV |          RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3             |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
 
 ### Azure images
 
-|                   |         Official image         | OS image | OS version | Kernel version               | Cosmian base image    | Version |
+|                   |         Official image         | OS image | OS version | Kernel version               | Eviden base image    | Version |
 | :---------------- | :----------------------------: | :------: | ---------- | ---------------------------- | --------------------- | ------- |
 | Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
 | Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
@@ -137,7 +137,7 @@ _Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on t
 
 ### GCP images
 
-|                 |          Official image           | OS image | OS version | Kernel version               | Cosmian base image          |
+|                 |          Official image           | OS image | OS version | Kernel version               | Eviden base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
 | GCP - Intel TDX | ubuntu-2404-noble-amd64-v20260225 |  Ubuntu  | 24.04      | 6.17.0-1008-gcp              | base-image-X-Y-Z-ubuntu-tdx |
 | GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20260225 |  Ubuntu  | 24.04      | 6.17.0-1008-gcp              | base-image-X-Y-Z-ubuntu-sev |
@@ -146,18 +146,18 @@ _Cosmian VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on t
 
 ### Marketplace Image content
 
-The Cosmian VM image built on the marketplaces of GCP, Azure, or AWS contains four primary executables:
+The Eviden VM image built on the marketplaces of GCP, Azure, or AWS contains four primary executables:
 
-- `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM, such as the IMA file, the TEE quote, or the TPM quote
+- `cosmian_vm_agent` is designed to be deployed on the Eviden VM. It serves on demand the collaterals used to verify the trustworthiness of the Eviden VM, such as the IMA file, the TEE quote, or the TPM quote
 - `cosmian_certtool` is designed to generate a certificate signed by _Let's Encrypt_ or an RATLS certificate
 - `cosmian_fstool` is designed to generate a LUKS container and enroll the TPM to be automatically started on reboot
-- `cosmian_vm` is a CLI designed to be used on your host. It queries the `cosmian_vm_agent` to get the collaterals used to verify the integrity/trustworthiness of the Cosmian VM
+- `cosmian_vm` is a CLI designed to be used on your host. It queries the `cosmian_vm_agent` to get the collaterals used to verify the integrity/trustworthiness of the Eviden VM
 
 This image:
 
 - contains the fully configured IMA
 - contains the fully configured SELinux
-- disables the auto-update (to avoid any modification of the Cosmian VM after having snapshotted it)
+- disables the auto-update (to avoid any modification of the Eviden VM after having snapshotted it)
 - contains the fully configured `cosmian_vm_agent`
 
 This is an abstract of the updated file tree:

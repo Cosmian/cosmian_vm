@@ -1,16 +1,16 @@
-@startuml cosmian_vm_sec
+@startuml eviden_vm_sec
 
 skinparam SequenceMessageAlign center
 skinparam BoxPadding 30
 
-mainframe Cosmian VM
+mainframe Eviden VM
 
 box #ededed
     participant "SysAdmin" as client
 end box
 
 box #f8dfdf
-    entity "Cosmian VM instance" as server
+    entity "Eviden VM instance" as server
 end box
 
 box #ededed

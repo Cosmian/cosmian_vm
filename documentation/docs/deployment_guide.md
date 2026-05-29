@@ -1,39 +1,39 @@
-!!! info "Cosmian VM reminder"
+!!! info "Eviden VM reminder"
 
-    First, read detailed information about [Cosmian VM](./index.md) or about [Cosmian VM Agent and related software tools functioning](https://github.com/Cosmian/cosmian_vm).
+    First, read detailed information about [Eviden VM](./index.md) or about [Eviden VM Agent and related software tools functioning](https://github.com/Cosmian/cosmian_vm).
 
-    As a reminder, the Cosmian VM's goal is to verify Confidential VM trustworthiness and integrity at anytime. This verification runs on the operating system where one or more applications have been installed.
+    As a reminder, the Eviden VM's goal is to verify Confidential VM trustworthiness and integrity at anytime. This verification runs on the operating system where one or more applications have been installed.
 
     First, a snapshot is generated, freezing the state of the system and all executable files.
 
-    Then, at anytime, a remote verification of the VM can be done using the Cosmian VM CLI tool (`cosmian_vm`).
+    Then, at anytime, a remote verification of the VM can be done using the Eviden VM CLI tool (`cosmian_vm`).
 
 <p align="center">
   <img src="../images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
-The Cosmian VM can be deployed on virtual machines that supports AMD SEV-SNP or Intel TDX technologies.
+The Eviden VM can be deployed on virtual machines that supports AMD SEV-SNP or Intel TDX technologies.
 
-The following steps help to deploy a Cosmian VM instance on any [supported cloud provider](./index.md#cloud-providers-support).
+The following steps help to deploy a Eviden VM instance on any [supported cloud provider](./index.md#cloud-providers-support).
 
-The Cosmian VM contains a set of software to ensure trustworthiness of the executable environment of the VM.
+The Eviden VM contains a set of software to ensure trustworthiness of the executable environment of the VM.
 
 Then, the deployment flow is the following:
 
-- instantiate a **Cosmian Confidential VM**,
+- instantiate a **Eviden Confidential VM**,
 - connect on this VM and install everything required for your application to run correctly,
 - create for once a VM snapshot remotely using Cosmian VM CLI,
 - verify at anytime the integrity of the VM
 
-## Instantiate Cosmian VM on your favorite cloud provider 🚚
+## Instantiate Eviden VM on your favorite cloud provider 🚚
 
-Go the Cosmian marketplace webpage of the chosen cloud provider:
+Go the Eviden marketplace webpage of the chosen cloud provider:
 
-- [Cosmian VM/KMS/AI on AWS Marketplace](https://aws.amazon.com/marketplace/search/results?searchTerms=cosmian)
-- [Cosmian VM/KMS/AI on Azure Marketplace](https://marketplace.microsoft.com/fr-fr/marketplace/apps?search=cosmian&page=1)
-- [Cosmian VM/KMS/AI on GCP Marketplace](https://console.cloud.google.com/marketplace/browse?hl=fr&q=Cosmian)
+- [Eviden VM/KMS/AI on AWS Marketplace](https://aws.amazon.com/marketplace/search/results?searchTerms=cosmian)
+- [Eviden VM/KMS/AI on Azure Marketplace](https://marketplace.microsoft.com/fr-fr/marketplace/apps?search=cosmian&page=1)
+- [Eviden VM/KMS/AI on GCP Marketplace](https://console.cloud.google.com/marketplace/browse?hl=fr&q=Cosmian)
 
-Select an OS, set an external IP and continue until the Cosmian VM instance is spawned.
+Select an OS, set an external IP and continue until the Eviden VM instance is spawned.
 
 Here's the list of instance types by cloud provider
 
@@ -50,17 +50,17 @@ Here's the list of instance types by cloud provider
 
 ## Customize your VM 👩‍🔧
 
-Connect to the spawned Cosmian VM using SSH and install whatever is required for application and services to run (installing software and dependencies, setting-up configurations and services etc.).
+Connect to the spawned Eviden VM using SSH and install whatever is required for application and services to run (installing software and dependencies, setting-up configurations and services etc.).
 
 For example, deploy an app and [setup it as a Linux service](#deploy-your-application-as-a-service).
 
 ## Snapshot the VM remotely
 
-Once the VM is configured as needed, Cosmian VM Agent can do a snapshot of the VM containing fingerprint of the executables and metadata related to TEE and TPM.
+Once the VM is configured as needed, Eviden VM Agent can do a snapshot of the VM containing fingerprint of the executables and metadata related to TEE and TPM.
 
-### Install the Cosmian VM CLI on your local machine
+### Install the Eviden VM CLI on your local machine
 
-Install the Cosmian VM CLI on a local machine
+Install the Eviden VM CLI on a local machine
 
 === "Ubuntu 22.04"
 
@@ -111,7 +111,7 @@ Install the Cosmian VM CLI on a local machine
     apt install ./cosmian-vm_1.3.21-1_amd64.deb
     ```
 
-Generate a snapshot of the Cosmian VM:
+Generate a snapshot of the Eviden VM:
 
 ```console title="On the local machine"
 cosmian_vm --url https://${COSMIAN_VM_IP_ADDR}:5555 --allow-insecure-tls snapshot
@@ -119,11 +119,11 @@ cosmian_vm --url https://${COSMIAN_VM_IP_ADDR}:5555 --allow-insecure-tls snapsho
 
 ## Verify the VM snapshot
 
-Take a look at the [global flow](./index.md#verification-of-the-remote-instance) to fully understand the whole verification process of a Cosmian VM.
+Take a look at the [global flow](./index.md#verification-of-the-remote-instance) to fully understand the whole verification process of a Eviden VM.
 
 Previous downloaded snapshot is stored as `cosmian_vm.snapshot` file (see the [previous step](#snapshot-the-vm-remotely)).
 
-- At <u>anytime</u>, the Cosmian VM integrity can be verified by running:
+- At <u>anytime</u>, the Eviden VM integrity can be verified by running:
 
 ```console title="On the local machine"
 cosmian_vm --url https://${COSMIAN_VM_IP_ADDR}:5555 --allow-insecure-tls \
@@ -140,14 +140,14 @@ cosmian_vm --url https://${COSMIAN_VM_IP_ADDR}:5555 --allow-insecure-tls \
 
 ## Deploy your application as a service
 
-The benefit of setting the deployed app as a service is that Cosmian VM Agent is able to:
+The benefit of setting the deployed app as a service is that Eviden VM Agent is able to:
 
 - handle the lifetime cycle of the app (start, stop, restart)
 - deploy safely (in encrypted folder) the config file
 
 ### Setup the systemd service
 
-Connect to the Cosmian VM instance through SSH to perform this setup.
+Connect to the Eviden VM instance through SSH to perform this setup.
 
 1. write a service file (here compatible with `systemctl`)
 
@@ -184,11 +184,11 @@ sudo systemctl enable my_app
 sudo systemctl daemon-reload
 ```
 
-**Note**: `my_app` and `my_app_svc` are indicative naming and can be changed, but don't forget to update the Cosmian VM Agent config file (`/etc/cosmian_vm/agent.toml`) as well.
+**Note**: `my_app` and `my_app_svc` are indicative naming and can be changed, but don't forget to update the Eviden VM Agent config file (`/etc/cosmian_vm/agent.toml`) as well.
 
 ### Configure the remote app safely
 
-On the local machine, write the config file of the app, and then use the Cosmian VM CLI to remotely configure the app.
+On the local machine, write the config file of the app, and then use the Eviden VM CLI to remotely configure the app.
 
 1. write the app config file
 
@@ -198,7 +198,7 @@ On the local machine, write the config file of the app, and then use the Cosmian
    secret = "a98jfdol"
    ```
 
-   The format (TOML, JSON, INI...) of this config file depends on the app but the Cosmian VM CLI doesn't care, as the config file is treated as a blob of bytes.
+   The format (TOML, JSON, INI...) of this config file depends on the app but the Eviden VM CLI doesn't care, as the config file is treated as a blob of bytes.
 
 2. send the configuration using `cosmian_vm` CLI
 
@@ -208,7 +208,7 @@ On the local machine, write the config file of the app, and then use the Cosmian
 
    The app conf is written in the encrypted folder.
 
-   Cosmian VM Agent start/restart automatically the app
+   Eviden VM Agent start/restart automatically the app
    after writing the config file when `init` is called.
 
 ### Control the remote app as a service
@@ -219,7 +219,7 @@ It could be relevant if the personnel in charge of the application doesn't have 
 
 !!! warning "Security"
 
-    If your *Cosmian VM* is reachable over Internet, be aware that anyone can control your application. Out of the box the access to the `cosmian_vm_agent` endpoints is not authenticated.
+    If your *Eviden VM* is reachable over Internet, be aware that anyone can control your application. Out of the box the access to the `cosmian_vm_agent` endpoints is not authenticated.
 
 Before going any further, you need to add a paragraph `app` inside the _Cosmian VM_ configuration file, as follow:
 
@@ -266,7 +266,7 @@ If you call again `init` the previous configuration file is overwritten.
 
 ## Advanced settings
 
-### Cosmian VM logs
+### Eviden VM logs
 
 The logs of _Cosmian VM_ are written in `journalctl` and can be accessed via `journalctl -exu cosmian_vm_agent`.
 
@@ -573,7 +573,7 @@ The verification performed by the _Cosmian VM_ relies on the fact that once the 
 
 An auto-update processing alters the VM and makes the comparison with the snapshot impossible.
 
-You shall update the Cosmian VM manually and create a new snapshot afterwards.
+You shall update the Eviden VM manually and create a new snapshot afterwards.
 
 ### Use a proxy in front of the Cosmian VM Agent
 
