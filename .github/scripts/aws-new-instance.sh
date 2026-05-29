@@ -42,7 +42,7 @@ else
       --image-id "$AMI_BASE" \
       --instance-type c6a.2xlarge \
       --cpu-options AmdSevSnp=enabled \
-      --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=20}" \
+      --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeType=gp3,VolumeSize=100}" \
       --key-name packer \
       --security-groups "$NAME-sg" \
       --metadata-options "InstanceMetadataTags=enabled, HttpTokens=optional, HttpEndpoint=enabled, HttpPutResponseHopLimit=2" \

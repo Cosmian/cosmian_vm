@@ -25,7 +25,7 @@ on:
         options:
           - cosmian-vm
           - kms
-          - ai-runner
+          # - ai-runner
       kms-version:
         required: true
         type: string

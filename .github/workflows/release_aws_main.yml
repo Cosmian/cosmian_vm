@@ -42,7 +42,7 @@ jobs:
       max-parallel: 3
       matrix:
         distrib: [ubuntu]  # rhel
-        product: [cosmian-vm, kms, ai-runner]
+        product: [cosmian-vm, kms]  # ai-runner
         techno: [sev]
     name: (AWS) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:

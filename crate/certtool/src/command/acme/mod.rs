@@ -48,8 +48,8 @@ fn generate_private_key(use_tee_key: Option<&[u8]>) -> Result<PKey<Private>, Err
         let group = EcGroup::from_curve_name(Nid::X9_62_PRIME256V1)?;
 
         let mut public_point = EcPoint::new(&group)?;
-        let ctx = BigNumContext::new()?;
-        public_point.mul_generator(&group, &private_number, &ctx)?;
+        let mut ctx = BigNumContext::new()?;
+        public_point.mul_generator2(&group, &private_number, &mut ctx)?;
 
         let pri_key_ec = EcKey::from_private_components(&group, &private_number, &public_point)?;
         Ok(PKey::from_ec_key(pri_key_ec)?)
