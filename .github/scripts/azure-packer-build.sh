@@ -9,7 +9,7 @@ set
 
 if [ "$DISTRIBUTION" = "ubuntu" ]; then
   IMAGE_PUBLISHER="canonical"
-  IMAGE_OFFER="ubuntu-24_04-lts"
+  IMAGE_OFFER="ubuntu-26_04-lts"
   IMAGE_SKU="cvm"
 else
   IMAGE_PUBLISHER="redhat"

@@ -1,5 +1,12 @@
 # Cosmian Base Image Changelog
 
+## [0.1.17] - 2026-06-01
+
+- *Azure*:
+  - Upgrade Ubuntu 24.04 to 26.04
+- *GCP*:
+  - *Ubuntu*: update from `ubuntu-2404-noble-amd64-v20260225` to `ubuntu-2404-noble-amd64-v20260517`
+
 ## [0.1.16] - 2026-03-12
 
 - *AWS*:
