@@ -131,7 +131,7 @@ _Eviden VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on th
 |                   |         Official image         | OS image | OS version | Kernel version               | Eviden base image    | Version |
 | :---------------- | :----------------------------: | :------: | ---------- | ---------------------------- | --------------------- | ------- |
 | Azure - Intel TDX | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-tdx | X.Y.Z   |
-| Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.8.0-1020-azure             | base-image-ubuntu-sev | X.Y.Z   |
+| Azure - AMD SEV   | Canonical-ubuntu-24_04-lts-cvm |  Ubuntu  | 24.04      | 6.17.0-1010-azure-fde        | base-image-ubuntu-sev | X.Y.Z   |
 | Azure - Intel TDX |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-tdx   | X.Y.Z   |
 | Azure - AMD SEV   |    Redhat-rhel-cvm-9_4_cvm     |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-rhel-sev   | X.Y.Z   |
 
@@ -140,7 +140,7 @@ _Eviden VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on th
 |                 |          Official image           | OS image | OS version | Kernel version               | Eviden base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
 | GCP - Intel TDX | ubuntu-2404-noble-amd64-v20260225 |  Ubuntu  | 24.04      | 6.17.0-1008-gcp              | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20260225 |  Ubuntu  | 24.04      | 6.17.0-1008-gcp              | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20260517 |  Ubuntu  | 24.04      | 6.17.0-1018-gcp              | base-image-X-Y-Z-ubuntu-sev |
 | GCP - AMD SEV   |         rhel-9-v20251016          |  Redhat  | 9.6        | 5.14.0-570.52.1.el9_6.x86_64 | base-image-X-Y-Z-rhel-sev   |
 | GCP - Intel TDX |         rhel-9-v20251016          |  Redhat  | 9.6        | 5.14.0-570.52.1.el9_6.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 

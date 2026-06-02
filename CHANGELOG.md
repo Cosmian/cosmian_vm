@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2026-06-01
+
+### 🐛 Bug Fixes
+
+- Upgrade GCP and Azure Ubuntu base images
+
 ## [1.4.0] - 2026-05-26
 
 ### 🐛 Bug Fixes
