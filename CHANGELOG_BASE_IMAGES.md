@@ -3,7 +3,7 @@
 ## [0.1.17] - 2026-06-01
 
 - *Azure*:
-  - Upgrade Ubuntu 24.04 to 26.04
+  - Rebuild Ubuntu 24.04 image with security patches
 - *GCP*:
   - *Ubuntu*: update from `ubuntu-2404-noble-amd64-v20260225` to `ubuntu-2404-noble-amd64-v20260517`
 
