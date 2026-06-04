@@ -47,7 +47,7 @@ source "azure-arm" "TEMPLATE_DISTRIBUTION" {
     image_version        = "TEMPLATE_AZURE_IMAGE_VERSION"
     storage_account_type = "Standard_LRS"
     target_region {
-      name = "westus"
+      name = "westeurope"
     }
     confidential_vm_image_encryption_type = "EncryptedVMGuestStateOnlyWithPmk"
   }
