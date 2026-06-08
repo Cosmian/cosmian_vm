@@ -2,11 +2,11 @@ use std::{io::Write, sync::Arc, thread::sleep, time::Duration};
 
 use reqwest::header::{HeaderMap, HeaderValue};
 use reqwest::{Client, ClientBuilder, Response, StatusCode};
-use url::Url;
 use rustls::pki_types::CertificateDer;
 use serde::{Deserialize, Serialize};
 use tls_cert::{get_tls_certificate_from_url, LeafCertificateVerifier, NoVerifier};
 use tpm_quote::PcrHashMethod;
+use url::Url;
 
 use crate::{error::Error, ser_de::base64_serde, snapshot::CosmianVmSnapshot};
 
@@ -303,10 +303,8 @@ pub fn get_server_certificate(host: &str, port: u16) -> Result<Vec<u8>, Error> {
         .with_no_client_auth();
 
     let rc_config = Arc::new(config);
-    let server_name: ServerName<'static> = host
-        .to_string()
-        .try_into()
-        .map_err(|_| Error::DNSName)?;
+    let server_name: ServerName<'static> =
+        host.to_string().try_into().map_err(|_| Error::DNSName)?;
 
     let mut socket =
         std::net::TcpStream::connect(format!("{host}:{port}")).map_err(|_| Error::Connection)?;
