@@ -103,7 +103,6 @@ jobs:
             target/debian/cosmian-vm_*
             target/release/cosmian_vm
             target/release/cosmian_vm_agent
-            target/release/cosmian_certtool
             /usr/lib/x86_64-linux-gnu/libtdx_attest.so.1.24.100.2
           retention-days: 1
           if-no-files-found: error

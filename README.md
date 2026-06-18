@@ -27,17 +27,9 @@ The foundation of _Cosmian VM_ relies on the following components:
 - Trusted Platform Module (TPM) or vTPM (virtual TPM) to store secrets and attest the content of some memory region
 - Integrity Measurement Architecture (IMA), a Linux kernel module used to maintain a measurement log of all executables
 
-In addition, _Cosmian VM_ image contains the following software:
+In addition, _Cosmian VM_ image contains the following softwares:
 
-- `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
-- `cosmian_certtool` to ease the generation of **Let's Encrypt** certificates if needed
-
-```bash
-sudo certbot certonly --manual --preferred-challenges dns -d <my_dns_name> -m <admin@email.com> --agree-tos
-sudo cp /etc/letsencrypt/live/my_dns_name/fullchain.pem /var/lib/cosmian_vm/data/cert.pem
-sudo cp /etc/letsencrypt/live/my_dns_name/privkey.pem /var/lib/cosmian_vm/data/key.pem
-sudo service nginx restart
-```
+ - `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
 
 - `cosmian_fstool` to ease the generation of LUKS container with secret key stored in the TPM/vTPM
 
@@ -147,7 +139,6 @@ gcloud compute images list --filter="guestOsFeatures[].type=TDX_CAPABLE" --forma
 The Cosmian VM image build on the marketplaces of GCP, Azure or AWS contains four major executables:
 
 - `cosmian_vm_agent` is designed to be deployed on the Cosmian VM. It serves on demand the collaterals used to verify the trustworthiness of the Cosmian VM such as the IMA file, the TEE quote or the TPM quote
-- `cosmian_certtool` is designed to generate a certificate signed by _Let's Encrypt_ or an RATLS certificate
 - `cosmian_fstool` is designed to generate a LUKS container and enroll the TPM to be automatically started on reboot
 - `cosmian_vm` is a CLI designed to be used on your own host. It queries the `cosmian_vm_agent` in order to get the collaterals used to verify the trustworthiness of the Cosmian VM
 
@@ -181,7 +172,6 @@ This is a abstract of the updated file tree:
 ├── usr
 │   └── local
 │       └── bin
-│           ├── cosmian_certtool
 │           ├── cosmian_fstool
 │           └── cosmian_vm_agent
 └── var
@@ -224,7 +214,7 @@ It is recommended to configure 1. and 2. on your own for production systems.
 The certificate can be changed at will:
 
 - Edit your DNS register to point to that VM
-- Create a trusted certificate using the method of your choice (_Let's encrypt_ for instance) or use `cosmian_certtool`
+- Create a trusted certificate using the method of your choice (_Let's encrypt_ for instance)
 - Edit the `cosmian_vm_agent` configuration file to point to the location of the TLS certificate and private key.
 
 The LUKS container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container.

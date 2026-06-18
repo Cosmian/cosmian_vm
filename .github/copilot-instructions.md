@@ -11,7 +11,6 @@ This is a Rust workspace with the following key components:
 - **`crate/agent`** - VM agent running inside confidential VMs to handle attestations and collaterals
 - **`crate/cli`** - Client CLI tool (`cosmian_vm`) for interacting with and verifying remote instances
 - **`crate/client`** - Shared client library for VM communication
-- **`crate/certtool`** - Certificate generation tool (`cosmian_certtool`) for Let's Encrypt and RATLS certificates
 - **`crate/ima`** - Integrity Measurement Architecture support for file integrity verification
 - **`ansible/`** - Deployment playbooks for cloud providers (AWS, Azure, GCP)
 - **`packer/`** - Configuration for building base images
