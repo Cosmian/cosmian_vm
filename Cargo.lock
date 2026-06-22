@@ -454,8 +454,8 @@ dependencies = [
 
 [[package]]
 name = "azure_cvm"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "base64",
  "jose-jwk",
@@ -816,7 +816,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "cosmian_vm"
-version = "1.4.1"
+version = "1.4.2"
 dependencies = [
  "anyhow",
  "clap",
@@ -827,7 +827,7 @@ dependencies = [
  "serde_json",
  "sha2 0.11.0",
  "tee_attestation",
- "tls-cert",
+ "tls_cert",
  "tokio",
  "tpm_quote",
  "tracing",
@@ -836,7 +836,7 @@ dependencies = [
 
 [[package]]
 name = "cosmian_vm_agent"
-version = "1.4.1"
+version = "1.4.2"
 dependencies = [
  "actix-cors",
  "actix-http",
@@ -880,7 +880,7 @@ dependencies = [
 
 [[package]]
 name = "cosmian_vm_client"
-version = "1.4.1"
+version = "1.4.2"
 dependencies = [
  "base64",
  "hex",
@@ -889,7 +889,7 @@ dependencies = [
  "serde",
  "tee_attestation",
  "thiserror 2.0.18",
- "tls-cert",
+ "tls_cert",
  "tpm_quote",
  "url",
  "webpki-roots",
@@ -1806,7 +1806,7 @@ dependencies = [
 
 [[package]]
 name = "ima"
-version = "1.4.1"
+version = "1.4.2"
 dependencies = [
  "hex",
  "serde",
@@ -2125,8 +2125,8 @@ checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
 
 [[package]]
 name = "maa_client"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "base64",
  "hex",
@@ -2498,8 +2498,8 @@ dependencies = [
 
 [[package]]
 name = "pccs_client"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "hex",
  "reqwest",
@@ -3288,8 +3288,8 @@ dependencies = [
 
 [[package]]
 name = "sev_quote"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "asn1-rs",
  "hex",
@@ -3306,8 +3306,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_pck_extension"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "asn1",
  "asn1-rs",
@@ -3317,8 +3317,8 @@ dependencies = [
 
 [[package]]
 name = "sgx_quote"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "chrono",
  "hex",
@@ -3560,8 +3560,8 @@ dependencies = [
 
 [[package]]
 name = "tdx_quote"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "hex",
  "log",
@@ -3578,8 +3578,8 @@ dependencies = [
 
 [[package]]
 name = "tee_attestation"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "azure_cvm",
  "hex",
@@ -3699,9 +3699,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
-name = "tls-cert"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+name = "tls_cert"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "rustls",
  "thiserror 2.0.18",
@@ -3866,8 +3866,8 @@ checksum = "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3"
 
 [[package]]
 name = "tpm_quote"
-version = "2.0.0"
-source = "git+https://github.com/Cosmian/tee-tools?tag=2.0.0#e5dcf4820c27dc9a93a541d7c5aa7bcab81433e8"
+version = "2.1.0"
+source = "git+https://github.com/Cosmian/tee-tools?tag=2.1.0#8fadb760835a243a65fd08dc981869eaa76789b7"
 dependencies = [
  "hex",
  "p256",
