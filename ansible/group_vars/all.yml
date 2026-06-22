@@ -1,8 +1,8 @@
 ---
 cosmian_vm_version: 1.4.2
 package_version: 1.4.2
-cosmian_kms_version: 5.22.0
-kms_package_version: 5.22.0
+cosmian_kms_version: 5.24.0
+kms_package_version: 5.24.0
 cosmian_ai_runner_version: 1.0.1
 
 nginx_user: root

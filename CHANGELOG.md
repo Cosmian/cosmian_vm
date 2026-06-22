@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Bump [tee-tools](https://github.com/Cosmian/tee-tools/releases/tag/2.1.0) to version 2.1.0
 
+### 🚀 Features
+
+- Bump KMS version to 5.24.0
+
 ## [1.4.1] - 2026-06-01
 
 ### 🐛 Bug Fixes
