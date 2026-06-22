@@ -44,7 +44,6 @@ To do this, Eviden VM builds on the following components:
 To securely tie these components together, Eviden VM image contains the following software:
 
 - `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
-- `cosmian_certtool` to ease the generation of _Let's Encrypt_ certificates if needed
 - `cosmian_fstool` to ease the generation of LUKS container with the secret key stored in the TPM/vTPM (automount on reboot)
 
 Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crate/cli) can be used to interact with `cosmian_vm_agent` and verify the trustworthiness of a specific instance launched with Eviden VM as base image.
@@ -149,7 +148,7 @@ _Eviden VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on th
 The Eviden VM image built on the marketplaces of GCP, Azure, or AWS contains four primary executables:
 
 - `cosmian_vm_agent` is designed to be deployed on the Eviden VM. It serves on demand the collaterals used to verify the trustworthiness of the Eviden VM, such as the IMA file, the TEE quote, or the TPM quote
-- `cosmian_certtool` is designed to generate a certificate signed by _Let's Encrypt_ or an RATLS certificate
+
 - `cosmian_fstool` is designed to generate a LUKS container and enroll the TPM to be automatically started on reboot
 - `cosmian_vm` is a CLI designed to be used on your host. It queries the `cosmian_vm_agent` to get the collaterals used to verify the integrity/trustworthiness of the Eviden VM
 
@@ -183,7 +182,6 @@ This is an abstract of the updated file tree:
 ├── usr
 │   └── local
 |       └── bin
-│           ├── cosmian_certtool
 │           ├── cosmian_fstool
 │           └── cosmian_vm_agent
 └── var

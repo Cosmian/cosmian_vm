@@ -1,7 +1,6 @@
 [workspace]
 members = [
   "crate/agent",
-  "crate/certtool",
   "crate/cli",
   "crate/client",
   "crate/ima",

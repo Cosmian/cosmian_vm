@@ -134,7 +134,7 @@ cosmian_vm --url https://${COSMIAN_VM_IP_ADDR}:5555 --allow-insecure-tls \
 
     When the agent starts (see step [Snapshot the VM](#snapshot-the-vm-remotely)) self-signed certificate is created to enable HTTPS out of the box.
 
-    These certificates must be replaced by trusted ones using tools like `cosmian_certtool` or Linux tools (`certbot` with **Let's Encrypt** for instance).
+    The self-signed certificate can be replaced by a certificate signed by a trusted authority such as **Let's Encrypt** (see [certbot](https://certbot.eff.org/) for certificate generation).
 
     See [how to setup trusted certificates](#configure-https-with-your-own-domain).
 
@@ -388,7 +388,7 @@ Therefore when using the CLI, `--allow-insecure-tls` must be added to ignore SSL
 To enable HTTPS with trusted certs:
 
 - Edit your DNS registry to point to that VM
-- Create a trusted certificate using the method of your choice (_Let's encrypt_ for instance) or using `cosmian_certtool`
+- Create a trusted certificate using the method of your choice (_Let's encrypt_ for instance)
 - Edit the `nginx` configuration file to point to the location of the TLS certificate and private key:
 
   ```conf title="/etc/nginx/conf.d/default.conf"
@@ -554,7 +554,6 @@ This is an abstract of the updated file tree:
 ├── usr
 │   └── local
 │       └── bin
-│           ├── cosmian_certtool
 │           ├── cosmian_fstool
 │           └── cosmian_vm_agent
 └── var
