@@ -37,6 +37,8 @@ case $? in
         exit 4
     fi
 
+    export TPM2TOOLS_TCTI="device:/dev/tpmrm0"
+
     # unlock the partition (retry up to 30 times as the vTPM may not be fully initialized yet)
     MAX_RETRIES=30
     RETRY_DELAY=5
