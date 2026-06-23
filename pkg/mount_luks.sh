@@ -37,8 +37,18 @@ case $? in
         exit 4
     fi
 
-    # unlock the partition
-    /lib/systemd/systemd-cryptsetup attach cosmian_vm_container /var/lib/cosmian_vm/container - tpm2-device=auto,headless=true,header=/var/lib/cosmian_vm/header || exit 1
+    # unlock the partition (retry up to 30 times as the vTPM may not be fully initialized yet)
+    MAX_RETRIES=30
+    RETRY_DELAY=5
+    for i in $(seq 1 $MAX_RETRIES); do
+        /lib/systemd/systemd-cryptsetup attach cosmian_vm_container /var/lib/cosmian_vm/container - tpm2-device=auto,headless=true,header=/var/lib/cosmian_vm/header && break
+        echo "TPM unseal attempt $i/$MAX_RETRIES failed, retrying in ${RETRY_DELAY}s..."
+        if [ "$i" -eq "$MAX_RETRIES" ]; then
+            echo "Failed to attach LUKS container after $MAX_RETRIES attempts"
+            exit 1
+        fi
+        sleep $RETRY_DELAY
+    done
     # mount the partition
     mount /dev/mapper/cosmian_vm_container /var/lib/cosmian_vm/data || exit 1
     exit 0
