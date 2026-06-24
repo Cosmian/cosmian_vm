@@ -21,7 +21,7 @@ rand = { workspace = true }
 serde_json = { workspace = true }
 sha2 = { workspace = true }
 tee_attestation = { workspace = true }
-tls-cert = { workspace = true }
+tls_cert = { workspace = true }
 tokio = { workspace = true }
 tpm_quote = { workspace = true }
 tracing = { workspace = true }

@@ -24,7 +24,7 @@ rustls = { workspace = true }
 serde = { workspace = true }
 tee_attestation = { workspace = true }
 thiserror = { workspace = true }
-tls-cert = { workspace = true }
+tls_cert = { workspace = true }
 tpm_quote = { workspace = true }
 url = "2.5"
 webpki-roots = "1.0"
