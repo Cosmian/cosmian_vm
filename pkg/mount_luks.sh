@@ -43,8 +43,12 @@ case $? in
     MAX_RETRIES=30
     RETRY_DELAY=5
     for i in $(seq 1 $MAX_RETRIES); do
-        /lib/systemd/systemd-cryptsetup attach cosmian_vm_container /var/lib/cosmian_vm/container - tpm2-device=auto,headless=true,header=/var/lib/cosmian_vm/header && break
-        echo "TPM unseal attempt $i/$MAX_RETRIES failed, retrying in ${RETRY_DELAY}s..."
+        /lib/systemd/systemd-cryptsetup attach cosmian_vm_container /var/lib/cosmian_vm/container - tpm2-device=auto,headless=true,header=/var/lib/cosmian_vm/header
+        STATUS=$?
+        if [ $STATUS -eq 0 ]; then
+            break
+        fi
+        echo "TPM unseal attempt $i/$MAX_RETRIES failed (code $STATUS), retrying in ${RETRY_DELAY}s..."
         if [ "$i" -eq "$MAX_RETRIES" ]; then
             echo "Failed to attach LUKS container after $MAX_RETRIES attempts"
             exit 1
