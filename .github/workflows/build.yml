@@ -7,9 +7,13 @@ on:
       distrib:
         required: true
         type: string
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   check:
+    if: github.event_name == 'workflow_call'
     name: (${{ inputs.distrib }}) Rust Check
     runs-on: ${{ inputs.distrib }}
 
@@ -112,7 +116,7 @@ jobs:
 
   push:
     needs: check
-    if: needs.check.outputs.cache-hit != 'true'
+    if: github.event_name == 'workflow_call' && needs.check.outputs.cache-hit != 'true'
     name: (${{ inputs.distrib }}) package.cosmian.com
     runs-on: [self-hosted, no-tee]
     container:
@@ -137,3 +141,17 @@ jobs:
           DISTRIB: ${{ inputs.distrib }}
         run: |
           bash .github/scripts/push_packages.sh
+
+  build-documentation:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mdBook toolchain
+        run: curl -fsSL https://raw.githubusercontent.com/Cosmian/doc-theme/main/scripts/setup-mdbook.sh | sh
+
+      - name: Build documentation
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          cd documentation && mdbook build

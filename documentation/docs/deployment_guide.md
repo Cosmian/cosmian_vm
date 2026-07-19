@@ -30,7 +30,7 @@ Then, the deployment flow is the following:
 Go the Eviden marketplace webpage of the chosen cloud provider:
 
 - [Eviden VM/KMS/AI on AWS Marketplace](https://aws.amazon.com/marketplace/search/results?searchTerms=cosmian)
-- [Eviden VM/KMS/AI on Azure Marketplace](https://marketplace.microsoft.com/fr-fr/marketplace/apps?search=cosmian&page=1)
+- Eviden VM/KMS/AI on Azure Marketplace
 - [Eviden VM/KMS/AI on GCP Marketplace](https://console.cloud.google.com/marketplace/browse?hl=fr&q=Cosmian)
 
 Select an OS, set an external IP and continue until the Eviden VM instance is spawned.
@@ -62,54 +62,57 @@ Once the VM is configured as needed, Eviden VM Agent can do a snapshot of the VM
 
 Install the Eviden VM CLI on a local machine
 
-=== "Ubuntu 22.04"
+{{#tabs }}
+{{#tab name="Ubuntu 22.04" }}
 
-    Download the binary and allow it to be executed:
+Download the binary and allow it to be executed:
 
-    ```console title="On the local machine"
-    sudo apt update && sudo apt install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.21/ubuntu-22.04/cosmian-vm_1.3.21-1_amd64.deb
-    sudo apt install ./cosmian-vm_1.3.21-1_amd64.deb
-    cosmian_vm --version
-    ```
+```console title="On the local machine"
+sudo apt update && sudo apt install -y wget
+wget https://package.cosmian.com/cosmian_vm/1.3.21/ubuntu-22.04/cosmian-vm_1.3.21-1_amd64.deb
+sudo apt install ./cosmian-vm_1.3.21-1_amd64.deb
+cosmian_vm --version
+```
+{{#endtab }}
+{{#tab name="Ubuntu 24.04" }}
 
-=== "Ubuntu 24.04"
+Download the binary and allow it to be executed:
 
-    Download the binary and allow it to be executed:
+```console title="On the local machine"
+sudo apt update && sudo apt install -y wget
+wget https://package.cosmian.com/cosmian_vm/1.3.21/ubuntu-24.04/cosmian-vm_1.3.21-1_amd64.deb
+sudo apt install ./cosmian-vm_1.3.21-1_amd64.deb
+cosmian_vm --version
+```
+{{#endtab }}
+{{#tab name="RHEL 9" }}
 
-    ```console title="On the local machine"
-    sudo apt update && sudo apt install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.21/ubuntu-24.04/cosmian-vm_1.3.21-1_amd64.deb
-    sudo apt install ./cosmian-vm_1.3.21-1_amd64.deb
-    cosmian_vm --version
-    ```
+Download the binary and allow it to be executed:
 
-=== "RHEL 9"
+```console title="On the local machine"
+sudo dnf update && dnf install -y wget
+wget https://package.cosmian.com/cosmian_vm/1.3.21/rhel9/cosmian_vm-1.3.21-1.x86_64.rpm
+sudo dnf install ./cosmian_vm-1.3.21-1.x86_64.rpm
+cosmian_vm --version
+```
+{{#endtab }}
+{{#tab name="MacOS / Windows" }}
 
-    Download the binary and allow it to be executed:
+Start a Ubuntu-based Docker container and enter it:
 
-    ```console title="On the local machine"
-    sudo dnf update && dnf install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.21/rhel9/cosmian_vm-1.3.21-1.x86_64.rpm
-    sudo dnf install ./cosmian_vm-1.3.21-1.x86_64.rpm
-    cosmian_vm --version
-    ```
+```console title="On the local machine"
+docker run -it ubuntu:22.04 /bin/bash
+```
 
-=== "MacOS / Windows"
+Download the binary and allow it to be executed:
 
-    Start a Ubuntu-based Docker container and enter it:
-
-    ```console title="On the local machine"
-    docker run -it ubuntu:22.04 /bin/bash
-    ```
-
-    Download the binary and allow it to be executed:
-
-    ```console title="In Docker container (local machine)"
-    apt update && apt install -y wget
-    wget https://package.cosmian.com/cosmian_vm/1.3.21/ubuntu-22.04/cosmian-vm_1.3.21-1_amd64.deb
-    apt install ./cosmian-vm_1.3.21-1_amd64.deb
-    ```
+```console title="In Docker container (local machine)"
+apt update && apt install -y wget
+wget https://package.cosmian.com/cosmian_vm/1.3.21/ubuntu-22.04/cosmian-vm_1.3.21-1_amd64.deb
+apt install ./cosmian-vm_1.3.21-1_amd64.deb
+```
+{{#endtab }}
+{{#endtabs }}
 
 Generate a snapshot of the Eviden VM:
 
@@ -338,7 +341,7 @@ $ ls -Z
 system_u:object_r:cosmiand_script_t:s0 my_script.py
 ```
 
-See [RHEL SELinux documentation](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/using_selinux/index#proc_providing-feedback-on-red-hat-documentation_using-selinux) for more details and advanced usage of SELinux.
+See RHEL SELinux documentation for more details and advanced usage of SELinux.
 
 ### Cosmian VM Agent lifecycle
 

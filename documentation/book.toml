@@ -2,7 +2,7 @@
 title = "Eviden VM"
 authors = ["Cosmian"]
 language = "en"
-src = "src"
+src = "docs"
 
 [build]
 build-dir = "book"
@@ -22,9 +22,33 @@ enable = true
 enable = true
 level = 1
 
+[output.linkcheck]
+follow-web-links = true
+warning-policy = "error"
+exclude = [
+  'localhost',
+  '@',
+  # Cross-book references — other sections only exist in the combined book
+  'key_management_system',
+  'kms_clients',
+  'findex',
+  'eviden_ai',
+  'eviden_enclave',
+  'crates\.io',
+  'cosmian\.com',
+  'chrome://',
+  'csrc\.nist\.gov',
+  'nvlpubs\.nist\.gov',
+  'support\.google\.com',
+  'marketplace\.microsoft\.com',
+]
+
 [preprocessor.admonish]
 command = "mdbook-admonish"
 assets_version = "3.1.0"
+
+[preprocessor.tabs]
+command = "python3 ../../theme/scripts/mdbook_tabs.py"
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
