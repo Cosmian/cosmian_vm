@@ -42,6 +42,7 @@ exclude = [
   'nvlpubs\.nist\.gov',
   'support\.google\.com',
   'marketplace\.microsoft\.com',
+  'docs\.redhat\.com/',
 ]
 
 [preprocessor.admonish]

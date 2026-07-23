@@ -73,7 +73,7 @@ Our client CLI [cosmian_vm](https://github.com/Cosmian/cosmian_vm/tree/main/crat
 
 ## Setup flow
 
-An Eviden VM is instantiated from a cloud provider marketplace on top of a confidential computing machine.
+An Eviden VM is instantiated from a [cloud provider marketplace](https://cosmian.com/marketplace/) on top of a confidential computing machine.
 Once the system administrator has installed the application and its dependencies, a snapshot of the VM is taken. Integrity checks can then be performed on the running VM to verify the running code, OS, and hardware.
 
 <p align="center">
@@ -102,20 +102,17 @@ The verification process of the Eviden VM is performed using client CLI [cosmian
 
 The verification is successful if files in IMA measurement log and snapshot have the same hash digests, TPM or vTPM correctly attested the IMA measurement log content and finally if TEE attestation is valid.
 
-{{#tabs }}
-{{#tab name="Flow" }}
+=== "Flow"
 
-<p align="center">
-    <img src="./images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
-</p>
-{{#endtab }}
-{{#tab name="Detailed flow" }}
+    <p align="center">
+        <img src="./images/simple_confidential_vm_verification_flow.drawio.svg" alt="simple verification flow">
+    </p>
 
-<p align="center">
-    <img src="./images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
-</p>
-{{#endtab }}
-{{#endtabs }}
+=== "Detailed flow"
+
+    <p align="center">
+        <img src="./images/confidential_vm_verification_flow.svg" alt="detailed verification flow">
+    </p>
 
 ## Cloud providers support
 
