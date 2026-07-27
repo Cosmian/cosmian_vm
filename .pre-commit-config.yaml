@@ -20,7 +20,10 @@ repos:
     rev: v0.41.0
     hooks:
       - id: markdownlint-fix
-        args: [--disable=MD004, --disable=MD013, --disable=MD024, --disable=MD029, --disable=MD033, --disable=MD041, --disable=MD046]
+        args: [--disable=MD004, --disable=MD013, --disable=MD024, --disable=MD029, --disable=MD033, --disable=MD046]
+        # MD041 (first heading must be #) and MD025 (only one # per file) are intentionally enabled
+        # SUMMARY.md uses empty links for mdBook section separators (valid mdBook syntax)
+        exclude: documentation/docs/SUMMARY\.md
 
   - repo: https://github.com/tcort/markdown-link-check
     rev: v3.12.2

@@ -1,3 +1,5 @@
+# Getting started
+
 !!! info "Eviden VM reminder"
 
     First, read detailed information about [Eviden VM](./index.md) or about [Eviden VM Agent and related software tools functioning](https://github.com/Cosmian/cosmian_vm).

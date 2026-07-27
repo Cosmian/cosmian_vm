@@ -47,7 +47,6 @@ The following table lists security advisories that are currently being tracked o
 | ID                | Description                                              | Status  | Reason                                                   |
 | ----------------- | -------------------------------------------------------- | ------- | -------------------------------------------------------- |
 
-
 ### Advisory Details
 
 These security advisories are tracked in our `deny.toml` configuration file and are regularly reviewed by our security team. Most ignored advisories are due to:
