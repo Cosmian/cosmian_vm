@@ -393,7 +393,7 @@ To enable HTTPS with trusted certs:
 - Create a trusted certificate using the method of your choice (_Let's encrypt_ for instance)
 - Edit the `nginx` configuration file to point to the location of the TLS certificate and private key:
 
-  ```conf title="/etc/nginx/conf.d/default.conf"
+  ```nginx title="/etc/nginx/conf.d/default.conf"
   server {
           ...
 
