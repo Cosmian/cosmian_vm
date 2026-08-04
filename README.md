@@ -29,7 +29,7 @@ The foundation of _Cosmian VM_ relies on the following components:
 
 In addition, _Cosmian VM_ image contains the following softwares:
 
- - `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
+- `cosmian_vm_agent`: an agent running in the confidential VM to forward attestations, collaterals (e.g. root certificates) and measurement log
 
 - `cosmian_fstool` to ease the generation of LUKS container with secret key stored in the TPM/vTPM
 

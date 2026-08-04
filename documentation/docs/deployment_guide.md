@@ -1,3 +1,5 @@
+# Getting started
+
 !!! info "Eviden VM reminder"
 
     First, read detailed information about [Eviden VM](./index.md) or about [Eviden VM Agent and related software tools functioning](https://github.com/Cosmian/cosmian_vm).
@@ -9,7 +11,7 @@
     Then, at anytime, a remote verification of the VM can be done using the Eviden VM CLI tool (`cosmian_vm`).
 
 <p align="center">
-  <img src="../images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
+  <img src="images/confidential_vm_setup_flow.drawio.svg" alt="setup flow">
 </p>
 
 The Eviden VM can be deployed on virtual machines that supports AMD SEV-SNP or Intel TDX technologies.
@@ -391,7 +393,7 @@ To enable HTTPS with trusted certs:
 - Create a trusted certificate using the method of your choice (_Let's encrypt_ for instance)
 - Edit the `nginx` configuration file to point to the location of the TLS certificate and private key:
 
-  ```conf title="/etc/nginx/conf.d/default.conf"
+  ```nginx title="/etc/nginx/conf.d/default.conf"
   server {
           ...
 

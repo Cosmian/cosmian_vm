@@ -27,7 +27,7 @@ pub(crate) fn call(exe: &str, args: &[&str], background: bool) -> Result<Option<
 }
 
 pub(crate) fn create_tpm_context(tpm_device: &Path) -> Result<Context, Error> {
-    let tcti = TctiNameConf::from_str(&format!("device:{}", &tpm_device.to_string_lossy()))
+    let tcti = TctiNameConf::from_str(&format!("device:{}", tpm_device.to_string_lossy()))
         .map_err(|e| Error::Unexpected(format!("Incorrect TCTI (TPM device): {e}")))?;
 
     let tpm_context = Context::new(tcti).map_err(|e| {

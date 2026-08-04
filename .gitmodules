@@ -1,0 +1,3 @@
+[submodule "documentation/theme"]
+	path = documentation/theme
+	url = git@github.com:Cosmian/doc-theme.git
