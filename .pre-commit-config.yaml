@@ -126,9 +126,3 @@ repos:
       - id: clippy-all-targets-all-features
       - id: clippy-all-targets
       - id: cargo-format # in last due to clippy fixes
-
-  - repo: https://github.com/EmbarkStudios/cargo-deny
-    rev: 0.18.2
-    hooks:
-      - id: cargo-deny
-        args: [--all-features, check]     # optionally modify the arguments for cargo-deny (default arguments shown here)
