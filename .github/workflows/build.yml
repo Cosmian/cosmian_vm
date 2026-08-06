@@ -7,13 +7,9 @@ on:
       distrib:
         required: true
         type: string
-  push:
-  pull_request:
-  workflow_dispatch:
 
 jobs:
   check:
-    if: github.event_name == 'workflow_call'
     name: (${{ inputs.distrib }}) Rust Check
     runs-on: ${{ inputs.distrib }}
 
@@ -116,7 +112,7 @@ jobs:
 
   push:
     needs: check
-    if: github.event_name == 'workflow_call' && needs.check.outputs.cache-hit != 'true'
+    if: needs.check.outputs.cache-hit != 'true'
     name: (${{ inputs.distrib }}) package.cosmian.com
     runs-on: [self-hosted, no-tee]
     container:
