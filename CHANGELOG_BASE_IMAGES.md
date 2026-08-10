@@ -1,5 +1,10 @@
 # Cosmian Base Image Changelog
 
+## [0.1.18] - 2026-08-10
+
+- *GCP*:
+- *Ubuntu*: update from `ubuntu-2404-noble-amd64-v20260517` to `ubuntu-2404-noble-amd64-v20260807`
+
 ## [0.1.17] - 2026-06-01
 
 - *Azure*:

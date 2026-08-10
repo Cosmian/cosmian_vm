@@ -816,7 +816,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "cosmian_vm"
-version = "1.4.3"
+version = "1.4.4"
 dependencies = [
  "anyhow",
  "clap",
@@ -836,7 +836,7 @@ dependencies = [
 
 [[package]]
 name = "cosmian_vm_agent"
-version = "1.4.3"
+version = "1.4.4"
 dependencies = [
  "actix-cors",
  "actix-http",
@@ -880,7 +880,7 @@ dependencies = [
 
 [[package]]
 name = "cosmian_vm_client"
-version = "1.4.3"
+version = "1.4.4"
 dependencies = [
  "base64",
  "hex",
@@ -1796,7 +1796,7 @@ dependencies = [
 
 [[package]]
 name = "ima"
-version = "1.4.3"
+version = "1.4.4"
 dependencies = [
  "hex",
  "serde",
