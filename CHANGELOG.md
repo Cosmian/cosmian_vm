@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [1.4.4] - 2026-08-06
 
+### 🐛 Bug Fixes
+
+- Upgrade GCP Ubuntu base images
+
 ### 🚀 Features
 
-- Migrate mkdocs to Mdbook (#246)
+- Bump KMS version to 5.26.0
 
 ## [1.4.3] - 2026-08-06
 
