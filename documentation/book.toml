@@ -43,6 +43,7 @@ exclude = [
   'support\.google\.com',
   'marketplace\.microsoft\.com',
   'docs\.redhat\.com/',
+  'docs\.aws\.amazon\.com/',
 ]
 
 [preprocessor.admonish]
@@ -50,7 +51,7 @@ command = "mdbook-admonish"
 assets_version = "3.1.0"
 
 [preprocessor.tabs]
-command = "python3 ../../theme/scripts/mdbook_tabs.py"
+command = "python3 theme/scripts/mdbook_tabs.py"
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"

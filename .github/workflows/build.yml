@@ -150,6 +150,11 @@ jobs:
       - name: Install mdBook toolchain
         run: curl -fsSL https://raw.githubusercontent.com/Cosmian/doc-theme/main/scripts/setup-mdbook.sh | sh
 
+      - name: Download mdBook theme scripts
+        run: |
+          mkdir -p documentation/theme/scripts
+          curl -fsSL https://raw.githubusercontent.com/Cosmian/doc-theme/main/scripts/mdbook_tabs.py -o documentation/theme/scripts/mdbook_tabs.py
+
       - name: Build documentation
         run: |
           export PATH="$HOME/.cargo/bin:$PATH"
