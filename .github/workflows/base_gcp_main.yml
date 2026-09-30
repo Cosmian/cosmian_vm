@@ -23,7 +23,7 @@ jobs:
       matrix:
         distrib: [ubuntu]  # rhel
         product: [base-image]
-        techno: [sev]  # tdx
+        techno: [sev, tdx]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     secrets: inherit
     uses: ./.github/workflows/base_gcp_image.yml
