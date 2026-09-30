@@ -43,7 +43,7 @@ jobs:
       matrix:
         distrib: [ubuntu]  # rhel
         product: [cosmian-vm, kms, kms-fips]  # ai-runner
-        techno: [sev]  # tdx
+        techno: [sev, tdx]
         exclude:
           - techno: tdx
             distrib: rhel
@@ -70,7 +70,7 @@ jobs:
       matrix:
         distrib: [ubuntu]  # rhel
         product: [cosmian-vm, kms]  # ai-runner
-        techno: [sev]  # tdx
+        techno: [sev, tdx]
         exclude:
           - techno: tdx
             distrib: rhel
