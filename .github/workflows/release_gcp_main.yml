@@ -43,7 +43,7 @@ jobs:
       matrix:
         distrib: [ubuntu]  # rhel
         product: [cosmian-vm, kms]  # ai-runner
-        techno: [sev]  # tdx
+        techno: [sev, tdx]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
@@ -65,7 +65,7 @@ jobs:
       matrix:
         distrib: [ubuntu]  # rhel
         product: [cosmian-vm, kms]  # ai-runner
-        techno: [sev]  # tdx
+        techno: [sev, tdx]
     name: (GCP) ${{ matrix.product }} - ${{ matrix.distrib }} - ${{ matrix.techno }}
     needs:
       - clean-resources
