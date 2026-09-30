@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.5] - 2026-09-30
+
+### 🚀 Features
+
+- Bump KMS version to 5.27.1
+- Recreate Azure and GCP TDX images
+
 ## [1.4.4] - 2026-08-12
 
 ### 🐛 Bug Fixes
