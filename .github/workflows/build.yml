@@ -39,9 +39,9 @@ jobs:
             PACKAGE_VERSION="noble1"
             UBUNTU_CODENAME="noble"
           fi
-          sudo curl -fsSLo /usr/share/keyrings/intel-sgx-deb.asc https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
+          sudo curl --retry 5 --retry-delay 5 --retry-all-errors -fsSLo /usr/share/keyrings/intel-sgx-deb.asc https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key
           echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu ${UBUNTU_CODENAME} main" | sudo tee /etc/apt/sources.list.d/intel-sgx.list
-          sudo apt-get update && sudo apt-get install -y tpm2-tools libtss2-dev libtdx-attest=1.24.100.2-${PACKAGE_VERSION} libtdx-attest-dev=1.24.100.2-${PACKAGE_VERSION}
+          sudo apt-get -o Acquire::Retries=5 update && sudo apt-get -o Acquire::Retries=5 install -y tpm2-tools libtss2-dev libtdx-attest=1.24.100.2-${PACKAGE_VERSION} libtdx-attest-dev=1.24.100.2-${PACKAGE_VERSION}
 
       - name: Install Rust toolchain and components
         if: steps.cargo-cache.outputs.cache-hit != 'true'
@@ -176,7 +176,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Cosmian/public_documentation
-          ref: develop
+          ref: feat/subrepo-docs-check
           path: public_documentation
           submodules: true
           token: ${{ secrets.PAT_TOKEN }}
