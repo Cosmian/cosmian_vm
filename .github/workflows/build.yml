@@ -176,7 +176,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Cosmian/public_documentation
-          ref: feat/subrepo-docs-check
+          ref: develop
           path: public_documentation
           submodules: true
           token: ${{ secrets.PAT_TOKEN }}
