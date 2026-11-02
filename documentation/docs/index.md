@@ -122,7 +122,7 @@ _Eviden VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on th
 
 |               |                            Official image                            | OS image | OS version | Kernel version               | Eviden base image          |
 | :------------ | :------------------------------------------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-v20251212 |  Ubuntu  | 24.04      | 6.17.0-1007-aws              | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20261023 |  Ubuntu  | 24.04      | 7.0.0-1014-aws                | base-image-X-Y-Z-ubuntu-sev |
 | AWS - AMD SEV |          RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3             |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
 
 ### Azure images
