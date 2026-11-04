@@ -1,5 +1,12 @@
 # Cosmian Base Image Changelog
 
+## [0.1.19] - 2026-11-02
+
+- *GCP*:
+- *Ubuntu*: update from `ubuntu-2404-noble-amd64-v20260807` to `ubuntu-2404-noble-amd64-v20261024`
+- *AWS*:
+  - *Ubuntu*: update from `ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250610`to `ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20261023`
+
 ## [0.1.18] - 2026-08-10
 
 - *GCP*:

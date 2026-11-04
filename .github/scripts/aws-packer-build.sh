@@ -23,7 +23,7 @@ if [ -n "${VERSION+x}" ]; then
   BASE_IMAGE_NAME="base-image-${BASE_VERSION}-${DISTRIBUTION}-sev"
 else
   if [ "$DISTRIBUTION" = "ubuntu" ]; then
-    BASE_IMAGE_NAME="ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20260218"
+    BASE_IMAGE_NAME="ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20261023"
   else
     BASE_IMAGE_NAME="RHEL-10.1.0_HVM-20260108-x86_64-0-Hourly2-GP3"
   fi

@@ -122,7 +122,7 @@ _Eviden VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on th
 
 |               |                            Official image                            | OS image | OS version | Kernel version               | Eviden base image          |
 | :------------ | :------------------------------------------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
-| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-v20251212 |  Ubuntu  | 24.04      | 6.17.0-1007-aws              | base-image-X-Y-Z-ubuntu-sev |
+| AWS - AMD SEV | ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20261023 |  Ubuntu  | 24.04      | 7.0.0-1014-aws                | base-image-X-Y-Z-ubuntu-sev |
 | AWS - AMD SEV |          RHEL-9.4.0_HVM-20250519-x86_64-0-Hourly2-GP3             |  Redhat  | 9.4        | 5.14.0-427.37.1.el9_4.x86_64 | base-image-X-Y-Z-ubuntu-sev |
 
 ### Azure images
@@ -139,7 +139,7 @@ _Eviden VM_ already supports AMD SEV-SNP and Intel TDX but it might depend on th
 |                 |          Official image           | OS image | OS version | Kernel version               | Eviden base image          |
 | :-------------- | :-------------------------------: | :------: | ---------- | ---------------------------- | --------------------------- |
 | GCP - Intel TDX | ubuntu-2404-noble-amd64-v20260225 |  Ubuntu  | 24.04      | 6.17.0-1008-gcp              | base-image-X-Y-Z-ubuntu-tdx |
-| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20260807 |  Ubuntu  | 24.04      | 6.17.0-1018-gcp              | base-image-X-Y-Z-ubuntu-sev |
+| GCP - AMD SEV   | ubuntu-2404-noble-amd64-v20261024 |  Ubuntu  | 24.04      | 7.0.0-1014-gcp               | base-image-X-Y-Z-ubuntu-sev |
 | GCP - AMD SEV   |         rhel-9-v20251016          |  Redhat  | 9.6        | 5.14.0-570.52.1.el9_6.x86_64 | base-image-X-Y-Z-rhel-sev   |
 | GCP - Intel TDX |         rhel-9-v20251016          |  Redhat  | 9.6        | 5.14.0-570.52.1.el9_6.x86_64 | base-image-X-Y-Z-rhel-tdx   |
 
