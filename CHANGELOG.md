@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- Upgrade AWS Ubuntu base image to fix vulnerability [CVE-2026-111497]
+- Upgrade AWS ang GCP Ubuntu base image to fix vulnerability [CVE-2026-111497]
 
 ## [1.4.5] - 2026-09-30
 
