@@ -62,10 +62,30 @@
   when: not check_cosmian_vm_test_reboot
 
 - name: Wait for certificate /var/lib/cosmian_vm/data/cert.pem
-  ansible.builtin.wait_for:
-    path: /var/lib/cosmian_vm/data/cert.pem
-    state: present
-    timeout: 600 # default is 300
+  block:
+    - name: Wait for certificate file
+      ansible.builtin.wait_for:
+        path: /var/lib/cosmian_vm/data/cert.pem
+        state: present
+        timeout: 600 # default is 300
+  rescue:
+    - name: Collect diagnostics when the certificate is missing
+      ansible.builtin.shell:
+        cmd: |
+          systemctl status mount_luks cosmian_vm_agent --no-pager -l
+          journalctl -u mount_luks -u cosmian_vm_agent --no-pager -n 200
+          ls -la /var/lib/cosmian_vm /var/lib/cosmian_vm/data
+      register: check_cosmian_vm_cert_diagnostics
+      changed_when: false
+      failed_when: false
+
+    - name: Display diagnostics
+      ansible.builtin.debug:
+        var: check_cosmian_vm_cert_diagnostics.stdout_lines
+
+    - name: Fail because the certificate was not generated
+      ansible.builtin.fail:
+        msg: Timeout when waiting for file /var/lib/cosmian_vm/data/cert.pem
 
 - name: Display Cosmian VM Agent version
   ansible.builtin.debug:
