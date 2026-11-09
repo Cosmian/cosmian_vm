@@ -8,6 +8,9 @@ StartLimitIntervalSec=0
 Type=oneshot
 Restart=on-failure
 RestartSec=10s
+# exit code 2 means "no LUKS header yet" (first boot, before the agent's initialization):
+# nothing to mount, and restarting would race with the agent creating the container
+SuccessExitStatus=2
 ExecStart=/bin/bash /root/mount_luks.sh
 RemainAfterExit=yes
 
