@@ -219,6 +219,10 @@ The certificate can be changed at will:
 
 The LUKS container can be regenerated using `cosmian_fstool` with your own size and password (to store by yourself in a secure location). It is recommended to use an additional backup disk to store the container.
 
+Once these first startup steps are complete, the agent writes `/var/lib/cosmian_vm/cache.init` and skips them on subsequent starts.
+If this file is missing, the agent considers any existing LUKS container (`/var/lib/cosmian_vm/container` and `/var/lib/cosmian_vm/header`) as left over by an interrupted initialization:
+it **deletes it** and generates a new one. Do not remove `cache.init` unless you intend to wipe the container.
+
 You can skip all these first startup steps by setting `COSMIAN_VM_PREINIT=0` when starting `cosmian_vm_agent`.
 
 ### Handle Cosmian VM status
