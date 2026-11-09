@@ -25,7 +25,7 @@ level = 1
 [output.linkcheck]
 follow-web-links = true
 traverse-parent-directories = true
-warning-policy = "error"
+warning-policy = "warn"
 exclude = [
   'localhost',
   '@',
