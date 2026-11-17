@@ -52,7 +52,7 @@ jobs:
 
       - name: Cargo install cargo-machete
         if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: cargo install cargo-machete
+        run: cargo install cargo-machete@0.9.2
 
       - name: Cargo fmt
         if: steps.cargo-cache.outputs.cache-hit != 'true'
