@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.7] - 2026-11-17
+
+### 🐛 Bug Fixes
+
+- Upgrade Azure Ubuntu base image to fix vulnerability [CVE-2026-98432, CVE-2026-99999]
+
 ## [1.4.6] - 2026-11-02
 
 ### 🚀 Features

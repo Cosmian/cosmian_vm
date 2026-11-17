@@ -1,5 +1,10 @@
 # Cosmian Base Image Changelog
 
+## [0.1.20] - 2026-11-17
+
+- *Azure*:
+  - Rebuild Ubuntu 24.04 image with security patches
+
 ## [0.1.19] - 2026-11-02
 
 - *GCP*:
