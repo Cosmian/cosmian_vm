@@ -12,7 +12,7 @@
       ansible.builtin.apt:
         update_cache: true
         only_upgrade: true
-        upgrade: safe
+        upgrade: dist
       tags: ubuntu
 
 - name: Upgrade all packages (dnf)
