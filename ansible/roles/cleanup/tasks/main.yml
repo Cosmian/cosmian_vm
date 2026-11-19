@@ -93,3 +93,39 @@
         name: Old version found {{ item.name }}-{{ item.version }}-{{ item.release }}
       with_items: "{{ cleanup_installed_packages['ansible_facts']['packages']['kernel-modules-core'] }}"
       when: item.release is version(cleanup_kernel_release, '<') or item.version is version(cleanup_kernel_main_version, '<')
+
+- name: Clean old Ubuntu kernels
+  tags: clean_old_kernels
+  when: ansible_facts['distribution_file_variety'] == 'Debian'
+  block:
+    # Marketplace scanners flag every installed vulnerable kernel, not only the running one.
+    - name: Find packages from old kernels
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          dpkg-query -W -f='${db:Status-Abbrev} ${Package}\n' 'linux-*' \
+            | awk '$1 == "ii" {print $2}' \
+            | grep -E -- '-[0-9]+\.[0-9]+\.[0-9]+-[0-9]+' \
+            | grep -vF -- '{{ ansible_kernel | regex_replace("-[a-z].*$", "") }}' || true
+        executable: /bin/bash
+      register: cleanup_old_kernel_packages
+      changed_when: false
+
+    - name: Purge packages from old kernels
+      ansible.builtin.apt:
+        name: "{{ cleanup_old_kernel_packages.stdout_lines }}"
+        state: absent
+        purge: true
+      when: cleanup_old_kernel_packages.stdout_lines | length > 0
+
+    - name: Find packages from old kernels after cleanup
+      ansible.builtin.shell:
+        cmd: "{{ cleanup_old_kernel_packages.cmd }}"
+        executable: /bin/bash
+      register: cleanup_remaining_old_kernel_packages
+      changed_when: false
+
+    - name: Fail if old kernel packages are still installed
+      ansible.builtin.fail:
+        msg: "Old kernel packages found: {{ cleanup_remaining_old_kernel_packages.stdout_lines }}"
+      when: cleanup_remaining_old_kernel_packages.stdout_lines | length > 0
