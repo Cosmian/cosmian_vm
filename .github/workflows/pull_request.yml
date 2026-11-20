@@ -15,6 +15,7 @@ jobs:
     needs: cleanup
     name: Build binaries
     uses: ./.github/workflows/build_all.yml
+    secrets: inherit
 
   azure:
     needs: build-cosmian-vm-binaries
